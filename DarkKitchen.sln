@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.Domain", "DarkKitchen.Domain\DarkKitchen.Domain.csproj", "{CF35B9D4-3DAA-4442-963C-DAA83C79DC2E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.BusinessLogic", "DarkKitchen.BusinessLogic\DarkKitchen.BusinessLogic.csproj", "{0F210109-CCC7-459F-A07C-700927203548}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.DataAccess", "DarkKitchen.DataAccess\DarkKitchen.DataAccess.csproj", "{2DC341E1-FA41-4462-8CB1-C649BFF1094F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.WebApi", "DarkKitchen.WebApi\DarkKitchen.WebApi.csproj", "{F601FEBF-63BF-4FAD-A3A0-973FB7C9B9EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.BusinessLogicTest", "DarkKitchen.BusinessLogicTest\DarkKitchen.BusinessLogicTest.csproj", "{62BDC9ED-9647-4A5D-AFA4-C0E1DAD3BEB7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.DataAccess.Test", "DarkKitchen.DataAccess.Test\DarkKitchen.DataAccess.Test.csproj", "{48BDE5F2-D544-460D-B442-8C4BECDF8A94}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CF35B9D4-3DAA-4442-963C-DAA83C79DC2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF35B9D4-3DAA-4442-963C-DAA83C79DC2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF35B9D4-3DAA-4442-963C-DAA83C79DC2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF35B9D4-3DAA-4442-963C-DAA83C79DC2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F210109-CCC7-459F-A07C-700927203548}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F210109-CCC7-459F-A07C-700927203548}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F210109-CCC7-459F-A07C-700927203548}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F210109-CCC7-459F-A07C-700927203548}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DC341E1-FA41-4462-8CB1-C649BFF1094F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DC341E1-FA41-4462-8CB1-C649BFF1094F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DC341E1-FA41-4462-8CB1-C649BFF1094F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DC341E1-FA41-4462-8CB1-C649BFF1094F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F601FEBF-63BF-4FAD-A3A0-973FB7C9B9EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F601FEBF-63BF-4FAD-A3A0-973FB7C9B9EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F601FEBF-63BF-4FAD-A3A0-973FB7C9B9EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F601FEBF-63BF-4FAD-A3A0-973FB7C9B9EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62BDC9ED-9647-4A5D-AFA4-C0E1DAD3BEB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62BDC9ED-9647-4A5D-AFA4-C0E1DAD3BEB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62BDC9ED-9647-4A5D-AFA4-C0E1DAD3BEB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62BDC9ED-9647-4A5D-AFA4-C0E1DAD3BEB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48BDE5F2-D544-460D-B442-8C4BECDF8A94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48BDE5F2-D544-460D-B442-8C4BECDF8A94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48BDE5F2-D544-460D-B442-8C4BECDF8A94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48BDE5F2-D544-460D-B442-8C4BECDF8A94}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
