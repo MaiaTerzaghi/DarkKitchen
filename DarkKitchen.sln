@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.BusinessLogicTe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.DataAccess.Test", "DarkKitchen.DataAccess.Test\DarkKitchen.DataAccess.Test.csproj", "{48BDE5F2-D544-460D-B442-8C4BECDF8A94}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.WebApi.Test", "DarkKitchen.WebApi.Test\DarkKitchen.WebApi.Test.csproj", "{A87D1AAF-1F19-4976-AB63-F45C58412C57}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +50,9 @@ Global
 		{48BDE5F2-D544-460D-B442-8C4BECDF8A94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{48BDE5F2-D544-460D-B442-8C4BECDF8A94}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{48BDE5F2-D544-460D-B442-8C4BECDF8A94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A87D1AAF-1F19-4976-AB63-F45C58412C57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A87D1AAF-1F19-4976-AB63-F45C58412C57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A87D1AAF-1F19-4976-AB63-F45C58412C57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A87D1AAF-1F19-4976-AB63-F45C58412C57}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
