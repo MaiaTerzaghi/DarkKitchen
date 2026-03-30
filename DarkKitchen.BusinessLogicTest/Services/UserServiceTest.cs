@@ -1,11 +1,10 @@
-using System;
+// using System;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Interfaces;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace DarkKitchen.BusinessLogic.Test.Services;
+namespace DarkKitchen.BusinessLogicTest.Services;
 
 [TestClass]
 public sealed class UserServiceTest

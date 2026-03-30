@@ -6,14 +6,9 @@ namespace DarkKitchen.WebApi.Controllers;
 
 [ApiController]
 [Route("api/auth")]
-public class AuthController : ControllerBase
+public class AuthController(IUserService userService) : ControllerBase
 {
-    private readonly IUserService _userService;
-
-    public AuthController(IUserService userService)
-    {
-        _userService = userService;
-    }
+    private readonly IUserService _userService = userService;
 
     [HttpPost("login")]
     public IActionResult Login(LoginRequestDTO request)
