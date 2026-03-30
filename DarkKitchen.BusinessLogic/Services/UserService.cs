@@ -1,4 +1,5 @@
 using DarkKitchen.BusinessLogic.Interfaces;
+using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Interfaces;
 
 namespace DarkKitchen.BusinessLogic.Services;
@@ -10,11 +11,13 @@ public class UserService(IUserRepository userRepository) : IUserService
     public string Login(string email, string password)
     {
         var user = _userRepository.GetByEmail(email);
-        if (user == null || user.Password != password)
+        if(user == null || user.Password != password)
         {
             throw new Exception("Credenciales inválidas");
         }
 
-        return user.Id.ToString();
+        var session = new Session { User = user };
+        _userRepository.AddSession(session);
+        return session.Token;
     }
 }

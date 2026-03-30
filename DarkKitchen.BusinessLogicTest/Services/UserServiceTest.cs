@@ -28,5 +28,6 @@ public sealed class UserServiceTest
         var result = userService.Login("juan@email.com", "Contrasena1!@#$%");
 
         Assert.IsNotNull(result);
+        Assert.IsInstanceOfType(result, typeof(string));
     }
 }

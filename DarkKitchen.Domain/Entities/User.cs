@@ -1,3 +1,5 @@
+using DarkKitchen.Domain.Enums;
+
 namespace DarkKitchen.Domain.Entities;
 
 public class User
@@ -8,4 +10,5 @@ public class User
     public string Name { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public string Phone { get; set; } = string.Empty;
+    public UserRole Role { get; set; }
 }

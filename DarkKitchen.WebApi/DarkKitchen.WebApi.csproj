@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DarkKitchen.BusinessLogic\DarkKitchen.BusinessLogic.csproj" />
+    <ProjectReference Include="..\DarkKitchen.DataAccess\DarkKitchen.DataAccess.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

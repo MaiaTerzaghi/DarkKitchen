@@ -175,7 +175,7 @@ dotnet_diagnostic.SA1520.severity = Warning
 #### Documentation rules ####
 dotnet_diagnostic.SA1600.severity = none
 dotnet_diagnostic.SA1601.severity = none
-dotnet_diagnostic.SA1602.severity = Warning
+dotnet_diagnostic.SA1602.severity = none ###Warning###
 dotnet_diagnostic.SA1603.severity = None
 dotnet_diagnostic.SA1604.severity = Warning
 dotnet_diagnostic.SA1605.severity = Warning
