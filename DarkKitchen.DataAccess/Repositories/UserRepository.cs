@@ -1,0 +1,26 @@
+using DarkKitchen.DataAccess.Context;
+using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Interfaces;
+
+namespace DarkKitchen.DataAccess.Repositories;
+
+public class UserRepository(DarkKitchenContext context) : IUserRepository
+{
+    private readonly DarkKitchenContext _context = context;
+
+    public User? GetByEmail(string email)
+    {
+        return _context.Users.FirstOrDefault(u => u.Email == email);
+    }
+
+    public void AddSession(Session session)
+    {
+        _context.Sessions.Add(session);
+        _context.SaveChanges();
+    }
+
+    public Session? GetSessionByToken(string token)
+    {
+        return _context.Sessions.FirstOrDefault(s => s.Token == token);
+    }
+}
