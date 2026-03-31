@@ -30,4 +30,17 @@ public sealed class UserServiceTest
         Assert.IsNotNull(result);
         Assert.IsInstanceOfType(result, typeof(string));
     }
+
+    [TestMethod]
+    public void Login_WhenInvalidCredentials_ThrowsException()
+    {
+        var userRepositoryMock = new Mock<IUserRepository>();
+        userRepositoryMock.Setup(r => r.GetByEmail("mal@email.com"))
+                        .Returns((User?)null);
+
+        var userService = new UserService(userRepositoryMock.Object);
+
+        Assert.ThrowsException<Exception>(() =>
+            userService.Login("mal@email.com", "contrasenamal"));
+    }
 }
