@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("DarkKitchen");
-if (string.IsNullOrEmpty(connectionString))
+if(string.IsNullOrEmpty(connectionString))
 {
     throw new Exception("Missing DarkKitchen connection string");
 }
