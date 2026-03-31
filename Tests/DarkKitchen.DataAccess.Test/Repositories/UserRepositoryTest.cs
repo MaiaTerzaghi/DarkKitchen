@@ -3,7 +3,6 @@ using DarkKitchen.DataAccess.Repositories;
 using DarkKitchen.Domain.Entities;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace DarkKitchen.DataAccess.Test.Repositories;
 
