@@ -13,6 +13,8 @@ public class UserController(IUserService userService) : ControllerBase
     private readonly IUserService _userService = userService;
 
     [HttpPost("register")]
+
+    // IActionResult me devuelve ademas de lo que yo quiero un codigo HTTP, como 200=OK
     public IActionResult Register(RegisterClientDTO request)
     {
         var user = new User
@@ -26,6 +28,6 @@ public class UserController(IUserService userService) : ControllerBase
         };
 
         var id = _userService.Register(user);
-        return CreatedAtAction(nameof(Register), new { id }, null);
+        return CreatedAtAction(nameof(Register), new { id }, new { id });
     }
 }
