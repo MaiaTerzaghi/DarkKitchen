@@ -108,4 +108,24 @@ public sealed class UserServiceTest
 
         userService.Register(user);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(Exception))]
+    public void Register_WhenEmailIsInvalid_ThrowsException()
+    {
+        var userRepositoryMock = new Mock<IUserRepository>();
+        var userService = new UserService(userRepositoryMock.Object);
+
+        var user = new User
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "emailinvalido",
+            Phone = "+59899123456",
+            Password = "Contrasena1!@#$%",
+            Role = UserRole.Client
+        };
+
+        userService.Register(user);
+    }
 }
