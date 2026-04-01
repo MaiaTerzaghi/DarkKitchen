@@ -1,6 +1,7 @@
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.DataAccess.Repositories;
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
@@ -87,5 +88,24 @@ public sealed class UserRepositoryTest
 
         Assert.IsNotNull(result);
         Assert.AreEqual(session.Token, result.Token);
+    }
+
+    [TestMethod]
+    public void AddUser_WhenValidUser_ReturnsId()
+    {
+        var user = new User
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@email.com",
+            Phone = "+59899123456",
+            Password = "Contrasena1!@#$%",
+            Role = UserRole.Client
+        };
+
+        var repository = new UserRepository(_context!);
+        var result = repository.AddUser(user);
+
+        Assert.IsTrue(result > 0);
     }
 }
