@@ -59,6 +59,8 @@ public sealed class UserServiceTest
         };
 
         var userRepositoryMock = new Mock<IUserRepository>();
+        userRepositoryMock.Setup(r => r.GetByEmail("juan@email.com"))
+                        .Returns((User?)null);
         userRepositoryMock.Setup(r => r.AddUser(user))
                         .Returns(1);
 
