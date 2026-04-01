@@ -11,7 +11,7 @@ public class PromotionRepository(DarkKitchenContext context) : IPromotionReposit
     public List<Promotion> GetActivePromotions(DateTime? date, string? productLine, string? product)
     {
         return _context.Promotions
-            .Where(p => p.ValidFrom <= date!.Value && p.ValidTo >= date.Value)
+            .Where(p => !date.HasValue || (p.ValidFrom <= date.Value && p.ValidTo >= date.Value))
             .ToList();
     }
 }
