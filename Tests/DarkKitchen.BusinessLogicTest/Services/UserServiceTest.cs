@@ -128,4 +128,24 @@ public sealed class UserServiceTest
 
         userService.Register(user);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(Exception))]
+    public void Register_WhenPhoneIsInvalid_ThrowsException()
+    {
+        var userRepositoryMock = new Mock<IUserRepository>();
+        var userService = new UserService(userRepositoryMock.Object);
+
+        var user = new User
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@email.com",
+            Phone = "123",
+            Password = "Contrasena1!@#$%",
+            Role = UserRole.Client
+        };
+
+        userService.Register(user);
+    }
 }
