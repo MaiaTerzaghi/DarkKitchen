@@ -20,4 +20,9 @@ public class UserService(IUserRepository userRepository) : IUserService
         _userRepository.AddSession(session);
         return session.Token;
     }
+
+     public int Register(User user)
+    {
+        throw new NotImplementedException();
+    }
 }
