@@ -22,6 +22,11 @@ public class ProductRepository(DarkKitchenContext context) : IProductRepository
             query = query.Where(p => p.Category == category);
         }
 
+        if (!string.IsNullOrEmpty(line))
+        {
+            query = query.Where(p => p.CommercialLine == line);
+        }
+
         return query.ToList();
-}
+    }
 }
