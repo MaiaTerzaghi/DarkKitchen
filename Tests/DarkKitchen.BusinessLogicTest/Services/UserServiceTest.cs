@@ -1,6 +1,7 @@
 // using System;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Interfaces;
 using Moq;
 
@@ -42,5 +43,29 @@ public sealed class UserServiceTest
 
         Assert.ThrowsException<Exception>(() =>
             userService.Login("mal@email.com", "contrasenamal"));
+    }
+
+    [TestMethod]
+    public void Register_WhenValidData_ReturnsId()
+    {
+        var user = new User
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@email.com",
+            Phone = "+59899123456",
+            Password = "Contrasena1!@#$%",
+            Role = UserRole.Client
+        };
+
+        var userRepositoryMock = new Mock<IUserRepository>();
+        userRepositoryMock.Setup(r => r.AddUser(user))
+                        .Returns(1);
+
+        var userService = new UserService(userRepositoryMock.Object);
+
+        var result = userService.Register(user);
+
+        Assert.AreEqual(1, result);
     }
 }
