@@ -1,6 +1,5 @@
 using DarkKitchen.BusinessLogic.Interfaces;
 using DarkKitchen.Domain.Entities;
-using DarkKitchen.Domain.Enums;
 using DarkKitchen.WebApi.Controllers;
 using DarkKitchen.WebApi.DTOs;
 using Microsoft.AspNetCore.Mvc;

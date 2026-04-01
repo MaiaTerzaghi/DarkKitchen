@@ -21,7 +21,7 @@ public class UserService(IUserRepository userRepository) : IUserService
         return session.Token;
     }
 
-     public int Register(User user)
+    public int Register(User user)
     {
         return _userRepository.AddUser(user);
     }

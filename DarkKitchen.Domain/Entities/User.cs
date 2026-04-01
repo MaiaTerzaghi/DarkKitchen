@@ -11,7 +11,7 @@ public class User
         get => _email;
         set
         {
-            if (!System.Text.RegularExpressions.Regex.IsMatch(value, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+            if(!System.Text.RegularExpressions.Regex.IsMatch(value, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
             {
                 throw new Exception("El email no tiene un formato válido");
             }
@@ -26,32 +26,32 @@ public class User
         get => _password;
         set
         {
-            if (value.Length < 15 || value.Length > 25)
+            if(value.Length < 15 || value.Length > 25)
             {
                 throw new Exception("La contraseña debe tener entre 15 y 25 caracteres");
             }
 
-            if (!System.Text.RegularExpressions.Regex.IsMatch(value, @"[A-Z]"))
+            if(!System.Text.RegularExpressions.Regex.IsMatch(value, @"[A-Z]"))
             {
                 throw new Exception("La contraseña debe tener al menos una mayúscula");
             }
 
-            if (!System.Text.RegularExpressions.Regex.IsMatch(value, @"[a-z]"))
+            if(!System.Text.RegularExpressions.Regex.IsMatch(value, @"[a-z]"))
             {
                 throw new Exception("La contraseña debe tener al menos una minúscula");
             }
 
-            if (!System.Text.RegularExpressions.Regex.IsMatch(value, @"[0-9]"))
+            if(!System.Text.RegularExpressions.Regex.IsMatch(value, @"[0-9]"))
             {
                 throw new Exception("La contraseña debe tener al menos un número");
             }
 
-            if (!System.Text.RegularExpressions.Regex.IsMatch(value, @"[^a-zA-Z0-9]"))
+            if(!System.Text.RegularExpressions.Regex.IsMatch(value, @"[^a-zA-Z0-9]"))
             {
                 throw new Exception("La contraseña debe tener al menos un símbolo");
             }
 
-            if (System.Text.RegularExpressions.Regex.IsMatch(value, @"012|123|234|345|456|567|678|789"))
+            if(System.Text.RegularExpressions.Regex.IsMatch(value, @"012|123|234|345|456|567|678|789"))
             {
                 throw new Exception("La contraseña no debe tener secuencias de números");
             }
@@ -66,7 +66,7 @@ public class User
         get => _name;
         set
         {
-            if (string.IsNullOrEmpty(value))
+            if(string.IsNullOrEmpty(value))
             {
                 throw new Exception("El nombre no puede estar vacío");
             }
@@ -81,7 +81,7 @@ public class User
         get => _lastName;
         set
         {
-            if (value.Length < 3 || value.Length > 25)
+            if(value.Length < 3 || value.Length > 25)
             {
                 throw new Exception("El apellido debe tener entre 3 y 25 caracteres");
             }
@@ -96,7 +96,7 @@ public class User
         get => _phone;
         set
         {
-            if (!System.Text.RegularExpressions.Regex.IsMatch(value, @"^\+\d{7,15}$"))
+            if(!System.Text.RegularExpressions.Regex.IsMatch(value, @"^\+\d{7,15}$"))
             {
                 throw new Exception("El teléfono no tiene un formato válido");
             }
