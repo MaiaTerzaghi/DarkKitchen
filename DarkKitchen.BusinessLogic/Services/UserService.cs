@@ -23,6 +23,12 @@ public class UserService(IUserRepository userRepository) : IUserService
 
     public int Register(User user)
     {
+        var existingUser = _userRepository.GetByEmail(user.Email);
+        if(existingUser != null)
+        {
+            throw new Exception("El mail ya esta registrado");
+        }
+
         return _userRepository.AddUser(user);
     }
 }

@@ -59,6 +59,8 @@ public sealed class UserServiceTest
         };
 
         var userRepositoryMock = new Mock<IUserRepository>();
+        userRepositoryMock.Setup(r => r.GetByEmail("juan@email.com"))
+                        .Returns((User?)null);
         userRepositoryMock.Setup(r => r.AddUser(user))
                         .Returns(1);
 
@@ -67,6 +69,29 @@ public sealed class UserServiceTest
         var result = userService.Register(user);
 
         Assert.AreEqual(1, result);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(Exception))]
+    public void Register_WhenEmailAlreadyExists_ThrowsException()
+    {
+        var user = new User
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juanexistente@email.com",
+            Phone = "+59899123456",
+            Password = "Contrasena1!@#$%",
+            Role = UserRole.Client
+        };
+
+        var userRepositoryMock = new Mock<IUserRepository>();
+        userRepositoryMock.Setup(r => r.GetByEmail("juanexistente@email.com"))
+                        .Returns(user);
+
+        var userService = new UserService(userRepositoryMock.Object);
+
+        userService.Register(user);
     }
 
     [TestMethod]
