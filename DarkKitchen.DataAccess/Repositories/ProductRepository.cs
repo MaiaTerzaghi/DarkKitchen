@@ -9,7 +9,14 @@ public class ProductRepository(DarkKitchenContext context) : IProductRepository
     private readonly DarkKitchenContext _context = context;
 
     public List<Product> GetAll(string? name, string? category, string? line)
+{
+    var query = _context.Products.AsQueryable();
+
+    if (!string.IsNullOrEmpty(name))
     {
-        return _context.Products.ToList();
+        query = query.Where(p => p.Name.Contains(name));
     }
+
+    return query.ToList();
+}
 }
