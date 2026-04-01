@@ -168,4 +168,124 @@ public sealed class UserServiceTest
 
         userService.Register(user);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(Exception))]
+    public void Register_WhenPasswordIsTooShort_ThrowsException()
+    {
+        var userRepositoryMock = new Mock<IUserRepository>();
+        var userService = new UserService(userRepositoryMock.Object);
+
+        var user = new User
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@email.com",
+            Phone = "+59899123456",
+            Password = "Corta1!@#$%",
+            Role = UserRole.Client
+        };
+
+        userService.Register(user);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(Exception))]
+    public void Register_WhenPasswordHasNoUppercase_ThrowsException()
+    {
+        var userRepositoryMock = new Mock<IUserRepository>();
+        var userService = new UserService(userRepositoryMock.Object);
+
+        var user = new User
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@email.com",
+            Phone = "+59899123456",
+            Password = "contrasena1!@#$%",
+            Role = UserRole.Client
+        };
+
+        userService.Register(user);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(Exception))]
+    public void Register_WhenPasswordHasNoLowercase_ThrowsException()
+    {
+        var userRepositoryMock = new Mock<IUserRepository>();
+        var userService = new UserService(userRepositoryMock.Object);
+
+        var user = new User
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@email.com",
+            Phone = "+59899123456",
+            Password = "CONTRASENA1!@#$%",
+            Role = UserRole.Client
+        };
+
+        userService.Register(user);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(Exception))]
+    public void Register_WhenPasswordHasNoNumber_ThrowsException()
+    {
+        var userRepositoryMock = new Mock<IUserRepository>();
+        var userService = new UserService(userRepositoryMock.Object);
+
+        var user = new User
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@email.com",
+            Phone = "+59899123456",
+            Password = "Contrasena!@#$%&*",
+            Role = UserRole.Client
+        };
+
+        userService.Register(user);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(Exception))]
+    public void Register_WhenPasswordHasNoSymbol_ThrowsException()
+    {
+        var userRepositoryMock = new Mock<IUserRepository>();
+        var userService = new UserService(userRepositoryMock.Object);
+
+        var user = new User
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@email.com",
+            Phone = "+59899123456",
+            Password = "Contrasena11111",
+            Role = UserRole.Client
+        };
+
+        userService.Register(user);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(Exception))]
+    public void Register_WhenPasswordHasSequence_ThrowsException()
+    {
+        var userRepositoryMock = new Mock<IUserRepository>();
+        var userService = new UserService(userRepositoryMock.Object);
+
+        var user = new User
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@email.com",
+            Phone = "+59899123456",
+            Password = "Contrasena123!@#",
+            Role = UserRole.Client
+        };
+
+        userService.Register(user);
+    }
 }
