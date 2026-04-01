@@ -70,8 +70,12 @@ public sealed class UserServiceTest
     }
 
     [TestMethod]
+    [ExpectedException(typeof(Exception))]
     public void Register_WhenNameIsEmpty_ThrowsException()
     {
+        var userRepositoryMock = new Mock<IUserRepository>();
+        var userService = new UserService(userRepositoryMock.Object);
+
         var user = new User
         {
             Name = string.Empty,
@@ -82,9 +86,6 @@ public sealed class UserServiceTest
             Role = UserRole.Client
         };
 
-        var userRepositoryMock = new Mock<IUserRepository>();
-        var userService = new UserService(userRepositoryMock.Object);
-
-        Assert.ThrowsException<Exception>(() => userService.Register(user));
+        userService.Register(user);
     }
 }
