@@ -88,4 +88,24 @@ public sealed class UserServiceTest
 
         userService.Register(user);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(Exception))]
+    public void Register_WhenLastNameIsTooShort_ThrowsException()
+    {
+        var userRepositoryMock = new Mock<IUserRepository>();
+        var userService = new UserService(userRepositoryMock.Object);
+
+        var user = new User
+        {
+            Name = "Juan",
+            LastName = "Pe",
+            Email = "juan@email.com",
+            Phone = "+59899123456",
+            Password = "Contrasena1!@#$%",
+            Role = UserRole.Client
+        };
+
+        userService.Register(user);
+    }
 }
