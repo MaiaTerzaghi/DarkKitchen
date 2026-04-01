@@ -23,4 +23,11 @@ public class UserRepository(DarkKitchenContext context) : IUserRepository
     {
         return _context.Sessions.FirstOrDefault(s => s.Token == token);
     }
+
+    public int AddUser(User user)
+    {
+        _context.Users.Add(user);
+        _context.SaveChanges();
+        return user.Id;
+    }
 }
