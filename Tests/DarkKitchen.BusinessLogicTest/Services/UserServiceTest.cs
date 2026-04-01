@@ -73,6 +73,29 @@ public sealed class UserServiceTest
 
     [TestMethod]
     [ExpectedException(typeof(Exception))]
+    public void Register_WhenEmailAlreadyExists_ThrowsException()
+    {
+        var user = new User
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juanexistente@email.com",
+            Phone = "+59899123456",
+            Password = "Contrasena1!@#$%",
+            Role = UserRole.Client
+        };
+
+        var userRepositoryMock= new Mock<IUserRepository>();
+        userRepositoryMock.Setup(r => r.GetByEmail("juanexistente@email.com"))
+                        .Returns(user);
+
+        var userService = new UserService(userRepositoryMock.Object);
+
+        userService.Register(user);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(Exception))]
     public void Register_WhenNameIsEmpty_ThrowsException()
     {
         var userRepositoryMock = new Mock<IUserRepository>();
