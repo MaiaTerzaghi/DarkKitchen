@@ -68,4 +68,23 @@ public sealed class UserServiceTest
 
         Assert.AreEqual(1, result);
     }
+
+    [TestMethod]
+    public void Register_WhenNameIsEmpty_ThrowsException()
+    {
+        var user = new User
+        {
+            Name = string.Empty,
+            LastName = "Perez",
+            Email = "juan@email.com",
+            Phone = "+59899123456",
+            Password = "Contrasena1!@#$%",
+            Role = UserRole.Client
+        };
+
+        var userRepositoryMock = new Mock<IUserRepository>();
+        var userService = new UserService(userRepositoryMock.Object);
+
+        Assert.ThrowsException<Exception>(() => userService.Register(user));
+    }
 }
