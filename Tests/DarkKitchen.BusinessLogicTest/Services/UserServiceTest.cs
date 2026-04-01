@@ -85,7 +85,7 @@ public sealed class UserServiceTest
             Role = UserRole.Client
         };
 
-        var userRepositoryMock= new Mock<IUserRepository>();
+        var userRepositoryMock = new Mock<IUserRepository>();
         userRepositoryMock.Setup(r => r.GetByEmail("juanexistente@email.com"))
                         .Returns(user);
 
