@@ -23,6 +23,6 @@ public class UserService(IUserRepository userRepository) : IUserService
 
      public int Register(User user)
     {
-        throw new NotImplementedException();
+        return _userRepository.AddUser(user);
     }
 }
