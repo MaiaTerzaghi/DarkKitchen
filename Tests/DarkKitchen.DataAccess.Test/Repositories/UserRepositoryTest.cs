@@ -37,7 +37,7 @@ public sealed class UserRepositoryTest
     [TestMethod]
     public void GetByEmail_WhenUserExists_ReturnsUser()
     {
-        var user = new User { Name = "Juan", LastName = "Perez", Email = "juan@test.com", Password = "Password1!@#$%" };
+        var user = new User { Name = "Juan", LastName = "Perez", Email = "juan@test.com", Password = "Contrasena1!@#$%" };
         _context!.Users.Add(user);
         _context.SaveChanges();
 
@@ -60,7 +60,7 @@ public sealed class UserRepositoryTest
     [TestMethod]
     public void AddSession_WhenValidSession_SavesSession()
     {
-        var user = new User { Name = "Juan", LastName = "Perez", Email = "juan@test.com", Password = "Password1!@#$%" };
+        var user = new User { Name = "Juan", LastName = "Perez", Email = "juan@test.com", Password = "Contrasena1!@#$%" };
         _context!.Users.Add(user);
         _context.SaveChanges();
 
@@ -75,7 +75,7 @@ public sealed class UserRepositoryTest
     [TestMethod]
     public void GetSessionByToken_WhenSessionExists_ReturnsSession()
     {
-        var user = new User { Name = "Juan", LastName = "Perez", Email = "juan@test.com", Password = "Password1!@#$%" };
+        var user = new User { Name = "Juan", LastName = "Perez", Email = "juan@test.com", Password = "Contrasena1!@#$%" };
         _context!.Users.Add(user);
         _context.SaveChanges();
 
