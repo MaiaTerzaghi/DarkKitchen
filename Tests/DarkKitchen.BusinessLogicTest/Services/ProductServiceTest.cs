@@ -27,4 +27,24 @@ public sealed class ProductServiceTest
 
         Assert.AreEqual(2, result.Count);
     }
+
+     [TestMethod]
+    public void GetAll_WhenFilterByName_ReturnsFilteredProducts()
+    {
+        var products = new List<Product>
+        {
+            new Product { Id = 1, Name = "Pizza" },
+        };
+
+        var productRepositoryMock = new Mock<IProductRepository>();
+        productRepositoryMock.Setup(r => r.GetAll("Pizza", null, null))
+                             .Returns(products);
+
+        var productService = new ProductService(productRepositoryMock.Object);
+
+        var result = productService.GetAll("Pizza", null, null);
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("Pizza", result[0].Name);
+    }
 }
