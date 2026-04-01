@@ -5,7 +5,21 @@ namespace DarkKitchen.Domain.Entities;
 public class User
 {
     public int Id { get; set; }
-    public string Email { get; set; } = string.Empty;
+    private string _email = string.Empty;
+    public string Email
+    {
+        get => _email;
+        set
+        {
+            if (!System.Text.RegularExpressions.Regex.IsMatch(value, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+            {
+                throw new Exception("El email no tiene un formato válido");
+            }
+
+            _email = value;
+        }
+    }
+
     public string Password { get; set; } = string.Empty;
     private string _name = string.Empty;
     public string Name
