@@ -53,4 +53,25 @@ public sealed class PromotionRepositoryTest
         Assert.IsNotNull(result);
         Assert.AreEqual(1, result.Count);
     }
+
+    [TestMethod]
+    public void GetActivePromotions_WhenNoDateFilter_ReturnsAllPromotions()
+    {
+        var promotion = new Promotion
+        {
+            Name = "Black Friday",
+            DiscountPercentage = 10,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 12, 30)
+        };
+
+        _context!.Promotions.Add(promotion);
+        _context.SaveChanges();
+
+        var repository = new PromotionRepository(_context);
+        var result = repository.GetActivePromotions(null, null, null);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.Count);
+    }
 }
