@@ -22,7 +22,21 @@ public class User
         }
     }
 
-    public string LastName { get; set; } = string.Empty;
+    private string _lastName = string.Empty;
+    public string LastName
+    {
+        get => _lastName;
+        set
+        {
+            if (value.Length < 3 || value.Length > 25)
+            {
+                throw new Exception("El apellido debe tener entre 3 y 25 caracteres");
+            }
+
+            _lastName = value;
+        }
+    }
+
     public string Phone { get; set; } = string.Empty;
     public UserRole Role { get; set; }
 }
