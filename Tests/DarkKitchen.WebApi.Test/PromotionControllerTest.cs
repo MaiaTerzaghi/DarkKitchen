@@ -1,5 +1,6 @@
 using DarkKitchen.BusinessLogic.Interfaces;
 using DarkKitchen.WebApi.Controllers;
+using DarkKitchen.WebApi.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -17,7 +18,7 @@ public sealed class PromotionControllerTest
 
         var controller = new PromotionController(promotionServiceMock.Object);
 
-        var result = controller.GetActivePromotions(null, null, null);
+        var result = controller.GetActivePromotions(new PromotionFilterDTO());
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
     }
