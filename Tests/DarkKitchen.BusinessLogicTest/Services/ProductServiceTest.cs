@@ -28,7 +28,7 @@ public sealed class ProductServiceTest
         Assert.AreEqual(2, result.Count);
     }
 
-     [TestMethod]
+    [TestMethod]
     public void GetAll_WhenFilterByName_ReturnsFilteredProducts()
     {
         var products = new List<Product>

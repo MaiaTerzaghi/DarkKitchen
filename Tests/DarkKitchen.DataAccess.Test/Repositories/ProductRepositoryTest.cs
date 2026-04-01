@@ -26,11 +26,11 @@ public sealed class ProductRepositoryTest
         _context.Database.EnsureCreated();
     }
 
-   [TestMethod]
+    [TestMethod]
     public void GetAll_WhenNoFilters_ReturnsAllProducts()
     {
-        _context!.Products.Add(new Product { Code = "P001", Name = "Pizza", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza", Price = 100 });
-        _context.Products.Add(new Product { Code = "P002", Name = "Pasta", Category = "Pastas", CommercialLine = "Minutas", Description = "Rica pasta", Price = 80 });
+        _context!.Products.Add(new Product { Code = "P001", Name = "Pizza", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza", Price = 100.0 });
+        _context.Products.Add(new Product { Code = "P002", Name = "Pasta", Category = "Pastas", CommercialLine = "Minutas", Description = "Rica pasta", Price = 80.0 });
         _context.SaveChanges();
 
         var repository = new ProductRepository(_context);
@@ -42,8 +42,8 @@ public sealed class ProductRepositoryTest
     [TestMethod]
     public void GetAll_WhenFilterByName_ReturnsFilteredProducts()
     {
-        _context!.Products.Add(new Product { Code = "P001", Name = "Pizza", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza", Price = 100 });
-        _context.Products.Add(new Product { Code = "P002", Name = "Pasta", Category = "Pastas", CommercialLine = "Minutas", Description = "Rica pasta", Price = 80 });
+        _context!.Products.Add(new Product { Code = "P001", Name = "Pizza", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza", Price = 100.0 });
+        _context.Products.Add(new Product { Code = "P002", Name = "Pasta", Category = "Pastas", CommercialLine = "Minutas", Description = "Rica pasta", Price = 80.0 });
         _context.SaveChanges();
 
         var repository = new ProductRepository(_context);
@@ -56,8 +56,8 @@ public sealed class ProductRepositoryTest
     [TestMethod]
     public void GetAll_WhenFilterByCategory_ReturnsFilteredProducts()
     {
-        _context!.Products.Add(new Product { Code = "P001", Name = "Pizza", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza", Price = 100 });
-        _context.Products.Add(new Product { Code = "P002", Name = "Pasta", Category = "Pastas", CommercialLine = "Minutas", Description = "Rica pasta", Price = 80 });
+        _context!.Products.Add(new Product { Code = "P001", Name = "Pizza", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza", Price = 100.0 });
+        _context.Products.Add(new Product { Code = "P002", Name = "Pasta", Category = "Pastas", CommercialLine = "Minutas", Description = "Rica pasta", Price = 80.0 });
         _context.SaveChanges();
 
         var repository = new ProductRepository(_context);
@@ -70,8 +70,8 @@ public sealed class ProductRepositoryTest
     [TestMethod]
     public void GetAll_WhenFilterByLine_ReturnsFilteredProducts()
     {
-        _context!.Products.Add(new Product { Code = "P001", Name = "Pizza", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza", Price = 100 });
-        _context.Products.Add(new Product { Code = "P002", Name = "Pasta", Category = "Pastas", CommercialLine = "Desayunos", Description = "Rica pasta", Price = 80 });
+        _context!.Products.Add(new Product { Code = "P001", Name = "Pizza", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza", Price = 100.0 });
+        _context.Products.Add(new Product { Code = "P002", Name = "Pasta", Category = "Pastas", CommercialLine = "Desayunos", Description = "Rica pasta", Price = 80.0 });
         _context.SaveChanges();
 
         var repository = new ProductRepository(_context);
