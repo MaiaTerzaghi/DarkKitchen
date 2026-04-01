@@ -51,6 +51,20 @@ public class User
         }
     }
 
-    public string Phone { get; set; } = string.Empty;
+    private string _phone = string.Empty;
+    public string Phone
+    {
+        get => _phone;
+        set
+        {
+            if (!System.Text.RegularExpressions.Regex.IsMatch(value, @"^\+\d{7,15}$"))
+            {
+                throw new Exception("El teléfono no tiene un formato válido");
+            }
+
+            _phone = value;
+        }
+    }
+
     public UserRole Role { get; set; }
 }
