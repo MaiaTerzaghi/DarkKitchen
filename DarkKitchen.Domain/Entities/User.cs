@@ -7,6 +7,11 @@ public class User
 {
     public int Id { get; set; }
     private string _email = string.Empty;
+    private string _password = string.Empty;
+    private string _name = string.Empty;
+    private string _lastName = string.Empty;
+    private string _phone = string.Empty;
+    public UserRole Role { get; set; }
     public string Email
     {
         get => _email;
@@ -21,7 +26,6 @@ public class User
         }
     }
 
-    private string _password = string.Empty;
     public string Password
     {
         get => _password;
@@ -32,7 +36,6 @@ public class User
         }
     }
 
-    private string _name = string.Empty;
     public string Name
     {
         get => _name;
@@ -47,7 +50,6 @@ public class User
         }
     }
 
-    private string _lastName = string.Empty;
     public string LastName
     {
         get => _lastName;
@@ -62,7 +64,6 @@ public class User
         }
     }
 
-    private string _phone = string.Empty;
     public string Phone
     {
         get => _phone;
@@ -76,6 +77,4 @@ public class User
             _phone = value;
         }
     }
-
-    public UserRole Role { get; set; }
 }
