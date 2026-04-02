@@ -31,4 +31,22 @@ public sealed class ProductControllerTest
         var okResult = (OkObjectResult)result;
         Assert.IsNotNull(okResult.Value);
     }
+
+    [TestMethod]
+    public void ProductResponseDTO_WhenCreated_HasCorrectProperties()
+    {
+        var dto = new ProductResponseDTO
+        {
+            Code = "P001",
+            Name = "Pizza",
+            Price = 100,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = "img1.jpg"
+        };
+
+        Assert.AreEqual("P001", dto.Code);
+        Assert.AreEqual("Pizza", dto.Name);
+        Assert.AreEqual(100, dto.Price);
+    }
 }
