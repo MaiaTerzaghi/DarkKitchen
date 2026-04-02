@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DarkKitchen.DataAccess.Migrations
 {
     [DbContext(typeof(DarkKitchenContext))]
-    [Migration("20260401233136_AddProducts")]
+    [Migration("20260402184530_AddProducts")]
     partial class AddProducts
     {
         /// <inheritdoc />

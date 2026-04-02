@@ -1,4 +1,5 @@
 using DarkKitchen.BusinessLogic.Interfaces;
+using DarkKitchen.WebApi.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DarkKitchen.WebApi.Controllers;
@@ -13,6 +14,17 @@ public class ProductController(IProductService productService) : ControllerBase
     public IActionResult GetAll([FromQuery] string? name, [FromQuery] string? category, [FromQuery] string? line)
     {
         var products = _productService.GetAll(name, category, line);
-        return Ok(products);
+
+        var response = products.Select(p => new ProductResponseDTO
+        {
+            Code = p.Code,
+            Name = p.Name,
+            Price = p.Price,
+            CommercialLine = p.CommercialLine,
+            Category = p.Category,
+            Images = p.Images,
+        });
+
+        return Ok(response);
     }
 }
