@@ -30,4 +30,25 @@ public sealed class ProductControllerTest
         var okResult = (OkObjectResult)result;
         Assert.IsNotNull(okResult.Value);
     }
+
+    [TestMethod]
+    public void GetAll_WhenFilterByName_ReturnsOk()
+    {
+        var products = new List<Product>
+        {
+            new Product { Id = 1, Code = "P001", Name = "Pizza", Category = "Fritos", CommercialLine = "Minutas", Price = 100, Images = "img1.jpg" },
+        };
+
+        var productServiceMock = new Mock<IProductService>();
+        productServiceMock.Setup(s => s.GetAll("Pizza", null, null))
+                        .Returns(products);
+
+        var controller = new ProductController(productServiceMock.Object);
+
+        var result = controller.GetAll("Pizza", null, null);
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = (OkObjectResult)result;
+        Assert.IsNotNull(okResult.Value);
+    }
 }
