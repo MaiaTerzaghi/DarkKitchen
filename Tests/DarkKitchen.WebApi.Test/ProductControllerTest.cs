@@ -14,8 +14,8 @@ public sealed class ProductControllerTest
     {
         var products = new List<Product>
         {
-            new Product { Id = 1, Name = "Pizza", Category = "Fritos", CommercialLine = "Minutas" },
-            new Product { Id = 2, Name = "Pasta", Category = "Pastas", CommercialLine = "Minutas" },
+            new Product { Id = 1, Name = "Pizza", Category = "Fritos", CommercialLine = "Minutas", Images = "im1.jpg" },
+            new Product { Id = 2, Name = "Pasta", Category = "Pastas", CommercialLine = "Minutas",  Images = "im2.jpg" },
         };
 
         var productServiceMock = new Mock<IProductService>();
@@ -27,5 +27,7 @@ public sealed class ProductControllerTest
         var result = controller.GetAll(null, null, null);
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = (OkObjectResult)result;
+        Assert.IsNotNull(okResult.Value);
     }
 }
