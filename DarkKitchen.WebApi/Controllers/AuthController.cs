@@ -13,7 +13,14 @@ public class AuthController(IAuthService authService) : ControllerBase
     [HttpPost("login")]
     public IActionResult Login(LoginRequestDTO request)
     {
-        var token = _authService.Login(request.Email, request.Password);
-        return Ok(token);
+        try
+        {
+            var token = _authService.Login(request.Email, request.Password);
+            return Ok(token);
+        }
+        catch(ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 }
