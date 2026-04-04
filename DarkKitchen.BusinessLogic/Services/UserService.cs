@@ -8,19 +8,6 @@ public class UserService(IUserRepository userRepository) : IUserService
 {
     private readonly IUserRepository _userRepository = userRepository;
 
-    public string Login(string email, string password)
-    {
-        var user = _userRepository.GetByEmail(email);
-        if(user == null || user.Password != password)
-        {
-            throw new Exception("Datos inválidos");
-        }
-
-        var session = new Session { User = user };
-        _userRepository.AddSession(session);
-        return session.Token;
-    }
-
     public int Register(User user)
     {
         var existingUser = _userRepository.GetByEmail(user.Email);
