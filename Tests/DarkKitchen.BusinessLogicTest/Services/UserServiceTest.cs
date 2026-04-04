@@ -37,7 +37,7 @@ public sealed class UserServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(Exception))]
+    [ExpectedException(typeof(ArgumentException))]
     public void Register_WhenEmailAlreadyExists_ThrowsException()
     {
         var user = new User
@@ -60,7 +60,7 @@ public sealed class UserServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(Exception))]
+    [ExpectedException(typeof(ArgumentException))]
     public void Register_WhenNameIsEmpty_ThrowsException()
     {
         var userRepositoryMock = new Mock<IUserRepository>();
@@ -80,7 +80,7 @@ public sealed class UserServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(Exception))]
+    [ExpectedException(typeof(ArgumentException))]
     public void Register_WhenLastNameIsTooShort_ThrowsException()
     {
         var userRepositoryMock = new Mock<IUserRepository>();
@@ -100,7 +100,7 @@ public sealed class UserServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(Exception))]
+    [ExpectedException(typeof(ArgumentException))]
     public void Register_WhenEmailIsInvalid_ThrowsException()
     {
         var userRepositoryMock = new Mock<IUserRepository>();
@@ -120,7 +120,7 @@ public sealed class UserServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(Exception))]
+    [ExpectedException(typeof(ArgumentException))]
     public void Register_WhenPhoneIsInvalid_ThrowsException()
     {
         var userRepositoryMock = new Mock<IUserRepository>();
@@ -140,7 +140,7 @@ public sealed class UserServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(Exception))]
+    [ExpectedException(typeof(ArgumentException))]
     public void Register_WhenPasswordIsInvalid_ThrowsException()
     {
         var userRepositoryMock = new Mock<IUserRepository>();
@@ -160,7 +160,7 @@ public sealed class UserServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(Exception))]
+    [ExpectedException(typeof(ArgumentException))]
     public void Register_WhenPasswordIsTooShort_ThrowsException()
     {
         var userRepositoryMock = new Mock<IUserRepository>();
@@ -180,7 +180,7 @@ public sealed class UserServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(Exception))]
+    [ExpectedException(typeof(ArgumentException))]
     public void Register_WhenPasswordHasNoUppercase_ThrowsException()
     {
         var userRepositoryMock = new Mock<IUserRepository>();
@@ -200,7 +200,7 @@ public sealed class UserServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(Exception))]
+    [ExpectedException(typeof(ArgumentException))]
     public void Register_WhenPasswordHasNoLowercase_ThrowsException()
     {
         var userRepositoryMock = new Mock<IUserRepository>();
@@ -220,7 +220,7 @@ public sealed class UserServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(Exception))]
+    [ExpectedException(typeof(ArgumentException))]
     public void Register_WhenPasswordHasNoNumber_ThrowsException()
     {
         var userRepositoryMock = new Mock<IUserRepository>();
@@ -240,7 +240,7 @@ public sealed class UserServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(Exception))]
+    [ExpectedException(typeof(ArgumentException))]
     public void Register_WhenPasswordHasNoSymbol_ThrowsException()
     {
         var userRepositoryMock = new Mock<IUserRepository>();
@@ -260,7 +260,7 @@ public sealed class UserServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(Exception))]
+    [ExpectedException(typeof(ArgumentException))]
     public void Register_WhenPasswordHasSequence_ThrowsException()
     {
         var userRepositoryMock = new Mock<IUserRepository>();

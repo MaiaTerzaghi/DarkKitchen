@@ -31,7 +31,7 @@ public sealed class AuthServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(Exception))]
+    [ExpectedException(typeof(ArgumentException))]
     public void Login_WhenInvalidCredentials_ThrowsException()
     {
         var userRepositoryMock = new Mock<IUserRepository>();

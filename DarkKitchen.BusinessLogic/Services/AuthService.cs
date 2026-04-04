@@ -13,7 +13,7 @@ public class AuthService(IUserRepository userRepository) : IAuthService
         var user = _userRepository.GetByEmail(email);
         if(user == null || user.Password != password)
         {
-            throw new Exception("Credenciales inválidas");
+            throw new ArgumentException("Credenciales inválidas");
         }
 
         var session = new Session { User = user };

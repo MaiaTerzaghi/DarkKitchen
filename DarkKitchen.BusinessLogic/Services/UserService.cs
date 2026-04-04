@@ -13,7 +13,7 @@ public class UserService(IUserRepository userRepository) : IUserService
         var existingUser = _userRepository.GetByEmail(user.Email);
         if(existingUser != null)
         {
-            throw new Exception("El mail ya esta registrado");
+            throw new ArgumentException("El mail ya esta registrado");
         }
 
         return _userRepository.AddUser(user);
