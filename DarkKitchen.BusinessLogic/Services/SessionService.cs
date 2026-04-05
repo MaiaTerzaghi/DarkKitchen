@@ -11,6 +11,10 @@ public class SessionService(IUserRepository userRepository) : ISessionService
     public User GetUserFromToken(string token)
     {
         var session = _userRepository.GetSessionByToken(token);
+        if(session == null || session.User == null)
+        {
+            throw new ArgumentException("Token inválido");
+        }
 
         return session.User;
     }
