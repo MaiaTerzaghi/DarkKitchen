@@ -75,6 +75,41 @@ public class AuthorizeRolesAttributeTest
     }
 
     [TestMethod]
+    public void OnAuthorization_WhenUserDoesNotHaveRole_Returns403()
+    {
+        var user = new User { Id = 1, Role = UserRole.Client };
+
+        var sessionServiceMock = new Mock<ISessionService>();
+        sessionServiceMock
+            .Setup(s => s.GetUserFromToken(It.IsAny<string>()))
+            .Returns(user);
+
+        var serviceCollection = new ServiceCollection();
+        serviceCollection.AddScoped(_ => sessionServiceMock.Object);
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+
+        var httpContext = new DefaultHttpContext
+        {
+            RequestServices = serviceProvider
+        };
+
+        httpContext.Request.Headers["Authorization"] = "valid-token";
+
+        var context = new AuthorizationFilterContext(
+            new ActionContext(httpContext, new RouteData(), new ActionDescriptor()),
+            []);
+
+        // El endpoint requiere Admin, pero el user es Client
+        var filter = new AuthorizeRolesAttribute(UserRole.Administrative);
+
+        filter.OnAuthorization(context);
+
+        var result = context.Result as ObjectResult;
+        Assert.IsNotNull(result);
+        Assert.AreEqual(403, result.StatusCode);
+    }
+
+    [TestMethod]
     public void OnAuthorization_WhenUserHasCorrectRole_AllowsAccess()
     {
         var user = new User { Id = 1, Role = UserRole.Client };
