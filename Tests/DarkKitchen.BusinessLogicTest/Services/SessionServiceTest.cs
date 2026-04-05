@@ -25,4 +25,16 @@ public sealed class SessionServiceTest
         Assert.IsNotNull(result);
         Assert.AreEqual(1, result.Id);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void GetUserFromToken_WhenInvalidToken_ThrowsException()
+    {
+        var userRepositoryMock = new Mock<IUserRepository>();
+        userRepositoryMock.Setup(r => r.GetSessionByToken("invalid-token"))
+                          .Returns((Session?)null);
+
+        var sessionService = new SessionService(userRepositoryMock.Object);
+        sessionService.GetUserFromToken("invalid-token");
+    }
 }
