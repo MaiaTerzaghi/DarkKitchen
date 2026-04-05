@@ -18,7 +18,7 @@ public static class PasswordValidator
     {
         if(password.Length < 15 || password.Length > 25)
         {
-            throw new Exception("La contraseña debe tener entre 15 y 25 caracteres");
+            throw new ArgumentException("La contraseña debe tener entre 15 y 25 caracteres");
         }
     }
 
@@ -26,7 +26,7 @@ public static class PasswordValidator
     {
         if(!Regex.IsMatch(password, @"[A-Z]"))
         {
-            throw new Exception("La contraseña debe tener al menos una mayúscula");
+            throw new ArgumentException("La contraseña debe tener al menos una mayúscula");
         }
     }
 
@@ -34,7 +34,7 @@ public static class PasswordValidator
     {
         if(!Regex.IsMatch(password, @"[a-z]"))
         {
-            throw new Exception("La contraseña debe tener al menos una minúscula");
+            throw new ArgumentException("La contraseña debe tener al menos una minúscula");
         }
     }
 
@@ -42,7 +42,7 @@ public static class PasswordValidator
     {
         if(!Regex.IsMatch(password, @"[0-9]"))
         {
-            throw new Exception("La contraseña debe tener al menos un número");
+            throw new ArgumentException("La contraseña debe tener al menos un número");
         }
     }
 
@@ -50,15 +50,15 @@ public static class PasswordValidator
     {
         if(!Regex.IsMatch(password, @"[^a-zA-Z0-9]"))
         {
-            throw new Exception("La contraseña debe tener al menos un símbolo");
+            throw new ArgumentException("La contraseña debe tener al menos un símbolo");
         }
     }
 
     private static void ValidateNoSequence(string password)
     {
-        if(Regex.IsMatch(password, @"012|123|234|345|456|567|678|789"))
+        if(Regex.IsMatch(password, @"012|123|234|345|456|567|678|789|987|876|765|654|543|432|321|210"))
         {
-            throw new Exception("La contraseña no debe tener secuencias de números");
+            throw new ArgumentException("La contraseña no debe tener secuencias de números");
         }
     }
 }
