@@ -1,10 +1,10 @@
 {
   "info": {
-    "_postman_id": "60660391-4dd1-46d4-81af-1e246ef877bb",
+    "_postman_id": "478516e5-d11f-4bc4-86df-059327145240",
     "name": "API Obligatorio BD2",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "53493163",
-    "_collection_link": "https://go.postman.co/collection/53493163-60660391-4dd1-46d4-81af-1e246ef877bb?source=collection_link"
+    "_exporter_id": "53626018",
+    "_collection_link": "https://go.postman.co/collection/53626018-478516e5-d11f-4bc4-86df-059327145240?source=collection_link"
   },
   "item": [
     {
@@ -147,10 +147,63 @@
       ]
     },
     {
+      "name": "Promotions",
+      "item": [
+        {
+          "name": "GET ConsultaPromociones",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "305da6e2-a585-4403-b13a-e541d5f89d66",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5041/api/promotions",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5041",
+              "path": [
+                "api",
+                "promotions"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Post Login",
       "request": {
-        "method": "GET",
-        "header": []
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"email\": \"maia@gmail.com\",\r\n  \"password\": \"Contrasena1@%#!\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:5041/api/auth/login",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5041",
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        }
       },
       "response": []
     }
