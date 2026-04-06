@@ -106,4 +106,47 @@ public sealed class PromotionRepositoryTest
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("Black Friday", result[0].Name);
     }
+
+    [TestMethod]
+    public void GetActivePromotions_WhenProductFilter_ReturnsFilteredPromotions()
+    {
+        var product1 = new Product
+        {
+            Code = "P001",
+            Name = "Pizza",
+            Description = "Rica pizza",
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Price = 100.0
+        };
+
+        var promotion1 = new Promotion
+        {
+            Name = "Black Friday",
+            DiscountPercentage = 10,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 12, 30),
+            ProductLine = "Minutas",
+            Products = [product1]
+        };
+
+        var promotion2 = new Promotion
+        {
+            Name = "Semana Turismo",
+            DiscountPercentage = 15,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 12, 30),
+            ProductLine = "Desayunos"
+        };
+
+        _context!.Promotions.Add(promotion1);
+        _context.Promotions.Add(promotion2);
+        _context.SaveChanges();
+
+        var repository = new PromotionRepository(_context);
+        var result = repository.GetActivePromotions(null, null, "Pizza");
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("Black Friday", result[0].Name);
+    }
 }
