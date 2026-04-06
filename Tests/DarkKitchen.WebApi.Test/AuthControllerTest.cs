@@ -12,11 +12,11 @@ public sealed class AuthControllerTest
     [TestMethod]
     public void Login_WhenValidCredentials_ReturnsOk()
     {
-        var userServiceMock = new Mock<IUserService>();
-        userServiceMock.Setup(s => s.Login("juan@email.com", "Contrasena1!@#$%"))
+        var authServiceMock = new Mock<IAuthService>();
+        authServiceMock.Setup(s => s.Login("juan@email.com", "Contrasena1!@#$%"))
                        .Returns("token-generado");
 
-        var controller = new AuthController(userServiceMock.Object);
+        var controller = new AuthController(authServiceMock.Object);
         var request = new LoginRequestDTO
         {
             Email = "juan@email.com",

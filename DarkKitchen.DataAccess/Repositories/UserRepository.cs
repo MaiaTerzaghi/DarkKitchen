@@ -1,6 +1,7 @@
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace DarkKitchen.DataAccess.Repositories;
 
@@ -21,7 +22,9 @@ public class UserRepository(DarkKitchenContext context) : IUserRepository
 
     public Session? GetSessionByToken(string token)
     {
-        return _context.Sessions.FirstOrDefault(s => s.Token == token);
+        return _context.Sessions
+        .Include(s => s.User)
+        .FirstOrDefault(s => s.Token == token);
     }
 
     public int AddUser(User user)

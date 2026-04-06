@@ -15,8 +15,12 @@ if(string.IsNullOrEmpty(connectionString))
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<DarkKitchenContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ISessionService, SessionService>();
 
 var app = builder.Build();
 

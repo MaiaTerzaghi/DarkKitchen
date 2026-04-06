@@ -2,7 +2,7 @@ using DarkKitchen.Domain.Entities;
 
 namespace DarkKitchen.BusinessLogic.Interfaces;
 
-public interface IUserService
+public interface ISessionService
 {
-    int Register(User user);
+    User GetUserFromToken(string token);
 }
