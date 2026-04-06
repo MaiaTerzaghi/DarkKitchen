@@ -24,7 +24,6 @@ builder.Services.AddScoped<IPromotionService, PromotionService>();
 builder.Services.AddScoped<IPromotionRepository, PromotionRepository>();
 builder.Services.AddScoped<ISessionService, SessionService>();
 
-
 var app = builder.Build();
 
 app.UseHttpsRedirection();
