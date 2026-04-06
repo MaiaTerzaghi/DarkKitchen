@@ -7,5 +7,6 @@ public sealed class DarkKitchenContext(DbContextOptions<DarkKitchenContext> opti
 {
     public DbSet<User> Users { get; set; }
     public DbSet<Session> Sessions { get; set; }
+    public DbSet<Promotion> Promotions { get; set; }
     public DbSet<Product> Products { get; set; }
 }
