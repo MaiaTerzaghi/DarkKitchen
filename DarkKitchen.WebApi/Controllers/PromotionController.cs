@@ -21,7 +21,7 @@ public class PromotionController(IPromotionService promotionService) : Controlle
             var promotions = _promotionService.GetActivePromotions(filters.Date, filters.ProductLine, filters.Product);
             return Ok(promotions);
         }
-        catch (ArgumentException ex)
+        catch(ArgumentException ex)
         {
             return BadRequest(ex.Message);
         }
