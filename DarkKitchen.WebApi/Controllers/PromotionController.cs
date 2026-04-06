@@ -1,5 +1,7 @@
 using DarkKitchen.BusinessLogic.Interfaces;
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.WebApi.DTOs;
+using DarkKitchen.WebApi.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DarkKitchen.WebApi.Controllers;
@@ -10,6 +12,7 @@ public class PromotionController(IPromotionService promotionService) : Controlle
 {
     private readonly IPromotionService _promotionService = promotionService;
 
+    [AuthorizeRoles(UserRole.Client, UserRole.Administrative)]
     [HttpGet]
     public IActionResult GetActivePromotions([FromQuery] PromotionFilterDTO filters)
     {
