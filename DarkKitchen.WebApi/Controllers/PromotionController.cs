@@ -16,7 +16,14 @@ public class PromotionController(IPromotionService promotionService) : Controlle
     [HttpGet]
     public IActionResult GetActivePromotions([FromQuery] PromotionFilterDTO filters)
     {
-        var promotions = _promotionService.GetActivePromotions(filters.Date, filters.ProductLine, filters.Product);
-        return Ok(promotions);
+        try
+        {
+            var promotions = _promotionService.GetActivePromotions(filters.Date, filters.ProductLine, filters.Product);
+            return Ok(promotions);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 }
