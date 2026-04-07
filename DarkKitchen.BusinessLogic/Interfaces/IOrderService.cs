@@ -1,0 +1,9 @@
+using DarkKitchen.BusinessLogic.Args.In;
+using DarkKitchen.BusinessLogic.Args.Output;
+
+namespace DarkKitchen.BusinessLogic.Interfaces;
+
+public interface IOrderService
+{
+    CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request);
+}
