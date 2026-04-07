@@ -1,6 +1,6 @@
+using DarkKitchen.BusinessLogic.Interfaces;
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.Domain.Entities;
-using DarkKitchen.Domain.Interfaces;
 
 namespace DarkKitchen.DataAccess.Repositories;
 
