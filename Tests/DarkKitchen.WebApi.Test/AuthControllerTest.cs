@@ -27,4 +27,23 @@ public sealed class AuthControllerTest
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
     }
+
+    [TestMethod]
+    public void Login_WhenServiceThrowsException_ReturnsBadRequest()
+    {
+        var authServiceMock = new Mock<IAuthService>();
+        authServiceMock.Setup(s => s.Login(It.IsAny<string>(), It.IsAny<string>()))
+                    .Throws(new ArgumentException("Credenciales inválidas"));
+
+        var controller = new AuthController(authServiceMock.Object);
+        var request = new LoginRequestDTO
+        {
+            Email = "juan@email.com",
+            Password = "Contrasena1!@#$%"
+        };
+
+        var result = controller.Login(request);
+
+        Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
+    }
 }
