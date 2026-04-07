@@ -13,7 +13,14 @@ public class OrderController(IOrderService orderService) : ControllerBase
     [HttpPost("create")]
     public IActionResult CreateOrder([FromBody] CreateOrderRequestDTO request)
     {
-        var response = _orderService.CreateOrder(request);
-        return Ok(response);
+        try
+        {
+            var response = _orderService.CreateOrder(request);
+            return Ok(response);
+        }
+        catch(ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 }
