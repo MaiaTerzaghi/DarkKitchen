@@ -5,7 +5,7 @@ using DarkKitchen.WebApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
-namespace DarkKitchen.Tests.WebApi;
+namespace DarkKitchen.WebApi.Test;
 
 [TestClass]
 public class OrderControllerTest
