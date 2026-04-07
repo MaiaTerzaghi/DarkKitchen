@@ -49,4 +49,18 @@ public sealed class ProductControllerTest
         Assert.AreEqual("Pizza", dto.Name);
         Assert.AreEqual(100, dto.Price);
     }
+
+    [TestMethod]
+    public void GetAll_WhenServiceThrowsException_ReturnsBadRequest()
+    {
+        var productServiceMock = new Mock<IProductService>();
+        productServiceMock.Setup(s => s.GetAll(It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<string?>()))
+                        .Throws(new ArgumentException("Error"));
+
+        var controller = new ProductController(productServiceMock.Object);
+
+        var result = controller.GetAll(null, null, null);
+
+        Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
+    }
 }
