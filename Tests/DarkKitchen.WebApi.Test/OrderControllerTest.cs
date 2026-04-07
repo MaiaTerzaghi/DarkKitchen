@@ -60,4 +60,29 @@ public class OrderControllerTest
         Assert.AreEqual(expectedResponse.OrderId, response.OrderId);
         Assert.AreEqual(expectedResponse.Total, response.Total);
     }
+
+    [TestMethod]
+    public void CreateOrder_EmptyItems_ReturnsBadRequest()
+    {
+        var request = new CreateOrderRequestDTO
+        {
+            ClientId = Guid.NewGuid(),
+            DeliveryType = "Express",
+            Address = new AddressDTO
+            {
+                Street = "18 de Julio",
+                DoorNumber = "1234",
+                Apartment = "2B"
+            },
+            Items = []
+        };
+
+        _orderServiceMock
+            .Setup(s => s.CreateOrder(request))
+            .Throws(new ArgumentException("El pedido debe tener al menos un producto."));
+
+        var result = _controller.CreateOrder(request);
+
+        Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
+    }
 }
