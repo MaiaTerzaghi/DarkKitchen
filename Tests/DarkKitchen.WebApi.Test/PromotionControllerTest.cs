@@ -22,4 +22,18 @@ public sealed class PromotionControllerTest
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
     }
+
+    [TestMethod]
+    public void GetActivePromotions_WhenServiceThrowsException_ReturnsBadRequest()
+    {
+        var promotionServiceMock = new Mock<IPromotionService>();
+        promotionServiceMock.Setup(s => s.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>()))
+                            .Throws(new ArgumentException("Error"));
+
+        var controller = new PromotionController(promotionServiceMock.Object);
+
+        var result = controller.GetActivePromotions(new PromotionFilterDTO());
+
+        Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
+    }
 }
