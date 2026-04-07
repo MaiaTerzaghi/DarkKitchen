@@ -1,6 +1,5 @@
 using DarkKitchen.BusinessLogic.Interfaces;
 using DarkKitchen.Domain.Entities;
-using DarkKitchen.Domain.Interfaces;
 
 namespace DarkKitchen.BusinessLogic.Services;
 

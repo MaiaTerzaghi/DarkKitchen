@@ -2,7 +2,6 @@ using DarkKitchen.BusinessLogic.Interfaces;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.DataAccess.Repositories;
-using DarkKitchen.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
