@@ -31,4 +31,26 @@ public sealed class UserControllerTest
 
         Assert.IsInstanceOfType(result, typeof(CreatedAtActionResult));
     }
+
+    [TestMethod]
+    public void Register_WhenServiceThrowsException_ReturnsBadRequest()
+    {
+        var userServiceMock = new Mock<IUserService>();
+        userServiceMock.Setup(s => s.Register(It.IsAny<User>()))
+                    .Throws(new ArgumentException("Error"));
+
+        var controller = new UserController(userServiceMock.Object);
+        var request = new RegisterClientDTO
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@email.com",
+            Phone = "+59899123456",
+            Password = "Contrasena1!@#$%"
+        };
+
+        var result = controller.Register(request);
+
+        Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
+    }
 }
