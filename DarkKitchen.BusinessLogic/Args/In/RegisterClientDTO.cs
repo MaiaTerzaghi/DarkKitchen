@@ -1,4 +1,4 @@
-namespace DarkKitchen.WebApi.DTOs;
+namespace DarkKitchen.BusinessLogic.Args.In;
 
 public class RegisterClientDTO
 {
