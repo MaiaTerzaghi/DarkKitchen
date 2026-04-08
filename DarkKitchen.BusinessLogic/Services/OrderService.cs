@@ -18,6 +18,11 @@ public class OrderService(
 
     public CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request)
     {
+        if (request.Items == null || request.Items.Count == 0)
+        {
+            throw new ArgumentException("El pedido debe tener al menos un producto.");
+        }
+
         var items = request.Items.Select(i =>
         {
             var product = _productRepository.GetById(i.ProductId);
