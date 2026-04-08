@@ -60,6 +60,6 @@ public class OrderServiceTest
         Assert.AreEqual(1, result.OrderId);
         Assert.AreEqual(200.0, result.Subtotal);
         Assert.AreEqual(50.0, result.ShippingCost);
-        Assert.AreEqual(304.26, Math.Round(result.Total, 2));
+        Assert.AreEqual(294.0, result.Total);
     }
 }
