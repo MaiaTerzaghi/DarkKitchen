@@ -21,10 +21,15 @@ public class OrderServiceTest
         _orderRepositoryMock = new Mock<IOrderRepository>();
         _productRepositoryMock = new Mock<IProductRepository>();
         _promotionRepositoryMock = new Mock<IPromotionRepository>();
+
+        _promotionRepositoryMock
+        .Setup(r => r.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>()))
+        .Returns([]);
+
         _service = new OrderService(
             _orderRepositoryMock.Object,
-            _productRepositoryMock.Object);
-        /*_promotionRepositoryMock.Object*/
+            _productRepositoryMock.Object,
+            _promotionRepositoryMock.Object);
     }
 
     [TestMethod]

@@ -7,10 +7,13 @@ namespace DarkKitchen.BusinessLogic.Services;
 
 public class OrderService(
     IOrderRepository orderRepository,
-    IProductRepository productRepository) : IOrderService
+    IProductRepository productRepository,
+    IPromotionRepository promotionRepository) : IOrderService
 {
     private readonly IOrderRepository _orderRepository = orderRepository;
     private readonly IProductRepository _productRepository = productRepository;
+
+    private readonly IPromotionRepository _promotionRepository = promotionRepository;
 
     private const double Iva = 0.22;
     private const double ExpressShipping = 50.0;
@@ -36,9 +39,21 @@ public class OrderService(
 
         var subtotal = items.Sum(i => i.Product.Price * i.Quantity);
 
+        var promotions = _promotionRepository.GetActivePromotions(DateTime.Today, null, null);
+        double discount = 0;
+        foreach (var promo in promotions)
+        {
+            if (items.Any(i => promo.Products.Any(p => p.Id == i.ProductId)))
+            {
+                discount += subtotal * ((double)promo.DiscountPercentage / 100);
+            }
+        }
+
+        var discountedSubtotal = subtotal - discount;
+
         var shippingCost = request.DeliveryType == "Express" ? ExpressShipping : StandardShipping;
 
-        var total = (subtotal * (1 + Iva)) + shippingCost;
+        var total = (discountedSubtotal * (1 + Iva)) + shippingCost;
 
         var order = new Order
         {
