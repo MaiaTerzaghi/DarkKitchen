@@ -28,12 +28,7 @@ public class OrderService(
 
         var items = request.Items.Select(i =>
         {
-            var product = _productRepository.GetById(i.ProductId);
-
-            if (product == null)
-            {
-                throw new ArgumentException($"Producto con id {i.ProductId} no encontrado.");
-            }
+            var product = _productRepository.GetById(i.ProductId) ?? throw new ArgumentException($"Producto con id {i.ProductId} no encontrado.");
 
             return new OrderItem
             {
