@@ -80,4 +80,27 @@ public sealed class ProductRepositoryTest
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("Pizza", result[0].Name);
     }
+
+    [TestMethod]
+    public void GetById_ExistingProduct_ReturnsProduct()
+    {
+        var product = new Product
+        {
+            Code = "P001",
+            Name = "Pizza",
+            Category = "Fritos",
+            CommercialLine = "Minutas",
+            Description = "Rica pizza",
+            Price = 100.0
+        };
+
+        _context!.Products.Add(product);
+        _context.SaveChanges();
+
+        var repository = new ProductRepository(_context);
+        var result = repository.GetById(product.Id);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(product.Id, result.Id);
+    }
 }
