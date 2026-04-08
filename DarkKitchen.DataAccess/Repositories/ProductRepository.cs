@@ -29,4 +29,9 @@ public class ProductRepository(DarkKitchenContext context) : IProductRepository
 
         return query.ToList();
     }
+
+    public Product GetById(int id)
+    {
+        throw new NotImplementedException();
+    }
 }
