@@ -126,4 +126,51 @@ public class OrderServiceTest
 
         _service.CreateOrder(request);
     }
+
+    [TestMethod]
+    public void CreateOrder_WithPromotion_AppliesDiscountCorrectly()
+    {
+        var clientId = Guid.NewGuid();
+        var product = new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas" };
+
+        var promotion = new Promotion
+        {
+            Id = 1,
+            DiscountPercentage = 10, // 10% de descuento
+            Products = [product]
+        };
+
+        var request = new CreateOrderRequestDTO
+        {
+            ClientId = clientId,
+            DeliveryType = "Standard",
+            Address = new AddressDTO { Street = "18 de Julio", DoorNumber = "1234", Apartment = "2B" },
+            Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
+        };
+
+        _productRepositoryMock.
+        Setup(r => r.GetById(1)).
+        Returns(product);
+
+        _promotionRepositoryMock
+            .Setup(r => r.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>()))
+            .Returns([promotion]);
+
+        _orderRepositoryMock.
+        Setup(r => r.Save(It.IsAny<Order>())).
+        Returns((Order o) =>
+        {
+            o.Id = 1;
+            return o;
+        });
+
+        var result = _service.CreateOrder(request);
+
+        var expectedSubtotal = 200.0;
+        var expectedDiscountedSubtotal = expectedSubtotal * 0.9;
+        var expectedShipping = 20.0;
+        var expectedTotal = Math.Round((expectedDiscountedSubtotal * 1.22) + expectedShipping, 2);
+
+        Assert.AreEqual(expectedTotal, result.Total);
+    }
 }
