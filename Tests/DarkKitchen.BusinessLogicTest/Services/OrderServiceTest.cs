@@ -24,7 +24,7 @@ public class OrderServiceTest
         _service = new OrderService(
             _orderRepositoryMock.Object,
             _productRepositoryMock.Object);
-            /*_promotionRepositoryMock.Object*/
+        /*_promotionRepositoryMock.Object*/
     }
 
     [TestMethod]
@@ -52,7 +52,11 @@ public class OrderServiceTest
 
         _orderRepositoryMock
             .Setup(r => r.Save(It.IsAny<Order>()))
-            .Returns((Order o) => { o.Id = 1; return o; });
+            .Returns((Order o) =>
+            {
+                o.Id = 1;
+                return o;
+            });
 
         var result = _service.CreateOrder(request);
 
@@ -88,7 +92,11 @@ public class OrderServiceTest
 
         _orderRepositoryMock
             .Setup(r => r.Save(It.IsAny<Order>()))
-            .Returns((Order o) => { o.Id = 1; return o; });
+            .Returns((Order o) =>
+            {
+                o.Id = 1;
+                return o;
+            });
 
         var result = _service.CreateOrder(request);
 

@@ -14,6 +14,7 @@ public class OrderService(
 
     private const double Iva = 0.22;
     private const double ExpressShipping = 50.0;
+    private const double StandardShipping = 20.0;
 
     public CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request)
     {
@@ -30,7 +31,7 @@ public class OrderService(
 
         var subtotal = items.Sum(i => i.Product.Price * i.Quantity);
 
-        var shippingCost = ExpressShipping;
+        var shippingCost = request.DeliveryType == "Express" ? ExpressShipping : StandardShipping;
 
         var total = (subtotal * (1 + Iva)) + shippingCost;
 
