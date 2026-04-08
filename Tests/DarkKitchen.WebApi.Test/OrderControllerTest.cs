@@ -25,7 +25,7 @@ public class OrderControllerTest
     {
         var request = new CreateOrderRequestDTO
         {
-            ClientId = Guid.NewGuid(),
+            ClientId = 1,
             DeliveryType = "Express",
             Address = new AddressDTO
             {
@@ -66,7 +66,7 @@ public class OrderControllerTest
     {
         var request = new CreateOrderRequestDTO
         {
-            ClientId = Guid.NewGuid(),
+            ClientId = 1,
             DeliveryType = "Express",
             Address = new AddressDTO
             {

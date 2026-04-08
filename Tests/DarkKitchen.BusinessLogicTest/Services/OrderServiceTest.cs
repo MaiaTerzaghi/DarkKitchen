@@ -35,12 +35,11 @@ public class OrderServiceTest
     [TestMethod]
     public void CreateOrder_ValidRequest_ReturnsCorrectTotals()
     {
-        var clientId = Guid.NewGuid();
         var product = new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas" };
 
         var request = new CreateOrderRequestDTO
         {
-            ClientId = clientId,
+            ClientId = 1,
             DeliveryType = "Express",
             Address = new AddressDTO
             {
@@ -65,7 +64,7 @@ public class OrderServiceTest
 
         var result = _service.CreateOrder(request);
 
-        Assert.AreEqual(clientId, result.ClientId);
+        Assert.AreEqual(1, result.ClientId);
         Assert.AreEqual(1, result.OrderId);
         Assert.AreEqual(200.0, result.Subtotal);
         Assert.AreEqual(50.0, result.ShippingCost);
@@ -75,12 +74,11 @@ public class OrderServiceTest
     [TestMethod]
     public void CreateOrder_StandardDelivery_ReturnsCorrectShipping()
     {
-        var clientId = Guid.NewGuid();
         var product = new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas" };
 
         var request = new CreateOrderRequestDTO
         {
-            ClientId = clientId,
+            ClientId = 1,
             DeliveryType = "Standard",
             Address = new AddressDTO
             {
@@ -105,7 +103,7 @@ public class OrderServiceTest
 
         var result = _service.CreateOrder(request);
 
-        Assert.AreEqual(clientId, result.ClientId);
+        Assert.AreEqual(1, result.ClientId);
         Assert.AreEqual(1, result.OrderId);
         Assert.AreEqual(200.0, result.Subtotal);
         Assert.AreEqual(20.0, result.ShippingCost);
@@ -118,7 +116,7 @@ public class OrderServiceTest
     {
         var request = new CreateOrderRequestDTO
         {
-            ClientId = Guid.NewGuid(),
+            ClientId = 1,
             DeliveryType = "Express",
             Address = new AddressDTO
             {
@@ -135,7 +133,6 @@ public class OrderServiceTest
     [TestMethod]
     public void CreateOrder_WithPromotion_AppliesDiscountCorrectly()
     {
-        var clientId = Guid.NewGuid();
         var product = new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas" };
 
         var promotion = new Promotion
@@ -147,7 +144,7 @@ public class OrderServiceTest
 
         var request = new CreateOrderRequestDTO
         {
-            ClientId = clientId,
+            ClientId = 1,
             DeliveryType = "Standard",
             Address = new AddressDTO { Street = "18 de Julio", DoorNumber = "1234", Apartment = "2B" },
             Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
@@ -185,7 +182,7 @@ public class OrderServiceTest
     {
         var request = new CreateOrderRequestDTO
         {
-            ClientId = Guid.NewGuid(),
+            ClientId = 1,
             DeliveryType = "Express",
             Address = new AddressDTO
             {

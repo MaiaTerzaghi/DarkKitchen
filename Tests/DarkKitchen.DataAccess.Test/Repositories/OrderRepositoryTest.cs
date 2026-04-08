@@ -38,7 +38,7 @@ public sealed class OrderRepositoryTest
     {
         var order = new Order
         {
-            ClientId = Guid.NewGuid(),
+            ClientId = 1,
             DeliveryType = "Express",
             Status = "Pending",
             Street = "18 de Julio",
