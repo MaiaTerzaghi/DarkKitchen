@@ -178,4 +178,28 @@ public class OrderServiceTest
 
         Assert.AreEqual(expectedTotal, result.Total);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CreateOrder_ProductNotFound_ThrowsException()
+    {
+        var request = new CreateOrderRequestDTO
+        {
+            ClientId = Guid.NewGuid(),
+            DeliveryType = "Express",
+            Address = new AddressDTO
+            {
+                Street = "18 de Julio",
+                DoorNumber = "1234",
+                Apartment = "2B"
+            },
+            Items = [new OrderItemRequestDTO { ProductId = 99, Quantity = 2 }]
+        };
+
+        _productRepositoryMock
+            .Setup(r => r.GetById(99))
+            .Returns((Product)null!);
+
+        _service.CreateOrder(request);
+    }
 }
