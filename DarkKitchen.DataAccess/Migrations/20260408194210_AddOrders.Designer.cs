@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DarkKitchen.DataAccess.Migrations
 {
     [DbContext(typeof(DarkKitchenContext))]
-    [Migration("20260408191453_AddOrders")]
+    [Migration("20260408194210_AddOrders")]
     partial class AddOrders
     {
         /// <inheritdoc />
@@ -36,8 +36,8 @@ namespace DarkKitchen.DataAccess.Migrations
                     b.Property<string>("Apartment")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ClientId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
 
                     b.Property<string>("DeliveryType")
                         .IsRequired()

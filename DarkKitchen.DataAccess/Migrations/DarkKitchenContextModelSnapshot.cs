@@ -33,8 +33,8 @@ namespace DarkKitchen.DataAccess.Migrations
                     b.Property<string>("Apartment")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ClientId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
 
                     b.Property<string>("DeliveryType")
                         .IsRequired()
