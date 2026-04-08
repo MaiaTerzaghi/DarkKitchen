@@ -1,9 +1,6 @@
 namespace DarkKitchen.Domain.Exceptions;
 
-public class DuplicateEmailException : Exception
+public class DuplicateEmailException(string email)
+    : Exception($"El email {email} ya está registrado.")
 {
-    public DuplicateEmailException(string email)
-        : base($"El email {email} ya está registrado.")
-    {
-    }
 }

@@ -1,9 +1,6 @@
 namespace DarkKitchen.Domain.Exceptions;
 
-public class ProductNotFoundException : Exception
+public class ProductNotFoundException(int id)
+    : Exception($"Producto con id {id} no encontrado.")
 {
-    public ProductNotFoundException(int id)
-        : base($"No se encontró un producto con id {id}.")
-    {
-    }
 }
