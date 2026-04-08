@@ -62,4 +62,40 @@ public class OrderServiceTest
         Assert.AreEqual(50.0, result.ShippingCost);
         Assert.AreEqual(294.0, result.Total);
     }
+
+    [TestMethod]
+    public void CreateOrder_StandardDelivery_ReturnsCorrectShipping()
+    {
+        var clientId = Guid.NewGuid();
+        var product = new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas" };
+
+        var request = new CreateOrderRequestDTO
+        {
+            ClientId = clientId,
+            DeliveryType = "Standard",
+            Address = new AddressDTO
+            {
+                Street = "18 de Julio",
+                DoorNumber = "1234",
+                Apartment = "2B"
+            },
+            Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
+        };
+
+        _productRepositoryMock
+            .Setup(r => r.GetById(1))
+            .Returns(product);
+
+        _orderRepositoryMock
+            .Setup(r => r.Save(It.IsAny<Order>()))
+            .Returns((Order o) => { o.Id = 1; return o; });
+
+        var result = _service.CreateOrder(request);
+
+        Assert.AreEqual(clientId, result.ClientId);
+        Assert.AreEqual(1, result.OrderId);
+        Assert.AreEqual(200.0, result.Subtotal);
+        Assert.AreEqual(20.0, result.ShippingCost);
+        Assert.AreEqual(264.0, result.Total);
+    }
 }
