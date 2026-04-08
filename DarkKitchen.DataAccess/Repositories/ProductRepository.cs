@@ -32,6 +32,6 @@ public class ProductRepository(DarkKitchenContext context) : IProductRepository
 
     public Product GetById(int id)
     {
-        throw new NotImplementedException();
+        return _context.Products.FirstOrDefault(p => p.Id == id)!;
     }
 }
