@@ -106,4 +106,24 @@ public class OrderServiceTest
         Assert.AreEqual(20.0, result.ShippingCost);
         Assert.AreEqual(264.0, result.Total);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CreateOrder_EmptyItems_ThrowsException()
+    {
+        var request = new CreateOrderRequestDTO
+        {
+            ClientId = Guid.NewGuid(),
+            DeliveryType = "Express",
+            Address = new AddressDTO
+            {
+                Street = "18 de Julio",
+                DoorNumber = "1234",
+                Apartment = "2B"
+            },
+            Items = []
+        };
+
+        _service.CreateOrder(request);
+    }
 }
