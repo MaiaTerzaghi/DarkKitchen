@@ -43,7 +43,7 @@ public class OrderService(
 
         var discountedSubtotal = ApplyPromotions(subtotal, items, promotions);
 
-        var shippingCost = request.DeliveryType == "Express" ? ExpressShipping : StandardShipping;
+        var shippingCost = CalculateShipping(request.DeliveryType);
 
         var total = (discountedSubtotal * (1 + Iva)) + shippingCost;
 
@@ -85,5 +85,10 @@ public class OrderService(
         }
 
         return subtotal - discount;
+    }
+
+    private static double CalculateShipping(string deliveryType)
+    {
+        return deliveryType == "Express" ? ExpressShipping : StandardShipping;
     }
 }
