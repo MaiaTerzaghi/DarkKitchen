@@ -21,7 +21,7 @@ public class OrderService(
 
     public CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request)
     {
-        if (request.Items == null || request.Items.Count == 0)
+        if(request.Items == null || request.Items.Count == 0)
         {
             throw new ArgumentException("El pedido debe tener al menos un producto.");
         }
@@ -40,16 +40,8 @@ public class OrderService(
         var subtotal = items.Sum(i => i.Product.Price * i.Quantity);
 
         var promotions = _promotionRepository.GetActivePromotions(DateTime.Today, null, null);
-        double discount = 0;
-        foreach (var promo in promotions)
-        {
-            if (items.Any(i => promo.Products.Any(p => p.Id == i.ProductId)))
-            {
-                discount += subtotal * ((double)promo.DiscountPercentage / 100);
-            }
-        }
 
-        var discountedSubtotal = subtotal - discount;
+        var discountedSubtotal = ApplyPromotions(subtotal, items, promotions);
 
         var shippingCost = request.DeliveryType == "Express" ? ExpressShipping : StandardShipping;
 
@@ -76,5 +68,22 @@ public class OrderService(
             ShippingCost = shippingCost,
             Total = Math.Round(total, 2)
         };
+    }
+
+    private static double ApplyPromotions(double subtotal, List<OrderItem> items, List<Promotion> promotions)
+    {
+        double discount = 0;
+
+        foreach(var promotion in promotions)
+        {
+            var applies = items.Any(i => promotion.Products.Any(p => p.Id == i.ProductId));
+
+            if(applies)
+            {
+                discount += subtotal * (double)(promotion.DiscountPercentage / 100);
+            }
+        }
+
+        return subtotal - discount;
     }
 }
