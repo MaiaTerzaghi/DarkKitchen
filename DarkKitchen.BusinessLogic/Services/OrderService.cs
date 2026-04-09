@@ -2,7 +2,6 @@ using DarkKitchen.BusinessLogic.Args.In;
 using DarkKitchen.BusinessLogic.Args.Output;
 using DarkKitchen.BusinessLogic.Interfaces;
 using DarkKitchen.Domain.Entities;
-using DarkKitchen.Domain.Exceptions;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
