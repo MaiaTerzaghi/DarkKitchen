@@ -1,10 +1,8 @@
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace DarkKitchen.WebApi.Filters;
 
-[ExcludeFromCodeCoverage]
 public class ExceptionFilter : Attribute, IExceptionFilter
 {
     public void OnException(ExceptionContext context)
