@@ -24,6 +24,7 @@ public sealed class PromotionControllerTest
     }
 
     [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
     public void GetActivePromotions_WhenServiceThrowsException_ReturnsBadRequest()
     {
         var promotionServiceMock = new Mock<IPromotionService>();
@@ -32,8 +33,6 @@ public sealed class PromotionControllerTest
 
         var controller = new PromotionController(promotionServiceMock.Object);
 
-        var result = controller.GetActivePromotions(new PromotionFilterDTO());
-
-        Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
+        controller.GetActivePromotions(new PromotionFilterDTO());
     }
 }

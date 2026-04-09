@@ -33,6 +33,7 @@ public sealed class UserControllerTest
     }
 
     [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
     public void Register_WhenServiceThrowsException_ReturnsBadRequest()
     {
         var userServiceMock = new Mock<IUserService>();
@@ -49,8 +50,6 @@ public sealed class UserControllerTest
             Password = "Contrasena1!@#$%"
         };
 
-        var result = controller.Register(request);
-
-        Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
+        controller.Register(request);
     }
 }

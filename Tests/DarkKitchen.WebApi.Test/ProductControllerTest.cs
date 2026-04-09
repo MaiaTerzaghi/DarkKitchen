@@ -51,6 +51,7 @@ public sealed class ProductControllerTest
     }
 
     [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
     public void GetAll_WhenServiceThrowsException_ReturnsBadRequest()
     {
         var productServiceMock = new Mock<IProductService>();
@@ -59,8 +60,6 @@ public sealed class ProductControllerTest
 
         var controller = new ProductController(productServiceMock.Object);
 
-        var result = controller.GetAll(null, null, null);
-
-        Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
+        controller.GetAll(null, null, null);
     }
 }
