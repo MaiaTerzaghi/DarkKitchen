@@ -84,4 +84,18 @@ public class OrderControllerTest
 
         _controller.CreateOrder(request);
     }
+
+    [TestMethod]
+    public void GetClientOrders_WhenCalled_ReturnsOk()
+    {
+        var orders = new List<GetClientOrdersResponseDTO>();
+
+        _orderServiceMock
+            .Setup(s => s.GetClientOrders(It.IsAny<GetClientOrdersRequestDTO>()))
+            .Returns(orders);
+
+        var result = _controller.GetClientOrders(new GetClientOrdersRequestDTO { ClientId = 1 });
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+    }
 }
