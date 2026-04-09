@@ -1,3 +1,4 @@
+using DarkKitchen.BusinessLogic.Args.In;
 using DarkKitchen.BusinessLogic.Interfaces;
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.Domain.Entities;
@@ -13,5 +14,10 @@ public class OrderRepository(DarkKitchenContext context) : IOrderRepository
         _context.Orders.Add(order);
         _context.SaveChanges();
         return order;
+    }
+
+    public List<Order> GetClientOrders(GetClientOrdersRequestDTO request)
+    {
+        throw new NotImplementedException();
     }
 }

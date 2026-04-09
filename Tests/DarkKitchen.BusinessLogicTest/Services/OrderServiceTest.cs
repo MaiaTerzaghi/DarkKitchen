@@ -208,7 +208,7 @@ public class OrderServiceTest
             Id = 1,
             ClientId = 1,
             Status = "Pending",
-            Items = [new OrderItem { ProductId = 1, Quantity = 2 }]
+            Items = [new OrderItem { ProductId = 1, Quantity = 2, Product = new Product { Id = 1, Price = 100.0 } }]
         };
 
         _orderRepositoryMock

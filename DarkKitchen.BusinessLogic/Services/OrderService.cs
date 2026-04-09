@@ -94,6 +94,14 @@ public class OrderService(
 
     public List<GetClientOrdersResponseDTO> GetClientOrders(GetClientOrdersRequestDTO request)
     {
-        throw new NotImplementedException();
+        var orders = _orderRepository.GetClientOrders(request);
+        return orders.Select(o => new GetClientOrdersResponseDTO
+        {
+            OrderId = o.Id,
+            ClientId = o.ClientId,
+            Status = o.Status,
+            Total = o.Items.Sum(i => i.Product.Price * i.Quantity),
+            ItemCount = o.Items.Sum(i => i.Quantity)
+        }).ToList();
     }
 }
