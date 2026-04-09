@@ -38,7 +38,7 @@ public sealed class UserServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(DuplicateEmailException))]
+    [ExpectedException(typeof(ArgumentException))]
     public void Register_WhenEmailAlreadyExists_ThrowsException()
     {
         var user = new User

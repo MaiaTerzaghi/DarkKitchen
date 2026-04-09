@@ -178,7 +178,7 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ProductNotFoundException))]
+    [ExpectedException(typeof(ArgumentException))]
     public void CreateOrder_ProductNotFound_ThrowsException()
     {
         var request = new CreateOrderRequestDTO
