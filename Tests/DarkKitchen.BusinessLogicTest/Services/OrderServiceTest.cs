@@ -2,7 +2,6 @@ using DarkKitchen.BusinessLogic.Args.In;
 using DarkKitchen.BusinessLogic.Interfaces;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
-using DarkKitchen.Domain.Exceptions;
 using Moq;
 
 namespace DarkKitchen.BusinessLogicTest.Services;
@@ -178,7 +177,7 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ProductNotFoundException))]
+    [ExpectedException(typeof(ArgumentException))]
     public void CreateOrder_ProductNotFound_ThrowsException()
     {
         var request = new CreateOrderRequestDTO

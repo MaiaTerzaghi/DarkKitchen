@@ -1,6 +1,5 @@
 using DarkKitchen.BusinessLogic.Interfaces;
 using DarkKitchen.Domain.Entities;
-using DarkKitchen.Domain.Exceptions;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
@@ -13,7 +12,7 @@ public class UserService(IUserRepository userRepository) : IUserService
         var existingUser = _userRepository.GetByEmail(user.Email);
         if(existingUser != null)
         {
-            throw new DuplicateEmailException(user.Email);
+            throw new ArgumentException("El mail ya esta registrado");
         }
 
         return _userRepository.AddUser(user);
