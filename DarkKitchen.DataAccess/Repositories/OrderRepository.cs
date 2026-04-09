@@ -14,4 +14,9 @@ public class OrderRepository(DarkKitchenContext context) : IOrderRepository
         _context.SaveChanges();
         return order;
     }
+
+    public List<Order> GetOrders(GetOrdersRequestDTO request)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -10,4 +10,5 @@ public class Order
     public string Street { get; set; } = string.Empty;
     public string DoorNumber { get; set; } = string.Empty;
     public string? Apartment { get; set; }
+    public DateTime Date { get; set; }
 }
