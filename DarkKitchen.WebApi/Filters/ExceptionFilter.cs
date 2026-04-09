@@ -7,7 +7,7 @@ public class ExceptionFilter : Attribute, IExceptionFilter
 {
     public void OnException(ExceptionContext context)
     {
-        if (context.Exception is ArgumentException)
+        if(context.Exception is ArgumentException)
         {
             context.ExceptionHandled = true;
             context.Result = new ObjectResult(new { message = context.Exception.Message })

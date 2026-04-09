@@ -18,17 +18,17 @@ public class UserController(IUserService userService) : ControllerBase
     public IActionResult Register(RegisterClientDTO request)
     {
         var user = new User
-            {
-                Name = request.Name,
-                LastName = request.LastName,
-                Email = request.Email,
-                Phone = request.Phone,
-                Password = request.Password,
-                Role = UserRole.Client
-            };
+        {
+            Name = request.Name,
+            LastName = request.LastName,
+            Email = request.Email,
+            Phone = request.Phone,
+            Password = request.Password,
+            Role = UserRole.Client
+        };
 
-            var id = _userService.Register(user);
+        var id = _userService.Register(user);
 
-            return CreatedAtAction(nameof(Register), new { id }, new { id });
+        return CreatedAtAction(nameof(Register), new { id }, new { id });
     }
 }

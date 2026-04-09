@@ -16,18 +16,18 @@ public class ProductController(IProductService productService) : ControllerBase
     [HttpGet]
     public IActionResult GetAll([FromQuery] string? name, [FromQuery] string? category, [FromQuery] string? line)
     {
-            var products = _productService.GetAll(name, category, line);
+        var products = _productService.GetAll(name, category, line);
 
-            var response = products.Select(p => new ProductResponseDTO
-            {
-                Code = p.Code,
-                Name = p.Name,
-                Price = p.Price,
-                CommercialLine = p.CommercialLine,
-                Category = p.Category,
-                Images = p.Images,
-            });
+        var response = products.Select(p => new ProductResponseDTO
+        {
+            Code = p.Code,
+            Name = p.Name,
+            Price = p.Price,
+            CommercialLine = p.CommercialLine,
+            Category = p.Category,
+            Images = p.Images,
+        });
 
-            return Ok(response);
+        return Ok(response);
     }
 }
