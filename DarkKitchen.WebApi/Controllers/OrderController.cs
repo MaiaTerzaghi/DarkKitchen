@@ -19,4 +19,12 @@ public class OrderController(IOrderService orderService) : ControllerBase
         var response = _orderService.CreateOrder(request);
         return Ok(response);
     }
+
+    [AuthorizeRoles(UserRole.Dispatcher)]
+    [HttpGet]
+    public IActionResult GetOrders([FromQuery] GetOrdersRequestDTO request)
+    {
+        var response = _orderService.GetOrders(request);
+        return Ok(response);
+    }
 }
