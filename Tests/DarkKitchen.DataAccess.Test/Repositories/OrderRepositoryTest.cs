@@ -1,3 +1,4 @@
+using DarkKitchen.BusinessLogic.Args.In;
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.DataAccess.Repositories;
 using DarkKitchen.Domain.Entities;
@@ -52,5 +53,30 @@ public sealed class OrderRepositoryTest
 
         Assert.IsNotNull(result);
         Assert.AreNotEqual(0, result.Id);
+    }
+
+    [TestMethod]
+    public void GetClientOrders_WhenClientHasOrders_ReturnsOrders()
+    {
+        var order = new Order
+        {
+            ClientId = 1,
+            DeliveryType = "Express",
+            Status = "Pending",
+            Street = "18 de Julio",
+            DoorNumber = "1234",
+            Items = []
+        };
+
+        _context!.Orders.Add(order);
+        _context.SaveChanges();
+
+        var repository = new OrderRepository(_context);
+        var request = new GetClientOrdersRequestDTO { ClientId = 1 };
+
+        var result = repository.GetClientOrders(request);
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual(1, result[0].ClientId);
     }
 }
