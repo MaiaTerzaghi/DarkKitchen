@@ -6,4 +6,5 @@ namespace DarkKitchen.BusinessLogic.Interfaces;
 public interface IOrderService
 {
     CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request);
+    List<GetClientOrdersResponseDTO> GetClientOrders(GetClientOrdersRequestDTO request);
 }
