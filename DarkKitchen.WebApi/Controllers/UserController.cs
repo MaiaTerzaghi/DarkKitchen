@@ -17,9 +17,7 @@ public class UserController(IUserService userService) : ControllerBase
     // IActionResult me devuelve ademas de lo que yo quiero un codigo HTTP, como 200=OK
     public IActionResult Register(RegisterClientDTO request)
     {
-        try
-        {
-            var user = new User
+        var user = new User
             {
                 Name = request.Name,
                 LastName = request.LastName,
@@ -32,10 +30,5 @@ public class UserController(IUserService userService) : ControllerBase
             var id = _userService.Register(user);
 
             return CreatedAtAction(nameof(Register), new { id }, new { id });
-        }
-        catch(ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
-        }
     }
 }

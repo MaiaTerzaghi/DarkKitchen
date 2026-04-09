@@ -2,6 +2,7 @@ using DarkKitchen.BusinessLogic.Interfaces;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.DataAccess.Repositories;
+using DarkKitchen.WebApi.Filters;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,7 +13,8 @@ if(string.IsNullOrEmpty(connectionString))
     throw new Exception("Missing DarkKitchen connection string");
 }
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+    options.Filters.Add<ExceptionFilter>());
 builder.Services.AddDbContext<DarkKitchenContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
