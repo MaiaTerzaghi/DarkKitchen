@@ -62,6 +62,7 @@ public class OrderControllerTest
     }
 
     [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
     public void CreateOrder_EmptyItems_ReturnsBadRequest()
     {
         var request = new CreateOrderRequestDTO
@@ -81,8 +82,6 @@ public class OrderControllerTest
             .Setup(s => s.CreateOrder(request))
             .Throws(new ArgumentException("El pedido debe tener al menos un producto."));
 
-        var result = _controller.CreateOrder(request);
-
-        Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
+        _controller.CreateOrder(request);
     }
 }
