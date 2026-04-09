@@ -199,4 +199,27 @@ public class OrderServiceTest
 
         _service.CreateOrder(request);
     }
+
+    [TestMethod]
+    public void GetClientOrders_WhenCalled_ReturnsOrders()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            ClientId = 1,
+            Status = "Pending",
+            Items = [new OrderItem { ProductId = 1, Quantity = 2 }]
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetClientOrders(It.IsAny<GetClientOrdersRequestDTO>()))
+            .Returns([order]);
+
+        var request = new GetClientOrdersRequestDTO { ClientId = 1 };
+
+        var result = _service.GetClientOrders(request);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.Count);
+    }
 }
