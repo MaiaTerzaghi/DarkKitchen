@@ -91,4 +91,9 @@ public class OrderService(
     {
         return deliveryType == "Express" ? ExpressShipping : StandardShipping;
     }
+
+    public List<GetOrdersResponseDTO> GetOrders(GetOrdersRequestDTO request)
+    {
+        throw new NotImplementedException();
+    }
 }
