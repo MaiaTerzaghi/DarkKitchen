@@ -94,6 +94,19 @@ public class OrderService(
 
     public List<GetOrdersResponseDTO> GetOrders(GetOrdersRequestDTO request)
     {
-        throw new NotImplementedException();
+        var orders = _orderRepository.GetOrders(request);
+
+        return orders.Select(order => new GetOrdersResponseDTO
+        {
+            OrderId = order.Id,
+            ClientName = order.ClientId.ToString(),
+            Date = order.Date,
+            Status = order.Status,
+            Items = order.Items.Select(item => new OrderItemResponseDTO
+            {
+                ProductName = item.Product.Name,
+                Quantity = item.Quantity
+            }).ToList()
+        }).ToList();
     }
 }
