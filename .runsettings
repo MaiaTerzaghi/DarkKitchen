@@ -9,11 +9,7 @@
     <DataCollectors>
       <DataCollector friendlyName="XPlat Code Coverage">
         <Configuration>
-          <Include>
-            [DarkKitchen.BusinessLogic*]*
-            [DarkKitchen.DataAccess*]*
-            [DarkKitchen.WebApi*]*
-          </Include>
+          <Exclude>[DarkKitchen.Domain*]*</Exclude>
           <ExcludeByFile>**/*Migrations/*.cs,**/Program.cs,**/*DbContext.cs,**/*Context.cs</ExcludeByFile>
           <ExcludeByAttribute>GeneratedCodeAttribute</ExcludeByAttribute>
         </Configuration>
