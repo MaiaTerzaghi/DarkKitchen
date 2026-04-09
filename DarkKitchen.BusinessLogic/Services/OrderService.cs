@@ -2,7 +2,6 @@ using DarkKitchen.BusinessLogic.Args.In;
 using DarkKitchen.BusinessLogic.Args.Output;
 using DarkKitchen.BusinessLogic.Interfaces;
 using DarkKitchen.Domain.Entities;
-using DarkKitchen.Domain.Exceptions;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
@@ -29,8 +28,7 @@ public class OrderService(
 
         var items = request.Items.Select(i =>
         {
-            var product = _productRepository.GetById(i.ProductId) ?? throw new ProductNotFoundException(i.ProductId);
-
+            var product = _productRepository.GetById(i.ProductId) ?? throw new ArgumentException($"Producto con id {i.ProductId} no encontrado.");
             return new OrderItem
             {
                 ProductId = i.ProductId,
