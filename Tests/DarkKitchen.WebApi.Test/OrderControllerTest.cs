@@ -84,4 +84,39 @@ public class OrderControllerTest
 
         _controller.CreateOrder(request);
     }
+
+    [TestMethod]
+    public void GetOrders_ValidRequest_ReturnsOkWithOrders()
+    {
+        var request = new GetOrdersRequestDTO
+        {
+            DateFrom = new DateTime(2026, 1, 1),
+            DateTo = new DateTime(2026, 1, 31)
+        };
+
+        var expectedOrders = new List<GetOrdersResponseDTO>
+        {
+            new GetOrdersResponseDTO
+            {
+                OrderId = 1,
+                ClientName = "Juan Perez",
+                Date = new DateTime(2026, 1, 10),
+                Status = "Pending",
+                Items = [new OrderItemResponseDTO { ProductName = "Hamburguesa", Quantity = 2 }]
+            }
+        };
+
+        _orderServiceMock
+            .Setup(s => s.GetOrders(request))
+            .Returns(expectedOrders);
+
+        var result = _controller.GetOrders(request);
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = (OkObjectResult)result;
+        var response = (List<GetOrdersResponseDTO>)okResult.Value!;
+        Assert.AreEqual(expectedOrders.Count, response.Count);
+        Assert.AreEqual(expectedOrders[0].OrderId, response[0].OrderId);
+        Assert.AreEqual(expectedOrders[0].ClientName, response[0].ClientName);
+    }
 }
