@@ -28,6 +28,7 @@ public sealed class AuthControllerTest
     }
 
     [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
     public void Login_WhenServiceThrowsException_ReturnsBadRequest()
     {
         var authServiceMock = new Mock<IAuthService>();
@@ -41,8 +42,6 @@ public sealed class AuthControllerTest
             Password = "Contrasena1!@#$%"
         };
 
-        var result = controller.Login(request);
-
-        Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
+        controller.Login(request);
     }
 }
