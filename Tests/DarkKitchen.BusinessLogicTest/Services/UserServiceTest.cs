@@ -3,6 +3,7 @@ using DarkKitchen.BusinessLogic.Interfaces;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
+using DarkKitchen.Domain.Exceptions;
 using Moq;
 
 namespace DarkKitchen.BusinessLogicTest.Services;
@@ -37,7 +38,7 @@ public sealed class UserServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(DuplicateEmailException))]
     public void Register_WhenEmailAlreadyExists_ThrowsException()
     {
         var user = new User
