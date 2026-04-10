@@ -24,12 +24,12 @@ public class OrderRepository(DarkKitchenContext context) : IOrderRepository
             .ThenInclude(i => i.Product)
             .Where(o => o.Date >= request.DateFrom && o.Date <= request.DateTo);
 
-        if (!string.IsNullOrEmpty(request.Street))
+        if(!string.IsNullOrEmpty(request.Street))
         {
             query = query.Where(o => o.Street.Contains(request.Street));
         }
 
-        if (!string.IsNullOrEmpty(request.Status))
+        if(!string.IsNullOrEmpty(request.Status))
         {
             query = query.Where(o => o.Status == request.Status);
         }

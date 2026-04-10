@@ -20,7 +20,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
         return Ok(response);
     }
 
-    [AuthorizeRoles(UserRole.Dispatcher)]
+    // [AuthorizeRoles(UserRole.Dispatcher)]
     [HttpGet]
     public IActionResult GetOrders([FromQuery] GetOrdersRequestDTO request)
     {
