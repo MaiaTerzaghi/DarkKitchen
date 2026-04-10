@@ -55,7 +55,8 @@ public class OrderService(
             Street = request.Address.Street,
             DoorNumber = request.Address.DoorNumber,
             Apartment = request.Address.Apartment,
-            Items = items
+            Items = items,
+            Date = DateTime.Now,
         };
 
         var saved = _orderRepository.Save(order);
@@ -90,5 +91,23 @@ public class OrderService(
     private static double CalculateShipping(string deliveryType)
     {
         return deliveryType == "Express" ? ExpressShipping : StandardShipping;
+    }
+
+    public List<GetOrdersResponseDTO> GetOrders(GetOrdersRequestDTO request)
+    {
+        var orders = _orderRepository.GetOrders(request);
+
+        return orders.Select(order => new GetOrdersResponseDTO
+        {
+            OrderId = order.Id,
+            ClientName = order.ClientId.ToString(),
+            Date = order.Date,
+            Status = order.Status,
+            Items = order.Items.Select(item => new OrderItemResponseDTO
+            {
+                ProductName = item.Product.Name,
+                Quantity = item.Quantity
+            }).ToList()
+        }).ToList();
     }
 }

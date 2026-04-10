@@ -199,4 +199,50 @@ public class OrderServiceTest
 
         _service.CreateOrder(request);
     }
+
+    [TestMethod]
+    public void GetOrders_ValidRequest_ReturnsMappedOrders()
+    {
+        var request = new GetOrdersRequestDTO
+        {
+            DateFrom = new DateTime(2026, 1, 1),
+            DateTo = new DateTime(2026, 1, 31)
+        };
+
+        var ordersFromRepo = new List<Order>
+        {
+            new Order
+            {
+                Id = 1,
+                ClientId = 10,
+                Status = "Pending",
+                Date = new DateTime(2026, 1, 10),
+                Street = "18 de Julio",
+                DoorNumber = "1234",
+                Items =
+                [
+                    new OrderItem
+                    {
+                        ProductId = 1,
+                        Quantity = 2,
+                        Product = new Product { Name = "Hamburguesa" }
+                    }
+
+                ]
+            }
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrders(request))
+            .Returns(ordersFromRepo);
+
+        var result = _service.GetOrders(request);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual(1, result[0].OrderId);
+        Assert.AreEqual("Pending", result[0].Status);
+        Assert.AreEqual("Hamburguesa", result[0].Items[0].ProductName);
+        Assert.AreEqual(2, result[0].Items[0].Quantity);
+    }
 }
