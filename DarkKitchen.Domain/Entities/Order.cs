@@ -8,7 +8,7 @@ public class Order
     public string Status { get; set; } = string.Empty;
     public List<OrderItem> Items { get; set; } = [];
     public string Street { get; set; } = string.Empty;
+    public DateTime Date { get; set; } = DateTime.Now;
     public string DoorNumber { get; set; } = string.Empty;
     public string? Apartment { get; set; }
-    public DateTime Date { get; set; }
 }
