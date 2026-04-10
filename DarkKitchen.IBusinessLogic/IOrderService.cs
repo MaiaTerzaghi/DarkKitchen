@@ -1,8 +1,7 @@
-using DarkKitchen.BusinessLogic.Args.In;
-using DarkKitchen.BusinessLogic.Args.Output;
+using DarkKitchen.DTOs.Args.In;
+using DarkKitchen.DTOs.Args.Output;
 
-namespace DarkKitchen.BusinessLogic.Interfaces;
-
+namespace DarkKitchen.IBusinessLogic;
 public interface IOrderService
 {
     CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request);

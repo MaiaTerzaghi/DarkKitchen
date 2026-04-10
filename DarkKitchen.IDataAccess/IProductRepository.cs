@@ -1,6 +1,6 @@
 using DarkKitchen.Domain.Entities;
 
-namespace DarkKitchen.BusinessLogic.Interfaces;
+namespace DarkKitchen.IDataAccess;
 
 public interface IProductRepository
 {

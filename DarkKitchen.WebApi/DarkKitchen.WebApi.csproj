@@ -1,8 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
-    <ProjectReference Include="..\DarkKitchen.BusinessLogic\DarkKitchen.BusinessLogic.csproj" />
-    <ProjectReference Include="..\DarkKitchen.DataAccess\DarkKitchen.DataAccess.csproj" />
+    <ProjectReference Include="..\DarkKitchen.DTOs\DarkKitchen.DTOs.csproj" />
+    <ProjectReference Include= "..\DarkKitchen.IBusinessLogic\DarkKitchen.IBusinessLogic.csproj" />
+    <ProjectReference Include="..\DarkKitchen.IDataAccess\DarkKitchen.IDataAccess.csproj" />
+    <ProjectReference Include="..\DarkKitchen.ServiceFactory\DarkKitchen.ServiceFactory.csproj" />
   </ItemGroup>
 
   <ItemGroup>

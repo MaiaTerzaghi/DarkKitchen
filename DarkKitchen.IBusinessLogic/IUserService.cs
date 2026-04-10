@@ -1,7 +1,6 @@
 using DarkKitchen.Domain.Entities;
 
-namespace DarkKitchen.BusinessLogic.Interfaces;
-
+namespace DarkKitchen.IBusinessLogic;
 public interface IUserService
 {
     int Register(User user);

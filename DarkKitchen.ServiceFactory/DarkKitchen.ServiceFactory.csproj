@@ -1,8 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\DarkKitchen.Domain\DarkKitchen.Domain.csproj" />
-    <ProjectReference Include="..\DarkKitchen.DTOs\DarkKitchen.DTOs.csproj" />
+    <ProjectReference Include="..\DarkKitchen.BusinessLogic\DarkKitchen.BusinessLogic.csproj" />
+    <ProjectReference Include="..\DarkKitchen.DataAccess\DarkKitchen.DataAccess.csproj" />
     <ProjectReference Include="..\DarkKitchen.IBusinessLogic\DarkKitchen.IBusinessLogic.csproj" />
     <ProjectReference Include="..\DarkKitchen.IDataAccess\DarkKitchen.IDataAccess.csproj" />
   </ItemGroup>
