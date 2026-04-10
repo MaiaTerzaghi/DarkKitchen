@@ -29,7 +29,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
     }
 
     // [AuthorizeRoles(UserRole.Dispatcher)]
-    [HttpGet]
+    [HttpGet("date")]
     public IActionResult GetOrders([FromQuery] GetOrdersRequestDTO request)
     {
         var response = _orderService.GetOrders(request);

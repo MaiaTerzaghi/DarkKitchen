@@ -10,5 +10,7 @@ DarkKitchen.ServiceFactory.ServiceRegistration.RegisterServices(builder.Services
 var app = builder.Build();
 
 app.UseHttpsRedirection();
+
 app.MapControllers();
+
 app.Run();
