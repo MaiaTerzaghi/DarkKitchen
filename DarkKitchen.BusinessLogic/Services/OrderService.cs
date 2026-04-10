@@ -55,7 +55,8 @@ public class OrderService(
             Street = request.Address.Street,
             DoorNumber = request.Address.DoorNumber,
             Apartment = request.Address.Apartment,
-            Items = items
+            Items = items,
+            Date = DateTime.Now,
         };
 
         var saved = _orderRepository.Save(order);
