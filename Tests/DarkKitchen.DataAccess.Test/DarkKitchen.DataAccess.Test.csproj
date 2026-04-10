@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\DarkKitchen.DataAccess\DarkKitchen.DataAccess.csproj" />
     <ProjectReference Include="..\..\DarkKitchen.Domain\DarkKitchen.Domain.csproj" />
+    <ProjectReference Include="..\..\DarkKitchen.DTOs\DarkKitchen.DTOs.csproj" />
   </ItemGroup>
 
 </Project>

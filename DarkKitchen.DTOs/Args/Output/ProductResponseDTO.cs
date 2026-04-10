@@ -1,4 +1,4 @@
-namespace DarkKitchen.BusinessLogic.Args.Output;
+namespace DarkKitchen.DTOs.Args.Output;
 
 public class ProductResponseDTO
 {

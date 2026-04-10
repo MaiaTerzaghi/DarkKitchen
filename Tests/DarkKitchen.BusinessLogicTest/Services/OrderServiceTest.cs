@@ -1,7 +1,7 @@
-using DarkKitchen.BusinessLogic.Args.In;
-using DarkKitchen.BusinessLogic.Interfaces;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.DTOs.Args.In;
+using DarkKitchen.IDataAccess;
 using Moq;
 
 namespace DarkKitchen.BusinessLogicTest.Services;

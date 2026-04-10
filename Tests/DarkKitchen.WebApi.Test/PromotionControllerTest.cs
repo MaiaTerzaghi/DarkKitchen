@@ -1,5 +1,5 @@
-using DarkKitchen.BusinessLogic.Args.In;
-using DarkKitchen.BusinessLogic.Interfaces;
+using DarkKitchen.DTOs.Args.In;
+using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Moq;

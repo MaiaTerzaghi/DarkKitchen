@@ -1,7 +1,7 @@
-using DarkKitchen.BusinessLogic.Args.In;
-using DarkKitchen.BusinessLogic.Interfaces;
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.DTOs.Args.In;
+using DarkKitchen.IDataAccess;
 using Microsoft.EntityFrameworkCore;
 
 namespace DarkKitchen.DataAccess.Repositories;

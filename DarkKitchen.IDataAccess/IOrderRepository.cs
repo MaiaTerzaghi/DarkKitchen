@@ -1,7 +1,7 @@
-using DarkKitchen.BusinessLogic.Args.In;
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.DTOs.Args.In;
 
-namespace DarkKitchen.BusinessLogic.Interfaces;
+namespace DarkKitchen.IDataAccess;
 
 public interface IOrderRepository
 {

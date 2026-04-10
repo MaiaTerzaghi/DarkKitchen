@@ -1,4 +1,4 @@
-namespace DarkKitchen.BusinessLogic.Args.In;
+namespace DarkKitchen.DTOs.Args.In;
 
 public class GetClientOrdersRequestDTO
 {

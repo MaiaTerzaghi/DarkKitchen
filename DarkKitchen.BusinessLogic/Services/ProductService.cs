@@ -1,6 +1,6 @@
-using DarkKitchen.BusinessLogic.Interfaces;
 using DarkKitchen.Domain.Entities;
-
+using DarkKitchen.IBusinessLogic;
+using DarkKitchen.IDataAccess;
 namespace DarkKitchen.BusinessLogic.Services;
 
 public class ProductService(IProductRepository productRepository) : IProductService

@@ -1,7 +1,6 @@
 using DarkKitchen.Domain.Entities;
 
-namespace DarkKitchen.BusinessLogic.Interfaces;
-
+namespace DarkKitchen.IDataAccess;
 public interface IUserRepository
 {
     User? GetByEmail(string email);
