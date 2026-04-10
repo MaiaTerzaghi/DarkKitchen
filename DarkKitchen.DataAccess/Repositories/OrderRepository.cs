@@ -17,6 +17,7 @@ public class OrderRepository(DarkKitchenContext context) : IOrderRepository
         return order;
     }
 
+
     public List<Order> GetClientOrders(GetClientOrdersRequestDTO request)
     {
         return _context.Orders
@@ -27,5 +28,25 @@ public class OrderRepository(DarkKitchenContext context) : IOrderRepository
             .Where(o => !request.DateFrom.HasValue || o.Date >= request.DateFrom.Value)
             .Where(o => !request.DateTo.HasValue || o.Date <= request.DateTo.Value)
             .ToList();
+    }
+    
+    public List<Order> GetOrders(GetOrdersRequestDTO request)
+    {
+        var query = _context.Orders
+            .Include(o => o.Items)
+            .ThenInclude(i => i.Product)
+            .Where(o => o.Date >= request.DateFrom && o.Date <= request.DateTo);
+
+        if(!string.IsNullOrEmpty(request.Street))
+        {
+            query = query.Where(o => o.Street.Contains(request.Street));
+        }
+
+        if(!string.IsNullOrEmpty(request.Status))
+        {
+            query = query.Where(o => o.Status == request.Status);
+        }
+
+        return query.ToList();
     }
 }

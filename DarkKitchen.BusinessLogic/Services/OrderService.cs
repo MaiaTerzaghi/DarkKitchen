@@ -55,7 +55,8 @@ public class OrderService(
             Street = request.Address.Street,
             DoorNumber = request.Address.DoorNumber,
             Apartment = request.Address.Apartment,
-            Items = items
+            Items = items,
+            Date = DateTime.Now,
         };
 
         var saved = _orderRepository.Save(order);
@@ -102,6 +103,25 @@ public class OrderService(
             Status = o.Status,
             Total = o.Items.Sum(i => i.Product.Price * i.Quantity),
             ItemCount = o.Items.Sum(i => i.Quantity)
+            }).ToList();
+        }
+    }
+            
+    public List<GetOrdersResponseDTO> GetOrders(GetOrdersRequestDTO request)
+    {
+        var orders = _orderRepository.GetOrders(request);
+      
+        return orders.Select(order => new GetOrdersResponseDTO
+        {
+            OrderId = order.Id,
+            ClientName = order.ClientId.ToString(),
+            Date = order.Date,
+            Status = order.Status,
+            Items = order.Items.Select(item => new OrderItemResponseDTO
+            {
+                ProductName = item.Product.Name,
+                Quantity = item.Quantity
+            }).ToList()
         }).ToList();
     }
 }
