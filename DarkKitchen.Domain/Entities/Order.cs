@@ -11,5 +11,4 @@ public class Order
     public DateTime Date { get; set; } = DateTime.Now;
     public string DoorNumber { get; set; } = string.Empty;
     public string? Apartment { get; set; }
-    public DateTime Date { get; set; }
 }

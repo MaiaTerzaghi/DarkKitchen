@@ -98,7 +98,7 @@ public class OrderControllerTest
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
     }
-  
+
     [TestMethod]
     public void GetOrders_ValidRequest_ReturnsOkWithOrders()
     {

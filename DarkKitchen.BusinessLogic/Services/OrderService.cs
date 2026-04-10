@@ -103,14 +103,13 @@ public class OrderService(
             Status = o.Status,
             Total = o.Items.Sum(i => i.Product.Price * i.Quantity),
             ItemCount = o.Items.Sum(i => i.Quantity)
-            }).ToList();
-        }
+        }).ToList();
     }
-            
+
     public List<GetOrdersResponseDTO> GetOrders(GetOrdersRequestDTO request)
     {
         var orders = _orderRepository.GetOrders(request);
-      
+
         return orders.Select(order => new GetOrdersResponseDTO
         {
             OrderId = order.Id,

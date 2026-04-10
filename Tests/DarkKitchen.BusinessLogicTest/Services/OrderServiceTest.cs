@@ -218,11 +218,11 @@ public class OrderServiceTest
         var request = new GetClientOrdersRequestDTO { ClientId = 1 };
 
         var result = _service.GetClientOrders(request);
-  
+
         Assert.IsNotNull(result);
         Assert.AreEqual(1, result.Count);
     }
-  
+
     [TestMethod]
     public void GetOrders_ValidRequest_ReturnsMappedOrders()
     {
