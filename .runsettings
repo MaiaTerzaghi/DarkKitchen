@@ -10,6 +10,7 @@
       <DataCollector friendlyName="XPlat Code Coverage">
         <Configuration>
           <Exclude>[DarkKitchen.Domain*]*</Exclude>
+          <Exclude>[DarkKitchen.ServiceFactory*]*</Exclude>
           <ExcludeByFile>**/*Migrations/*.cs,**/Program.cs,**/*DbContext.cs,**/*Context.cs</ExcludeByFile>
           <ExcludeByAttribute>GeneratedCodeAttribute</ExcludeByAttribute>
         </Configuration>
