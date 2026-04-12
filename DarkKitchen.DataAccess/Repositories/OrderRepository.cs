@@ -56,6 +56,8 @@ public class OrderRepository(DarkKitchenContext context) : IOrderRepository
 
     public Order Update(Order order)
     {
-        throw new NotImplementedException();
+        _context.Orders.Update(order);
+        _context.SaveChanges();
+        return order;
     }
 }
