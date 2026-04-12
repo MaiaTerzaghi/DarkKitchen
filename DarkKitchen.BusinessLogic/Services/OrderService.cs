@@ -31,6 +31,12 @@ public class OrderService(
             throw new ArgumentException("El pedido debe tener al menos un producto.");
         }
 
+        var validTypes = new[] { "Express", "Standard" };
+        if (!validTypes.Contains(request.DeliveryType))
+        {
+            throw new ArgumentException($"Tipo de entrega '{request.DeliveryType}' no válido.");
+        }
+
         var items = request.Items.Select(i =>
         {
             var product = _productRepository.GetById(i.ProductId) ?? throw new ArgumentException($"Producto con id {i.ProductId} no encontrado.");
