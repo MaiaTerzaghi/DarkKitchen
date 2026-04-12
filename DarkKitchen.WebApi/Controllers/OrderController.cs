@@ -36,7 +36,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
         return Ok(response);
     }
 
-    [AuthorizeRoles(UserRole.Dispatcher, UserRole.Administrative)]
+    // [AuthorizeRoles(UserRole.Dispatcher, UserRole.Administrative)]
     [HttpPatch("{orderId}/prepared")]
     public IActionResult MarkAsPrepared(int orderId)
     {
