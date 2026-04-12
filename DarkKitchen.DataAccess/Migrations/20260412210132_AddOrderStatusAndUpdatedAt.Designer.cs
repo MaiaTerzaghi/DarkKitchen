@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DarkKitchen.DataAccess.Migrations
 {
     [DbContext(typeof(DarkKitchenContext))]
-    [Migration("20260410154919_AddDateToOrders")]
-    partial class AddDateToOrders
+    [Migration("20260412210132_AddOrderStatusAndUpdatedAt")]
+    partial class AddOrderStatusAndUpdatedAt
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,13 +50,15 @@ namespace DarkKitchen.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<string>("Street")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 

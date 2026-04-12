@@ -7,5 +7,6 @@ public interface IOrderService
     CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request);
     List<GetClientOrdersResponseDTO> GetClientOrders(GetClientOrdersRequestDTO request);
     List<GetOrdersResponseDTO> GetOrders(GetOrdersRequestDTO request);
+    UpdateOrderStatusResponseDTO MarkAsPrepared(int orderId);
     OrderDetailResponseDTO GetOrderDetail(int orderId);
 }

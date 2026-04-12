@@ -216,7 +216,7 @@ public class OrderServiceTest
         {
             Id = 1,
             ClientId = 1,
-            Status = "Pending",
+            Status = OrderStatus.Pending,
             Items = [new OrderItem { ProductId = 1, Quantity = 2, Product = new Product { Id = 1, Price = 100.0 } }]
         };
 
@@ -247,7 +247,7 @@ public class OrderServiceTest
             {
                 Id = 1,
                 ClientId = 10,
-                Status = "Pending",
+                Status = OrderStatus.Pending,
                 Date = new DateTime(2026, 1, 10),
                 Street = "18 de Julio",
                 DoorNumber = "1234",
@@ -317,6 +317,58 @@ public class OrderServiceTest
     }
 
     [TestMethod]
+    public void MarkAsPrepared_PendingOrder_ReturnsUpdatedStatus()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            Status = OrderStatus.Pending
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        _orderRepositoryMock
+            .Setup(r => r.Update(It.IsAny<Order>()))
+            .Returns(order);
+
+        var result = _service.MarkAsPrepared(1);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.OrderId);
+        Assert.AreEqual("Prepared", result.Status);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void MarkAsPrepared_OrderNotFound_ThrowsException()
+    {
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(99))
+            .Returns((Order)null!);
+
+        _service.MarkAsPrepared(99);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void MarkAsPrepared_OrderNotPending_ThrowsException()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            Status = OrderStatus.Prepared
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        _service.MarkAsPrepared(1);
+    }
+
+    [TestMethod]
     public void GetOrderDetail_WhenOrderExists_ReturnsDetail()
     {
         var product = new Product { Id = 1, Name = "Pizza", Price = 100.0 };
@@ -324,7 +376,7 @@ public class OrderServiceTest
         {
             Id = 1,
             ClientId = 1,
-            Status = "Pending",
+            Status = OrderStatus.Pending,
             DeliveryType = DeliveryType.Express,
             Date = DateTime.Now,
             Items = [new OrderItem { ProductId = 1, Quantity = 2, Product = product }]

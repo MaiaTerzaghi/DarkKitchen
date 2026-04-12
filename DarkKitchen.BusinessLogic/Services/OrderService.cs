@@ -62,7 +62,7 @@ public class OrderService(
         {
             ClientId = request.ClientId,
             DeliveryType = deliveryType,
-            Status = "Pending",
+            Status = OrderStatus.Pending,
             Street = request.Address.Street,
             DoorNumber = request.Address.DoorNumber,
             Apartment = request.Address.Apartment,
@@ -117,7 +117,7 @@ public class OrderService(
         {
             OrderId = o.Id,
             ClientId = o.ClientId,
-            Status = o.Status,
+            Status = o.Status.ToString(),
             Total = o.Items.Sum(i => i.Product.Price * i.Quantity),
             ItemCount = o.Items.Sum(i => i.Quantity)
         }).ToList();
@@ -132,13 +132,36 @@ public class OrderService(
             OrderId = order.Id,
             ClientName = order.ClientId.ToString(),
             Date = order.Date,
-            Status = order.Status,
+            Status = order.Status.ToString(),
             Items = order.Items.Select(item => new OrderItemResponseDTO
             {
                 ProductName = item.Product.Name,
                 Quantity = item.Quantity
             }).ToList()
         }).ToList();
+    }
+
+    public UpdateOrderStatusResponseDTO MarkAsPrepared(int orderId)
+    {
+        var order = _orderRepository.GetOrderById(orderId)
+            ?? throw new ArgumentException($"Pedido con id {orderId} no encontrado.");
+
+        if(order.Status != OrderStatus.Pending)
+        {
+            throw new ArgumentException("El pedido solo puede prepararse si está pendiente.");
+        }
+
+        order.Status = OrderStatus.Prepared;
+        order.UpdatedAt = DateTime.Now;
+
+        _orderRepository.Update(order);
+
+        return new UpdateOrderStatusResponseDTO
+        {
+            OrderId = order.Id,
+            Status = order.Status.ToString(),
+            UpdatedAt = order.UpdatedAt
+        };
     }
 
     public OrderDetailResponseDTO GetOrderDetail(int orderId)
@@ -150,7 +173,7 @@ public class OrderService(
             OrderId = order.Id,
             ClientId = order.ClientId,
             Date = order.Date,
-            Status = order.Status,
+            Status = order.Status.ToString(),
             DeliveryType = order.DeliveryType.ToString(),
             Total = order.Items.Sum(i => i.Product.Price * i.Quantity),
             Items = order.Items.Select(i => new OrderItemDetailDTO

@@ -6,13 +6,21 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DarkKitchen.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class AddDateToOrders : Migration
+    public partial class AddOrderStatusEnum : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterColumn<int>(
+                name: "Status",
+                table: "Orders",
+                type: "int",
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)");
+
             migrationBuilder.AddColumn<DateTime>(
-                name: "Date",
+                name: "UpdatedAt",
                 table: "Orders",
                 type: "datetime2",
                 nullable: false,
@@ -23,8 +31,16 @@ namespace DarkKitchen.DataAccess.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Date",
+                name: "UpdatedAt",
                 table: "Orders");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Status",
+                table: "Orders",
+                type: "nvarchar(max)",
+                nullable: false,
+                oldClrType: typeof(int),
+                oldType: "int");
         }
     }
 }
