@@ -1,3 +1,4 @@
+using DarkKitchen.BusinessLogic.Shipping;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
@@ -19,8 +20,6 @@ public class OrderService(
     private readonly IUserRepository _userRepository = userRepository;
 
     private const double Iva = 0.22;
-    private const double ExpressShipping = 50.0;
-    private const double StandardShipping = 20.0;
 
     public CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request)
     {
@@ -55,7 +54,7 @@ public class OrderService(
 
         var discountedSubtotal = ApplyPromotions(subtotal, items, promotions);
 
-        var shippingCost = CalculateShipping(request.DeliveryType);
+        var shippingCost = CalculateShipping(deliveryType);
 
         var total = (discountedSubtotal * (1 + Iva)) + shippingCost;
 
@@ -100,9 +99,15 @@ public class OrderService(
         return subtotal - discount;
     }
 
-    private static double CalculateShipping(string deliveryType)
+    // Implemento Strategy
+    private static double CalculateShipping(DeliveryType deliveryType)
     {
-        return deliveryType == "Express" ? ExpressShipping : StandardShipping;
+        return deliveryType switch
+        {
+            DeliveryType.Express => new ExpressShipping().CalculateCost(),
+            DeliveryType.Standard => new StandardShipping().CalculateCost(),
+            _ => throw new ArgumentException($"Tipo de entrega '{deliveryType}' no soportada.")
+        };
     }
 
     public List<GetClientOrdersResponseDTO> GetClientOrders(GetClientOrdersRequestDTO request)
