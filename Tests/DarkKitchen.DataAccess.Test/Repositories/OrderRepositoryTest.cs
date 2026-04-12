@@ -232,4 +232,29 @@ public sealed class OrderRepositoryTest
         Assert.AreEqual(order.Id, result.Id);
         Assert.AreEqual("Pending", result.Status);
     }
+
+    [TestMethod]
+    public void Update_ExistingOrder_ReturnsUpdatedOrder()
+    {
+        var order = new Order
+        {
+            ClientId = 1,
+            DeliveryType = DeliveryType.Express,
+            Status = "Pending",
+            Street = "18 de Julio",
+            DoorNumber = "1234",
+            Items = []
+        };
+
+        _context!.Orders.Add(order);
+        _context.SaveChanges();
+
+        order.Status = "Prepared";
+
+        var repository = new OrderRepository(_context);
+        var result = repository.Update(order);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual("Prepared", result.Status);
+    }
 }
