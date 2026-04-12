@@ -350,4 +350,21 @@ public class OrderServiceTest
 
         _service.MarkAsPrepared(99);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void MarkAsPrepared_OrderNotPending_ThrowsException()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            Status = "Prepared"
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetById(1))
+            .Returns(order);
+
+        _service.MarkAsPrepared(1);
+    }
 }
