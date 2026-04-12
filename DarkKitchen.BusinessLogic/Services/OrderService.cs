@@ -1,4 +1,6 @@
+using DarkKitchen.BusinessLogic.Shipping;
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
@@ -8,22 +10,31 @@ namespace DarkKitchen.BusinessLogic.Services;
 public class OrderService(
     IOrderRepository orderRepository,
     IProductRepository productRepository,
-    IPromotionRepository promotionRepository) : IOrderService
+    IPromotionRepository promotionRepository,
+    IUserRepository userRepository) : IOrderService
 {
     private readonly IOrderRepository _orderRepository = orderRepository;
     private readonly IProductRepository _productRepository = productRepository;
 
     private readonly IPromotionRepository _promotionRepository = promotionRepository;
+    private readonly IUserRepository _userRepository = userRepository;
 
     private const double Iva = 0.22;
-    private const double ExpressShipping = 50.0;
-    private const double StandardShipping = 20.0;
 
     public CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request)
     {
+        var client = _userRepository.GetById(request.ClientId)
+            ?? throw new ArgumentException($"Cliente con id {request.ClientId} no encontrado.");
+
         if(request.Items == null || request.Items.Count == 0)
         {
             throw new ArgumentException("El pedido debe tener al menos un producto.");
+        }
+
+        // Guardo en la variable deliveryType el tipo de delivery pero convertido en string
+        if(!Enum.TryParse<DeliveryType>(request.DeliveryType, out var deliveryType))
+        {
+            throw new ArgumentException($"Tipo de entrega '{request.DeliveryType}' no válido.");
         }
 
         var items = request.Items.Select(i =>
@@ -43,14 +54,14 @@ public class OrderService(
 
         var discountedSubtotal = ApplyPromotions(subtotal, items, promotions);
 
-        var shippingCost = CalculateShipping(request.DeliveryType);
+        var shippingCost = CalculateShipping(deliveryType);
 
         var total = (discountedSubtotal * (1 + Iva)) + shippingCost;
 
         var order = new Order
         {
             ClientId = request.ClientId,
-            DeliveryType = request.DeliveryType,
+            DeliveryType = deliveryType,
             Status = "Pending",
             Street = request.Address.Street,
             DoorNumber = request.Address.DoorNumber,
@@ -88,9 +99,15 @@ public class OrderService(
         return subtotal - discount;
     }
 
-    private static double CalculateShipping(string deliveryType)
+    // Implemento Strategy
+    private static double CalculateShipping(DeliveryType deliveryType)
     {
-        return deliveryType == "Express" ? ExpressShipping : StandardShipping;
+        return deliveryType switch
+        {
+            DeliveryType.Express => new ExpressShipping().CalculateCost(),
+            DeliveryType.Standard => new StandardShipping().CalculateCost(),
+            _ => throw new ArgumentException($"Tipo de entrega '{deliveryType}' no disponible.")
+        };
     }
 
     public List<GetClientOrdersResponseDTO> GetClientOrders(GetClientOrdersRequestDTO request)
