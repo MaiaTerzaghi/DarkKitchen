@@ -32,7 +32,7 @@ public class OrderService(
         }
 
         // Guardo en la variable deliveryType el tipo de delivery pero convertido en string
-        if (!Enum.TryParse<DeliveryType>(request.DeliveryType, out var deliveryType))
+        if(!Enum.TryParse<DeliveryType>(request.DeliveryType, out var deliveryType))
         {
             throw new ArgumentException($"Tipo de entrega '{request.DeliveryType}' no válido.");
         }
