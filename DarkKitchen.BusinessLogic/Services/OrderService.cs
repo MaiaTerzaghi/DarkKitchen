@@ -140,4 +140,9 @@ public class OrderService(
             }).ToList()
         }).ToList();
     }
+
+    public OrderDetailResponseDTO GetOrderDetail(int orderId)
+    {
+        throw new NotImplementedException();
+    }
 }
