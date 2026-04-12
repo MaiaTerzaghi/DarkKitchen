@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.IDataAccess", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.DTOs", "DarkKitchen.DTOs\DarkKitchen.DTOs.csproj", "{8FB56CB8-80D3-40B5-A483-0C9E763A74ED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.ServiceFactory", "DarkKitchen.ServiceFactory\DarkKitchen.ServiceFactory.csproj", "{95483411-F585-4AD4-AF95-067944F900B6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +76,10 @@ Global
 		{8FB56CB8-80D3-40B5-A483-0C9E763A74ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FB56CB8-80D3-40B5-A483-0C9E763A74ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8FB56CB8-80D3-40B5-A483-0C9E763A74ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95483411-F585-4AD4-AF95-067944F900B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95483411-F585-4AD4-AF95-067944F900B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95483411-F585-4AD4-AF95-067944F900B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95483411-F585-4AD4-AF95-067944F900B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{25964209-6F63-4F70-8CF3-926E610FA426} = {7FE77C09-CAC9-40F7-9622-8878F872BF84}
