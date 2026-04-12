@@ -10,4 +10,12 @@ public sealed class DarkKitchenContext(DbContextOptions<DarkKitchenContext> opti
     public DbSet<Promotion> Promotions { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<Order> Orders { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        // Guardo el tipo de delivery como string en la bdd
+        modelBuilder.Entity<Order>()
+            .Property(o => o.DeliveryType)
+            .HasConversion<string>();
+    }
 }

@@ -1,6 +1,7 @@
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.DataAccess.Repositories;
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +41,7 @@ public sealed class OrderRepositoryTest
         var order = new Order
         {
             ClientId = 1,
-            DeliveryType = "Express",
+            DeliveryType = DeliveryType.Express,
             Status = "Pending",
             Street = "18 de Julio",
             DoorNumber = "1234",
@@ -61,7 +62,7 @@ public sealed class OrderRepositoryTest
         var order = new Order
         {
             ClientId = 1,
-            DeliveryType = "Express",
+            DeliveryType = DeliveryType.Express,
             Status = "Pending",
             Street = "18 de Julio",
             DoorNumber = "1234",
@@ -86,7 +87,7 @@ public sealed class OrderRepositoryTest
         var order1 = new Order
         {
             ClientId = 1,
-            DeliveryType = "Express",
+            DeliveryType = DeliveryType.Express,
             Status = "Pending",
             Street = "18 de Julio",
             DoorNumber = "1234",
@@ -97,7 +98,7 @@ public sealed class OrderRepositoryTest
         var order2 = new Order
         {
             ClientId = 2,
-            DeliveryType = "Express",
+            DeliveryType = DeliveryType.Express,
             Status = "Pending",
             Street = "Av. Italia",
             DoorNumber = "5678",
@@ -128,7 +129,7 @@ public sealed class OrderRepositoryTest
         var order1 = new Order
         {
             ClientId = 1,
-            DeliveryType = "Express",
+            DeliveryType = DeliveryType.Express,
             Status = "Pending",
             Street = "18 de Julio",
             DoorNumber = "1234",
@@ -139,7 +140,7 @@ public sealed class OrderRepositoryTest
         var order2 = new Order
         {
             ClientId = 2,
-            DeliveryType = "Express",
+            DeliveryType = DeliveryType.Express,
             Status = "Pending",
             Street = "Av. Italia",
             DoorNumber = "5678",
@@ -171,7 +172,7 @@ public sealed class OrderRepositoryTest
         var order1 = new Order
         {
             ClientId = 1,
-            DeliveryType = "Express",
+            DeliveryType = DeliveryType.Express,
             Status = "Pending",
             Street = "18 de Julio",
             DoorNumber = "1234",
@@ -182,7 +183,7 @@ public sealed class OrderRepositoryTest
         var order2 = new Order
         {
             ClientId = 2,
-            DeliveryType = "Express",
+            DeliveryType = DeliveryType.Express,
             Status = "Delivered",
             Street = "Av. Italia",
             DoorNumber = "5678",

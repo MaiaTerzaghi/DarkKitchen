@@ -1,4 +1,5 @@
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
@@ -31,8 +32,8 @@ public class OrderService(
             throw new ArgumentException("El pedido debe tener al menos un producto.");
         }
 
-        var validTypes = new[] { "Express", "Standard" };
-        if (!validTypes.Contains(request.DeliveryType))
+        // Guardo en la variable deliveryType el tipo de delivery pero convertido en string
+        if (!Enum.TryParse<DeliveryType>(request.DeliveryType, out var deliveryType))
         {
             throw new ArgumentException($"Tipo de entrega '{request.DeliveryType}' no válido.");
         }
@@ -61,7 +62,7 @@ public class OrderService(
         var order = new Order
         {
             ClientId = request.ClientId,
-            DeliveryType = request.DeliveryType,
+            DeliveryType = deliveryType,
             Status = "Pending",
             Street = request.Address.Street,
             DoorNumber = request.Address.DoorNumber,
