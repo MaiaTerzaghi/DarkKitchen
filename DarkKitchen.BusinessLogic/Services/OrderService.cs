@@ -143,6 +143,23 @@ public class OrderService(
 
     public OrderDetailResponseDTO GetOrderDetail(int orderId)
     {
-        throw new NotImplementedException();
+        var order = _orderRepository.GetOrderById(orderId) ?? throw new ArgumentException($"Pedido con id {orderId} no encontrado.");
+
+        return new OrderDetailResponseDTO
+        {
+            OrderId = order.Id,
+            ClientId = order.ClientId,
+            Date = order.Date,
+            Status = order.Status,
+            DeliveryType = order.DeliveryType.ToString(),
+            Total = order.Items.Sum(i => i.Product.Price * i.Quantity),
+            Items = order.Items.Select(i => new OrderItemDetailDTO
+            {
+                ProductName = i.Product.Name,
+                Quantity = i.Quantity,
+                UnitPrice = i.Product.Price,
+                Subtotal = i.Product.Price * i.Quantity
+            }).ToList()
+        };
     }
 }
