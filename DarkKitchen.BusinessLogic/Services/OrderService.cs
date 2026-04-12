@@ -188,7 +188,9 @@ public class OrderService(
 
     public UpdateOrderStatusResponseDTO DeliverOrder(int orderId)
     {
-        var order = _orderRepository.GetOrderById(orderId)!;
+        var order = _orderRepository.GetOrderById(orderId)
+        ?? throw new ArgumentException($"Pedido con id {orderId} no encontrado.");
+
         order.Status = OrderStatus.Delivered;
         order.UpdatedAt = DateTime.Now;
         _orderRepository.Update(order);
