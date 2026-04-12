@@ -143,6 +143,18 @@ public class OrderService(
 
     public UpdateOrderStatusResponseDTO MarkAsPrepared(int orderId)
     {
-        throw new NotImplementedException();
+        var order = _orderRepository.GetById(orderId);
+
+        order.Status = "Prepared";
+        order.UpdatedAt = DateTime.Now;
+
+        _orderRepository.Update(order);
+
+        return new UpdateOrderStatusResponseDTO
+        {
+            OrderId = order.Id,
+            Status = order.Status,
+            UpdatedAt = order.UpdatedAt
+        };
     }
 }
