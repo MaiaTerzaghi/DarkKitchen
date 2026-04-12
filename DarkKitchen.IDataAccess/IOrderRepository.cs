@@ -9,4 +9,7 @@ public interface IOrderRepository
     List<Order> GetClientOrders(GetClientOrdersRequestDTO request);
 
     List<Order> GetOrders(GetOrdersRequestDTO request);
+
+    Order? GetById(int id);
+    Order Update(Order order);
 }

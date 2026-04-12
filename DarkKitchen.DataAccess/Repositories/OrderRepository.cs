@@ -48,4 +48,14 @@ public class OrderRepository(DarkKitchenContext context) : IOrderRepository
 
         return query.ToList();
     }
+
+    public Order? GetById(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Order Update(Order order)
+    {
+        throw new NotImplementedException();
+    }
 }

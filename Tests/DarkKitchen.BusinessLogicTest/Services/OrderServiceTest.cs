@@ -315,4 +315,28 @@ public class OrderServiceTest
 
         _service.CreateOrder(request);
     }
+
+    [TestMethod]
+    public void MarkAsPrepared_PendingOrder_ReturnsUpdatedStatus()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            Status = "Pending"
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetById(1))
+            .Returns(order);
+
+        _orderRepositoryMock
+            .Setup(r => r.Update(It.IsAny<Order>()))
+            .Returns(order);
+
+        var result = _service.MarkAsPrepared(1);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.OrderId);
+        Assert.AreEqual("Prepared", result.Status);
+    }
 }
