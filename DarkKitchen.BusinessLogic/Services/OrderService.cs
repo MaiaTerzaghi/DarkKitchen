@@ -106,7 +106,7 @@ public class OrderService(
         {
             DeliveryType.Express => new ExpressShipping().CalculateCost(),
             DeliveryType.Standard => new StandardShipping().CalculateCost(),
-            _ => throw new ArgumentException($"Tipo de entrega '{deliveryType}' no soportada.")
+            _ => throw new ArgumentException($"Tipo de entrega '{deliveryType}' no disponible.")
         };
     }
 
