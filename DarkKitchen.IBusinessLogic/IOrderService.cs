@@ -7,4 +7,5 @@ public interface IOrderService
     CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request);
     List<GetClientOrdersResponseDTO> GetClientOrders(GetClientOrdersRequestDTO request);
     List<GetOrdersResponseDTO> GetOrders(GetOrdersRequestDTO request);
+    OrderDetailResponseDTO GetOrderDetail(int orderId);
 }

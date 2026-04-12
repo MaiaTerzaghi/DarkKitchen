@@ -48,4 +48,12 @@ public class OrderRepository(DarkKitchenContext context) : IOrderRepository
 
         return query.ToList();
     }
+
+    public Order? GetOrderById(int orderId)
+    {
+        return _context.Orders
+            .Include(o => o.Items)
+            .ThenInclude(i => i.Product)
+            .FirstOrDefault(o => o.Id == orderId);
+    }
 }
