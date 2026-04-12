@@ -143,7 +143,8 @@ public class OrderService(
 
     public UpdateOrderStatusResponseDTO MarkAsPrepared(int orderId)
     {
-        var order = _orderRepository.GetById(orderId);
+        var order = _orderRepository.GetById(orderId)
+            ?? throw new ArgumentException($"Pedido con id {orderId} no encontrado.");
 
         order.Status = "Prepared";
         order.UpdatedAt = DateTime.Now;
