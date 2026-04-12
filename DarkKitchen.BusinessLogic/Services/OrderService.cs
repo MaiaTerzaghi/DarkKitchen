@@ -140,4 +140,9 @@ public class OrderService(
             }).ToList()
         }).ToList();
     }
+
+    public UpdateOrderStatusResponseDTO MarkAsPrepared(int orderId)
+    {
+        throw new NotImplementedException();
+    }
 }

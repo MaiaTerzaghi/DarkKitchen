@@ -35,4 +35,10 @@ public class OrderController(IOrderService orderService) : ControllerBase
         var response = _orderService.GetOrders(request);
         return Ok(response);
     }
+
+    [HttpPatch("{orderId}/prepared")]
+    public IActionResult MarkAsPrepared(int orderId)
+    {
+        throw new NotImplementedException();
+    }
 }
