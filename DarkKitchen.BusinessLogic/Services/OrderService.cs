@@ -188,6 +188,16 @@ public class OrderService(
 
     public UpdateOrderStatusResponseDTO DeliverOrder(int orderId)
     {
-        throw new NotImplementedException();
+        var order = _orderRepository.GetOrderById(orderId)!;
+        order.Status = OrderStatus.Delivered;
+        order.UpdatedAt = DateTime.Now;
+        _orderRepository.Update(order);
+
+        return new UpdateOrderStatusResponseDTO
+        {
+            OrderId = order.Id,
+            Status = order.Status.ToString(),
+            UpdatedAt = order.UpdatedAt
+        };
     }
 }
