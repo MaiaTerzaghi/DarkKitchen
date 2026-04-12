@@ -146,6 +146,11 @@ public class OrderService(
         var order = _orderRepository.GetById(orderId)
             ?? throw new ArgumentException($"Pedido con id {orderId} no encontrado.");
 
+        if(order.Status != "Pending")
+        {
+            throw new ArgumentException("El pedido solo puede prepararse si está pendiente.");
+        }
+
         order.Status = "Prepared";
         order.UpdatedAt = DateTime.Now;
 
