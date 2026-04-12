@@ -173,7 +173,7 @@ public class OrderService(
             OrderId = order.Id,
             ClientId = order.ClientId,
             Date = order.Date,
-            Status = order.Status,
+            Status = order.Status.ToString(),
             DeliveryType = order.DeliveryType.ToString(),
             Total = order.Items.Sum(i => i.Product.Price * i.Quantity),
             Items = order.Items.Select(i => new OrderItemDetailDTO

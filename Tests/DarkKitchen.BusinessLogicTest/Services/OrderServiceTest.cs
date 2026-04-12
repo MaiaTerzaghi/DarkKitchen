@@ -376,7 +376,7 @@ public class OrderServiceTest
         {
             Id = 1,
             ClientId = 1,
-            Status = "Pending",
+            Status = OrderStatus.Pending,
             DeliveryType = DeliveryType.Express,
             Date = DateTime.Now,
             Items = [new OrderItem { ProductId = 1, Quantity = 2, Product = product }]
