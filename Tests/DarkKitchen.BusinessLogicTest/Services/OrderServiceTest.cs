@@ -326,7 +326,7 @@ public class OrderServiceTest
         };
 
         _orderRepositoryMock
-            .Setup(r => r.GetById(1))
+            .Setup(r => r.GetOrderById(1))
             .Returns(order);
 
         _orderRepositoryMock
@@ -345,7 +345,7 @@ public class OrderServiceTest
     public void MarkAsPrepared_OrderNotFound_ThrowsException()
     {
         _orderRepositoryMock
-            .Setup(r => r.GetById(99))
+            .Setup(r => r.GetOrderById(99))
             .Returns((Order)null!);
 
         _service.MarkAsPrepared(99);
@@ -362,7 +362,7 @@ public class OrderServiceTest
         };
 
         _orderRepositoryMock
-            .Setup(r => r.GetById(1))
+            .Setup(r => r.GetOrderById(1))
             .Returns(order);
 
         _service.MarkAsPrepared(1);

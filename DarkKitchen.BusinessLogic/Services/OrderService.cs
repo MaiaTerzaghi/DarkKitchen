@@ -143,7 +143,7 @@ public class OrderService(
 
     public UpdateOrderStatusResponseDTO MarkAsPrepared(int orderId)
     {
-        var order = _orderRepository.GetById(orderId)
+        var order = _orderRepository.GetOrderById(orderId)
             ?? throw new ArgumentException($"Pedido con id {orderId} no encontrado.");
 
         if(order.Status != OrderStatus.Pending)

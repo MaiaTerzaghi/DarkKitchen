@@ -49,11 +49,6 @@ public class OrderRepository(DarkKitchenContext context) : IOrderRepository
         return query.ToList();
     }
 
-    public Order? GetById(int id)
-    {
-        return _context.Orders.FirstOrDefault(o => o.Id == id);
-    }
-
     public Order Update(Order order)
     {
         _context.Orders.Update(order);
