@@ -60,4 +60,12 @@ public class OrderRepository(DarkKitchenContext context) : IOrderRepository
         _context.SaveChanges();
         return order;
     }
+
+    public Order? GetOrderById(int orderId)
+    {
+        return _context.Orders
+            .Include(o => o.Items)
+            .ThenInclude(i => i.Product)
+            .FirstOrDefault(o => o.Id == orderId);
+    }
 }

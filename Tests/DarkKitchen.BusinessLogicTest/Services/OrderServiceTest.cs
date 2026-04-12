@@ -367,4 +367,30 @@ public class OrderServiceTest
 
         _service.MarkAsPrepared(1);
     }
+
+    [TestMethod]
+    public void GetOrderDetail_WhenOrderExists_ReturnsDetail()
+    {
+        var product = new Product { Id = 1, Name = "Pizza", Price = 100.0 };
+        var order = new Order
+        {
+            Id = 1,
+            ClientId = 1,
+            Status = "Pending",
+            DeliveryType = DeliveryType.Express,
+            Date = DateTime.Now,
+            Items = [new OrderItem { ProductId = 1, Quantity = 2, Product = product }]
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        var result = _service.GetOrderDetail(1);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.OrderId);
+        Assert.AreEqual("Pending", result.Status);
+        Assert.AreEqual(1, result.Items.Count);
+    }
 }

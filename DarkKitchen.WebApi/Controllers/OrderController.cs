@@ -43,4 +43,12 @@ public class OrderController(IOrderService orderService) : ControllerBase
         var response = _orderService.MarkAsPrepared(orderId);
         return Ok(response);
     }
+
+    [AuthorizeRoles(UserRole.Dispatcher, UserRole.Administrative)]
+    [HttpGet("{id}")]
+    public IActionResult GetOrderDetail(int id)
+    {
+        var order = _orderService.GetOrderDetail(id);
+        return Ok(order);
+    }
 }

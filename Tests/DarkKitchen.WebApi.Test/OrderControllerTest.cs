@@ -158,4 +158,24 @@ public class OrderControllerTest
         Assert.AreEqual("Prepared", response.Status);
         Assert.AreEqual(orderId, response.OrderId);
     }
+
+    [TestMethod]
+    public void GetOrderDetail_WhenCalled_ReturnsOk()
+    {
+        var response = new OrderDetailResponseDTO
+        {
+            OrderId = 1,
+            ClientId = 1,
+            Status = "Pending",
+            Total = 200.0
+        };
+
+        _orderServiceMock
+            .Setup(s => s.GetOrderDetail(It.IsAny<int>()))
+            .Returns(response);
+
+        var result = _controller.GetOrderDetail(1);
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+    }
 }
