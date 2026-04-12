@@ -14,6 +14,11 @@ public class UserRepository(DarkKitchenContext context) : IUserRepository
         return _context.Users.FirstOrDefault(u => u.Email == email);
     }
 
+    public User? GetById(int id)
+    {
+        return _context.Users.FirstOrDefault(u => u.Id == id);
+    }
+
     public void AddSession(Session session)
     {
         _context.Sessions.Add(session);

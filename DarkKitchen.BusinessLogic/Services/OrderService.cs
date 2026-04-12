@@ -8,12 +8,14 @@ namespace DarkKitchen.BusinessLogic.Services;
 public class OrderService(
     IOrderRepository orderRepository,
     IProductRepository productRepository,
-    IPromotionRepository promotionRepository) : IOrderService
+    IPromotionRepository promotionRepository,
+    IUserRepository userRepository) : IOrderService
 {
     private readonly IOrderRepository _orderRepository = orderRepository;
     private readonly IProductRepository _productRepository = productRepository;
 
     private readonly IPromotionRepository _promotionRepository = promotionRepository;
+    private readonly IUserRepository _userRepository = userRepository;
 
     private const double Iva = 0.22;
     private const double ExpressShipping = 50.0;
@@ -21,6 +23,9 @@ public class OrderService(
 
     public CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request)
     {
+        var client = _userRepository.GetById(request.ClientId)
+            ?? throw new ArgumentException($"Cliente con id {request.ClientId} no encontrado.");
+
         if(request.Items == null || request.Items.Count == 0)
         {
             throw new ArgumentException("El pedido debe tener al menos un producto.");

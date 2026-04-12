@@ -1,5 +1,6 @@
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IDataAccess;
 using Moq;
