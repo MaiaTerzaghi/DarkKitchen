@@ -185,4 +185,9 @@ public class OrderService(
             }).ToList()
         };
     }
+
+    public UpdateOrderStatusResponseDTO DeliverOrder(int orderId)
+    {
+        throw new NotImplementedException();
+    }
 }

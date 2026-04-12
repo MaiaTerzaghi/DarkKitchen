@@ -9,4 +9,5 @@ public interface IOrderService
     List<GetOrdersResponseDTO> GetOrders(GetOrdersRequestDTO request);
     UpdateOrderStatusResponseDTO MarkAsPrepared(int orderId);
     OrderDetailResponseDTO GetOrderDetail(int orderId);
+    UpdateOrderStatusResponseDTO DeliverOrder(int orderId);
 }
