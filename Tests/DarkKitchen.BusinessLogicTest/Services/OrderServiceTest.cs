@@ -339,4 +339,15 @@ public class OrderServiceTest
         Assert.AreEqual(1, result.OrderId);
         Assert.AreEqual("Prepared", result.Status);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void MarkAsPrepared_OrderNotFound_ThrowsException()
+    {
+        _orderRepositoryMock
+            .Setup(r => r.GetById(99))
+            .Returns((Order)null!);
+
+        _service.MarkAsPrepared(99);
+    }
 }
