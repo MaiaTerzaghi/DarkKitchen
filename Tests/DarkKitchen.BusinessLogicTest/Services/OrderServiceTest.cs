@@ -296,4 +296,23 @@ public class OrderServiceTest
 
         _service.CreateOrder(request);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CreateOrder_InvalidDeliveryType_ThrowsException()
+    {
+        _productRepositoryMock
+            .Setup(r => r.GetById(1))
+            .Returns(new Product { Id = 1, Price = 100.0 });
+
+        var request = new CreateOrderRequestDTO
+        {
+            ClientId = 1,
+            DeliveryType = "Drone",
+            Address = new AddressDTO { Street = "18 de Julio", DoorNumber = "1234" },
+            Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 1 }]
+        };
+
+        _service.CreateOrder(request);
+    }
 }
