@@ -419,4 +419,15 @@ public class OrderServiceTest
         Assert.IsNotNull(result);
         Assert.AreEqual("Delivered", result.Status);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void DeliverOrder_WhenOrderNotFound_ThrowsException()
+    {
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(It.IsAny<int>()))
+            .Returns((Order?)null);
+
+        _service.DeliverOrder(999);
+    }
 }
