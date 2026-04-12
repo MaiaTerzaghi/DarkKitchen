@@ -430,4 +430,24 @@ public class OrderServiceTest
 
         _service.DeliverOrder(999);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void DeliverOrder_WhenOrderIsNotOnTheWay_ThrowsException()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            ClientId = 1,
+            Status = OrderStatus.Pending,
+            DeliveryType = DeliveryType.Express,
+            Items = []
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        _service.DeliverOrder(1);
+    }
 }
