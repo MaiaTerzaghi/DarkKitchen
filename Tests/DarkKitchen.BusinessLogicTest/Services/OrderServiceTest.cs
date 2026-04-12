@@ -13,6 +13,8 @@ public class OrderServiceTest
     private Mock<IProductRepository> _productRepositoryMock = null!;
 
     private Mock<IPromotionRepository> _promotionRepositoryMock = null!;
+    private Mock<IUserRepository> _userRepositoryMock = null!;
+
     private OrderService _service = null!;
 
     [TestInitialize]
@@ -21,15 +23,21 @@ public class OrderServiceTest
         _orderRepositoryMock = new Mock<IOrderRepository>();
         _productRepositoryMock = new Mock<IProductRepository>();
         _promotionRepositoryMock = new Mock<IPromotionRepository>();
+        _userRepositoryMock = new Mock<IUserRepository>();
 
         _promotionRepositoryMock
         .Setup(r => r.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>()))
         .Returns([]);
 
+        _userRepositoryMock
+        .Setup(r => r.GetById(1))
+        .Returns(new User { Id = 1, Role = UserRole.Client });
+
         _service = new OrderService(
             _orderRepositoryMock.Object,
             _productRepositoryMock.Object,
-            _promotionRepositoryMock.Object);
+            _promotionRepositoryMock.Object,
+            _userRepositoryMock.Object);
     }
 
     [TestMethod]
@@ -267,5 +275,24 @@ public class OrderServiceTest
         Assert.AreEqual("Pending", result[0].Status);
         Assert.AreEqual("Hamburguesa", result[0].Items[0].ProductName);
         Assert.AreEqual(2, result[0].Items[0].Quantity);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CreateOrder_ClientNotFound_ThrowsException()
+    {
+        _userRepositoryMock
+            .Setup(r => r.GetById(99))
+            .Returns((User)null!);
+
+        var request = new CreateOrderRequestDTO
+        {
+            ClientId = 99,
+            DeliveryType = "Express",
+            Address = new AddressDTO { Street = "18 de Julio", DoorNumber = "1234" },
+            Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 1 }]
+        };
+
+        _service.CreateOrder(request);
     }
 }
