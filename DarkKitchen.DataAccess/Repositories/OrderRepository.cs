@@ -51,7 +51,7 @@ public class OrderRepository(DarkKitchenContext context) : IOrderRepository
 
     public Order? GetById(int id)
     {
-        throw new NotImplementedException();
+        return _context.Orders.FirstOrDefault(o => o.Id == id);
     }
 
     public Order Update(Order order)
