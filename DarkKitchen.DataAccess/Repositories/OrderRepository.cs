@@ -23,7 +23,7 @@ public class OrderRepository(DarkKitchenContext context) : IOrderRepository
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
             .Where(o => o.ClientId == request.ClientId)
-            .Where(o => string.IsNullOrEmpty(request.Status) || o.Status == request.Status)
+            .Where(o => !request.Status.HasValue || o.Status == request.Status.Value)
             .Where(o => !request.DateFrom.HasValue || o.Date >= request.DateFrom.Value)
             .Where(o => !request.DateTo.HasValue || o.Date <= request.DateTo.Value)
             .ToList();
@@ -41,9 +41,9 @@ public class OrderRepository(DarkKitchenContext context) : IOrderRepository
             query = query.Where(o => o.Street.Contains(request.Street));
         }
 
-        if(!string.IsNullOrEmpty(request.Status))
+        if(request.Status.HasValue)
         {
-            query = query.Where(o => o.Status == request.Status);
+            query = query.Where(o => o.Status == request.Status.Value);
         }
 
         return query.ToList();

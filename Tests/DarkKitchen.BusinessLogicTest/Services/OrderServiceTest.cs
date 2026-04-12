@@ -216,7 +216,7 @@ public class OrderServiceTest
         {
             Id = 1,
             ClientId = 1,
-            Status = "Pending",
+            Status = OrderStatus.Pending,
             Items = [new OrderItem { ProductId = 1, Quantity = 2, Product = new Product { Id = 1, Price = 100.0 } }]
         };
 
@@ -247,7 +247,7 @@ public class OrderServiceTest
             {
                 Id = 1,
                 ClientId = 10,
-                Status = "Pending",
+                Status = OrderStatus.Pending,
                 Date = new DateTime(2026, 1, 10),
                 Street = "18 de Julio",
                 DoorNumber = "1234",
@@ -322,7 +322,7 @@ public class OrderServiceTest
         var order = new Order
         {
             Id = 1,
-            Status = "Pending"
+            Status = OrderStatus.Pending
         };
 
         _orderRepositoryMock
@@ -358,7 +358,7 @@ public class OrderServiceTest
         var order = new Order
         {
             Id = 1,
-            Status = "Prepared"
+            Status = OrderStatus.Prepared
         };
 
         _orderRepositoryMock

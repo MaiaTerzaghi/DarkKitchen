@@ -6,7 +6,7 @@ public class Order
     public int Id { get; set; }
     public int ClientId { get; set; }
     public DeliveryType DeliveryType { get; set; }
-    public string Status { get; set; } = string.Empty;
+    public OrderStatus Status { get; set; }
     public List<OrderItem> Items { get; set; } = [];
     public string Street { get; set; } = string.Empty;
     public DateTime Date { get; set; } = DateTime.Now;

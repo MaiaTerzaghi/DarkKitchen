@@ -42,7 +42,7 @@ public sealed class OrderRepositoryTest
         {
             ClientId = 1,
             DeliveryType = DeliveryType.Express,
-            Status = "Pending",
+            Status = OrderStatus.Pending,
             Street = "18 de Julio",
             DoorNumber = "1234",
             Apartment = "2B",
@@ -63,7 +63,7 @@ public sealed class OrderRepositoryTest
         {
             ClientId = 1,
             DeliveryType = DeliveryType.Express,
-            Status = "Pending",
+            Status = OrderStatus.Pending,
             Street = "18 de Julio",
             DoorNumber = "1234",
             Items = []
@@ -88,7 +88,7 @@ public sealed class OrderRepositoryTest
         {
             ClientId = 1,
             DeliveryType = DeliveryType.Express,
-            Status = "Pending",
+            Status = OrderStatus.Pending,
             Street = "18 de Julio",
             DoorNumber = "1234",
             Date = new DateTime(2026, 1, 10),
@@ -99,7 +99,7 @@ public sealed class OrderRepositoryTest
         {
             ClientId = 2,
             DeliveryType = DeliveryType.Express,
-            Status = "Pending",
+            Status = OrderStatus.Pending,
             Street = "Av. Italia",
             DoorNumber = "5678",
             Date = new DateTime(2026, 3, 10),
@@ -130,7 +130,7 @@ public sealed class OrderRepositoryTest
         {
             ClientId = 1,
             DeliveryType = DeliveryType.Express,
-            Status = "Pending",
+            Status = OrderStatus.Pending,
             Street = "18 de Julio",
             DoorNumber = "1234",
             Date = new DateTime(2026, 1, 10),
@@ -141,7 +141,7 @@ public sealed class OrderRepositoryTest
         {
             ClientId = 2,
             DeliveryType = DeliveryType.Express,
-            Status = "Pending",
+            Status = OrderStatus.Pending,
             Street = "Av. Italia",
             DoorNumber = "5678",
             Date = new DateTime(2026, 1, 15),
@@ -173,7 +173,7 @@ public sealed class OrderRepositoryTest
         {
             ClientId = 1,
             DeliveryType = DeliveryType.Express,
-            Status = "Pending",
+            Status = OrderStatus.Pending,
             Street = "18 de Julio",
             DoorNumber = "1234",
             Date = new DateTime(2026, 1, 10),
@@ -184,7 +184,7 @@ public sealed class OrderRepositoryTest
         {
             ClientId = 2,
             DeliveryType = DeliveryType.Express,
-            Status = "Delivered",
+            Status = OrderStatus.Delivered,
             Street = "Av. Italia",
             DoorNumber = "5678",
             Date = new DateTime(2026, 1, 15),
@@ -200,13 +200,13 @@ public sealed class OrderRepositoryTest
         {
             DateFrom = new DateTime(2026, 1, 1),
             DateTo = new DateTime(2026, 1, 31),
-            Status = "Pending"
+            Status = OrderStatus.Pending
         };
 
         var result = repository.GetOrders(request);
 
         Assert.AreEqual(1, result.Count);
-        Assert.AreEqual("Pending", result[0].Status);
+        Assert.AreEqual(OrderStatus.Pending, result[0].Status);
     }
 
     [TestMethod]
@@ -216,7 +216,7 @@ public sealed class OrderRepositoryTest
         {
             ClientId = 1,
             DeliveryType = DeliveryType.Express,
-            Status = "Pending",
+            Status = OrderStatus.Pending,
             Street = "18 de Julio",
             DoorNumber = "1234",
             Items = []
@@ -230,7 +230,7 @@ public sealed class OrderRepositoryTest
 
         Assert.IsNotNull(result);
         Assert.AreEqual(order.Id, result.Id);
-        Assert.AreEqual("Pending", result.Status);
+        Assert.AreEqual(OrderStatus.Pending, result.Status);
     }
 
     [TestMethod]
@@ -240,7 +240,7 @@ public sealed class OrderRepositoryTest
         {
             ClientId = 1,
             DeliveryType = DeliveryType.Express,
-            Status = "Pending",
+            Status = OrderStatus.Pending,
             Street = "18 de Julio",
             DoorNumber = "1234",
             Items = []
@@ -249,12 +249,12 @@ public sealed class OrderRepositoryTest
         _context!.Orders.Add(order);
         _context.SaveChanges();
 
-        order.Status = "Prepared";
+        order.Status = OrderStatus.Prepared;
 
         var repository = new OrderRepository(_context);
         var result = repository.Update(order);
 
         Assert.IsNotNull(result);
-        Assert.AreEqual("Prepared", result.Status);
+        Assert.AreEqual(OrderStatus.Prepared, result.Status);
     }
 }
