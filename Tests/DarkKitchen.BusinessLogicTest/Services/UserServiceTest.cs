@@ -302,4 +302,27 @@ public sealed class UserServiceTest
 
         Assert.AreEqual(1, result);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CreateStaffUser_WhenEmailAlreadyExists_ThrowsArgumentException()
+    {
+        var request = new CreateStaffUserRequestDTO
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@test.com",
+            Phone = "+59899123456",
+            Password = "Contrasena1!@#$%",
+            Role = UserRole.Administrative
+        };
+
+        var userRepositoryMock = new Mock<IUserRepository>();
+        userRepositoryMock.Setup(r => r.GetByEmail("juan@test.com"))
+                        .Returns(new User { Email = "juan@test.com" });
+
+        var userService = new UserService(userRepositoryMock.Object);
+
+        userService.CreateStaffUser(request);
+    }
 }
