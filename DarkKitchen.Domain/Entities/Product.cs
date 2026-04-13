@@ -39,9 +39,9 @@ public class Product
         get => _description;
         set
         {
-            if (value.Length < 20)
+            if (value.Length < 20 || value.Length > 500)
             {
-                throw new ArgumentException("La descripción debe tener minimo 20 caracteres.");
+                throw new ArgumentException("La descripción debe tener entre 20 y 500 caracteres.");
             }
 
             _description = value;
