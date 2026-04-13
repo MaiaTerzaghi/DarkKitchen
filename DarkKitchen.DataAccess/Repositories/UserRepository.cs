@@ -41,6 +41,6 @@ public class UserRepository(DarkKitchenContext context) : IUserRepository
 
     public List<User> GetUsers(string? name, string? lastName)
     {
-        throw new NotImplementedException();
+        return _context.Users.ToList();
     }
 }
