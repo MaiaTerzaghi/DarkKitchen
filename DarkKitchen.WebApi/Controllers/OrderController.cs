@@ -76,7 +76,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
         return Ok(result);
     }
 
-    [AuthorizeRoles(UserRole.Dispatcher)]
+    // [AuthorizeRoles(UserRole.Dispatcher)]
     [HttpPatch("{orderId}/not-delivered")]
     public IActionResult MarkAsNotDelivered(int orderId)
     {

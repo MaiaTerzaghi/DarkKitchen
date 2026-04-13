@@ -259,6 +259,11 @@ public class OrderService(
         var order = _orderRepository.GetOrderById(orderId)
             ?? throw new ArgumentException($"Pedido con id {orderId} no encontrado.");
 
+        if(order.Status != OrderStatus.OnTheWay)
+        {
+            throw new ArgumentException("El pedido solo puede marcarse como no entregado si está en camino.");
+        }
+
         order.Status = OrderStatus.NotDelivered;
         order.UpdatedAt = DateTime.Now;
 
