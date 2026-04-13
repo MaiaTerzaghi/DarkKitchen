@@ -64,6 +64,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
     [HttpPatch("{orderId}/cancel")]
     public IActionResult CancelOrder(int orderId)
     {
-        throw new NotImplementedException();
+        var response = _orderService.CancelOrder(orderId);
+        return Ok(response);
     }
 }
