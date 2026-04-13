@@ -67,4 +67,12 @@ public class OrderController(IOrderService orderService) : ControllerBase
         var response = _orderService.CancelOrder(orderId);
         return Ok(response);
     }
+
+    // [AuthorizeRoles(UserRole.Dispatcher)]
+    [HttpPatch("{id}/OnTheWay")]
+    public IActionResult MarkAsOnTheWay(int id)
+    {
+        var result = _orderService.MarkAsOnTheWay(id);
+        return Ok(result);
+    }
 }

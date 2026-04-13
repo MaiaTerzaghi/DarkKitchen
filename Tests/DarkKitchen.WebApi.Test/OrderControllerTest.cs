@@ -222,4 +222,27 @@ public class OrderControllerTest
         Assert.AreEqual("Cancelled", response.Status);
         Assert.AreEqual(orderId, response.OrderId);
     }
+
+    [TestMethod]
+    public void MarkAsOnTheWay_ValidOrderId_ReturnsOk()
+    {
+        var expectedResponse = new UpdateOrderStatusResponseDTO
+        {
+            OrderId = 1,
+            Status = "OnTheWay",
+            UpdatedAt = DateTime.Now
+        };
+
+        _orderServiceMock
+            .Setup(s => s.MarkAsOnTheWay(1))
+            .Returns(expectedResponse);
+
+        var result = _controller.MarkAsOnTheWay(1);
+        var okResult = (OkObjectResult)result;
+        var response = (UpdateOrderStatusResponseDTO)okResult.Value!;
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        Assert.AreEqual("OnTheWay", response.Status);
+        Assert.AreEqual(1, response.OrderId);
+    }
 }
