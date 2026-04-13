@@ -530,4 +530,28 @@ public class OrderServiceTest
 
         _service.MarkAsOnTheWay(1);
     }
+
+    [TestMethod]
+    public void MarkAsOnTheWay_PreparedOrder_ReturnsOnTheWay()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            Status = OrderStatus.Prepared
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        _orderRepositoryMock
+            .Setup(r => r.Update(It.IsAny<Order>()))
+            .Returns(order);
+
+        var result = _service.MarkAsOnTheWay(1);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.OrderId);
+        Assert.AreEqual("OnTheWay", result.Status);
+    }
 }
