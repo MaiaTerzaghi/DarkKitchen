@@ -589,4 +589,21 @@ public class OrderServiceTest
 
         _service.MarkAsNotDelivered(99);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void MarkAsNotDelivered_OrderNotOnTheWay_ThrowsException()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            Status = OrderStatus.Pending
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        _service.MarkAsNotDelivered(1);
+    }
 }
