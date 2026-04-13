@@ -4,6 +4,7 @@ public class Product
 {
     public int Id { get; set; }
     private string _code = string.Empty;
+    private string _name = string.Empty;
     public string Code
     {
         get => _code;
@@ -18,7 +19,20 @@ public class Product
         }
     }
 
-    public string Name { get; set; } = string.Empty;
+    public string Name
+    {
+        get => _name;
+        set
+        {
+            if (value.Length < 10)
+            {
+                throw new ArgumentException("El nombre debe tener minimo 10 caracteres.");
+            }
+
+            _name = value;
+        }
+    }
+
     public string Description { get; set; } = string.Empty;
     public double Price { get; set; }
     public string CommercialLine { get; set; } = string.Empty;
