@@ -11,4 +11,5 @@ public interface IOrderService
     OrderDetailResponseDTO GetOrderDetail(int orderId);
     UpdateOrderStatusResponseDTO DeliverOrder(int orderId);
     UpdateOrderStatusResponseDTO CancelOrder(int orderId);
+    UpdateOrderStatusResponseDTO MarkAsOnTheWay(int orderId);
 }
