@@ -9,9 +9,9 @@ public class Product
         get => _code;
         set
         {
-            if (value.Length < 5)
+            if (value.Length < 5 || value.Length > 20)
             {
-                throw new ArgumentException("El código debe tener minimo 5.");
+                throw new ArgumentException("El código debe tener entre 5 y 20 caracteres.");
             }
 
             _code = value;
