@@ -29,8 +29,8 @@ public sealed class ProductRepositoryTest
     [TestMethod]
     public void GetAll_WhenNoFilters_ReturnsAllProducts()
     {
-        _context!.Products.Add(new Product { Code = "P0001", Name = "Pizza Napolitana", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza", Price = 100.0 });
-        _context.Products.Add(new Product { Code = "P0002", Name = "Pasta bolognese", Category = "Pastas", CommercialLine = "Minutas", Description = "Rica pasta", Price = 80.0 });
+        _context!.Products.Add(new Product { Code = "P0001", Name = "Pizza Napolitana", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza napolitana con tomate fresco", Price = 100.0 });
+        _context.Products.Add(new Product { Code = "P0002", Name = "Pasta bolognese", Category = "Pastas", CommercialLine = "Minutas", Description = "Rica pasta bolognese con carne fresca", Price = 80.0 });
         _context.SaveChanges();
 
         var repository = new ProductRepository(_context);
@@ -42,8 +42,8 @@ public sealed class ProductRepositoryTest
     [TestMethod]
     public void GetAll_WhenFilterByName_ReturnsFilteredProducts()
     {
-        _context!.Products.Add(new Product { Code = "P0001", Name = "Pizza Napolitana", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza", Price = 100.0 });
-        _context.Products.Add(new Product { Code = "P0002", Name = "Pasta bolognese", Category = "Pastas", CommercialLine = "Minutas", Description = "Rica pasta", Price = 80.0 });
+        _context!.Products.Add(new Product { Code = "P0001", Name = "Pizza Napolitana", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza napolitana con tomate fresco", Price = 100.0 });
+        _context.Products.Add(new Product { Code = "P0002", Name = "Pasta bolognese", Category = "Pastas", CommercialLine = "Minutas", Description = "Rica pasta bolognese con carne fresca", Price = 80.0 });
         _context.SaveChanges();
 
         var repository = new ProductRepository(_context);
@@ -56,8 +56,8 @@ public sealed class ProductRepositoryTest
     [TestMethod]
     public void GetAll_WhenFilterByCategory_ReturnsFilteredProducts()
     {
-        _context!.Products.Add(new Product { Code = "P0001", Name = "Pizza Napolitana", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza", Price = 100.0 });
-        _context.Products.Add(new Product { Code = "P0002", Name = "Pasta bolognese", Category = "Pastas", CommercialLine = "Minutas", Description = "Rica pasta", Price = 80.0 });
+        _context!.Products.Add(new Product { Code = "P0001", Name = "Pizza Napolitana", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza napolitana con tomate fresco", Price = 100.0 });
+        _context.Products.Add(new Product { Code = "P0002", Name = "Pasta bolognese", Category = "Pastas", CommercialLine = "Minutas", Description = "Rica pasta bolognese con carne fresca", Price = 80.0 });
         _context.SaveChanges();
 
         var repository = new ProductRepository(_context);
@@ -70,8 +70,8 @@ public sealed class ProductRepositoryTest
     [TestMethod]
     public void GetAll_WhenFilterByLine_ReturnsFilteredProducts()
     {
-        _context!.Products.Add(new Product { Code = "P0001", Name = "Pizza Napolitana", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza", Price = 100.0 });
-        _context.Products.Add(new Product { Code = "P0002", Name = "Pasta bolognese", Category = "Pastas", CommercialLine = "Desayunos", Description = "Rica pasta", Price = 80.0 });
+        _context!.Products.Add(new Product { Code = "P0001", Name = "Pizza Napolitana", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza napolitana con tomate fresco", Price = 100.0 });
+        _context.Products.Add(new Product { Code = "P0002", Name = "Pasta bolognese", Category = "Pastas", CommercialLine = "Desayunos", Description = "Rica pasta bolognese con carne fresca", Price = 80.0 });
         _context.SaveChanges();
 
         var repository = new ProductRepository(_context);
@@ -90,7 +90,7 @@ public sealed class ProductRepositoryTest
             Name = "Pizza Napolitana",
             Category = "Fritos",
             CommercialLine = "Minutas",
-            Description = "Rica pizza",
+            Description = "Rica pizza napolitana con tomate fresco",
             Price = 100.0
         };
 

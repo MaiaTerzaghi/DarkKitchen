@@ -114,7 +114,7 @@ public sealed class PromotionRepositoryTest
         {
             Code = "P0001",
             Name = "Pizza Napolitana",
-            Description = "Rica pizza",
+            Description = "Rica pizza napolitana con tomate fresco",
             CommercialLine = "Minutas",
             Category = "Fritos",
             Price = 100.0
