@@ -6,6 +6,7 @@ public class Product
     private string _code = string.Empty;
     private string _name = string.Empty;
     private string _description = string.Empty;
+    private string _commercialLine = string.Empty;
     public string Code
     {
         get => _code;
@@ -49,7 +50,20 @@ public class Product
     }
 
     public double Price { get; set; }
-    public string CommercialLine { get; set; } = string.Empty;
+    public string CommercialLine
+    {
+        get => _commercialLine;
+        set
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                throw new ArgumentException("La línea comercial no puede estar vacía.");
+            }
+
+            _commercialLine = value;
+        }
+    }
+
     public string Category { get; set; } = string.Empty;
     public bool IsActive { get; set; } = true;
     public string Images { get; set; } = string.Empty;
