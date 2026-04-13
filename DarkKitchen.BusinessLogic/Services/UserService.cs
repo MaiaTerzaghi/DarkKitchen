@@ -1,4 +1,5 @@
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 namespace DarkKitchen.BusinessLogic.Services;
@@ -16,5 +17,10 @@ public class UserService(IUserRepository userRepository) : IUserService
         }
 
         return _userRepository.AddUser(user);
+    }
+
+    public int CreateStaffUser(CreateStaffUserRequestDTO request)
+    {
+        throw new NotImplementedException();
     }
 }

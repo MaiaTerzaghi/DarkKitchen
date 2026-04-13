@@ -2,6 +2,7 @@ using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IBusinessLogic;
+using DarkKitchen.WebApi.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DarkKitchen.WebApi.Controllers;
@@ -30,5 +31,13 @@ public class UserController(IUserService userService) : ControllerBase
         var id = _userService.Register(user);
 
         return CreatedAtAction(nameof(Register), new { id }, new { id });
+    }
+
+    [AuthorizeRoles(UserRole.Administrative)]
+    [HttpPost]
+    public IActionResult CreateStaffUser(CreateStaffUserRequestDTO request)
+    {
+        var id = _userService.CreateStaffUser(request);
+        return CreatedAtAction(nameof(CreateStaffUser), new { id }, new { id });
     }
 }
