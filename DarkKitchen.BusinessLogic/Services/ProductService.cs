@@ -14,8 +14,30 @@ public class ProductService(IProductRepository productRepository) : IProductServ
         return _productRepository.GetAll(name, category, line);
     }
 
-    public ProductResponseDTO CreateProduct(CreateProductRequestDTO request)
+        public ProductResponseDTO CreateProduct(CreateProductRequestDTO request)
     {
-        throw new NotImplementedException();
+        var product = new Product
+        {
+            Code = request.Code,
+            Name = request.Name,
+            Description = request.Description,
+            Price = request.Price,
+            CommercialLine = request.CommercialLine,
+            Category = request.Category,
+            Images = request.Images,
+            IsActive = true
+        };
+
+        var saved = _productRepository.Add(product);
+
+        return new ProductResponseDTO
+        {
+            Code = saved.Code,
+            Name = saved.Name,
+            Price = saved.Price,
+            CommercialLine = saved.CommercialLine,
+            Category = saved.Category,
+            Images = saved.Images
+        };
     }
 }
