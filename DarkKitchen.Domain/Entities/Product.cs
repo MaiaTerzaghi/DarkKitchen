@@ -9,6 +9,7 @@ public class Product
     private string _commercialLine = string.Empty;
     private string _category = string.Empty;
     private double _price;
+    private string _images = string.Empty;
     public string Code
     {
         get => _code;
@@ -94,5 +95,17 @@ public class Product
     }
 
     public bool IsActive { get; set; } = true;
-    public string Images { get; set; } = string.Empty;
+    public string Images
+    {
+        get => _images;
+        set
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                throw new ArgumentException("Se requiere al menos una imagen.");
+            }
+
+            _images = value;
+        }
+    }
 }
