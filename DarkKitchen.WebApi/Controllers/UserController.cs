@@ -40,4 +40,12 @@ public class UserController(IUserService userService) : ControllerBase
         var id = _userService.CreateStaffUser(request);
         return CreatedAtAction(nameof(CreateStaffUser), new { id }, new { id });
     }
+
+    [AuthorizeRoles(UserRole.Administrative)]
+    [HttpGet]
+    public IActionResult GetUsers([FromQuery] string? name, [FromQuery] string? lastName)
+    {
+        var users = _userService.GetUsers(name, lastName);
+        return Ok(users);
+    }
 }
