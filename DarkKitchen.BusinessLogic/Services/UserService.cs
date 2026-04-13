@@ -1,6 +1,7 @@
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
+using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 namespace DarkKitchen.BusinessLogic.Services;
@@ -44,5 +45,10 @@ public class UserService(IUserRepository userRepository) : IUserService
             };
 
         return _userRepository.AddUser(user);
+    }
+
+    public List<UserResponseDTO> GetUsers(string? name, string? lastName)
+    {
+        throw new NotImplementedException();
     }
 }
