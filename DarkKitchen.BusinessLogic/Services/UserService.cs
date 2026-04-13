@@ -1,4 +1,5 @@
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
@@ -25,6 +26,11 @@ public class UserService(IUserRepository userRepository) : IUserService
         if(existingUser != null)
         {
             throw new ArgumentException("El mail ya está registrado");
+        }
+
+        if(request.Role != UserRole.Administrative && request.Role != UserRole.Dispatcher)
+        {
+            throw new ArgumentException("El rol debe ser Administrativo o Preparador");
         }
 
         var user = new User
