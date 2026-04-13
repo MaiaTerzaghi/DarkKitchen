@@ -241,6 +241,16 @@ public class OrderService(
             throw new ArgumentException("El pedido solo puede ponerse en camino si está preparado.");
         }
 
-        throw new NotImplementedException();
+        order.Status = OrderStatus.OnTheWay;
+        order.UpdatedAt = DateTime.Now;
+
+        _orderRepository.Update(order);
+
+        return new UpdateOrderStatusResponseDTO
+        {
+            OrderId = order.Id,
+            Status = order.Status.ToString(),
+            UpdatedAt = order.UpdatedAt
+        };
     }
 }
