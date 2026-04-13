@@ -8,4 +8,5 @@ public interface IUserRepository
     void AddSession(Session session);
     Session? GetSessionByToken(string token);
     int AddUser(User user);
+    List<User> GetUsers(string? name, string? lastName);
 }

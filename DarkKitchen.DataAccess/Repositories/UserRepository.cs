@@ -38,4 +38,9 @@ public class UserRepository(DarkKitchenContext context) : IUserRepository
         _context.SaveChanges();
         return user.Id;
     }
+
+    public List<User> GetUsers(string? name, string? lastName)
+    {
+        throw new NotImplementedException();
+    }
 }

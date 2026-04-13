@@ -348,4 +348,23 @@ public sealed class UserServiceTest
 
         userService.CreateStaffUser(request);
     }
+
+    [TestMethod]
+    public void GetUsers_WhenCalled_ReturnsUsers()
+    {
+        var users = new List<User>
+        {
+            new() { Id = 1, Name = "Juan", LastName = "Perez", Email = "juan@test.com", Phone = "+59899123456", Role = UserRole.Administrative }
+        };
+
+        var userRepositoryMock = new Mock<IUserRepository>();
+        userRepositoryMock.Setup(r => r.GetUsers(It.IsAny<string?>(), It.IsAny<string?>()))
+                        .Returns(users);
+
+        var userService = new UserService(userRepositoryMock.Object);
+
+        var result = userService.GetUsers(null, null);
+
+        Assert.AreEqual(1, result.Count);
+    }
 }
