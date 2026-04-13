@@ -103,4 +103,26 @@ public sealed class ProductRepositoryTest
         Assert.IsNotNull(result);
         Assert.AreEqual(product.Id, result.Id);
     }
+
+    [TestMethod]
+    public void Add_WhenValidProduct_ReturnsSavedProduct()
+    {
+        var product = new Product
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = "pizza.jpg"
+        };
+
+        var repository = new ProductRepository(_context!);
+        var result = repository.Add(product);
+
+        Assert.IsNotNull(result);
+        Assert.AreNotEqual(0, result.Id);
+        Assert.AreEqual("P0001", result.Code);
+    }
 }
