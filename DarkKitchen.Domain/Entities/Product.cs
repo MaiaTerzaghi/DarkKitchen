@@ -105,6 +105,11 @@ public class Product
                 throw new ArgumentException("Se requiere al menos una imagen.");
             }
 
+            if (value.Split(',').Length > 3)
+            {
+                throw new ArgumentException("Se permiten hasta 3 imágenes.");
+            }
+
             _images = value;
         }
     }
