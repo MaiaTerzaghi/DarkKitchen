@@ -277,4 +277,28 @@ public sealed class UserServiceTest
 
         userService.Register(user);
     }
+
+    [TestMethod]
+    public void CreateStaffUser_WhenValidData_ReturnsId()
+    {
+        var request = new CreateStaffUserRequestDTO
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@test.com",
+            Phone = "+59899123456",
+            Password = "Contrasena1!@#$%",
+            Role = UserRole.Administrative
+        };
+
+        var userRepositoryMock = new Mock<IUserRepository>();
+        userRepositoryMock.Setup(r => r.AddUser(It.IsAny<User>()))
+                        .Returns(1);
+
+        var userService = new UserService(userRepositoryMock.Object);
+
+        var result = userService.CreateStaffUser(request);
+
+        Assert.AreEqual(1, result);
+    }
 }
