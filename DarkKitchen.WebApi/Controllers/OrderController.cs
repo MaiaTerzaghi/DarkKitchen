@@ -80,6 +80,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
     [HttpPatch("{orderId}/not-delivered")]
     public IActionResult MarkAsNotDelivered(int orderId)
     {
-        throw new NotImplementedException();
+        var response = _orderService.MarkAsNotDelivered(orderId);
+        return Ok(response);
     }
 }
