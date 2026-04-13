@@ -24,9 +24,9 @@ public class Product
         get => _name;
         set
         {
-            if (value.Length < 10)
+            if (value.Length < 10 || value.Length > 50)
             {
-                throw new ArgumentException("El nombre debe tener minimo 10 caracteres.");
+                throw new ArgumentException("El nombre debe tener entre 10 y 50 caracteres.");
             }
 
             _name = value;
