@@ -393,4 +393,61 @@ public class OrderServiceTest
         Assert.AreEqual("Pending", result.Status);
         Assert.AreEqual(1, result.Items.Count);
     }
+
+    [TestMethod]
+    public void DeliverOrder_WhenOrderIsOnTheWay_ReturnsDelivered()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            ClientId = 1,
+            Status = OrderStatus.OnTheWay,
+            DeliveryType = DeliveryType.Express,
+            Items = []
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        _orderRepositoryMock
+            .Setup(r => r.Update(It.IsAny<Order>()))
+            .Returns(order);
+
+        var result = _service.DeliverOrder(1);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual("Delivered", result.Status);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void DeliverOrder_WhenOrderNotFound_ThrowsException()
+    {
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(It.IsAny<int>()))
+            .Returns((Order?)null);
+
+        _service.DeliverOrder(999);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void DeliverOrder_WhenOrderIsNotOnTheWay_ThrowsException()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            ClientId = 1,
+            Status = OrderStatus.Pending,
+            DeliveryType = DeliveryType.Express,
+            Items = []
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        _service.DeliverOrder(1);
+    }
 }

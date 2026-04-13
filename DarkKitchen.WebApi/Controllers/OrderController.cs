@@ -51,4 +51,12 @@ public class OrderController(IOrderService orderService) : ControllerBase
         var order = _orderService.GetOrderDetail(id);
         return Ok(order);
     }
+
+    [AuthorizeRoles(UserRole.Dispatcher)]
+    [HttpPatch("{id}/deliver")]
+    public IActionResult DeliverOrder(int id)
+    {
+        var result = _orderService.DeliverOrder(id);
+        return Ok(result);
+    }
 }

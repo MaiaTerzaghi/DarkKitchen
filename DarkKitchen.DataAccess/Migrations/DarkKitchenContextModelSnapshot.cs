@@ -59,7 +59,7 @@ namespace DarkKitchen.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("DarkKitchen.Domain.Entities.OrderItem", b =>
@@ -85,7 +85,7 @@ namespace DarkKitchen.DataAccess.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderItem");
+                    b.ToTable("OrderItem", (string)null);
                 });
 
             modelBuilder.Entity("DarkKitchen.Domain.Entities.Product", b =>
@@ -133,7 +133,7 @@ namespace DarkKitchen.DataAccess.Migrations
 
                     b.HasIndex("PromotionId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("DarkKitchen.Domain.Entities.Promotion", b =>
@@ -163,7 +163,7 @@ namespace DarkKitchen.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Promotions");
+                    b.ToTable("Promotions", (string)null);
                 });
 
             modelBuilder.Entity("DarkKitchen.Domain.Entities.Session", b =>
@@ -183,7 +183,7 @@ namespace DarkKitchen.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Sessions");
+                    b.ToTable("Sessions", (string)null);
                 });
 
             modelBuilder.Entity("DarkKitchen.Domain.Entities.User", b =>
@@ -219,7 +219,7 @@ namespace DarkKitchen.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("DarkKitchen.Domain.Entities.OrderItem", b =>

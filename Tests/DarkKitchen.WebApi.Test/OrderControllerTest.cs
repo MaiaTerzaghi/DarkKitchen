@@ -178,4 +178,23 @@ public class OrderControllerTest
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
     }
+
+    [TestMethod]
+    public void DeliverOrder_WhenCalled_ReturnsOk()
+    {
+        var response = new UpdateOrderStatusResponseDTO
+        {
+            OrderId = 1,
+            Status = "Delivered",
+            UpdatedAt = DateTime.Now
+        };
+
+        _orderServiceMock
+            .Setup(s => s.DeliverOrder(It.IsAny<int>()))
+            .Returns(response);
+
+        var result = _controller.DeliverOrder(1);
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+    }
 }

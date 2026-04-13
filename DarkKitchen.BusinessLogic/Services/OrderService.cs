@@ -185,4 +185,26 @@ public class OrderService(
             }).ToList()
         };
     }
+
+    public UpdateOrderStatusResponseDTO DeliverOrder(int orderId)
+    {
+        var order = _orderRepository.GetOrderById(orderId)
+        ?? throw new ArgumentException($"Pedido con id {orderId} no encontrado.");
+
+        if(order.Status != OrderStatus.OnTheWay)
+        {
+            throw new ArgumentException("El pedido solo puede entregarse si está en camino.");
+        }
+
+        order.Status = OrderStatus.Delivered;
+        order.UpdatedAt = DateTime.Now;
+        _orderRepository.Update(order);
+
+        return new UpdateOrderStatusResponseDTO
+        {
+            OrderId = order.Id,
+            Status = order.Status.ToString(),
+            UpdatedAt = order.UpdatedAt
+        };
+    }
 }
