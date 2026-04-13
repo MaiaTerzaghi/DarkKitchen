@@ -325,4 +325,27 @@ public sealed class UserServiceTest
 
         userService.CreateStaffUser(request);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CreateStaffUser_WhenRoleIsClient_ThrowsArgumentException()
+    {
+        var request = new CreateStaffUserRequestDTO
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@test.com",
+            Phone = "+59899123456",
+            Password = "Contrasena1!@#$%",
+            Role = UserRole.Client
+        };
+
+        var userRepositoryMock = new Mock<IUserRepository>();
+        userRepositoryMock.Setup(r => r.GetByEmail("juan@test.com"))
+                        .Returns((User?)null);
+
+        var userService = new UserService(userRepositoryMock.Object);
+
+        userService.CreateStaffUser(request);
+    }
 }
