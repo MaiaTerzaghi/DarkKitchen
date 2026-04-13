@@ -554,4 +554,28 @@ public class OrderServiceTest
         Assert.AreEqual(1, result.OrderId);
         Assert.AreEqual("OnTheWay", result.Status);
     }
+
+    [TestMethod]
+    public void MarkAsNotDelivered_OnTheWayOrder_ReturnsUpdatedStatus()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            Status = OrderStatus.OnTheWay
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        _orderRepositoryMock
+            .Setup(r => r.Update(It.IsAny<Order>()))
+            .Returns(order);
+
+        var result = _service.MarkAsNotDelivered(1);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.OrderId);
+        Assert.AreEqual("NotDelivered", result.Status);
+    }
 }
