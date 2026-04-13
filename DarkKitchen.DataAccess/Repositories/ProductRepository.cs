@@ -37,6 +37,8 @@ public class ProductRepository(DarkKitchenContext context) : IProductRepository
 
     public Product Add(Product product)
     {
-        throw new NotImplementedException();
+        _context.Products.Add(product);
+        _context.SaveChanges();
+        return product;
     }
 }
