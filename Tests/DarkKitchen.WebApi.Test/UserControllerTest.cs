@@ -1,4 +1,5 @@
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Controllers;
@@ -51,5 +52,28 @@ public sealed class UserControllerTest
         };
 
         controller.Register(request);
+    }
+
+    [TestMethod]
+    public void CreateStaffUser_WhenValidData_ReturnsCreated()
+    {
+        var userServiceMock = new Mock<IUserService>();
+        userServiceMock.Setup(s => s.CreateStaffUser(It.IsAny<CreateStaffUserRequestDTO>()))
+               .Returns(1);
+
+        var controller = new UserController(userServiceMock.Object);
+        var request = new CreateStaffUserRequestDTO
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@test.com",
+            Phone = "+59899123456",
+            Password = "Contrasena1!@#$%",
+            Role = UserRole.Administrative
+        };
+
+        var result = controller.CreateStaffUser(request);
+
+        Assert.IsInstanceOfType(result, typeof(CreatedAtActionResult));
     }
 }
