@@ -502,4 +502,15 @@ public class OrderServiceTest
 
         _service.CancelOrder(1);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void MarkAsOnTheWay_OrderNotFound_ThrowsException()
+    {
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(99))
+            .Returns((Order)null!);
+
+        _service.MarkAsOnTheWay(99);
+    }
 }
