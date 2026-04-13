@@ -371,7 +371,7 @@ public class OrderServiceTest
     [TestMethod]
     public void GetOrderDetail_WhenOrderExists_ReturnsDetail()
     {
-        var product = new Product { Id = 1, Name = "Pizza", Price = 100.0 };
+        var product = new Product { Id = 1, Name = "Pizza napolitana", Price = 100.0 };
         var order = new Order
         {
             Id = 1,

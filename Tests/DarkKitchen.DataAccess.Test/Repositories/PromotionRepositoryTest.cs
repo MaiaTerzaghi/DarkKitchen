@@ -113,7 +113,7 @@ public sealed class PromotionRepositoryTest
         var product1 = new Product
         {
             Code = "P0001",
-            Name = "Pizza",
+            Name = "Pizza Napolitana",
             Description = "Rica pizza",
             CommercialLine = "Minutas",
             Category = "Fritos",
@@ -144,7 +144,7 @@ public sealed class PromotionRepositoryTest
         _context.SaveChanges();
 
         var repository = new PromotionRepository(_context);
-        var result = repository.GetActivePromotions(null, null, "Pizza");
+        var result = repository.GetActivePromotions(null, null, "Pizza Napolitana");
 
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("Black Friday", result[0].Name);

@@ -16,8 +16,8 @@ public sealed class ProductControllerTest
     {
         var products = new List<Product>
         {
-            new Product { Id = 1, Name = "Pizza", Category = "Fritos", CommercialLine = "Minutas", Images = "im1.jpg" },
-            new Product { Id = 2, Name = "Pasta", Category = "Pastas", CommercialLine = "Minutas",  Images = "im2.jpg" },
+            new Product { Id = 1, Name = "Pizza Napolitana", Category = "Fritos", CommercialLine = "Minutas", Images = "im1.jpg" },
+            new Product { Id = 2, Name = "Pasta bolognese", Category = "Pastas", CommercialLine = "Minutas",  Images = "im2.jpg" },
         };
 
         var productServiceMock = new Mock<IProductService>();
@@ -39,7 +39,7 @@ public sealed class ProductControllerTest
         var dto = new ProductResponseDTO
         {
             Code = "P001",
-            Name = "Pizza",
+            Name = "Pizza Napolitana",
             Price = 100,
             CommercialLine = "Minutas",
             Category = "Fritos",
@@ -47,7 +47,7 @@ public sealed class ProductControllerTest
         };
 
         Assert.AreEqual("P001", dto.Code);
-        Assert.AreEqual("Pizza", dto.Name);
+        Assert.AreEqual("Pizza Napolitana", dto.Name);
         Assert.AreEqual(100, dto.Price);
     }
 

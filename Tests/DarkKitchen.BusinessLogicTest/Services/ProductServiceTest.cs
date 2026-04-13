@@ -14,8 +14,8 @@ public sealed class ProductServiceTest
     {
         var products = new List<Product>
         {
-            new Product { Id = 1, Name = "Pizza" },
-            new Product { Id = 2, Name = "Pasta" },
+            new Product { Id = 1, Name = "Pizza Napolitana" },
+            new Product { Id = 2, Name = "Pasta Bolognese" },
         };
 
         var productRepositoryMock = new Mock<IProductRepository>();
@@ -34,19 +34,19 @@ public sealed class ProductServiceTest
     {
         var products = new List<Product>
         {
-            new Product { Id = 1, Name = "Pizza" },
+            new Product { Id = 1, Name = "Pizza Napolitana" },
         };
 
         var productRepositoryMock = new Mock<IProductRepository>();
-        productRepositoryMock.Setup(r => r.GetAll("Pizza", null, null))
+        productRepositoryMock.Setup(r => r.GetAll("Pizza Napolitana", null, null))
                              .Returns(products);
 
         var productService = new ProductService(productRepositoryMock.Object);
 
-        var result = productService.GetAll("Pizza", null, null);
+        var result = productService.GetAll("Pizza Napolitana", null, null);
 
         Assert.AreEqual(1, result.Count);
-        Assert.AreEqual("Pizza", result[0].Name);
+        Assert.AreEqual("Pizza Napolitana", result[0].Name);
     }
 
     [TestMethod]

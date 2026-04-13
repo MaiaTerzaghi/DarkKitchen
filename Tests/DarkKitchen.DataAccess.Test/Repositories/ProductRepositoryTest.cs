@@ -29,8 +29,8 @@ public sealed class ProductRepositoryTest
     [TestMethod]
     public void GetAll_WhenNoFilters_ReturnsAllProducts()
     {
-        _context!.Products.Add(new Product { Code = "P0001", Name = "Pizza", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza", Price = 100.0 });
-        _context.Products.Add(new Product { Code = "P0002", Name = "Pasta", Category = "Pastas", CommercialLine = "Minutas", Description = "Rica pasta", Price = 80.0 });
+        _context!.Products.Add(new Product { Code = "P0001", Name = "Pizza Napolitana", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza", Price = 100.0 });
+        _context.Products.Add(new Product { Code = "P0002", Name = "Pasta bolognese", Category = "Pastas", CommercialLine = "Minutas", Description = "Rica pasta", Price = 80.0 });
         _context.SaveChanges();
 
         var repository = new ProductRepository(_context);
@@ -42,43 +42,43 @@ public sealed class ProductRepositoryTest
     [TestMethod]
     public void GetAll_WhenFilterByName_ReturnsFilteredProducts()
     {
-        _context!.Products.Add(new Product { Code = "P0001", Name = "Pizza", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza", Price = 100.0 });
-        _context.Products.Add(new Product { Code = "P0002", Name = "Pasta", Category = "Pastas", CommercialLine = "Minutas", Description = "Rica pasta", Price = 80.0 });
+        _context!.Products.Add(new Product { Code = "P0001", Name = "Pizza Napolitana", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza", Price = 100.0 });
+        _context.Products.Add(new Product { Code = "P0002", Name = "Pasta bolognese", Category = "Pastas", CommercialLine = "Minutas", Description = "Rica pasta", Price = 80.0 });
         _context.SaveChanges();
 
         var repository = new ProductRepository(_context);
         var result = repository.GetAll("Pizza", null, null);
 
         Assert.AreEqual(1, result.Count);
-        Assert.AreEqual("Pizza", result[0].Name);
+        Assert.AreEqual("Pizza Napolitana", result[0].Name);
     }
 
     [TestMethod]
     public void GetAll_WhenFilterByCategory_ReturnsFilteredProducts()
     {
-        _context!.Products.Add(new Product { Code = "P0001", Name = "Pizza", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza", Price = 100.0 });
-        _context.Products.Add(new Product { Code = "P0002", Name = "Pasta", Category = "Pastas", CommercialLine = "Minutas", Description = "Rica pasta", Price = 80.0 });
+        _context!.Products.Add(new Product { Code = "P0001", Name = "Pizza Napolitana", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza", Price = 100.0 });
+        _context.Products.Add(new Product { Code = "P0002", Name = "Pasta bolognese", Category = "Pastas", CommercialLine = "Minutas", Description = "Rica pasta", Price = 80.0 });
         _context.SaveChanges();
 
         var repository = new ProductRepository(_context);
         var result = repository.GetAll(null, "Fritos", null);
 
         Assert.AreEqual(1, result.Count);
-        Assert.AreEqual("Pizza", result[0].Name);
+        Assert.AreEqual("Pizza Napolitana", result[0].Name);
     }
 
     [TestMethod]
     public void GetAll_WhenFilterByLine_ReturnsFilteredProducts()
     {
-        _context!.Products.Add(new Product { Code = "P0001", Name = "Pizza", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza", Price = 100.0 });
-        _context.Products.Add(new Product { Code = "P0002", Name = "Pasta", Category = "Pastas", CommercialLine = "Desayunos", Description = "Rica pasta", Price = 80.0 });
+        _context!.Products.Add(new Product { Code = "P0001", Name = "Pizza Napolitana", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza", Price = 100.0 });
+        _context.Products.Add(new Product { Code = "P0002", Name = "Pasta bolognese", Category = "Pastas", CommercialLine = "Desayunos", Description = "Rica pasta", Price = 80.0 });
         _context.SaveChanges();
 
         var repository = new ProductRepository(_context);
         var result = repository.GetAll(null, null, "Minutas");
 
         Assert.AreEqual(1, result.Count);
-        Assert.AreEqual("Pizza", result[0].Name);
+        Assert.AreEqual("Pizza Napolitana", result[0].Name);
     }
 
     [TestMethod]
@@ -87,7 +87,7 @@ public sealed class ProductRepositoryTest
         var product = new Product
         {
             Code = "P0001",
-            Name = "Pizza",
+            Name = "Pizza Napolitana",
             Category = "Fritos",
             CommercialLine = "Minutas",
             Description = "Rica pizza",
