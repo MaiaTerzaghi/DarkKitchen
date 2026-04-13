@@ -223,4 +223,27 @@ public sealed class ProductServiceTest
         var productService = new ProductService(productRepositoryMock.Object);
         productService.CreateProduct(request);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CreateProduct_WhenCommercialLineIsEmpty_ThrowsException()
+    {
+        var request = new CreateProductRequestDTO
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = string.Empty,
+            Category = "Fritos",
+            Images = "pizza.jpg"
+        };
+
+        var productRepositoryMock = new Mock<IProductRepository>();
+        productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
+                            .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
+
+        var productService = new ProductService(productRepositoryMock.Object);
+        productService.CreateProduct(request);
+    }
 }
