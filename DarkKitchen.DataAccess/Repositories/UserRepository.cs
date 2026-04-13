@@ -41,6 +41,13 @@ public class UserRepository(DarkKitchenContext context) : IUserRepository
 
     public List<User> GetUsers(string? name, string? lastName)
     {
-        return _context.Users.ToList();
+        var users = _context.Users.ToList();
+
+        if(name != null)
+        {
+            users = users.Where(u => u.Name.Contains(name)).ToList();
+        }
+
+        return users;
     }
 }
