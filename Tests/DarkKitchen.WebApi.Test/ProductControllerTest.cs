@@ -62,4 +62,38 @@ public sealed class ProductControllerTest
 
         controller.GetAll(null, null, null);
     }
+
+    [TestMethod]
+    public void CreateProduct_WhenCalled_ReturnsCreated()
+    {
+        var request = new CreateProductRequestDTO
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = "pizza.jpg"
+        };
+
+        var response = new ProductResponseDTO
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = "pizza.jpg"
+        };
+
+        var productServiceMock = new Mock<IProductService>();
+        productServiceMock.Setup(s => s.CreateProduct(It.IsAny<CreateProductRequestDTO>()))
+                        .Returns(response);
+
+        var controller = new ProductController(productServiceMock.Object);
+        var result = controller.CreateProduct(request);
+
+        Assert.IsInstanceOfType(result, typeof(CreatedAtActionResult));
+    }
 }
