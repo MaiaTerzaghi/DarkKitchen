@@ -578,4 +578,15 @@ public class OrderServiceTest
         Assert.AreEqual(1, result.OrderId);
         Assert.AreEqual("NotDelivered", result.Status);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void MarkAsNotDelivered_OrderNotFound_ThrowsException()
+    {
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(99))
+            .Returns((Order)null!);
+
+        _service.MarkAsNotDelivered(99);
+    }
 }
