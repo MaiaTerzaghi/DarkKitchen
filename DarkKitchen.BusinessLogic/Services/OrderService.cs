@@ -207,4 +207,27 @@ public class OrderService(
             UpdatedAt = order.UpdatedAt
         };
     }
+
+    public UpdateOrderStatusResponseDTO CancelOrder(int orderId)
+    {
+        var order = _orderRepository.GetOrderById(orderId)
+            ?? throw new ArgumentException($"Pedido con id {orderId} no encontrado.");
+
+        if(order.Status != OrderStatus.Pending)
+        {
+            throw new ArgumentException("El pedido solo puede cancelarse si está pendiente.");
+        }
+
+        order.Status = OrderStatus.Cancelled;
+        order.UpdatedAt = DateTime.Now;
+
+        _orderRepository.Update(order);
+
+        return new UpdateOrderStatusResponseDTO
+        {
+            OrderId = order.Id,
+            Status = order.Status.ToString(),
+            UpdatedAt = order.UpdatedAt
+        };
+    }
 }
