@@ -21,6 +21,16 @@ public class UserService(IUserRepository userRepository) : IUserService
 
     public int CreateStaffUser(CreateStaffUserRequestDTO request)
     {
-        throw new NotImplementedException();
+        var user = new User
+            {
+                Name = request.Name,
+                LastName = request.LastName,
+                Email = request.Email,
+                Phone = request.Phone,
+                Password = request.Password,
+                Role = request.Role
+            };
+
+        return _userRepository.AddUser(user);
     }
 }
