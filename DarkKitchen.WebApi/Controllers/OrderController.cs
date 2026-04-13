@@ -59,4 +59,11 @@ public class OrderController(IOrderService orderService) : ControllerBase
         var result = _orderService.DeliverOrder(id);
         return Ok(result);
     }
+
+    [AuthorizeRoles(UserRole.Administrative)]
+    [HttpPatch("{orderId}/cancel")]
+    public IActionResult CancelOrder(int orderId)
+    {
+        throw new NotImplementedException();
+    }
 }

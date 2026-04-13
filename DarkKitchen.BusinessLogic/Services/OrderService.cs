@@ -207,4 +207,9 @@ public class OrderService(
             UpdatedAt = order.UpdatedAt
         };
     }
+
+    public UpdateOrderStatusResponseDTO CancelOrder(int orderId)
+    {
+        throw new NotImplementedException();
+    }
 }
