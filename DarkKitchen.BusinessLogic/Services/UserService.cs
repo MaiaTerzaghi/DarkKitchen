@@ -21,6 +21,12 @@ public class UserService(IUserRepository userRepository) : IUserService
 
     public int CreateStaffUser(CreateStaffUserRequestDTO request)
     {
+        var existingUser = _userRepository.GetByEmail(request.Email);
+        if(existingUser != null)
+        {
+            throw new ArgumentException("El mail ya está registrado");
+        }
+
         var user = new User
             {
                 Name = request.Name,
