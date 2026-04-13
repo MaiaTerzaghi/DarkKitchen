@@ -108,4 +108,26 @@ public sealed class UserRepositoryTest
 
         Assert.IsTrue(result > 0);
     }
+
+    [TestMethod]
+    public void GetUsers_WhenCalled_ReturnsUsers()
+    {
+        var user = new User
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@test.com",
+            Phone = "+59899123456",
+            Password = "Contrasena1!@#$%",
+            Role = UserRole.Administrative
+        };
+
+        _context!.Users.Add(user);
+        _context.SaveChanges();
+
+        var repository = new UserRepository(_context);
+        var result = repository.GetUsers(null, null);
+
+        Assert.AreEqual(1, result.Count);
+    }
 }
