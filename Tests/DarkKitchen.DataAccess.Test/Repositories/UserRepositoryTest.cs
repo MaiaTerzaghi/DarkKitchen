@@ -130,4 +130,19 @@ public sealed class UserRepositoryTest
 
         Assert.AreEqual(1, result.Count);
     }
+
+    [TestMethod]
+    public void GetUsers_WhenFilterByName_ReturnsFilteredUsers()
+    {
+        _context!.Users.AddRange(
+            new User { Name = "Juan", LastName = "Perez", Email = "juan@test.com", Phone = "+59899123456", Password = "Contrasena1!@#$%", Role = UserRole.Administrative },
+            new User { Name = "Maria", LastName = "Lopez", Email = "maria@test.com", Phone = "+59899123457", Password = "Contrasena2!@#$%", Role = UserRole.Administrative });
+        _context.SaveChanges();
+
+        var repository = new UserRepository(_context);
+        var result = repository.GetUsers("Juan", null);
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("Juan", result[0].Name);
+    }
 }
