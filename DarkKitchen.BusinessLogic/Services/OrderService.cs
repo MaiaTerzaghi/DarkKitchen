@@ -233,6 +233,9 @@ public class OrderService(
 
     public UpdateOrderStatusResponseDTO MarkAsOnTheWay(int orderId)
     {
+       _ = _orderRepository.GetOrderById(orderId)
+        ?? throw new ArgumentException($"Pedido con id {orderId} no encontrado.");
+
         throw new NotImplementedException();
     }
 }
