@@ -513,4 +513,21 @@ public class OrderServiceTest
 
         _service.MarkAsOnTheWay(99);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void MarkAsOnTheWay_OrderNotPrepared_ThrowsException()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            Status = OrderStatus.Pending
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        _service.MarkAsOnTheWay(1);
+    }
 }
