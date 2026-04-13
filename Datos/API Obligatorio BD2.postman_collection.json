@@ -1,10 +1,10 @@
 {
   "info": {
-    "_postman_id": "478516e5-d11f-4bc4-86df-059327145240",
+    "_postman_id": "60660391-4dd1-46d4-81af-1e246ef877bb",
     "name": "API Obligatorio BD2",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "53626018",
-    "_collection_link": "https://go.postman.co/collection/53626018-478516e5-d11f-4bc4-86df-059327145240?source=collection_link"
+    "_exporter_id": "53493163",
+    "_collection_link": "https://go.postman.co/collection/53493163-60660391-4dd1-46d4-81af-1e246ef877bb?source=collection_link"
   },
   "item": [
     {
@@ -37,7 +37,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"name\": \"Maia\",\r\n  \"lastName\": \"Terzaghi\",\r\n  \"email\": \"maia@gmail.com\",\r\n  \"phone\": \"+59899123456\",\r\n  \"password\": \"Contrasena1@%#!\"\r\n}",
+              "raw": "{\r\n  \"name\": \"Nacho\",\r\n  \"lastName\": \"Braga\",\r\n  \"email\": \"nacho@gmail.com\",\r\n  \"phone\": \"+59899123456\",\r\n  \"password\": \"Contrasena1@%#!\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -147,21 +147,30 @@
       ]
     },
     {
-      "name": "Promotions",
+      "name": "Order",
       "item": [
         {
-          "name": "GET ConsultaPromociones",
+          "name": "Crear Orden",
           "request": {
-            "method": "GET",
+            "method": "POST",
             "header": [
               {
                 "key": "Authorization",
-                "value": "305da6e2-a585-4403-b13a-e541d5f89d66",
+                "value": "f8bad09c-1a6e-4451-90f6-857a38e2dbfc",
                 "type": "text"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"clientId\": 1,\r\n  \"deliveryType\": \"Express\",\r\n  \"address\": {\r\n    \"street\": \"18 de Julio\",\r\n    \"doorNumber\": \"1234\",\r\n    \"apartment\": \"2B\"\r\n  },\r\n  \"items\": [\r\n    {\r\n      \"productId\": 8,\r\n      \"quantity\": 2\r\n    }\r\n  ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
-              "raw": "http://localhost:5041/api/promotions",
+              "raw": "http://localhost:5041/api/orders/create",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -169,7 +178,68 @@
               "port": "5041",
               "path": [
                 "api",
-                "promotions"
+                "orders",
+                "create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "MarcarPreparada",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5041/api/orders/7/prepared",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5041",
+              "path": [
+                "api",
+                "orders",
+                "7",
+                "prepared"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "MarcarEnCamino",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5041/api/orders/8/OnTheWay",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5041",
+              "path": [
+                "api",
+                "orders",
+                "8",
+                "OnTheWay"
               ]
             }
           },
