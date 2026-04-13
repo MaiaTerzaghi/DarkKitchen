@@ -5,6 +5,7 @@ public class Product
     public int Id { get; set; }
     private string _code = string.Empty;
     private string _name = string.Empty;
+    private string _description = string.Empty;
     public string Code
     {
         get => _code;
@@ -33,7 +34,20 @@ public class Product
         }
     }
 
-    public string Description { get; set; } = string.Empty;
+    public string Description
+    {
+        get => _description;
+        set
+        {
+            if (value.Length < 20)
+            {
+                throw new ArgumentException("La descripción debe tener minimo 20 caracteres.");
+            }
+
+            _description = value;
+        }
+    }
+
     public double Price { get; set; }
     public string CommercialLine { get; set; } = string.Empty;
     public string Category { get; set; } = string.Empty;
