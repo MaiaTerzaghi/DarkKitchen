@@ -233,8 +233,13 @@ public class OrderService(
 
     public UpdateOrderStatusResponseDTO MarkAsOnTheWay(int orderId)
     {
-       _ = _orderRepository.GetOrderById(orderId)
+       var order = _orderRepository.GetOrderById(orderId)
         ?? throw new ArgumentException($"Pedido con id {orderId} no encontrado.");
+
+        if (order.Status != OrderStatus.Prepared)
+        {
+            throw new ArgumentException("El pedido solo puede ponerse en camino si está preparado.");
+        }
 
         throw new NotImplementedException();
     }
