@@ -112,7 +112,7 @@ public sealed class PromotionRepositoryTest
     {
         var product1 = new Product
         {
-            Code = "P001",
+            Code = "P0001",
             Name = "Pizza",
             Description = "Rica pizza",
             CommercialLine = "Minutas",

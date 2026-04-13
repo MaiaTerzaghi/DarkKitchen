@@ -92,7 +92,7 @@ public sealed class ProductServiceTest
     {
         var request = new CreateProductRequestDTO
         {
-            Code = "P001",
+            Code = "P0001",
             Name = "Pizza Napolitana",
             Description = "Rica pizza napolitana con tomate y albahaca",
             Price = 100.0,
