@@ -256,7 +256,8 @@ public class OrderService(
 
     public UpdateOrderStatusResponseDTO MarkAsNotDelivered(int orderId)
     {
-        var order = _orderRepository.GetOrderById(orderId);
+        var order = _orderRepository.GetOrderById(orderId)
+            ?? throw new ArgumentException($"Pedido con id {orderId} no encontrado.");
 
         order.Status = OrderStatus.NotDelivered;
         order.UpdatedAt = DateTime.Now;
