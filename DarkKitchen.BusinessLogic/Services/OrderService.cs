@@ -230,4 +230,9 @@ public class OrderService(
             UpdatedAt = order.UpdatedAt
         };
     }
+
+    public UpdateOrderStatusResponseDTO MarkAsOnTheWay(int orderId)
+    {
+        throw new NotImplementedException();
+    }
 }
