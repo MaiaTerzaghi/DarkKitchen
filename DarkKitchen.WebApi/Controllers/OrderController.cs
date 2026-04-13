@@ -60,7 +60,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
         return Ok(result);
     }
 
-    [AuthorizeRoles(UserRole.Administrative)]
+    // [AuthorizeRoles(UserRole.Administrative)]
     [HttpPatch("{orderId}/cancel")]
     public IActionResult CancelOrder(int orderId)
     {
