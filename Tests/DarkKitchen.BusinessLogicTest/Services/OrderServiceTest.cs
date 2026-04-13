@@ -474,4 +474,15 @@ public class OrderServiceTest
         Assert.AreEqual(1, result.OrderId);
         Assert.AreEqual("Cancelled", result.Status);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CancelOrder_OrderNotFound_ThrowsException()
+    {
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(99))
+            .Returns((Order)null!);
+
+        _service.CancelOrder(99);
+    }
 }
