@@ -3,7 +3,21 @@ namespace DarkKitchen.Domain.Entities;
 public class Product
 {
     public int Id { get; set; }
-    public string Code { get; set; } = string.Empty;
+    private string _code = string.Empty;
+    public string Code
+    {
+        get => _code;
+        set
+        {
+            if (value.Length < 5)
+            {
+                throw new ArgumentException("El código debe tener minimo 5.");
+            }
+
+            _code = value;
+        }
+    }
+
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public double Price { get; set; }
