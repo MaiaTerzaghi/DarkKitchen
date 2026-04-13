@@ -253,4 +253,9 @@ public class OrderService(
             UpdatedAt = order.UpdatedAt
         };
     }
+
+    public UpdateOrderStatusResponseDTO MarkAsNotDelivered(int orderId)
+    {
+        throw new NotImplementedException();
+    }
 }

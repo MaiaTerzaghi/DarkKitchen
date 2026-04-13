@@ -75,4 +75,11 @@ public class OrderController(IOrderService orderService) : ControllerBase
         var result = _orderService.MarkAsOnTheWay(id);
         return Ok(result);
     }
+
+    [AuthorizeRoles(UserRole.Dispatcher)]
+    [HttpPatch("{orderId}/not-delivered")]
+    public IActionResult MarkAsNotDelivered(int orderId)
+    {
+        throw new NotImplementedException();
+    }
 }
