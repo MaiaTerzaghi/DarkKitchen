@@ -1,4 +1,5 @@
 using DarkKitchen.Domain.Enums;
+using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Filters;
@@ -29,5 +30,13 @@ public class ProductController(IProductService productService) : ControllerBase
         });
 
         return Ok(response);
+    }
+
+    [AuthorizeRoles(UserRole.Administrative)]
+    [HttpPost]
+    public IActionResult CreateProduct([FromBody] CreateProductRequestDTO request)
+    {
+        var product = _productService.CreateProduct(request);
+        return CreatedAtAction(nameof(CreateProduct), new { id = product.Code }, product);
     }
 }
