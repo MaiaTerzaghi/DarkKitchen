@@ -8,6 +8,7 @@ public class Product
     private string _description = string.Empty;
     private string _commercialLine = string.Empty;
     private string _category = string.Empty;
+    private double _price;
     public string Code
     {
         get => _code;
@@ -50,7 +51,20 @@ public class Product
         }
     }
 
-    public double Price { get; set; }
+    public double Price
+    {
+        get => _price;
+        set
+        {
+            if (value < 0)
+            {
+                throw new ArgumentException("El precio debe ser mayor a cero.");
+            }
+
+            _price = value;
+        }
+    }
+
     public string CommercialLine
     {
         get => _commercialLine;
