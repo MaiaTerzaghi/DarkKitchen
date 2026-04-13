@@ -485,4 +485,21 @@ public class OrderServiceTest
 
         _service.CancelOrder(99);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CancelOrder_OrderNotPending_ThrowsException()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            Status = OrderStatus.Prepared
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        _service.CancelOrder(1);
+    }
 }
