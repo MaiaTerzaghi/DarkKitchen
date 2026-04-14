@@ -64,6 +64,25 @@ public class UserService(IUserRepository userRepository) : IUserService
 
     public UserResponseDTO UpdateUser(int id, UpdateUserRequestDTO request)
     {
-        throw new NotImplementedException();
-    }
+        var user = _userRepository.GetById(id);
+
+        user!.Name = request.Name;
+        user.LastName = request.LastName;
+        user.Email = request.Email;
+        user.Phone = request.Phone;
+        user.Password = request.Password;
+        user.Role = request.Role;
+
+        var updated = _userRepository.UpdateUser(user);
+
+        return new UserResponseDTO
+        {
+            Id = updated.Id,
+            Name = updated.Name,
+            LastName = updated.LastName,
+            Email = updated.Email,
+            Phone = updated.Phone,
+            Role = updated.Role
+        };
+        }
 }

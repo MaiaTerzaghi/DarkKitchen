@@ -55,4 +55,9 @@ public class UserRepository(DarkKitchenContext context) : IUserRepository
 
         return users;
     }
+
+    public User UpdateUser(User user)
+    {
+        throw new NotImplementedException();
+    }
 }

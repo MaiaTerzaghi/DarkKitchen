@@ -9,4 +9,5 @@ public interface IUserRepository
     Session? GetSessionByToken(string token);
     int AddUser(User user);
     List<User> GetUsers(string? name, string? lastName);
+    User UpdateUser(User user);
 }
