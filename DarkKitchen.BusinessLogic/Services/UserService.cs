@@ -62,7 +62,7 @@ public class UserService(IUserRepository userRepository) : IUserService
         }).ToList();
     }
 
-    public void UpdateUser(int id, UpdateUserRequestDTO request)
+    public UserResponseDTO UpdateUser(int id, UpdateUserRequestDTO request)
     {
         throw new NotImplementedException();
     }
