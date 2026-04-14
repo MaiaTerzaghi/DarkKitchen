@@ -60,4 +60,9 @@ public class UserRepository(DarkKitchenContext context) : IUserRepository
     {
         throw new NotImplementedException();
     }
+
+    public void DeleteUser(int id)
+    {
+        throw new NotImplementedException();
+    }
 }

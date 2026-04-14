@@ -10,4 +10,5 @@ public interface IUserRepository
     int AddUser(User user);
     List<User> GetUsers(string? name, string? lastName);
     User UpdateUser(User user);
+    void DeleteUser(int id);
 }
