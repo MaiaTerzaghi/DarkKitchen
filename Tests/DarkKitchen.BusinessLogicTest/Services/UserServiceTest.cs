@@ -481,4 +481,16 @@ public sealed class UserServiceTest
 
         userRepositoryMock.Verify(r => r.DeleteUser(1), Times.Once);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void DeleteUser_WhenUserNotFound_ThrowsArgumentException()
+    {
+        var userRepositoryMock = new Mock<IUserRepository>();
+        userRepositoryMock.Setup(r => r.GetById(1)).Returns((User?)null);
+
+        var userService = new UserService(userRepositoryMock.Object);
+
+        userService.DeleteUser(1, 2);
+    }
 }
