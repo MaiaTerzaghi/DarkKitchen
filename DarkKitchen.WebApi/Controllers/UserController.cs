@@ -48,4 +48,12 @@ public class UserController(IUserService userService) : ControllerBase
         var users = _userService.GetUsers(name, lastName);
         return Ok(users);
     }
+
+    [AuthorizeRoles(UserRole.Administrative)]
+    [HttpPut("{id}")]
+    public IActionResult UpdateUser(int id, UpdateUserRequestDTO request)
+    {
+        _userService.UpdateUser(id, request);
+        return Ok(new { id });
+    }
 }
