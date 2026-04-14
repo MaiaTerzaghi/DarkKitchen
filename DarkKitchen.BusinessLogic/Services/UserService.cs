@@ -64,7 +64,7 @@ public class UserService(IUserRepository userRepository) : IUserService
 
     public UserResponseDTO UpdateUser(int id, UpdateUserRequestDTO request)
     {
-        var user = _userRepository.GetById(id);
+        var user = _userRepository.GetById(id) ?? throw new ArgumentException("Usuario no encontrado");
 
         user!.Name = request.Name;
         user.LastName = request.LastName;
