@@ -493,4 +493,27 @@ public sealed class UserServiceTest
 
         userService.DeleteUser(1, 2);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void DeleteUser_WhenUserDeletesHimself_ThrowsArgumentException()
+    {
+        var existingUser = new User
+        {
+            Id = 1,
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@test.com",
+            Phone = "+59899123456",
+            Password = "Contrasena1!@#$%",
+            Role = UserRole.Administrative
+        };
+
+        var userRepositoryMock = new Mock<IUserRepository>();
+        userRepositoryMock.Setup(r => r.GetById(1)).Returns(existingUser);
+
+        var userService = new UserService(userRepositoryMock.Object);
+
+        userService.DeleteUser(1, 1);
+    }
 }
