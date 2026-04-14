@@ -4,6 +4,7 @@ using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Controllers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -113,6 +114,14 @@ public sealed class UserControllerTest
             .Returns(new UserResponseDTO { Id = 1, Name = "Juan", LastName = "Perez", Email = "juan@test.com", Phone = "+59899123456", Role = UserRole.Administrative });
 
         var controller = new UserController(userServiceMock.Object);
+
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
+
+        controller.HttpContext.Items["RequestingUser"] = new User { Id = 2 };
+
         var request = new UpdateUserRequestDTO
         {
             Name = "Juan",
@@ -135,6 +144,13 @@ public sealed class UserControllerTest
         userServiceMock.Setup(s => s.DeleteUser(It.IsAny<int>(), It.IsAny<int>()));
 
         var controller = new UserController(userServiceMock.Object);
+
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
+
+        controller.HttpContext.Items["RequestingUser"] = new User { Id = 2 };
 
         var result = controller.DeleteUser(1);
 

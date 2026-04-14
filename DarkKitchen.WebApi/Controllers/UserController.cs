@@ -53,7 +53,8 @@ public class UserController(IUserService userService) : ControllerBase
     [HttpPut("{id}")]
     public IActionResult UpdateUser(int id, UpdateUserRequestDTO request)
     {
-        _userService.UpdateUser(id, request, 0);
+        var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
+        _userService.UpdateUser(id, request, requestingUser.Id);
         return Ok(new { id });
     }
 
@@ -61,7 +62,8 @@ public class UserController(IUserService userService) : ControllerBase
     [HttpDelete("{id}")]
     public IActionResult DeleteUser(int id)
     {
-        _userService.DeleteUser(id, 0);
+        var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
+        _userService.DeleteUser(id, requestingUser.Id);
         return Ok(new { id });
     }
 }
