@@ -65,6 +65,8 @@ public class UserRepository(DarkKitchenContext context) : IUserRepository
 
     public void DeleteUser(int id)
     {
-        throw new NotImplementedException();
+        var user = _context.Users.FirstOrDefault(u => u.Id == id);
+        _context.Users.Remove(user!);
+        _context.SaveChanges();
     }
 }
