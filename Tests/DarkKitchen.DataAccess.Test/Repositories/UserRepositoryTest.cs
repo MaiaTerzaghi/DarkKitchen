@@ -108,4 +108,111 @@ public sealed class UserRepositoryTest
 
         Assert.IsTrue(result > 0);
     }
+
+    [TestMethod]
+    public void GetUsers_WhenCalled_ReturnsUsers()
+    {
+        var user = new User
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@test.com",
+            Phone = "+59899123456",
+            Password = "Contrasena1!@#$%",
+            Role = UserRole.Administrative
+        };
+
+        _context!.Users.Add(user);
+        _context.SaveChanges();
+
+        var repository = new UserRepository(_context);
+        var result = repository.GetUsers(null, null);
+
+        Assert.AreEqual(1, result.Count);
+    }
+
+    [TestMethod]
+    public void GetUsers_WhenFilterByName_ReturnsFilteredUsers()
+    {
+        _context!.Users.AddRange(
+            new User { Name = "Juan", LastName = "Perez", Email = "juan@test.com", Phone = "+59899123456", Password = "Contrasena1!@#$%", Role = UserRole.Administrative },
+            new User { Name = "Maria", LastName = "Lopez", Email = "maria@test.com", Phone = "+59899123457", Password = "Contrasena2!@#$%", Role = UserRole.Administrative });
+        _context.SaveChanges();
+
+        var repository = new UserRepository(_context);
+        var result = repository.GetUsers("Juan", null);
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("Juan", result[0].Name);
+    }
+
+    [TestMethod]
+    public void GetUsers_WhenFilterByLastName_ReturnsFilteredUsers()
+    {
+        _context!.Users.AddRange(
+            new User { Name = "Juan", LastName = "Perez", Email = "juan@test.com", Phone = "+59899123456", Password = "Contrasena1!@#$%", Role = UserRole.Administrative },
+            new User { Name = "Maria", LastName = "Lopez", Email = "maria@test.com", Phone = "+59899123457", Password = "Contrasena4!@#$%", Role = UserRole.Administrative });
+        _context.SaveChanges();
+
+        var repository = new UserRepository(_context);
+        var result = repository.GetUsers(null, "Perez");
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("Perez", result[0].LastName);
+    }
+
+    [TestMethod]
+    public void UpdateUser_WhenValidUser_ReturnsUpdatedUser()
+    {
+        var user = new User
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@test.com",
+            Phone = "+59899123456",
+            Password = "Contrasena1!@#$%",
+            Role = UserRole.Administrative
+        };
+
+        _context!.Users.Add(user);
+        _context.SaveChanges();
+
+        user.Name = "NuevoNombre";
+
+        var repository = new UserRepository(_context);
+        var result = repository.UpdateUser(user);
+
+        Assert.AreEqual("NuevoNombre", result.Name);
+    }
+
+    [TestMethod]
+    public void DeleteUser_WhenValidId_DeletesUser()
+    {
+        var user = new User
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@test.com",
+            Phone = "+59899123456",
+            Password = "Contrasena1!@#$%",
+            Role = UserRole.Administrative
+        };
+
+        _context!.Users.Add(user);
+        _context.SaveChanges();
+
+        var repository = new UserRepository(_context);
+        repository.DeleteUser(user.Id);
+
+        var result = _context.Users.FirstOrDefault(u => u.Id == user.Id);
+        Assert.IsNull(result);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void DeleteUser_WhenUserNotFound_ThrowsArgumentException()
+    {
+        var repository = new UserRepository(_context!);
+        repository.DeleteUser(999);
+    }
 }
