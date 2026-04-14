@@ -402,4 +402,26 @@ public sealed class UserServiceTest
 
         Assert.AreEqual("Juan", result.Name);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void UpdateUser_WhenUserNotFound_ThrowsArgumentException()
+    {
+        var request = new UpdateUserRequestDTO
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@test.com",
+            Phone = "+59899123456",
+            Password = "Contrasena1!@#$%",
+            Role = UserRole.Administrative
+        };
+
+        var userRepositoryMock = new Mock<IUserRepository>();
+        userRepositoryMock.Setup(r => r.GetById(1)).Returns((User?)null);
+
+        var userService = new UserService(userRepositoryMock.Object);
+
+        userService.UpdateUser(1, request);
+    }
 }
