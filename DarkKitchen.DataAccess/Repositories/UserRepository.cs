@@ -65,8 +65,8 @@ public class UserRepository(DarkKitchenContext context) : IUserRepository
 
     public void DeleteUser(int id)
     {
-        var user = _context.Users.FirstOrDefault(u => u.Id == id);
-        _context.Users.Remove(user!);
+        var user = _context.Users.FirstOrDefault(u => u.Id == id) ?? throw new ArgumentException("Usuario no encontrado");
+        _context.Users.Remove(user);
         _context.SaveChanges();
     }
 }
