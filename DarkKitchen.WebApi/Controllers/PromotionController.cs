@@ -24,6 +24,7 @@ public class PromotionController(IPromotionService promotionService) : Controlle
     [HttpPost]
     public IActionResult CreatePromotion([FromBody] CreatePromotionRequestDTO request)
     {
-        throw new NotImplementedException();
+        var response = _promotionService.CreatePromotion(request);
+        return Ok(response);
     }
 }
