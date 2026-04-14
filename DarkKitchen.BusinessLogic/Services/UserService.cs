@@ -64,6 +64,11 @@ public class UserService(IUserRepository userRepository) : IUserService
 
     public UserResponseDTO UpdateUser(int id, UpdateUserRequestDTO request, int requestingUserId)
     {
+        if(id == requestingUserId)
+        {
+            throw new ArgumentException("Un usuario no puede modificarse a sí mismo");
+        }
+
         var user = _userRepository.GetById(id) ?? throw new ArgumentException("Usuario no encontrado");
 
         user!.Name = request.Name;
