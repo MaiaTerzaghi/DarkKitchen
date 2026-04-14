@@ -58,7 +58,9 @@ public class UserRepository(DarkKitchenContext context) : IUserRepository
 
     public User UpdateUser(User user)
     {
-        throw new NotImplementedException();
+        _context.Users.Update(user);
+        _context.SaveChanges();
+        return user;
     }
 
     public void DeleteUser(int id)
