@@ -93,6 +93,8 @@ public class UserService(IUserRepository userRepository) : IUserService
 
     public void DeleteUser(int id, int requestingUserId)
     {
+        _ = _userRepository.GetById(id) ?? throw new ArgumentException("Usuario no encontrado");
+
         _userRepository.DeleteUser(id);
     }
 }
