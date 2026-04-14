@@ -19,4 +19,11 @@ public class PromotionController(IPromotionService promotionService) : Controlle
         var promotions = _promotionService.GetActivePromotions(filters.Date, filters.ProductLine, filters.Product);
         return Ok(promotions);
     }
+
+    [AuthorizeRoles(UserRole.Administrative)]
+    [HttpPost]
+    public IActionResult CreatePromotion([FromBody] CreatePromotionRequestDTO request)
+    {
+        throw new NotImplementedException();
+    }
 }
