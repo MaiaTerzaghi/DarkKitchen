@@ -56,4 +56,12 @@ public class UserController(IUserService userService) : ControllerBase
         _userService.UpdateUser(id, request, 0);
         return Ok(new { id });
     }
+
+    [AuthorizeRoles(UserRole.Administrative)]
+    [HttpDelete("{id}")]
+    public IActionResult DeleteUser(int id)
+    {
+        _userService.DeleteUser(id, 0);
+        return Ok(new { id });
+    }
 }
