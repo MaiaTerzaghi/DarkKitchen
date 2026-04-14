@@ -93,6 +93,6 @@ public class UserService(IUserRepository userRepository) : IUserService
 
     public void DeleteUser(int id, int requestingUserId)
     {
-        throw new NotImplementedException();
+        _userRepository.DeleteUser(id);
     }
 }
