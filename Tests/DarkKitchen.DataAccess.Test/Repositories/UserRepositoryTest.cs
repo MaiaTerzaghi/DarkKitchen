@@ -184,4 +184,27 @@ public sealed class UserRepositoryTest
 
         Assert.AreEqual("NuevoNombre", result.Name);
     }
+
+    [TestMethod]
+    public void GI()
+    {
+        var user = new User
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@test.com",
+            Phone = "+59899123456",
+            Password = "Contrasena1!@#$%",
+            Role = UserRole.Administrative
+        };
+
+        _context!.Users.Add(user);
+        _context.SaveChanges();
+
+        var repository = new UserRepository(_context);
+        repository.DeleteUser(user.Id);
+
+        var result = _context.Users.FirstOrDefault(u => u.Id == user.Id);
+        Assert.IsNull(result);
+    }
 }
