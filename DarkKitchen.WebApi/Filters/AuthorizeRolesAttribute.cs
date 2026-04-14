@@ -34,8 +34,8 @@ public class AuthorizeRolesAttribute(params UserRole[] roles) : Attribute, IAuth
 
             context.HttpContext.Items["RequestingUser"] = user; // Agregue esto para guardar
 
-                                                                // el usuario autenticado para que los controllers puedan accederlo
-                                                                //  sin necesidad de llamar al servicio de sesión nuevamente
+            // el usuario autenticado para que los controllers puedan accederlo
+            //  sin necesidad de llamar al servicio de sesión nuevamente
         }
         catch(Exception)
         {

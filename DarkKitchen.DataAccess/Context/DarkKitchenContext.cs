@@ -18,9 +18,9 @@ public sealed class DarkKitchenContext(DbContextOptions<DarkKitchenContext> opti
             .Property(o => o.DeliveryType)
             .HasConversion<string>();
 
-            modelBuilder.Entity<Session>()
-                .HasOne(s => s.User)
-                .WithMany()
-                .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<Session>()
+            .HasOne(s => s.User)
+            .WithMany()
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
