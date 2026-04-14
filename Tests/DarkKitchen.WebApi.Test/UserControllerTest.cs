@@ -109,7 +109,8 @@ public sealed class UserControllerTest
     public void UpdateUser_WhenValidData_ReturnsOk()
     {
         var userServiceMock = new Mock<IUserService>();
-        userServiceMock.Setup(s => s.UpdateUser(It.IsAny<int>(), It.IsAny<UpdateUserRequestDTO>()));
+        userServiceMock.Setup(s => s.UpdateUser(It.IsAny<int>(), It.IsAny<UpdateUserRequestDTO>(), It.IsAny<int>()))
+            .Returns(new UserResponseDTO { Id = 1, Name = "Juan", LastName = "Perez", Email = "juan@test.com", Phone = "+59899123456", Role = UserRole.Administrative });
 
         var controller = new UserController(userServiceMock.Object);
         var request = new UpdateUserRequestDTO

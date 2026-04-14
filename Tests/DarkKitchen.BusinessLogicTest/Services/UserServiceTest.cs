@@ -398,7 +398,7 @@ public sealed class UserServiceTest
 
         var userService = new UserService(userRepositoryMock.Object);
 
-        var result = userService.UpdateUser(1, request);
+        var result = userService.UpdateUser(1, request, 2);
 
         Assert.AreEqual("Juan", result.Name);
     }
@@ -422,6 +422,6 @@ public sealed class UserServiceTest
 
         var userService = new UserService(userRepositoryMock.Object);
 
-        userService.UpdateUser(1, request);
+        userService.UpdateUser(1, request, 2);
     }
 }

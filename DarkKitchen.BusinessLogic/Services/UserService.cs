@@ -62,7 +62,7 @@ public class UserService(IUserRepository userRepository) : IUserService
         }).ToList();
     }
 
-    public UserResponseDTO UpdateUser(int id, UpdateUserRequestDTO request)
+    public UserResponseDTO UpdateUser(int id, UpdateUserRequestDTO request, int requestingUserId)
     {
         var user = _userRepository.GetById(id) ?? throw new ArgumentException("Usuario no encontrado");
 

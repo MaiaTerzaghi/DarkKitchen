@@ -8,5 +8,5 @@ public interface IUserService
     int Register(User user);
     int CreateStaffUser(CreateStaffUserRequestDTO request);
     List<UserResponseDTO> GetUsers(string? name, string? lastName);
-    UserResponseDTO UpdateUser(int id, UpdateUserRequestDTO request);
+    UserResponseDTO UpdateUser(int id, UpdateUserRequestDTO request, int requestingUserId);
 }

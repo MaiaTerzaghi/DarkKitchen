@@ -53,7 +53,7 @@ public class UserController(IUserService userService) : ControllerBase
     [HttpPut("{id}")]
     public IActionResult UpdateUser(int id, UpdateUserRequestDTO request)
     {
-        _userService.UpdateUser(id, request);
+        _userService.UpdateUser(id, request, 0);
         return Ok(new { id });
     }
 }
