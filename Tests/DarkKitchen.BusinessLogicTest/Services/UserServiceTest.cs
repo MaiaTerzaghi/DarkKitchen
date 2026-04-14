@@ -367,4 +367,39 @@ public sealed class UserServiceTest
 
         Assert.AreEqual(1, result.Count);
     }
+
+    [TestMethod]
+    public void UpdateUser_WhenValidData_ReturnsUpdatedUser()
+    {
+        var request = new UpdateUserRequestDTO
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@test.com",
+            Phone = "+59899123456",
+            Password = "Contrasena1!@#$%",
+            Role = UserRole.Administrative
+        };
+
+        var existingUser = new User
+        {
+            Id = 1,
+            Name = "OldName",
+            LastName = "OldLastName",
+            Email = "juan@test.com",
+            Phone = "+59899123456",
+            Password = "Contrasena1!@#$%",
+            Role = UserRole.Administrative
+        };
+
+        var userRepositoryMock = new Mock<IUserRepository>();
+        userRepositoryMock.Setup(r => r.GetById(1)).Returns(existingUser);
+        userRepositoryMock.Setup(r => r.UpdateUser(It.IsAny<User>())).Returns(existingUser);
+
+        var userService = new UserService(userRepositoryMock.Object);
+
+        var result = userService.UpdateUser(1, request);
+
+        Assert.AreEqual("Juan", result.Name);
+    }
 }
