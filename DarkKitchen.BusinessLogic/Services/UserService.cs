@@ -93,6 +93,11 @@ public class UserService(IUserRepository userRepository) : IUserService
 
     public void DeleteUser(int id, int requestingUserId)
     {
+        if(id == requestingUserId)
+        {
+            throw new ArgumentException("Un usuario no puede eliminarse a sí mismo");
+        }
+
         _ = _userRepository.GetById(id) ?? throw new ArgumentException("Usuario no encontrado");
 
         _userRepository.DeleteUser(id);
