@@ -89,5 +89,10 @@ public class UserService(IUserRepository userRepository) : IUserService
             Phone = updated.Phone,
             Role = updated.Role
         };
-        }
+    }
+
+    public void DeleteUser(int id, int requestingUserId)
+    {
+        throw new NotImplementedException();
+    }
 }

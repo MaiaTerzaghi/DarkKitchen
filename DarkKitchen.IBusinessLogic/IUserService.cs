@@ -9,4 +9,5 @@ public interface IUserService
     int CreateStaffUser(CreateStaffUserRequestDTO request);
     List<UserResponseDTO> GetUsers(string? name, string? lastName);
     UserResponseDTO UpdateUser(int id, UpdateUserRequestDTO request, int requestingUserId);
+    void DeleteUser(int id, int requestingUserId);
 }

@@ -127,4 +127,17 @@ public sealed class UserControllerTest
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
     }
+
+    [TestMethod]
+    public void DeleteUser_WhenValidId_ReturnsOk()
+    {
+        var userServiceMock = new Mock<IUserService>();
+        userServiceMock.Setup(s => s.DeleteUser(It.IsAny<int>(), It.IsAny<int>()));
+
+        var controller = new UserController(userServiceMock.Object);
+
+        var result = controller.DeleteUser(1);
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+    }
 }
