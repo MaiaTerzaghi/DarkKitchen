@@ -186,7 +186,7 @@ public sealed class UserRepositoryTest
     }
 
     [TestMethod]
-    public void GI()
+    public void DeleteUser_WhenValidId_DeletesUser()
     {
         var user = new User
         {
@@ -206,5 +206,13 @@ public sealed class UserRepositoryTest
 
         var result = _context.Users.FirstOrDefault(u => u.Id == user.Id);
         Assert.IsNull(result);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void DeleteUser_WhenUserNotFound_ThrowsArgumentException()
+    {
+        var repository = new UserRepository(_context!);
+        repository.DeleteUser(999);
     }
 }
