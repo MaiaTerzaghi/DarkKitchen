@@ -61,4 +61,9 @@ public class UserService(IUserRepository userRepository) : IUserService
             Role = u.Role
         }).ToList();
     }
+
+    public void UpdateUser(int id, UpdateUserRequestDTO request)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -104,4 +104,26 @@ public sealed class UserControllerTest
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
     }
+
+    [TestMethod]
+    public void UpdateUser_WhenValidData_ReturnsOk()
+    {
+        var userServiceMock = new Mock<IUserService>();
+        userServiceMock.Setup(s => s.UpdateUser(It.IsAny<int>(), It.IsAny<UpdateUserRequestDTO>()));
+
+        var controller = new UserController(userServiceMock.Object);
+        var request = new UpdateUserRequestDTO
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@test.com",
+            Phone = "+59899123456",
+            Password = "Contrasena1!@#$%",
+            Role = UserRole.Administrative
+        };
+
+        var result = controller.UpdateUser(1, request);
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+    }
 }
