@@ -54,8 +54,8 @@ public class UserController(IUserService userService) : ControllerBase
     public IActionResult UpdateUser(int id, UpdateUserRequestDTO request)
     {
         var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
-        _userService.UpdateUser(id, request, requestingUser.Id);
-        return Ok(new { id });
+        var result = _userService.UpdateUser(id, request, requestingUser.Id);
+        return Ok(result);
     }
 
     [AuthorizeRoles(UserRole.Administrative)]
