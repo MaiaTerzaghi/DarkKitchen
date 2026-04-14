@@ -160,4 +160,28 @@ public sealed class UserRepositoryTest
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("Perez", result[0].LastName);
     }
+
+    [TestMethod]
+    public void UpdateUser_WhenValidUser_ReturnsUpdatedUser()
+    {
+        var user = new User
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@test.com",
+            Phone = "+59899123456",
+            Password = "Contrasena1!@#$%",
+            Role = UserRole.Administrative
+        };
+
+        _context!.Users.Add(user);
+        _context.SaveChanges();
+
+        user.Name = "NuevoNombre";
+
+        var repository = new UserRepository(_context);
+        var result = repository.UpdateUser(user);
+
+        Assert.AreEqual("NuevoNombre", result.Name);
+    }
 }
