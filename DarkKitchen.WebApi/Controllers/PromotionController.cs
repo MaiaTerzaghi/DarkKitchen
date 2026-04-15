@@ -35,4 +35,11 @@ public class PromotionController(IPromotionService promotionService) : Controlle
         var response = _promotionService.UpdatePromotion(id, request);
         return Ok(response);
     }
+
+    [AuthorizeRoles(UserRole.Administrative)]
+    [HttpPost("{promotionId}/products/{productId}")]
+    public IActionResult AddProductToPromotion(int promotionId, int productId)
+    {
+        throw new NotImplementedException();
+    }
 }

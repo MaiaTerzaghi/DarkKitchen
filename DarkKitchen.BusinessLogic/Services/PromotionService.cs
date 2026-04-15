@@ -87,4 +87,9 @@ public class PromotionService(IPromotionRepository promotionRepository) : IPromo
             ValidTo = updated.ValidTo
         };
     }
+
+    public void AddProductToPromotion(int promotionId, int productId)
+    {
+        throw new NotImplementedException();
+    }
 }

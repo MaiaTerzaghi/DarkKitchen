@@ -110,4 +110,18 @@ public sealed class PromotionControllerTest
         Assert.AreEqual(expectedResponse.Id, response.Id);
         Assert.AreEqual(expectedResponse.Name, response.Name);
     }
+
+    [TestMethod]
+    public void AddProductToPromotion_ValidRequest_ReturnsOk()
+    {
+        var promotionId = 1;
+        var productId = 1;
+
+        _promotionServiceMock
+            .Setup(s => s.AddProductToPromotion(promotionId, productId));
+
+        var result = _controller.AddProductToPromotion(promotionId, productId);
+
+        Assert.IsInstanceOfType(result, typeof(OkResult));
+    }
 }
