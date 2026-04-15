@@ -18,7 +18,7 @@ public class Repository<TEntity>(DbContext context) : IRepository<TEntity>
 
     public TEntity? Get(Expression<Func<TEntity, bool>> predicate)
     {
-        throw new NotImplementedException();
+        return _entities.FirstOrDefault(predicate);
     }
 
     public TEntity Update(TEntity entity)
