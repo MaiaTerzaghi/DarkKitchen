@@ -105,4 +105,19 @@ public sealed class PromotionServiceTest
 
         _service.CreatePromotion(request);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CreatePromotion_EmptyName_ThrowsException()
+    {
+        var request = new CreatePromotionRequestDTO
+        {
+            Name = string.Empty,
+            DiscountPercentage = 10,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 1, 30)
+        };
+
+        _service.CreatePromotion(request);
+    }
 }
