@@ -53,6 +53,11 @@ public class PromotionService(IPromotionRepository promotionRepository) : IPromo
 
     public PromotionResponseDTO UpdatePromotion(int id, UpdatePromotionRequestDTO request)
     {
+        if(request.ValidFrom > request.ValidTo)
+        {
+            throw new ArgumentException("La fecha de inicio no puede ser mayor que la fecha de fin.");
+        }
+
         var promotion = _promotionRepository.Get(p => p.Id == id)
             ?? throw new ArgumentException($"Promoción con id {id} no encontrada.");
 
