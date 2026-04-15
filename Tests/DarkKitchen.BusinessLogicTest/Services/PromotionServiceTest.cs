@@ -75,4 +75,19 @@ public sealed class PromotionServiceTest
         Assert.AreEqual("Black Friday", result.Name);
         Assert.AreEqual(10, result.DiscountPercentage);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CreatePromotion_InvalidDateRange_ThrowsException()
+    {
+        var request = new CreatePromotionRequestDTO
+        {
+            Name = "Black Friday",
+            DiscountPercentage = 10,
+            ValidFrom = new DateTime(2026, 1, 30),
+            ValidTo = new DateTime(2026, 1, 25)
+        };
+
+        _service.CreatePromotion(request);
+    }
 }
