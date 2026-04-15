@@ -18,4 +18,9 @@ public class PromotionRepository(DarkKitchenContext context) : Repository<Promot
             .Where(p => string.IsNullOrEmpty(product) || p.Products.Any(pr => pr.Name == product))
             .ToList();
     }
+
+    public bool ProductHasActivePromotion(int productId)
+    {
+        throw new NotImplementedException();
+    }
 }
