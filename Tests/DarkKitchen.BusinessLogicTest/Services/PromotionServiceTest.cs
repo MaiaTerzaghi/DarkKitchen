@@ -90,4 +90,19 @@ public sealed class PromotionServiceTest
 
         _service.CreatePromotion(request);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CreatePromotion_InvalidDiscountPercentage_ThrowsException()
+    {
+        var request = new CreatePromotionRequestDTO
+        {
+            Name = "Black Friday",
+            DiscountPercentage = 0,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 1, 30)
+        };
+
+        _service.CreatePromotion(request);
+    }
 }
