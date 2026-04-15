@@ -48,6 +48,7 @@ public class PromotionController(IPromotionService promotionService) : Controlle
     [HttpDelete("{promotionId}/products/{productId}")]
     public IActionResult RemoveProductFromPromotion(int promotionId, int productId)
     {
-       throw new NotImplementedException();
+        _promotionService.RemoveProductFromPromotion(promotionId, productId);
+        return Ok();
     }
 }
