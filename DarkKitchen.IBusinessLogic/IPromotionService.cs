@@ -9,4 +9,5 @@ public interface IPromotionService
     PromotionResponseDTO CreatePromotion(CreatePromotionRequestDTO request);
     PromotionResponseDTO UpdatePromotion(int id, UpdatePromotionRequestDTO request);
     void AddProductToPromotion(int promotionId, int productId);
+    void RemoveProductFromPromotion(int promotionId, int productId);
 }

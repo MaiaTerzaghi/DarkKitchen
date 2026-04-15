@@ -124,4 +124,18 @@ public sealed class PromotionControllerTest
 
         Assert.IsInstanceOfType(result, typeof(OkResult));
     }
+
+    [TestMethod]
+    public void RemoveProductFromPromotion_ValidRequest_ReturnsOk()
+    {
+        var promotionId = 1;
+        var productId = 1;
+
+        _promotionServiceMock
+            .Setup(s => s.RemoveProductFromPromotion(promotionId, productId));
+
+        var result = _controller.RemoveProductFromPromotion(promotionId, productId);
+
+        Assert.IsInstanceOfType(result, typeof(OkResult));
+    }
 }

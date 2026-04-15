@@ -276,7 +276,7 @@ public sealed class PromotionServiceTest
             Products = []
         };
 
-        var product = new Product { Id = 1, Name = "Pizza", Price = 100 };
+        var product = new Product { Id = 1, Name = "Pizza Napolitana", Price = 100 };
 
         _promotionRepositoryMock
             .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))

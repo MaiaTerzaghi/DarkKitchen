@@ -106,4 +106,9 @@ public class PromotionService(IPromotionRepository promotionRepository, IProduct
 
         _promotionRepository.Update(promotion);
     }
+
+    public void RemoveProductFromPromotion(int promotionId, int productId)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -43,4 +43,11 @@ public class PromotionController(IPromotionService promotionService) : Controlle
         _promotionService.AddProductToPromotion(promotionId, productId);
         return Ok();
     }
+
+    [AuthorizeRoles(UserRole.Administrative)]
+    [HttpDelete("{promotionId}/products/{productId}")]
+    public IActionResult RemoveProductFromPromotion(int promotionId, int productId)
+    {
+       throw new NotImplementedException();
+    }
 }
