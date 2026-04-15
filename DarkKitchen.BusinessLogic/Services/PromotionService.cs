@@ -16,6 +16,11 @@ public class PromotionService(IPromotionRepository promotionRepository) : IPromo
 
     public PromotionResponseDTO CreatePromotion(CreatePromotionRequestDTO request)
     {
+        if(request.ValidFrom > request.ValidTo)
+        {
+            throw new ArgumentException("La fecha de inicio no puede ser mayor que la fecha de fin.");
+        }
+
         var promotion = new Promotion
         {
             Name = request.Name,
