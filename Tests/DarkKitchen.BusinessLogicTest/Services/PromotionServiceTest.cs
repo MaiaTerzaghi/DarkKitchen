@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.DTOs.Args.In;
@@ -120,4 +121,39 @@ public sealed class PromotionServiceTest
 
         _service.CreatePromotion(request);
     }
+
+    [TestMethod]
+public void UpdatePromotion_ValidRequest_ReturnsUpdatedPromotion()
+{
+    var promotion = new Promotion
+    {
+        Id = 1,
+        Name = "Black Friday",
+        DiscountPercentage = 10,
+        ValidFrom = new DateTime(2026, 1, 25),
+        ValidTo = new DateTime(2026, 1, 30)
+    };
+
+    var request = new UpdatePromotionRequestDTO
+    {
+        Name = "Black Friday Updated",
+        DiscountPercentage = 20,
+        ValidFrom = new DateTime(2026, 1, 25),
+        ValidTo = new DateTime(2026, 1, 30)
+    };
+
+    _promotionRepositoryMock
+        .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+        .Returns(promotion);
+
+    _promotionRepositoryMock
+        .Setup(r => r.Update(It.IsAny<Promotion>()))
+        .Returns(promotion);
+
+    var result = _service.UpdatePromotion(1, request);
+
+    Assert.IsNotNull(result);
+    Assert.AreEqual(1, result.Id);
+    Assert.AreEqual("Black Friday Updated", result.Name);
+}
 }

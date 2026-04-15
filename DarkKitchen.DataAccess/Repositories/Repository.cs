@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using DarkKitchen.IDataAccess;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,5 +14,15 @@ public class Repository<TEntity>(DbContext context) : IRepository<TEntity>
         _entities.Add(entity);
         _context.SaveChanges();
         return entity;
+    }
+
+    public TEntity Get(Expression<Func<TEntity, bool>> predicate)
+    {
+        throw new NotImplementedException();
+    }
+
+    public TEntity Update(TEntity entity)
+    {
+        throw new NotImplementedException();
     }
 }
