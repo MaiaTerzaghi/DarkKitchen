@@ -361,4 +361,32 @@ public sealed class PromotionServiceTest
 
         _service.AddProductToPromotion(1, 1);
     }
+
+    [TestMethod]
+    public void RemoveProductFromPromotion_ValidRequest_RemovesProductFromPromotion()
+    {
+        var product = new Product { Id = 1, Name = "Pizza Napolitana", Price = 100 };
+
+        var promotion = new Promotion
+        {
+            Id = 1,
+            Name = "Black Friday",
+            DiscountPercentage = 10,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 1, 30),
+            Products = [product]
+        };
+
+        _promotionRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Returns(promotion);
+
+        _promotionRepositoryMock
+            .Setup(r => r.Update(It.IsAny<Promotion>()))
+            .Returns(promotion);
+
+        _service.RemoveProductFromPromotion(1, 1);
+
+        Assert.AreEqual(0, promotion.Products.Count);
+    }
 }
