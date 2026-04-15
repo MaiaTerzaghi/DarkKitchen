@@ -8,9 +8,7 @@ namespace DarkKitchen.BusinessLogic.Services;
 public class PromotionService(IPromotionRepository promotionRepository, IProductRepository productRepository) : IPromotionService
 {
     private readonly IPromotionRepository _promotionRepository = promotionRepository;
-     #pragma warning disable CA1823
     private readonly IProductRepository _productRepository = productRepository;
-    #pragma warning restore CA1823
 
     public List<Promotion> GetActivePromotions(DateTime? date, string? productLine, string? product)
     {
@@ -93,6 +91,11 @@ public class PromotionService(IPromotionRepository promotionRepository, IProduct
 
     public void AddProductToPromotion(int promotionId, int productId)
     {
-        throw new NotImplementedException();
+        var promotion = _promotionRepository.Get(p => p.Id == promotionId);
+        var product = _productRepository.Get(p => p.Id == productId);
+
+        promotion.Products.Add(product!);
+
+        _promotionRepository.Update(promotion);
     }
 }
