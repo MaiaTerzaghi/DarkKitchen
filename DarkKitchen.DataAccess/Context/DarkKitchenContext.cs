@@ -22,5 +22,10 @@ public sealed class DarkKitchenContext(DbContextOptions<DarkKitchenContext> opti
             .HasOne(s => s.User)
             .WithMany()
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Promotion>()
+            .HasMany(p => p.Products)
+            .WithMany()
+            .UsingEntity(j => j.ToTable("PromotionProducts"));
     }
 }
