@@ -123,37 +123,56 @@ public sealed class PromotionServiceTest
     }
 
     [TestMethod]
-public void UpdatePromotion_ValidRequest_ReturnsUpdatedPromotion()
-{
-    var promotion = new Promotion
+    public void UpdatePromotion_ValidRequest_ReturnsUpdatedPromotion()
     {
-        Id = 1,
-        Name = "Black Friday",
-        DiscountPercentage = 10,
-        ValidFrom = new DateTime(2026, 1, 25),
-        ValidTo = new DateTime(2026, 1, 30)
-    };
+        var promotion = new Promotion
+        {
+            Id = 1,
+            Name = "Black Friday",
+            DiscountPercentage = 10,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 1, 30)
+        };
 
-    var request = new UpdatePromotionRequestDTO
+        var request = new UpdatePromotionRequestDTO
+        {
+            Name = "Black Friday Updated",
+            DiscountPercentage = 20,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 1, 30)
+        };
+
+        _promotionRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Returns(promotion);
+
+        _promotionRepositoryMock
+            .Setup(r => r.Update(It.IsAny<Promotion>()))
+            .Returns(promotion);
+
+        var result = _service.UpdatePromotion(1, request);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.Id);
+        Assert.AreEqual("Black Friday Updated", result.Name);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void UpdatePromotion_PromotionNotFound_ThrowsException()
     {
-        Name = "Black Friday Updated",
-        DiscountPercentage = 20,
-        ValidFrom = new DateTime(2026, 1, 25),
-        ValidTo = new DateTime(2026, 1, 30)
-    };
+        _promotionRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Returns((Promotion)null!);
 
-    _promotionRepositoryMock
-        .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
-        .Returns(promotion);
+        var request = new UpdatePromotionRequestDTO
+        {
+            Name = "Black Friday Updated",
+            DiscountPercentage = 20,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 1, 30)
+        };
 
-    _promotionRepositoryMock
-        .Setup(r => r.Update(It.IsAny<Promotion>()))
-        .Returns(promotion);
-
-    var result = _service.UpdatePromotion(1, request);
-
-    Assert.IsNotNull(result);
-    Assert.AreEqual(1, result.Id);
-    Assert.AreEqual("Black Friday Updated", result.Name);
-}
+        _service.UpdatePromotion(99, request);
+    }
 }

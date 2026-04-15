@@ -16,7 +16,7 @@ public class Repository<TEntity>(DbContext context) : IRepository<TEntity>
         return entity;
     }
 
-    public TEntity Get(Expression<Func<TEntity, bool>> predicate)
+    public TEntity? Get(Expression<Func<TEntity, bool>> predicate)
     {
         throw new NotImplementedException();
     }
