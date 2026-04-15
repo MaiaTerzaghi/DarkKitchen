@@ -294,4 +294,15 @@ public sealed class PromotionServiceTest
 
         Assert.AreEqual(1, promotion.Products.Count);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void AddProductToPromotion_PromotionNotFound_ThrowsException()
+    {
+        _promotionRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Returns((Promotion)null!);
+
+        _service.AddProductToPromotion(99, 1);
+    }
 }
