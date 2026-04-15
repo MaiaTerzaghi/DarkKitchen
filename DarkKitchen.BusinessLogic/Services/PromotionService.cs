@@ -112,9 +112,10 @@ public class PromotionService(IPromotionRepository promotionRepository, IProduct
         var promotion = _promotionRepository.Get(p => p.Id == promotionId)
             ?? throw new ArgumentException($"Promoción con id {promotionId} no encontrada.");
 
-        var product = promotion.Products.FirstOrDefault(p => p.Id == productId);
+        var product = promotion.Products.FirstOrDefault(p => p.Id == productId)
+            ?? throw new ArgumentException($"El producto con id {productId} no está en la promoción.");
 
-        promotion.Products.Remove(product!);
+        promotion.Products.Remove(product);
 
         _promotionRepository.Update(promotion);
     }
