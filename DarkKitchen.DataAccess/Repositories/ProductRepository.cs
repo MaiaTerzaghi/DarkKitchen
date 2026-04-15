@@ -64,6 +64,11 @@ public class ProductRepository(DarkKitchenContext context) : IProductRepository
             query = query.Where(p => p.Description.Contains(request.Description));
         }
 
+        if (!string.IsNullOrEmpty(request.Category))
+        {
+            query = query.Where(p => p.Category.Contains(request.Category));
+        }
+
         return query.ToList();
     }
 }
