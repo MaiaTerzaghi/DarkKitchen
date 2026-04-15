@@ -53,7 +53,8 @@ public class PromotionService(IPromotionRepository promotionRepository) : IPromo
 
     public PromotionResponseDTO UpdatePromotion(int id, UpdatePromotionRequestDTO request)
     {
-        var promotion = _promotionRepository.Get(p => p.Id == id);
+        var promotion = _promotionRepository.Get(p => p.Id == id)
+            ?? throw new ArgumentException($"Promoción con id {id} no encontrada.");
 
         promotion.Name = request.Name;
         promotion.DiscountPercentage = request.DiscountPercentage;
