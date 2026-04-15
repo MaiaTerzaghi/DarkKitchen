@@ -37,18 +37,18 @@ public class PromotionController(IPromotionService promotionService) : Controlle
     }
 
     // [AuthorizeRoles(UserRole.Administrative)]
-    [HttpPost("{promotionId}/products/{productId}")]
-    public IActionResult AddProductToPromotion(int promotionId, int productId)
+    [HttpPost("{id}/products")]
+    public IActionResult AddProductToPromotion(int id, [FromQuery] int productId)
     {
-        _promotionService.AddProductToPromotion(promotionId, productId);
+        _promotionService.AddProductToPromotion(id, productId);
         return Ok();
     }
 
     // [AuthorizeRoles(UserRole.Administrative)]
-    [HttpDelete("{promotionId}/products/{productId}")]
-    public IActionResult RemoveProductFromPromotion(int promotionId, int productId)
+    [HttpDelete("{id}/products")]
+    public IActionResult RemoveProductFromPromotion(int id, [FromQuery] int productId)
     {
-        _promotionService.RemoveProductFromPromotion(promotionId, productId);
+        _promotionService.RemoveProductFromPromotion(id, productId);
         return Ok();
     }
 }
