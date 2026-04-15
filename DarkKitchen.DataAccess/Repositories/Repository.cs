@@ -23,6 +23,8 @@ public class Repository<TEntity>(DbContext context) : IRepository<TEntity>
 
     public TEntity Update(TEntity entity)
     {
-        throw new NotImplementedException();
+        _entities.Update(entity);
+        _context.SaveChanges();
+        return entity;
     }
 }
