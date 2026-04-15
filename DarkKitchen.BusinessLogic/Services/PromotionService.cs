@@ -16,6 +16,11 @@ public class PromotionService(IPromotionRepository promotionRepository) : IPromo
 
     public PromotionResponseDTO CreatePromotion(CreatePromotionRequestDTO request)
     {
+        if(request.DiscountPercentage <= 0 || request.DiscountPercentage > 100)
+        {
+            throw new ArgumentException("El porcentaje de descuento debe ser mayor que 0 y menor o igual a 100.");
+        }
+
         if(request.ValidFrom > request.ValidTo)
         {
             throw new ArgumentException("La fecha de inicio no puede ser mayor que la fecha de fin.");
