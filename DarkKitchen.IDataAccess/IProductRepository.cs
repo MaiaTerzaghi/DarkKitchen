@@ -1,4 +1,5 @@
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.DTOs.Args.In;
 
 namespace DarkKitchen.IDataAccess;
 
@@ -10,4 +11,5 @@ public interface IProductRepository
 
     Product Add(Product product);
     Product Update(Product product);
+    List<Product> GetManage(GetProductsManageRequestDTO request);
 }

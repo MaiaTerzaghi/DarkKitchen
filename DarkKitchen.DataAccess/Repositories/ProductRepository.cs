@@ -1,5 +1,6 @@
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IDataAccess;
 
 namespace DarkKitchen.DataAccess.Repositories;
@@ -47,5 +48,10 @@ public class ProductRepository(DarkKitchenContext context) : IProductRepository
         _context.Products.Update(product);
         _context.SaveChanges();
         return product;
+    }
+
+    public List<Product> GetManage(GetProductsManageRequestDTO request)
+    {
+        throw new NotImplementedException();
     }
 }

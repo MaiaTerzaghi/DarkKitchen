@@ -70,6 +70,16 @@ public class ProductService(IProductRepository productRepository) : IProductServ
 
     public List<ProductResponseDTO> GetManage(GetProductsManageRequestDTO request)
     {
-        throw new NotImplementedException();
+        var products = _productRepository.GetManage(request);
+
+        return products.Select(p => new ProductResponseDTO
+        {
+            Code = p.Code,
+            Name = p.Name,
+            Price = p.Price,
+            CommercialLine = p.CommercialLine,
+            Category = p.Category,
+            Images = p.Images
+        }).ToList();
     }
 }
