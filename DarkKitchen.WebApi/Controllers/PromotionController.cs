@@ -40,6 +40,7 @@ public class PromotionController(IPromotionService promotionService) : Controlle
     [HttpPost("{promotionId}/products/{productId}")]
     public IActionResult AddProductToPromotion(int promotionId, int productId)
     {
-        throw new NotImplementedException();
+        _promotionService.AddProductToPromotion(promotionId, productId);
+        return Ok();
     }
 }
