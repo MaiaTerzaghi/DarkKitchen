@@ -40,4 +40,9 @@ public class ProductService(IProductRepository productRepository) : IProductServ
             Images = saved.Images
         };
     }
+
+    public ProductResponseDTO UpdateProduct(int id, UpdateProductRequestDTO request)
+    {
+        throw new NotImplementedException();
+    }
 }

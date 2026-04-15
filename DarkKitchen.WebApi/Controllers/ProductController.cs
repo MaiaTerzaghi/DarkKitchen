@@ -39,4 +39,12 @@ public class ProductController(IProductService productService) : ControllerBase
         var product = _productService.CreateProduct(request);
         return CreatedAtAction(nameof(CreateProduct), new { id = product.Code }, product);
     }
+
+    [AuthorizeRoles(UserRole.Administrative)]
+    [HttpPut("{id}")]
+    public IActionResult UpdateProduct(int id, [FromBody] UpdateProductRequestDTO request)
+    {
+        var product = _productService.UpdateProduct(id, request);
+        return Ok(product);
+    }
 }
