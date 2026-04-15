@@ -43,7 +43,8 @@ public class ProductService(IProductRepository productRepository) : IProductServ
 
     public ProductResponseDTO UpdateProduct(int id, UpdateProductRequestDTO request)
     {
-        var product = _productRepository.GetById(id)!;
+        var product = _productRepository.GetById(id)
+            ?? throw new ArgumentException($"Producto con id {id} no encontrado.");
 
         product.Code = request.Code;
         product.Name = request.Name;
