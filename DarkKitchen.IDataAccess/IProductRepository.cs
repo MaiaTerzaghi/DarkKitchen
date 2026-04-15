@@ -9,4 +9,5 @@ public interface IProductRepository
     Product GetById(int id);
 
     Product Add(Product product);
+    Product Update(Product product);
 }

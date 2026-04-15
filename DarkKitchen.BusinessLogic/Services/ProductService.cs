@@ -43,6 +43,27 @@ public class ProductService(IProductRepository productRepository) : IProductServ
 
     public ProductResponseDTO UpdateProduct(int id, UpdateProductRequestDTO request)
     {
-        throw new NotImplementedException();
+        var product = _productRepository.GetById(id)!;
+
+        product.Code = request.Code;
+        product.Name = request.Name;
+        product.Description = request.Description;
+        product.Price = request.Price;
+        product.CommercialLine = request.CommercialLine;
+        product.Category = request.Category;
+        product.Images = request.Images;
+        product.IsActive = request.IsActive;
+
+        var updated = _productRepository.Update(product);
+
+        return new ProductResponseDTO
+        {
+            Code = updated.Code,
+            Name = updated.Name,
+            Price = updated.Price,
+            CommercialLine = updated.CommercialLine,
+            Category = updated.Category,
+            Images = updated.Images
+        };
     }
 }
