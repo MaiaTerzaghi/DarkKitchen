@@ -38,4 +38,35 @@ public class UserRepository(DarkKitchenContext context) : IUserRepository
         _context.SaveChanges();
         return user.Id;
     }
+
+    public List<User> GetUsers(string? name, string? lastName)
+    {
+        var users = _context.Users.ToList();
+
+        if(name != null)
+        {
+            users = users.Where(u => u.Name.Contains(name)).ToList();
+        }
+
+        if(lastName != null)
+        {
+            users = users.Where(u => u.LastName.Contains(lastName)).ToList();
+        }
+
+        return users;
+    }
+
+    public User UpdateUser(User user)
+    {
+        _context.Users.Update(user);
+        _context.SaveChanges();
+        return user;
+    }
+
+    public void DeleteUser(int id)
+    {
+        var user = _context.Users.FirstOrDefault(u => u.Id == id) ?? throw new ArgumentException("Usuario no encontrado");
+        _context.Users.Remove(user);
+        _context.SaveChanges();
+    }
 }

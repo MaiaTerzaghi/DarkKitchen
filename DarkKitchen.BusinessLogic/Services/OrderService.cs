@@ -259,4 +259,27 @@ public class OrderService(
             UpdatedAt = order.UpdatedAt
         };
     }
+
+    public UpdateOrderStatusResponseDTO MarkAsNotDelivered(int orderId)
+    {
+        var order = _orderRepository.GetOrderById(orderId)
+            ?? throw new ArgumentException($"Pedido con id {orderId} no encontrado.");
+
+        if(order.Status != OrderStatus.OnTheWay)
+        {
+            throw new ArgumentException("El pedido solo puede marcarse como no entregado si está en camino.");
+        }
+
+        order.Status = OrderStatus.NotDelivered;
+        order.UpdatedAt = DateTime.Now;
+
+        _orderRepository.Update(order);
+
+        return new UpdateOrderStatusResponseDTO
+        {
+            OrderId = order.Id,
+            Status = order.Status.ToString(),
+            UpdatedAt = order.UpdatedAt
+        };
+    }
 }
