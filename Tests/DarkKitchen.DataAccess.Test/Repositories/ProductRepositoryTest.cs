@@ -1,6 +1,7 @@
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.DataAccess.Repositories;
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.DTOs.Args.In;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,8 +30,8 @@ public sealed class ProductRepositoryTest
     [TestMethod]
     public void GetAll_WhenNoFilters_ReturnsAllProducts()
     {
-        _context!.Products.Add(new Product { Code = "P001", Name = "Pizza", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza", Price = 100.0 });
-        _context.Products.Add(new Product { Code = "P002", Name = "Pasta", Category = "Pastas", CommercialLine = "Minutas", Description = "Rica pasta", Price = 80.0 });
+        _context!.Products.Add(new Product { Code = "P0001", Name = "Pizza Napolitana", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza napolitana con tomate fresco", Price = 100.0 });
+        _context.Products.Add(new Product { Code = "P0002", Name = "Pasta bolognese", Category = "Pastas", CommercialLine = "Minutas", Description = "Rica pasta bolognese con carne fresca", Price = 80.0 });
         _context.SaveChanges();
 
         var repository = new ProductRepository(_context);
@@ -42,43 +43,43 @@ public sealed class ProductRepositoryTest
     [TestMethod]
     public void GetAll_WhenFilterByName_ReturnsFilteredProducts()
     {
-        _context!.Products.Add(new Product { Code = "P001", Name = "Pizza", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza", Price = 100.0 });
-        _context.Products.Add(new Product { Code = "P002", Name = "Pasta", Category = "Pastas", CommercialLine = "Minutas", Description = "Rica pasta", Price = 80.0 });
+        _context!.Products.Add(new Product { Code = "P0001", Name = "Pizza Napolitana", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza napolitana con tomate fresco", Price = 100.0 });
+        _context.Products.Add(new Product { Code = "P0002", Name = "Pasta bolognese", Category = "Pastas", CommercialLine = "Minutas", Description = "Rica pasta bolognese con carne fresca", Price = 80.0 });
         _context.SaveChanges();
 
         var repository = new ProductRepository(_context);
         var result = repository.GetAll("Pizza", null, null);
 
         Assert.AreEqual(1, result.Count);
-        Assert.AreEqual("Pizza", result[0].Name);
+        Assert.AreEqual("Pizza Napolitana", result[0].Name);
     }
 
     [TestMethod]
     public void GetAll_WhenFilterByCategory_ReturnsFilteredProducts()
     {
-        _context!.Products.Add(new Product { Code = "P001", Name = "Pizza", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza", Price = 100.0 });
-        _context.Products.Add(new Product { Code = "P002", Name = "Pasta", Category = "Pastas", CommercialLine = "Minutas", Description = "Rica pasta", Price = 80.0 });
+        _context!.Products.Add(new Product { Code = "P0001", Name = "Pizza Napolitana", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza napolitana con tomate fresco", Price = 100.0 });
+        _context.Products.Add(new Product { Code = "P0002", Name = "Pasta bolognese", Category = "Pastas", CommercialLine = "Minutas", Description = "Rica pasta bolognese con carne fresca", Price = 80.0 });
         _context.SaveChanges();
 
         var repository = new ProductRepository(_context);
         var result = repository.GetAll(null, "Fritos", null);
 
         Assert.AreEqual(1, result.Count);
-        Assert.AreEqual("Pizza", result[0].Name);
+        Assert.AreEqual("Pizza Napolitana", result[0].Name);
     }
 
     [TestMethod]
     public void GetAll_WhenFilterByLine_ReturnsFilteredProducts()
     {
-        _context!.Products.Add(new Product { Code = "P001", Name = "Pizza", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza", Price = 100.0 });
-        _context.Products.Add(new Product { Code = "P002", Name = "Pasta", Category = "Pastas", CommercialLine = "Desayunos", Description = "Rica pasta", Price = 80.0 });
+        _context!.Products.Add(new Product { Code = "P0001", Name = "Pizza Napolitana", Category = "Fritos", CommercialLine = "Minutas", Description = "Rica pizza napolitana con tomate fresco", Price = 100.0 });
+        _context.Products.Add(new Product { Code = "P0002", Name = "Pasta bolognese", Category = "Pastas", CommercialLine = "Desayunos", Description = "Rica pasta bolognese con carne fresca", Price = 80.0 });
         _context.SaveChanges();
 
         var repository = new ProductRepository(_context);
         var result = repository.GetAll(null, null, "Minutas");
 
         Assert.AreEqual(1, result.Count);
-        Assert.AreEqual("Pizza", result[0].Name);
+        Assert.AreEqual("Pizza Napolitana", result[0].Name);
     }
 
     [TestMethod]
@@ -86,11 +87,11 @@ public sealed class ProductRepositoryTest
     {
         var product = new Product
         {
-            Code = "P001",
-            Name = "Pizza",
+            Code = "P0001",
+            Name = "Pizza Napolitana",
             Category = "Fritos",
             CommercialLine = "Minutas",
-            Description = "Rica pizza",
+            Description = "Rica pizza napolitana con tomate fresco",
             Price = 100.0
         };
 
@@ -102,5 +103,313 @@ public sealed class ProductRepositoryTest
 
         Assert.IsNotNull(result);
         Assert.AreEqual(product.Id, result.Id);
+    }
+
+    [TestMethod]
+    public void Add_WhenValidProduct_ReturnsSavedProduct()
+    {
+        var product = new Product
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = "pizza.jpg"
+        };
+
+        var repository = new ProductRepository(_context!);
+        var result = repository.Add(product);
+
+        Assert.IsNotNull(result);
+        Assert.AreNotEqual(0, result.Id);
+        Assert.AreEqual("P0001", result.Code);
+    }
+
+    [TestMethod]
+    public void Update_WhenProductExists_ReturnsUpdatedProduct()
+    {
+        var product = new Product
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = "pizza.jpg"
+        };
+
+        _context!.Products.Add(product);
+        _context.SaveChanges();
+
+        product.Name = "Pizza Cuatro Quesos";
+
+        var repository = new ProductRepository(_context);
+        var result = repository.Update(product);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual("Pizza Cuatro Quesos", result.Name);
+    }
+
+    [TestMethod]
+    public void GetManage_WhenNoFilters_ReturnsAllProducts()
+    {
+        _context!.Products.Add(new Product
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = "pizza.jpg",
+            IsActive = true
+        });
+        _context.SaveChanges();
+
+        var repository = new ProductRepository(_context);
+        var result = repository.GetManage(new GetProductsManageRequestDTO());
+
+        Assert.AreEqual(1, result.Count);
+    }
+
+    [TestMethod]
+    public void GetManage_WhenFilterByName_ReturnsFilteredProducts()
+    {
+        _context!.Products.Add(new Product
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = "pizza.jpg",
+            IsActive = true
+        });
+        _context.Products.Add(new Product
+        {
+            Code = "P0002",
+            Name = "Pasta Bolognese",
+            Description = "Rica pasta bolognese con carne y tomate",
+            Price = 80.0,
+            CommercialLine = "Minutas",
+            Category = "Pastas",
+            Images = "pasta.jpg",
+            IsActive = true
+        });
+        _context.SaveChanges();
+
+        var repository = new ProductRepository(_context);
+        var result = repository.GetManage(new GetProductsManageRequestDTO { Name = "Pizza" });
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("Pizza Napolitana", result[0].Name);
+    }
+
+    [TestMethod]
+    public void GetManage_WhenFilterByDescription_ReturnsFilteredProducts()
+    {
+        _context!.Products.Add(new Product
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = "pizza.jpg",
+            IsActive = true
+        });
+        _context.Products.Add(new Product
+        {
+            Code = "P0002",
+            Name = "Pasta Bolognese",
+            Description = "Rica pasta bolognese con carne y tomate",
+            Price = 80.0,
+            CommercialLine = "Minutas",
+            Category = "Pastas",
+            Images = "pasta.jpg",
+            IsActive = true
+        });
+        _context.SaveChanges();
+
+        var repository = new ProductRepository(_context);
+        var result = repository.GetManage(new GetProductsManageRequestDTO { Description = "napolitana" });
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("Pizza Napolitana", result[0].Name);
+    }
+
+    [TestMethod]
+    public void GetManage_WhenFilterByCategory_ReturnsFilteredProducts()
+    {
+        _context!.Products.Add(new Product
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = "pizza.jpg",
+            IsActive = true
+        });
+        _context.Products.Add(new Product
+        {
+            Code = "P0002",
+            Name = "Pasta Bolognese",
+            Description = "Rica pasta bolognese con carne y tomate",
+            Price = 80.0,
+            CommercialLine = "Minutas",
+            Category = "Pastas",
+            Images = "pasta.jpg",
+            IsActive = true
+        });
+        _context.SaveChanges();
+
+        var repository = new ProductRepository(_context);
+        var result = repository.GetManage(new GetProductsManageRequestDTO { Category = "Fritos" });
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("Pizza Napolitana", result[0].Name);
+    }
+
+    [TestMethod]
+    public void GetManage_WhenFilterByCommercialLine_ReturnsFilteredProducts()
+    {
+        _context!.Products.Add(new Product
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = "pizza.jpg",
+            IsActive = true
+        });
+        _context.Products.Add(new Product
+        {
+            Code = "P0002",
+            Name = "Cafe con leche",
+            Description = "Rico cafe con leche y medialunas",
+            Price = 80.0,
+            CommercialLine = "Desayunos",
+            Category = "Bebidas",
+            Images = "cafe.jpg",
+            IsActive = true
+        });
+        _context.SaveChanges();
+
+        var repository = new ProductRepository(_context);
+        var result = repository.GetManage(new GetProductsManageRequestDTO { CommercialLine = "Minutas" });
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("Pizza Napolitana", result[0].Name);
+    }
+
+    [TestMethod]
+    public void GetManage_WhenFilterByIsActive_ReturnsFilteredProducts()
+    {
+        _context!.Products.Add(new Product
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = "pizza.jpg",
+            IsActive = true
+        });
+        _context.Products.Add(new Product
+        {
+            Code = "P0002",
+            Name = "Pasta Bolognese",
+            Description = "Rica pasta bolognese con carne y tomate",
+            Price = 80.0,
+            CommercialLine = "Minutas",
+            Category = "Pastas",
+            Images = "pasta.jpg",
+            IsActive = false
+        });
+        _context.SaveChanges();
+
+        var repository = new ProductRepository(_context);
+        var result = repository.GetManage(new GetProductsManageRequestDTO { IsActive = true });
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("Pizza Napolitana", result[0].Name);
+    }
+
+    [TestMethod]
+    public void GetManage_WhenFilterByPriceMin_ReturnsFilteredProducts()
+    {
+        _context!.Products.Add(new Product
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = "pizza.jpg",
+            IsActive = true
+        });
+        _context.Products.Add(new Product
+        {
+            Code = "P0002",
+            Name = "Pasta Bolognese",
+            Description = "Rica pasta bolognese con carne y tomate",
+            Price = 50.0,
+            CommercialLine = "Minutas",
+            Category = "Pastas",
+            Images = "pasta.jpg",
+            IsActive = true
+        });
+        _context.SaveChanges();
+
+        var repository = new ProductRepository(_context);
+        var result = repository.GetManage(new GetProductsManageRequestDTO { PriceMin = 80.0 });
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("Pizza Napolitana", result[0].Name);
+    }
+
+    [TestMethod]
+    public void GetManage_WhenFilterByPriceMax_ReturnsFilteredProducts()
+    {
+        _context!.Products.Add(new Product
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = "pizza.jpg",
+            IsActive = true
+        });
+        _context.Products.Add(new Product
+        {
+            Code = "P0002",
+            Name = "Pasta Bolognese",
+            Description = "Rica pasta bolognese con carne y tomate",
+            Price = 50.0,
+            CommercialLine = "Minutas",
+            Category = "Pastas",
+            Images = "pasta.jpg",
+            IsActive = true
+        });
+        _context.SaveChanges();
+
+        var repository = new ProductRepository(_context);
+        var result = repository.GetManage(new GetProductsManageRequestDTO { PriceMax = 80.0 });
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("Pasta Bolognese", result[0].Name);
     }
 }
