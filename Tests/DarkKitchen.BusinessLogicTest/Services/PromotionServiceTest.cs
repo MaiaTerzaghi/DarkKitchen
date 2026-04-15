@@ -203,4 +203,32 @@ public sealed class PromotionServiceTest
 
         _service.UpdatePromotion(1, request);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void UpdatePromotion_InvalidDiscountPercentage_ThrowsException()
+    {
+        var promotion = new Promotion
+        {
+            Id = 1,
+            Name = "Black Friday",
+            DiscountPercentage = 10,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 1, 30)
+        };
+
+        _promotionRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Returns(promotion);
+
+        var request = new UpdatePromotionRequestDTO
+        {
+            Name = "Black Friday Updated",
+            DiscountPercentage = 0,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 1, 30)
+        };
+
+        _service.UpdatePromotion(1, request);
+    }
 }
