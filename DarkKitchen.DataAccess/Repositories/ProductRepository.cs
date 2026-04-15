@@ -50,13 +50,18 @@ public class ProductRepository(DarkKitchenContext context) : IProductRepository
         return product;
     }
 
-    public List<Product> GetManage(GetProductsManageRequestDTO request)
+   public List<Product> GetManage(GetProductsManageRequestDTO request)
     {
         var query = _context.Products.AsQueryable();
 
         if (!string.IsNullOrEmpty(request.Name))
         {
             query = query.Where(p => p.Name.Contains(request.Name));
+        }
+
+        if (!string.IsNullOrEmpty(request.Description))
+        {
+            query = query.Where(p => p.Description.Contains(request.Description));
         }
 
         return query.ToList();
