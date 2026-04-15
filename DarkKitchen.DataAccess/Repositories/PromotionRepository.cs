@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DarkKitchen.DataAccess.Repositories;
 
-public class PromotionRepository(DarkKitchenContext context) : IPromotionRepository
+public class PromotionRepository(DarkKitchenContext context) : Repository<Promotion>(context), IPromotionRepository
 {
     private readonly DarkKitchenContext _context = context;
 
