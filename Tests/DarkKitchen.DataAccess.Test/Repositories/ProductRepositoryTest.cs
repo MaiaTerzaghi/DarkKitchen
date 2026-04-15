@@ -1,6 +1,7 @@
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.DataAccess.Repositories;
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.DTOs.Args.In;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
@@ -150,5 +151,27 @@ public sealed class ProductRepositoryTest
 
         Assert.IsNotNull(result);
         Assert.AreEqual("Pizza Cuatro Quesos", result.Name);
+    }
+
+    [TestMethod]
+    public void GetManage_WhenNoFilters_ReturnsAllProducts()
+    {
+        _context!.Products.Add(new Product
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = "pizza.jpg",
+            IsActive = true
+        });
+        _context.SaveChanges();
+
+        var repository = new ProductRepository(_context);
+        var result = repository.GetManage(new GetProductsManageRequestDTO());
+
+        Assert.AreEqual(1, result.Count);
     }
 }
