@@ -400,4 +400,25 @@ public sealed class PromotionServiceTest
 
         _service.RemoveProductFromPromotion(99, 1);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void RemoveProductFromPromotion_ProductNotInPromotion_ThrowsException()
+    {
+        var promotion = new Promotion
+        {
+            Id = 1,
+            Name = "Black Friday",
+            DiscountPercentage = 10,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 1, 30),
+            Products = []
+        };
+
+        _promotionRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Returns(promotion);
+
+        _service.RemoveProductFromPromotion(1, 99);
+    }
 }
