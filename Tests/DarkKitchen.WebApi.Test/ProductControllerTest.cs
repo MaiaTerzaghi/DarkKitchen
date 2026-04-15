@@ -97,4 +97,39 @@ public sealed class ProductControllerTest
 
         Assert.IsInstanceOfType(result, typeof(CreatedAtActionResult));
     }
+
+    [TestMethod]
+    public void UpdateProduct_WhenCalled_ReturnsOk()
+    {
+        var request = new UpdateProductRequestDTO
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = "pizza.jpg",
+            IsActive = true
+        };
+
+        var response = new ProductResponseDTO
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = "pizza.jpg"
+        };
+
+        var productServiceMock = new Mock<IProductService>();
+        productServiceMock.Setup(s => s.UpdateProduct(It.IsAny<int>(), It.IsAny<UpdateProductRequestDTO>()))
+                        .Returns(response);
+
+        var controller = new ProductController(productServiceMock.Object);
+        var result = controller.UpdateProduct(1, request);
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+    }
 }
