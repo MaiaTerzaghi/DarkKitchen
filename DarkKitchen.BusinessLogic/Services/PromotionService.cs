@@ -109,6 +109,12 @@ public class PromotionService(IPromotionRepository promotionRepository, IProduct
 
     public void RemoveProductFromPromotion(int promotionId, int productId)
     {
-        throw new NotImplementedException();
+        var promotion = _promotionRepository.Get(p => p.Id == promotionId);
+
+        var product = promotion.Products.FirstOrDefault(p => p.Id == productId);
+
+        promotion.Products.Remove(product!);
+
+        _promotionRepository.Update(promotion);
     }
 }
