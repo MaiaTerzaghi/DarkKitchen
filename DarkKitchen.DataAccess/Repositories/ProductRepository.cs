@@ -52,6 +52,6 @@ public class ProductRepository(DarkKitchenContext context) : IProductRepository
 
     public List<Product> GetManage(GetProductsManageRequestDTO request)
     {
-        throw new NotImplementedException();
+        return _context.Products.ToList();
     }
 }
