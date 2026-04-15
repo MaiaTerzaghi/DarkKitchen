@@ -74,6 +74,11 @@ public class ProductRepository(DarkKitchenContext context) : IProductRepository
             query = query.Where(p => p.CommercialLine.Contains(request.CommercialLine));
         }
 
+        if (request.IsActive.HasValue)
+        {
+            query = query.Where(p => p.IsActive == request.IsActive.Value);
+        }
+
         return query.ToList();
     }
 }
