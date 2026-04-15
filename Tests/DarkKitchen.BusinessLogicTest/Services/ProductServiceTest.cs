@@ -426,4 +426,34 @@ public sealed class ProductServiceTest
         var productService = new ProductService(productRepositoryMock.Object);
         productService.UpdateProduct(999, request);
     }
+
+    [TestMethod]
+    public void GetManage_WhenNoFilters_ReturnsAllProducts()
+    {
+        var products = new List<Product>
+        {
+            new Product
+            {
+                Id = 1,
+                Code = "P0001",
+                Name = "Pizza Napolitana",
+                Description = "Rica pizza napolitana con tomate y albahaca",
+                Price = 100.0,
+                CommercialLine = "Minutas",
+                Category = "Fritos",
+                Images = "pizza.jpg",
+                IsActive = true
+            }
+        };
+
+        var productRepositoryMock = new Mock<IProductRepository>();
+        productRepositoryMock.Setup(r => r.GetManage(It.IsAny<GetProductsManageRequestDTO>()))
+                            .Returns(products);
+
+        var productService = new ProductService(productRepositoryMock.Object);
+        var result = productService.GetManage(new GetProductsManageRequestDTO());
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.Count);
+    }
 }
