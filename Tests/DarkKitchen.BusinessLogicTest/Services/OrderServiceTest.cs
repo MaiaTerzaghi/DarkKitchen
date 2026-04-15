@@ -586,9 +586,9 @@ public class OrderServiceTest
             });
 
         _service.CreateOrder(request);
-    }  
+    } 
 
-    [TestMethod]  
+    [TestMethod]
     public void MarkAsNotDelivered_OnTheWayOrder_ReturnsUpdatedStatus()
     {
         var order = new Order
