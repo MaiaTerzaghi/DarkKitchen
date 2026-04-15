@@ -554,4 +554,37 @@ public class OrderServiceTest
         Assert.AreEqual(1, result.OrderId);
         Assert.AreEqual("OnTheWay", result.Status);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CreateOrder_InactiveProduct_ThrowsException()
+    {
+        var product = new Product { Id = 1, Price = 100.0, IsActive = false, CommercialLine = "Pizzas", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate y albahaca", Images = "pizza.jpg", Category = "Fritos", Code = "P0001" };
+
+        var request = new CreateOrderRequestDTO
+        {
+            ClientId = 1,
+            DeliveryType = "Express",
+            Address = new AddressDTO
+            {
+                Street = "18 de Julio",
+                DoorNumber = "1234"
+            },
+            Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
+        };
+
+        _productRepositoryMock
+            .Setup(r => r.GetById(1))
+            .Returns(product);
+
+        _orderRepositoryMock
+            .Setup(r => r.Save(It.IsAny<Order>()))
+            .Returns((Order o) =>
+            {
+                o.Id = 1;
+                return o;
+            });
+
+        _service.CreateOrder(request);
+    }
 }
