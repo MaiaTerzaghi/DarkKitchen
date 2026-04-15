@@ -53,6 +53,11 @@ public class PromotionService(IPromotionRepository promotionRepository) : IPromo
 
     public PromotionResponseDTO UpdatePromotion(int id, UpdatePromotionRequestDTO request)
     {
+        if(string.IsNullOrWhiteSpace(request.Name))
+        {
+            throw new ArgumentException("El nombre de la promoción no puede estar vacío.");
+        }
+
         if(request.DiscountPercentage <= 0 || request.DiscountPercentage > 100)
         {
             throw new ArgumentException("El porcentaje de descuento debe ser mayor que 0 y menor o igual a 100.");
