@@ -84,6 +84,11 @@ public class ProductRepository(DarkKitchenContext context) : IProductRepository
             query = query.Where(p => p.Price >= request.PriceMin.Value);
         }
 
+        if (request.PriceMax.HasValue)
+        {
+            query = query.Where(p => p.Price <= request.PriceMax.Value);
+        }
+
         return query.ToList();
     }
 }
