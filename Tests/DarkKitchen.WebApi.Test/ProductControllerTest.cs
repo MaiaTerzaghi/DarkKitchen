@@ -132,4 +132,32 @@ public sealed class ProductControllerTest
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
     }
+
+    [TestMethod]
+    public void GetManage_WhenCalled_ReturnsOk()
+    {
+        var products = new List<ProductResponseDTO>
+        {
+            new ProductResponseDTO
+            {
+                Code = "P0001",
+                Name = "Pizza Napolitana",
+                Price = 100.0,
+                CommercialLine = "Minutas",
+                Category = "Fritos",
+                Images = "pizza.jpg"
+            }
+        };
+
+        var request = new GetProductsManageRequestDTO();
+
+        var productServiceMock = new Mock<IProductService>();
+        productServiceMock.Setup(s => s.GetManage(It.IsAny<GetProductsManageRequestDTO>()))
+                        .Returns(products);
+
+        var controller = new ProductController(productServiceMock.Object);
+        var result = controller.GetManage(request);
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+    }
 }
