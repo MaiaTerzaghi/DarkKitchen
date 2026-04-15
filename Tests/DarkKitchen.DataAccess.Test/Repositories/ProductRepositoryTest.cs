@@ -310,4 +310,38 @@ public sealed class ProductRepositoryTest
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("Pizza Napolitana", result[0].Name);
     }
+
+    [TestMethod]
+    public void GetManage_WhenFilterByIsActive_ReturnsFilteredProducts()
+    {
+        _context!.Products.Add(new Product
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = "pizza.jpg",
+            IsActive = true
+        });
+        _context.Products.Add(new Product
+        {
+            Code = "P0002",
+            Name = "Pasta Bolognese",
+            Description = "Rica pasta bolognese con carne y tomate",
+            Price = 80.0,
+            CommercialLine = "Minutas",
+            Category = "Pastas",
+            Images = "pasta.jpg",
+            IsActive = false
+        });
+        _context.SaveChanges();
+
+        var repository = new ProductRepository(_context);
+        var result = repository.GetManage(new GetProductsManageRequestDTO { IsActive = true });
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("Pizza Napolitana", result[0].Name);
+    }
 }
