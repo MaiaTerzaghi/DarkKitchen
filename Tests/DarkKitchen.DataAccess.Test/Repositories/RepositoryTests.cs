@@ -72,4 +72,27 @@ public sealed class RepositoryTest
         Assert.IsNotNull(result);
         Assert.AreEqual(promotion.Id, result.Id);
     }
+
+    [TestMethod]
+    public void Update_ExistingEntity_ReturnsUpdatedEntity()
+    {
+        var promotion = new Promotion
+        {
+            Name = "Black Friday",
+            DiscountPercentage = 10,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 1, 30)
+        };
+
+        _context!.Promotions.Add(promotion);
+        _context.SaveChanges();
+
+        promotion.Name = "Black Friday Updated";
+
+        var repository = new Repository<Promotion>(_context);
+        var result = repository.Update(promotion);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual("Black Friday Updated", result.Name);
+    }
 }
