@@ -586,7 +586,7 @@ public class OrderServiceTest
             });
 
         _service.CreateOrder(request);
-    } 
+    }
 
     [TestMethod]
     public void MarkAsNotDelivered_OnTheWayOrder_ReturnsUpdatedStatus()
