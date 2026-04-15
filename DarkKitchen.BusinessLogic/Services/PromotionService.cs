@@ -16,6 +16,23 @@ public class PromotionService(IPromotionRepository promotionRepository) : IPromo
 
     public PromotionResponseDTO CreatePromotion(CreatePromotionRequestDTO request)
     {
-        throw new NotImplementedException();
+        var promotion = new Promotion
+        {
+            Name = request.Name,
+            DiscountPercentage = request.DiscountPercentage,
+            ValidFrom = request.ValidFrom,
+            ValidTo = request.ValidTo
+        };
+
+        var saved = _promotionRepository.Add(promotion);
+
+        return new PromotionResponseDTO
+        {
+            Id = saved.Id,
+            Name = saved.Name,
+            DiscountPercentage = saved.DiscountPercentage,
+            ValidFrom = saved.ValidFrom,
+            ValidTo = saved.ValidTo
+        };
     }
 }
