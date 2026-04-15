@@ -5,9 +5,12 @@ using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class PromotionService(IPromotionRepository promotionRepository) : IPromotionService
+public class PromotionService(IPromotionRepository promotionRepository, IProductRepository productRepository) : IPromotionService
 {
     private readonly IPromotionRepository _promotionRepository = promotionRepository;
+     #pragma warning disable CA1823
+    private readonly IProductRepository _productRepository = productRepository;
+    #pragma warning restore CA1823
 
     public List<Promotion> GetActivePromotions(DateTime? date, string? productLine, string? product)
     {

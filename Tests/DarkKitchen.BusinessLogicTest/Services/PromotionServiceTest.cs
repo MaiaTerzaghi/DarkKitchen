@@ -11,13 +11,16 @@ namespace DarkKitchen.BusinessLogicTest.Services;
 public sealed class PromotionServiceTest
 {
     private Mock<IPromotionRepository> _promotionRepositoryMock = null!;
+    private Mock<IProductRepository> _productRepositoryMock = null!;
+
     private PromotionService _service = null!;
 
     [TestInitialize]
     public void Setup()
     {
         _promotionRepositoryMock = new Mock<IPromotionRepository>();
-        _service = new PromotionService(_promotionRepositoryMock.Object);
+        _productRepositoryMock = new Mock<IProductRepository>();
+        _service = new PromotionService(_promotionRepositoryMock.Object, _productRepositoryMock.Object);
     }
 
     [TestMethod]
@@ -258,5 +261,37 @@ public sealed class PromotionServiceTest
         };
 
         _service.UpdatePromotion(1, request);
+    }
+
+    [TestMethod]
+    public void AddProductToPromotion_ValidRequest_AddsProductToPromotion()
+    {
+        var promotion = new Promotion
+        {
+            Id = 1,
+            Name = "Black Friday",
+            DiscountPercentage = 10,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 1, 30),
+            Products = []
+        };
+
+        var product = new Product { Id = 1, Name = "Pizza", Price = 100 };
+
+        _promotionRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Returns(promotion);
+
+        _productRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns(product);
+
+        _promotionRepositoryMock
+            .Setup(r => r.Update(It.IsAny<Promotion>()))
+            .Returns(promotion);
+
+        _service.AddProductToPromotion(1, 1);
+
+        Assert.AreEqual(1, promotion.Products.Count);
     }
 }
