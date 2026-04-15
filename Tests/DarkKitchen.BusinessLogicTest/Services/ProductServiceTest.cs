@@ -402,4 +402,28 @@ public sealed class ProductServiceTest
         Assert.IsNotNull(result);
         Assert.AreEqual("P0001", result.Code);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void UpdateProduct_WhenProductNotFound_ThrowsException()
+    {
+        var request = new UpdateProductRequestDTO
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = "pizza.jpg",
+            IsActive = true
+        };
+
+        var productRepositoryMock = new Mock<IProductRepository>();
+        productRepositoryMock.Setup(r => r.GetById(It.IsAny<int>()))
+                            .Returns((Product?)null);
+
+        var productService = new ProductService(productRepositoryMock.Object);
+        productService.UpdateProduct(999, request);
+    }
 }
