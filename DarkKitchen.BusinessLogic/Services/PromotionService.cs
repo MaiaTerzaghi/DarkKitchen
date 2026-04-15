@@ -97,6 +97,11 @@ public class PromotionService(IPromotionRepository promotionRepository, IProduct
         var product = _productRepository.Get(p => p.Id == productId)
             ?? throw new ArgumentException($"Producto con id {productId} no encontrado.");
 
+        if(_promotionRepository.ProductHasActivePromotion(productId))
+        {
+            throw new ArgumentException($"El producto con id {productId} ya tiene una promoción vigente.");
+        }
+
         promotion.Products.Add(product);
 
         _promotionRepository.Update(promotion);
