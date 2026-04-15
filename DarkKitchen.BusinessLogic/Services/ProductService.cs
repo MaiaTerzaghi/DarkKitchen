@@ -14,7 +14,7 @@ public class ProductService(IProductRepository productRepository) : IProductServ
         return _productRepository.GetAll(name, category, line);
     }
 
-        public ProductResponseDTO CreateProduct(CreateProductRequestDTO request)
+    public ProductResponseDTO CreateProduct(CreateProductRequestDTO request)
     {
         var product = new Product
         {

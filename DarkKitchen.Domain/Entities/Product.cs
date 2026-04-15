@@ -15,7 +15,7 @@ public class Product
         get => _code;
         set
         {
-            if (value.Length < 5 || value.Length > 20)
+            if(value.Length < 5 || value.Length > 20)
             {
                 throw new ArgumentException("El código debe tener entre 5 y 20 caracteres.");
             }
@@ -29,7 +29,7 @@ public class Product
         get => _name;
         set
         {
-            if (value.Length < 10 || value.Length > 50)
+            if(value.Length < 10 || value.Length > 50)
             {
                 throw new ArgumentException("El nombre debe tener entre 10 y 50 caracteres.");
             }
@@ -43,7 +43,7 @@ public class Product
         get => _description;
         set
         {
-            if (value.Length < 20 || value.Length > 500)
+            if(value.Length < 20 || value.Length > 500)
             {
                 throw new ArgumentException("La descripción debe tener entre 20 y 500 caracteres.");
             }
@@ -57,7 +57,7 @@ public class Product
         get => _price;
         set
         {
-            if (value < 0)
+            if(value < 0)
             {
                 throw new ArgumentException("El precio debe ser mayor a cero.");
             }
@@ -71,7 +71,7 @@ public class Product
         get => _commercialLine;
         set
         {
-            if (string.IsNullOrEmpty(value))
+            if(string.IsNullOrEmpty(value))
             {
                 throw new ArgumentException("La línea comercial no puede estar vacía.");
             }
@@ -85,7 +85,7 @@ public class Product
         get => _category;
         set
         {
-            if (string.IsNullOrEmpty(value))
+            if(string.IsNullOrEmpty(value))
             {
                 throw new ArgumentException("La categoría no puede estar vacía.");
             }
@@ -100,19 +100,19 @@ public class Product
         get => _images;
         set
         {
-            if (string.IsNullOrEmpty(value))
+            if(string.IsNullOrEmpty(value))
             {
                 throw new ArgumentException("Se requiere al menos una imagen.");
             }
 
             var images = value.Split(',');
 
-            if (images.Length > 3)
+            if(images.Length > 3)
             {
                 throw new ArgumentException("Se permiten hasta 3 imágenes.");
             }
 
-            if (images.Any(img => !img.Trim().EndsWith(".jpg")))
+            if(images.Any(img => !img.Trim().EndsWith(".jpg")))
             {
                 throw new ArgumentException("Las imágenes deben ser en formato jpg.");
             }
