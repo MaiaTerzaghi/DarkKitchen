@@ -32,6 +32,7 @@ public class PromotionController(IPromotionService promotionService) : Controlle
     [HttpPut("{id}")]
     public IActionResult UpdatePromotion(int id, [FromBody] UpdatePromotionRequestDTO request)
     {
-        throw new NotImplementedException();
+        var response = _promotionService.UpdatePromotion(id, request);
+        return Ok(response);
     }
 }
