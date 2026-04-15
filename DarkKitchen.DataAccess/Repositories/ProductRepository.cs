@@ -50,41 +50,41 @@ public class ProductRepository(DarkKitchenContext context) : IProductRepository
         return product;
     }
 
-   public List<Product> GetManage(GetProductsManageRequestDTO request)
+    public List<Product> GetManage(GetProductsManageRequestDTO request)
     {
         var query = _context.Products.AsQueryable();
 
-        if (!string.IsNullOrEmpty(request.Name))
+        if(!string.IsNullOrEmpty(request.Name))
         {
             query = query.Where(p => p.Name.Contains(request.Name));
         }
 
-        if (!string.IsNullOrEmpty(request.Description))
+        if(!string.IsNullOrEmpty(request.Description))
         {
             query = query.Where(p => p.Description.Contains(request.Description));
         }
 
-        if (!string.IsNullOrEmpty(request.Category))
+        if(!string.IsNullOrEmpty(request.Category))
         {
             query = query.Where(p => p.Category.Contains(request.Category));
         }
 
-        if (!string.IsNullOrEmpty(request.CommercialLine))
+        if(!string.IsNullOrEmpty(request.CommercialLine))
         {
             query = query.Where(p => p.CommercialLine.Contains(request.CommercialLine));
         }
 
-        if (request.IsActive.HasValue)
+        if(request.IsActive.HasValue)
         {
             query = query.Where(p => p.IsActive == request.IsActive.Value);
         }
 
-        if (request.PriceMin.HasValue)
+        if(request.PriceMin.HasValue)
         {
             query = query.Where(p => p.Price >= request.PriceMin.Value);
         }
 
-        if (request.PriceMax.HasValue)
+        if(request.PriceMax.HasValue)
         {
             query = query.Where(p => p.Price <= request.PriceMax.Value);
         }
