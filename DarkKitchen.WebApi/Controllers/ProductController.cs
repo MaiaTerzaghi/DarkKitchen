@@ -47,4 +47,12 @@ public class ProductController(IProductService productService) : ControllerBase
         var product = _productService.UpdateProduct(id, request);
         return Ok(product);
     }
+
+    [AuthorizeRoles(UserRole.Administrative)]
+    [HttpGet("manage")]
+    public IActionResult GetManage([FromQuery] GetProductsManageRequestDTO request)
+    {
+        var products = _productService.GetManage(request);
+        return Ok(products);
+    }
 }

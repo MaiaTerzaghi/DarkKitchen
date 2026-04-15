@@ -8,4 +8,5 @@ public interface IProductService
     List<Product> GetAll(string? name, string? category, string? line);
     ProductResponseDTO CreateProduct(CreateProductRequestDTO request);
     ProductResponseDTO UpdateProduct(int id, UpdateProductRequestDTO request);
+    List<ProductResponseDTO> GetManage(GetProductsManageRequestDTO request);
 }

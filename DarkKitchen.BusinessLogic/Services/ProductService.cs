@@ -67,4 +67,9 @@ public class ProductService(IProductRepository productRepository) : IProductServ
             Images = updated.Images
         };
     }
+
+    public List<ProductResponseDTO> GetManage(GetProductsManageRequestDTO request)
+    {
+        throw new NotImplementedException();
+    }
 }
