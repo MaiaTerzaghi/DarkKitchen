@@ -125,4 +125,30 @@ public sealed class ProductRepositoryTest
         Assert.AreNotEqual(0, result.Id);
         Assert.AreEqual("P0001", result.Code);
     }
+
+    [TestMethod]
+    public void Update_WhenProductExists_ReturnsUpdatedProduct()
+    {
+        var product = new Product
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = "pizza.jpg"
+        };
+
+        _context!.Products.Add(product);
+        _context.SaveChanges();
+
+        product.Name = "Pizza Cuatro Quesos";
+
+        var repository = new ProductRepository(_context);
+        var result = repository.Update(product);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual("Pizza Cuatro Quesos", result.Name);
+    }
 }
