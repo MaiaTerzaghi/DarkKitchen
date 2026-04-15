@@ -50,4 +50,9 @@ public class PromotionService(IPromotionRepository promotionRepository) : IPromo
             ValidTo = saved.ValidTo
         };
     }
+
+    public PromotionResponseDTO UpdatePromotion(int id, UpdatePromotionRequestDTO request)
+    {
+        throw new NotImplementedException();
+    }
 }

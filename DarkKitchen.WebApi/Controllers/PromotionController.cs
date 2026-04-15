@@ -27,4 +27,11 @@ public class PromotionController(IPromotionService promotionService) : Controlle
         var response = _promotionService.CreatePromotion(request);
         return Ok(response);
     }
+
+    [AuthorizeRoles(UserRole.Administrative)]
+    [HttpPut("{id}")]
+    public IActionResult UpdatePromotion(int id, [FromBody] UpdatePromotionRequestDTO request)
+    {
+        throw new NotImplementedException();
+    }
 }

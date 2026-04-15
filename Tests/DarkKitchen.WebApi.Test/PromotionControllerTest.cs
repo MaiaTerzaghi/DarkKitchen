@@ -75,4 +75,39 @@ public sealed class PromotionControllerTest
         Assert.AreEqual(expectedResponse.Id, response.Id);
         Assert.AreEqual(expectedResponse.Name, response.Name);
     }
+
+    [TestMethod]
+    public void UpdatePromotion_ValidRequest_ReturnsOkWithPromotion()
+    {
+        var promotionId = 1;
+
+        var request = new UpdatePromotionRequestDTO
+        {
+            Name = "Black Friday Updated",
+            DiscountPercentage = 20,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 1, 30)
+        };
+
+        var expectedResponse = new PromotionResponseDTO
+        {
+            Id = promotionId,
+            Name = "Black Friday Updated",
+            DiscountPercentage = 20,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 1, 30)
+        };
+
+        _promotionServiceMock
+            .Setup(s => s.UpdatePromotion(promotionId, request))
+            .Returns(expectedResponse);
+
+        var result = _controller.UpdatePromotion(promotionId, request);
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = (OkObjectResult)result;
+        var response = (PromotionResponseDTO)okResult.Value!;
+        Assert.AreEqual(expectedResponse.Id, response.Id);
+        Assert.AreEqual(expectedResponse.Name, response.Name);
+    }
 }
