@@ -305,4 +305,29 @@ public sealed class PromotionServiceTest
 
         _service.AddProductToPromotion(99, 1);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void AddProductToPromotion_ProductNotFound_ThrowsException()
+    {
+        var promotion = new Promotion
+        {
+            Id = 1,
+            Name = "Black Friday",
+            DiscountPercentage = 10,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 1, 30),
+            Products = []
+        };
+
+        _promotionRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Returns(promotion);
+
+        _productRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns((Product)null!);
+
+        _service.AddProductToPromotion(1, 99);
+    }
 }
