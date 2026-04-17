@@ -91,8 +91,8 @@ public class PromotionService(IPromotionRepository promotionRepository, IProduct
 
     public void AddProductToPromotion(int promotionId, int productId)
     {
-        var promotion = _promotionRepository.Get(p => p.Id == promotionId)
-            ?? throw new ArgumentException($"Promoción con id {promotionId} no encontrada.");
+        var promotion = _promotionRepository.GetPromotionWithProducts(promotionId)
+        ?? throw new ArgumentException($"Promoción con id {promotionId} no encontrada.");
 
         var product = _productRepository.Get(p => p.Id == productId)
             ?? throw new ArgumentException($"Producto con id {productId} no encontrado.");
@@ -109,8 +109,8 @@ public class PromotionService(IPromotionRepository promotionRepository, IProduct
 
     public void RemoveProductFromPromotion(int promotionId, int productId)
     {
-        var promotion = _promotionRepository.Get(p => p.Id == promotionId)
-            ?? throw new ArgumentException($"Promoción con id {promotionId} no encontrada.");
+        var promotion = _promotionRepository.GetPromotionWithProducts(promotionId)
+        ?? throw new ArgumentException($"Promoción con id {promotionId} no encontrada.");
 
         var product = promotion.Products.FirstOrDefault(p => p.Id == productId)
             ?? throw new ArgumentException($"El producto con id {productId} no está en la promoción.");
