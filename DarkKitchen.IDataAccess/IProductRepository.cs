@@ -3,7 +3,7 @@ using DarkKitchen.DTOs.Args.In;
 
 namespace DarkKitchen.IDataAccess;
 
-public interface IProductRepository
+public interface IProductRepository : IRepository<Product>
 {
     List<Product> GetAll(string? name, string? category, string? line);
 

@@ -412,4 +412,35 @@ public sealed class ProductRepositoryTest
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("Pasta Bolognese", result[0].Name);
     }
+
+    [TestMethod]
+    public void ProductHasActivePromotion_WhenProductHasActivePromotion_ReturnsTrue()
+    {
+        var product = new Product
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana",
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Price = 100.0
+        };
+
+        var promotion = new Promotion
+        {
+            Name = "Black Friday",
+            DiscountPercentage = 10,
+            ValidFrom = DateTime.Today.AddDays(-1),
+            ValidTo = DateTime.Today.AddDays(1),
+            Products = [product]
+        };
+
+        _context!.Promotions.Add(promotion);
+        _context.SaveChanges();
+
+        var repository = new PromotionRepository(_context);
+        var result = repository.ProductHasActivePromotion(product.Id);
+
+        Assert.IsTrue(result);
+    }
 }

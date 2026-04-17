@@ -4,6 +4,7 @@ using DarkKitchen.DataAccess.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DarkKitchen.DataAccess.Migrations
 {
     [DbContext(typeof(DarkKitchenContext))]
-    partial class DarkKitchenContextModelSnapshot : ModelSnapshot
+    [Migration("20260415210014_AddPromotionProductRelation")]
+    partial class AddPromotionProductRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -126,7 +129,12 @@ namespace DarkKitchen.DataAccess.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
+                    b.Property<int?>("PromotionId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("PromotionId");
 
                     b.ToTable("Products");
                 });
@@ -217,21 +225,6 @@ namespace DarkKitchen.DataAccess.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("ProductPromotion", b =>
-                {
-                    b.Property<int>("ProductsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PromotionId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProductsId", "PromotionId");
-
-                    b.HasIndex("PromotionId");
-
-                    b.ToTable("PromotionProducts", (string)null);
-                });
-
             modelBuilder.Entity("DarkKitchen.Domain.Entities.OrderItem", b =>
                 {
                     b.HasOne("DarkKitchen.Domain.Entities.Order", null)
@@ -247,6 +240,13 @@ namespace DarkKitchen.DataAccess.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("DarkKitchen.Domain.Entities.Product", b =>
+                {
+                    b.HasOne("DarkKitchen.Domain.Entities.Promotion", null)
+                        .WithMany("Products")
+                        .HasForeignKey("PromotionId");
+                });
+
             modelBuilder.Entity("DarkKitchen.Domain.Entities.Session", b =>
                 {
                     b.HasOne("DarkKitchen.Domain.Entities.User", "User")
@@ -257,24 +257,14 @@ namespace DarkKitchen.DataAccess.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ProductPromotion", b =>
-                {
-                    b.HasOne("DarkKitchen.Domain.Entities.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DarkKitchen.Domain.Entities.Promotion", null)
-                        .WithMany()
-                        .HasForeignKey("PromotionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("DarkKitchen.Domain.Entities.Order", b =>
                 {
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("DarkKitchen.Domain.Entities.Promotion", b =>
+                {
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }
