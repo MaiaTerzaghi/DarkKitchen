@@ -102,6 +102,11 @@ public class PromotionService(IPromotionRepository promotionRepository, IProduct
             throw new ArgumentException($"El producto con id {productId} ya tiene una promoción vigente.");
         }
 
+        if(promotion.ValidTo < DateTime.Today)
+        {
+            throw new ArgumentException($"La promoción con id {promotionId} está vencida.");
+        }
+
         promotion.Products.Add(product);
 
         _promotionRepository.Update(promotion);
