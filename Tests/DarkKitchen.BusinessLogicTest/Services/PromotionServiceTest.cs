@@ -320,9 +320,9 @@ public sealed class PromotionServiceTest
             Products = []
         };
 
-       _promotionRepositoryMock
-            .Setup(r => r.GetPromotionWithProducts(1))
-            .Returns(promotion);
+        _promotionRepositoryMock
+             .Setup(r => r.GetPromotionWithProducts(1))
+             .Returns(promotion);
 
         _productRepositoryMock
             .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
