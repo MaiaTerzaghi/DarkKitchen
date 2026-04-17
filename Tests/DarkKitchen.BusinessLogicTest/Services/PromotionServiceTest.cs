@@ -55,8 +55,8 @@ public sealed class PromotionServiceTest
         {
             Name = "Black Friday",
             DiscountPercentage = 10,
-            ValidFrom = new DateTime(2026, 1, 25),
-            ValidTo = new DateTime(2026, 1, 30)
+            ValidFrom = DateTime.Today.AddDays(-1),
+            ValidTo = DateTime.Today.AddDays(30),
         };
 
         var savedPromotion = new Promotion
@@ -271,8 +271,8 @@ public sealed class PromotionServiceTest
             Id = 1,
             Name = "Black Friday",
             DiscountPercentage = 10,
-            ValidFrom = new DateTime(2026, 1, 25),
-            ValidTo = new DateTime(2026, 1, 30),
+            ValidFrom = DateTime.Today.AddDays(-1),
+            ValidTo = DateTime.Today.AddDays(30),
             Products = []
         };
 
@@ -315,8 +315,8 @@ public sealed class PromotionServiceTest
             Id = 1,
             Name = "Black Friday",
             DiscountPercentage = 10,
-            ValidFrom = new DateTime(2026, 1, 25),
-            ValidTo = new DateTime(2026, 1, 30),
+            ValidFrom = DateTime.Today.AddDays(-1),
+            ValidTo = DateTime.Today.AddDays(30),
             Products = []
         };
 
