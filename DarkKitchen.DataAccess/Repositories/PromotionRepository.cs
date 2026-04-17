@@ -25,4 +25,9 @@ public class PromotionRepository(DarkKitchenContext context)
                 && p.ValidTo >= DateTime.Today
                 && p.Products.Any(pr => pr.Id == productId));
     }
+
+    public Promotion? GetPromotionWithProducts(int promotionId)
+    {
+        throw new NotImplementedException();
+    }
 }
