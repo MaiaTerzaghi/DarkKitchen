@@ -279,7 +279,7 @@ public sealed class PromotionServiceTest
         var product = new Product { Id = 1, Name = "Pizza Napolitana", Price = 100 };
 
         _promotionRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Setup(r => r.GetPromotionWithProducts(1))
             .Returns(promotion);
 
         _productRepositoryMock
@@ -300,7 +300,7 @@ public sealed class PromotionServiceTest
     public void AddProductToPromotion_PromotionNotFound_ThrowsException()
     {
         _promotionRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Setup(r => r.GetPromotionWithProducts(99))
             .Returns((Promotion)null!);
 
         _service.AddProductToPromotion(99, 1);
@@ -320,8 +320,8 @@ public sealed class PromotionServiceTest
             Products = []
         };
 
-        _promotionRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+       _promotionRepositoryMock
+            .Setup(r => r.GetPromotionWithProducts(1))
             .Returns(promotion);
 
         _productRepositoryMock
@@ -348,7 +348,7 @@ public sealed class PromotionServiceTest
         };
 
         _promotionRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Setup(r => r.GetPromotionWithProducts(1))
             .Returns(newPromotion);
 
         _productRepositoryMock
@@ -378,7 +378,7 @@ public sealed class PromotionServiceTest
         };
 
         _promotionRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Setup(r => r.GetPromotionWithProducts(1))
             .Returns(promotion);
 
         _promotionRepositoryMock
@@ -395,7 +395,7 @@ public sealed class PromotionServiceTest
     public void RemoveProductFromPromotion_PromotionNotFound_ThrowsException()
     {
         _promotionRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Setup(r => r.GetPromotionWithProducts(99))
             .Returns((Promotion)null!);
 
         _service.RemoveProductFromPromotion(99, 1);
@@ -416,7 +416,7 @@ public sealed class PromotionServiceTest
         };
 
         _promotionRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Setup(r => r.GetPromotionWithProducts(1))
             .Returns(promotion);
 
         _service.RemoveProductFromPromotion(1, 99);
