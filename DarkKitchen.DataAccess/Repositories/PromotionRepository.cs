@@ -28,6 +28,8 @@ public class PromotionRepository(DarkKitchenContext context)
 
     public Promotion? GetPromotionWithProducts(int promotionId)
     {
-        throw new NotImplementedException();
+        return context.Promotions
+            .Include(p => p.Products)
+            .FirstOrDefault(p => p.Id == promotionId);
     }
 }
