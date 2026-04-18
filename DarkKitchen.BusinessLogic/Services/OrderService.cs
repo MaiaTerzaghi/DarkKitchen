@@ -282,4 +282,9 @@ public class OrderService(
             UpdatedAt = order.UpdatedAt
         };
     }
+
+    public List<TopProductResponseDTO> GetTopProducts(DateTime dateFrom, DateTime dateTo)
+    {
+        throw new NotImplementedException();
+    }
 }

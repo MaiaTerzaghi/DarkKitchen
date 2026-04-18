@@ -9,9 +9,12 @@ namespace DarkKitchen.WebApi.Controllers;
 
 [ApiController]
 [Route("api/products")]
-public class ProductController(IProductService productService) : ControllerBase
+public class ProductController(IProductService productService, IOrderService orderService) : ControllerBase
 {
     private readonly IProductService _productService = productService;
+    #pragma warning disable CA1823
+    private readonly IOrderService _orderService = orderService;
+    #pragma warning restore CA1823
 
     [AuthorizeRoles(UserRole.Client, UserRole.Administrative)]
     [HttpGet]
@@ -54,5 +57,12 @@ public class ProductController(IProductService productService) : ControllerBase
     {
         var products = _productService.GetManage(request);
         return Ok(products);
+    }
+
+    [AuthorizeRoles(UserRole.Administrative)]
+    [HttpGet("top")]
+    public IActionResult GetTopProducts([FromQuery] DateTime dateFrom, [FromQuery] DateTime dateTo)
+    {
+        throw new NotImplementedException();
     }
 }

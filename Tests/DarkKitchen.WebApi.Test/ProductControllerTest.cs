@@ -24,7 +24,7 @@ public sealed class ProductControllerTest
         productServiceMock.Setup(s => s.GetAll(null, null, null))
                           .Returns(products);
 
-        var controller = new ProductController(productServiceMock.Object);
+        var controller = new ProductController(productServiceMock.Object, new Mock<IOrderService>().Object);
 
         var result = controller.GetAll(null, null, null);
 
@@ -59,7 +59,7 @@ public sealed class ProductControllerTest
         productServiceMock.Setup(s => s.GetAll(It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<string?>()))
                         .Throws(new ArgumentException("Error"));
 
-        var controller = new ProductController(productServiceMock.Object);
+        var controller = new ProductController(productServiceMock.Object, new Mock<IOrderService>().Object);
 
         controller.GetAll(null, null, null);
     }
@@ -92,7 +92,7 @@ public sealed class ProductControllerTest
         productServiceMock.Setup(s => s.CreateProduct(It.IsAny<CreateProductRequestDTO>()))
                         .Returns(response);
 
-        var controller = new ProductController(productServiceMock.Object);
+        var controller = new ProductController(productServiceMock.Object, new Mock<IOrderService>().Object);
         var result = controller.CreateProduct(request);
 
         Assert.IsInstanceOfType(result, typeof(CreatedAtActionResult));
@@ -127,7 +127,7 @@ public sealed class ProductControllerTest
         productServiceMock.Setup(s => s.UpdateProduct(It.IsAny<int>(), It.IsAny<UpdateProductRequestDTO>()))
                         .Returns(response);
 
-        var controller = new ProductController(productServiceMock.Object);
+        var controller = new ProductController(productServiceMock.Object, new Mock<IOrderService>().Object);
         var result = controller.UpdateProduct(1, request);
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
@@ -155,9 +155,41 @@ public sealed class ProductControllerTest
         productServiceMock.Setup(s => s.GetManage(It.IsAny<GetProductsManageRequestDTO>()))
                         .Returns(products);
 
-        var controller = new ProductController(productServiceMock.Object);
+        var controller = new ProductController(productServiceMock.Object, new Mock<IOrderService>().Object);
         var result = controller.GetManage(request);
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+    }
+
+    [TestMethod]
+    public void GetTopProducts_ValidRequest_ReturnsOkWithTopProducts()
+    {
+        var orderServiceMock = new Mock<IOrderService>();
+        var productServiceMock = new Mock<IProductService>();
+
+        var expectedResponse = new List<TopProductResponseDTO>
+        {
+            new TopProductResponseDTO
+            {
+                Code = "P0001",
+                Name = "Pizza Napolitana",
+                Quantity = 10,
+                Images = "pizza.jpg"
+            }
+        };
+
+        orderServiceMock
+            .Setup(s => s.GetTopProducts(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+            .Returns(expectedResponse);
+
+        var controller = new ProductController(productServiceMock.Object, orderServiceMock.Object);
+
+        var result = controller.GetTopProducts(new DateTime(2026, 1, 1), new DateTime(2026, 1, 31));
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = (OkObjectResult)result;
+        var response = (List<TopProductResponseDTO>)okResult.Value!;
+        Assert.AreEqual(1, response.Count);
+        Assert.AreEqual("Pizza Napolitana", response[0].Name);
     }
 }
