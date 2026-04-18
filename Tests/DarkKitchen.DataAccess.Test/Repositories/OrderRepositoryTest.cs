@@ -359,7 +359,7 @@ public sealed class OrderRepositoryTest
     [TestMethod]
     public void GetTopProducts_ValidRequest_ReturnsLimitedResults()
     {
-        for(int i = 1; i <= 6; i++)
+        for(var i = 1; i <= 6; i++)
         {
             var product = new Product
             {
