@@ -9,9 +9,10 @@ namespace DarkKitchen.WebApi.Controllers;
 
 [ApiController]
 [Route("api/products")]
-public class ProductController(IProductService productService) : ControllerBase
+public class ProductController(IProductService productService, IOrderService orderService) : ControllerBase
 {
     private readonly IProductService _productService = productService;
+    private readonly IOrderService _orderService = orderService;
 
     [AuthorizeRoles(UserRole.Client, UserRole.Administrative)]
     [HttpGet]
@@ -54,5 +55,13 @@ public class ProductController(IProductService productService) : ControllerBase
     {
         var products = _productService.GetManage(request);
         return Ok(products);
+    }
+
+    // [AuthorizeRoles(UserRole.Administrative)]
+    [HttpGet("top")]
+    public IActionResult GetTopProducts([FromQuery] DateTime dateFrom, [FromQuery] DateTime dateTo)
+    {
+        var response = _orderService.GetTopProducts(dateFrom, dateTo);
+        return Ok(response);
     }
 }
