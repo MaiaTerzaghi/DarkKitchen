@@ -1,6 +1,7 @@
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.DTOs.Args.In;
+using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IDataAccess;
 using Microsoft.EntityFrameworkCore;
 
@@ -62,5 +63,10 @@ public class OrderRepository(DarkKitchenContext context) : IOrderRepository
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
             .FirstOrDefault(o => o.Id == orderId);
+    }
+
+    public List<TopProductResponseDTO> GetTopProducts(DateTime dateFrom, DateTime dateTo, int top)
+    {
+        throw new NotImplementedException();
     }
 }
