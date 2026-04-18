@@ -57,7 +57,7 @@ public class ProductController(IProductService productService, IOrderService ord
         return Ok(products);
     }
 
-    [AuthorizeRoles(UserRole.Administrative)]
+    // [AuthorizeRoles(UserRole.Administrative)]
     [HttpGet("top")]
     public IActionResult GetTopProducts([FromQuery] DateTime dateFrom, [FromQuery] DateTime dateTo)
     {
