@@ -79,6 +79,7 @@ public class OrderRepository(DarkKitchenContext context) : IOrderRepository
                 Images = g.Key.Images
             })
             .OrderByDescending(p => p.Quantity)
+            .Take(top)
             .ToList();
     }
 }
