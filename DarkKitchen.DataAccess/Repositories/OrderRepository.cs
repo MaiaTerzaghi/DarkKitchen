@@ -67,6 +67,17 @@ public class OrderRepository(DarkKitchenContext context) : IOrderRepository
 
     public List<TopProductResponseDTO> GetTopProducts(DateTime dateFrom, DateTime dateTo, int top)
     {
-        throw new NotImplementedException();
+        return _context.Orders
+            .Where(o => o.Date >= dateFrom && o.Date <= dateTo)
+            .SelectMany(o => o.Items)
+            .GroupBy(i => i.Product)
+            .Select(g => new TopProductResponseDTO
+            {
+                Code = g.Key.Code,
+                Name = g.Key.Name,
+                Quantity = g.Sum(i => i.Quantity),
+                Images = g.Key.Images
+            })
+            .ToList();
     }
 }
