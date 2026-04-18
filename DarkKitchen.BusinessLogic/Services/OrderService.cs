@@ -18,6 +18,7 @@ public class OrderService(
 
     private readonly IPromotionRepository _promotionRepository = promotionRepository;
     private readonly IUserRepository _userRepository = userRepository;
+    private IShippingStrategy? _shippingStrategy;
     private const double Iva = 0.22;
     private const int TopProductsCount = 5;
 
@@ -60,7 +61,9 @@ public class OrderService(
 
         var discountedSubtotal = ApplyPromotions(subtotal, items, promotions);
 
-        var shippingCost = CalculateShipping(deliveryType);
+        // var shippingCost = CalculateShipping(deliveryType);
+
+        var shippingCost = CalculateShipping(request.DeliveryType);
 
         var total = (discountedSubtotal * (1 + Iva)) + shippingCost;
 
@@ -106,14 +109,16 @@ public class OrderService(
     }
 
     // Implemento Strategy
-    private static double CalculateShipping(DeliveryType deliveryType)
+    private double CalculateShipping(string deliveryType)
     {
-        return deliveryType switch
+        _shippingStrategy = deliveryType switch
         {
-            DeliveryType.Express => new ExpressShipping().CalculateCost(),
-            DeliveryType.Standard => new StandardShipping().CalculateCost(),
-            _ => throw new ArgumentException($"Tipo de entrega '{deliveryType}' no disponible.")
+            "Express" => new ExpressShipping(),
+            "Standard" => new StandardShipping(),
+            _ => throw new ArgumentException("Tipo de entrega no válido")
         };
+
+        return _shippingStrategy.CalculateCost();
     }
 
     public List<GetClientOrdersResponseDTO> GetClientOrders(GetClientOrdersRequestDTO request)
