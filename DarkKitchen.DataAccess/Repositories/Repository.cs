@@ -27,4 +27,14 @@ public class Repository<TEntity>(DbContext context) : IRepository<TEntity>
         _context.SaveChanges();
         return entity;
     }
+
+    public List<TEntity> GetAll(
+    Expression<Func<TEntity, bool>>? predicate = null,
+    Expression<Func<TEntity, object>>? orderBy = null,
+    bool descending = false,
+    int page = 1,
+    int pageSize = 20)
+    {
+        throw new NotImplementedException();
+    }
 }

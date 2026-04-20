@@ -95,4 +95,32 @@ public sealed class RepositoryTest
         Assert.IsNotNull(result);
         Assert.AreEqual("Black Friday Updated", result.Name);
     }
+
+    [TestMethod]
+    public void GetAll_WithoutFilters_ReturnsAllEntities()
+    {
+        var promotion1 = new Promotion
+        {
+            Name = "Black Friday",
+            DiscountPercentage = 10,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 1, 30)
+        };
+
+        var promotion2 = new Promotion
+        {
+            Name = "Semana Turismo",
+            DiscountPercentage = 15,
+            ValidFrom = new DateTime(2026, 3, 29),
+            ValidTo = new DateTime(2026, 4, 4)
+        };
+
+        _context!.Promotions.AddRange(promotion1, promotion2);
+        _context.SaveChanges();
+
+        var repository = new Repository<Promotion>(_context);
+        var result = repository.GetAll();
+
+        Assert.AreEqual(2, result.Count);
+    }
 }
