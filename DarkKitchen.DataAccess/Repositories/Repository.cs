@@ -42,6 +42,11 @@ public class Repository<TEntity>(DbContext context) : IRepository<TEntity>
             query = query.Where(predicate);
         }
 
+        if(orderBy != null)
+        {
+            query = query.OrderBy(orderBy);
+        }
+
         return query
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
