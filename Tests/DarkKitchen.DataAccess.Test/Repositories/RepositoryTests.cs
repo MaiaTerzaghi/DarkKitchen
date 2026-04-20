@@ -182,4 +182,34 @@ public sealed class RepositoryTest
         Assert.AreEqual("Black Friday", result[0].Name);
         Assert.AreEqual("Semana Turismo", result[1].Name);
     }
+
+    [TestMethod]
+    public void GetAll_WithOrderByDescending_ReturnsOrderedEntitiesDescending()
+    {
+        var promotion1 = new Promotion
+        {
+            Name = "Black Friday",
+            DiscountPercentage = 10,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 1, 30)
+        };
+
+        var promotion2 = new Promotion
+        {
+            Name = "Semana Turismo",
+            DiscountPercentage = 15,
+            ValidFrom = new DateTime(2026, 3, 29),
+            ValidTo = new DateTime(2026, 4, 4)
+        };
+
+        _context!.Promotions.AddRange(promotion1, promotion2);
+        _context.SaveChanges();
+
+        var repository = new Repository<Promotion>(_context);
+        var result = repository.GetAll(orderBy: p => p.Name, descending: true);
+
+        Assert.AreEqual(2, result.Count);
+        Assert.AreEqual("Semana Turismo", result[0].Name);
+        Assert.AreEqual("Black Friday", result[1].Name);
+    }
 }
