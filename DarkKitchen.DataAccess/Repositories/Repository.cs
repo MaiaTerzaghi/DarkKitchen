@@ -35,6 +35,9 @@ public class Repository<TEntity>(DbContext context) : IRepository<TEntity>
     int page = 1,
     int pageSize = 20)
     {
-        throw new NotImplementedException();
+        return _entities
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
     }
 }
