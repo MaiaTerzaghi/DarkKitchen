@@ -35,7 +35,14 @@ public class Repository<TEntity>(DbContext context) : IRepository<TEntity>
     int page = 1,
     int pageSize = 20)
     {
-        return _entities
+        var query = _entities.AsQueryable();
+
+        if(predicate != null)
+        {
+            query = query.Where(predicate);
+        }
+
+        return query
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToList();
