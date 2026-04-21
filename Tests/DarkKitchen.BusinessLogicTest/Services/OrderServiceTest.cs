@@ -673,4 +673,28 @@ public class OrderServiceTest
         Assert.AreEqual("Pizza Napolitana", result[0].Name);
         Assert.AreEqual(10, result[0].Quantity);
     }
+
+    [TestMethod]
+    public void GetSalesReport_ValidRequest_ReturnsSalesReport()
+    {
+        var expectedReport = new List<(int Year, int Month, int ClientId, double Total)>
+        {
+            (2026, 1, 1, 500.0),
+            (2026, 1, 2, 300.0)
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetSalesReport(1, 20))
+            .Returns(expectedReport);
+
+        var result = _service.GetSalesReport(1, 20);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual(2026, result[0].Year);
+        Assert.AreEqual(1, result[0].Month);
+        Assert.AreEqual(2, result[0].Clients.Count);
+        Assert.AreEqual(500.0, result[0].Clients[0].Total);
+        Assert.AreEqual(300.0, result[0].Clients[1].Total);
+    }
 }

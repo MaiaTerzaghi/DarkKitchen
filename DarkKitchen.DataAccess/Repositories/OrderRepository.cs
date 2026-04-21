@@ -80,4 +80,9 @@ public class OrderRepository(DarkKitchenContext context) : IOrderRepository
             .Select(g => (g.Product, g.Quantity))
             .ToList();
     }
+
+    public List<(int Year, int Month, int ClientId, double Total)> GetSalesReport(int page, int pageSize)
+    {
+        throw new NotImplementedException();
+    }
 }
