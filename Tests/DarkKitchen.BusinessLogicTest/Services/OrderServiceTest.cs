@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
@@ -638,5 +639,38 @@ public class OrderServiceTest
             .Returns(order);
 
         _service.MarkAsNotDelivered(1);
+    }
+
+    [TestMethod]
+    public void GetTopProducts_ValidRequest_ReturnsTopProducts()
+    {
+        var dateFrom = new DateTime(2026, 1, 1);
+        var dateTo = new DateTime(2026, 1, 31);
+
+        var product = new Product
+        {
+            Id = 1,
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Images = "pizza.jpg"
+        };
+
+        var topProducts = new List<(Product Product, int Quantity)>
+        {
+            (product, 10)
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetTopProducts(
+                It.IsAny<Expression<Func<Order, bool>>>(),
+                5))
+            .Returns(topProducts);
+
+        var result = _service.GetTopProducts(dateFrom, dateTo);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("Pizza Napolitana", result[0].Name);
+        Assert.AreEqual(10, result[0].Quantity);
     }
 }
