@@ -257,4 +257,54 @@ public sealed class OrderRepositoryTest
         Assert.IsNotNull(result);
         Assert.AreEqual(OrderStatus.Prepared, result.Status);
     }
+
+    [TestMethod]
+    public void GetTopProducts_ValidRequest_ReturnsProductsInDateRange()
+    {
+        var product = new Product
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana",
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Price = 100.0,
+            Images = "pizza.jpg"
+        };
+
+        var orderInRange = new Order
+        {
+            ClientId = 1,
+            DeliveryType = DeliveryType.Express,
+            Status = OrderStatus.Delivered,
+            Street = "18 de Julio",
+            DoorNumber = "1234",
+            Date = new DateTime(2026, 1, 10),
+            Items = [new OrderItem { Product = product, Quantity = 5 }]
+        };
+
+        var orderOutOfRange = new Order
+        {
+            ClientId = 1,
+            DeliveryType = DeliveryType.Express,
+            Status = OrderStatus.Delivered,
+            Street = "18 de Julio",
+            DoorNumber = "1234",
+            Date = new DateTime(2026, 3, 10),
+            Items = [new OrderItem { Product = product, Quantity = 10 }]
+        };
+
+        _context!.Orders.AddRange(orderInRange, orderOutOfRange);
+        _context.SaveChanges();
+
+        var repository = new OrderRepository(_context!);
+        var result = repository.GetTopProducts(
+            o => o.Date >= new DateTime(2026, 1, 1) && o.Date <= new DateTime(2026, 1, 31),
+            5);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("Pizza Napolitana", result[0].Product.Name);
+        Assert.AreEqual(5, result[0].Quantity);
+    }
 }
