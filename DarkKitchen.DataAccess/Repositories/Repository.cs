@@ -44,7 +44,9 @@ public class Repository<TEntity>(DbContext context) : IRepository<TEntity>
 
         if(orderBy != null)
         {
-            query = query.OrderBy(orderBy);
+            query = descending
+                ? query.OrderByDescending(orderBy)
+                : query.OrderBy(orderBy);
         }
 
         return query
