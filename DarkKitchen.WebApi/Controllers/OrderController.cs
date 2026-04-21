@@ -87,6 +87,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
     [HttpGet("report")]
     public IActionResult GetSalesReport([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
     {
-        throw new NotImplementedException();
+        var response = _orderService.GetSalesReport(page, pageSize);
+        return Ok(response);
     }
 }
