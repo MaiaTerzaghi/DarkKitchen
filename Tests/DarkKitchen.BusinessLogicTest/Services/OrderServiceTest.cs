@@ -1,8 +1,8 @@
+using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
-using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IDataAccess;
 using Moq;
 
@@ -647,20 +647,24 @@ public class OrderServiceTest
         var dateFrom = new DateTime(2026, 1, 1);
         var dateTo = new DateTime(2026, 1, 31);
 
-        var expectedTopProducts = new List<TopProductResponseDTO>
+        var product = new Product
         {
-            new TopProductResponseDTO
-            {
-                Code = "P0001",
-                Name = "Pizza Napolitana",
-                Quantity = 10,
-                Images = "pizza.jpg"
-            }
+            Id = 1,
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Images = "pizza.jpg"
+        };
+
+        var topProducts = new List<(Product Product, int Quantity)>
+        {
+            (product, 10)
         };
 
         _orderRepositoryMock
-            .Setup(r => r.GetTopProducts(dateFrom, dateTo, 5))
-            .Returns(expectedTopProducts);
+            .Setup(r => r.GetTopProducts(
+                It.IsAny<Expression<Func<Order, bool>>>(),
+                5))
+            .Returns(topProducts);
 
         var result = _service.GetTopProducts(dateFrom, dateTo);
 

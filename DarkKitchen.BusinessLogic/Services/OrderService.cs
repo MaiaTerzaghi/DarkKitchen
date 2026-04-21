@@ -290,6 +290,16 @@ public class OrderService(
 
     public List<TopProductResponseDTO> GetTopProducts(DateTime dateFrom, DateTime dateTo)
     {
-        return _orderRepository.GetTopProducts(dateFrom, dateTo, TopProductsCount);
+        var topProducts = _orderRepository.GetTopProducts(
+            o => o.Date >= dateFrom && o.Date <= dateTo,
+            TopProductsCount);
+
+        return topProducts.Select(p => new TopProductResponseDTO
+        {
+            Code = p.Product.Code,
+            Name = p.Product.Name,
+            Quantity = p.Quantity,
+            Images = p.Product.Images
+        }).ToList();
     }
 }

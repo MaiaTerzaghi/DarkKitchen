@@ -1,6 +1,6 @@
+using System.Linq.Expressions;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.DTOs.Args.In;
-using DarkKitchen.DTOs.Args.Output;
 
 namespace DarkKitchen.IDataAccess;
 
@@ -11,5 +11,7 @@ public interface IOrderRepository
     List<Order> GetOrders(GetOrdersRequestDTO request);
     Order Update(Order order);
     Order? GetOrderById(int orderId);
-    List<TopProductResponseDTO> GetTopProducts(DateTime dateFrom, DateTime dateTo, int top);
+    List<(Product Product, int Quantity)> GetTopProducts(
+    Expression<Func<Order, bool>> predicate,
+    int top);
 }

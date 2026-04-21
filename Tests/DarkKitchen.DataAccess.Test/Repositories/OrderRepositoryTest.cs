@@ -298,11 +298,13 @@ public sealed class OrderRepositoryTest
         _context.SaveChanges();
 
         var repository = new OrderRepository(_context!);
-        var result = repository.GetTopProducts(new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), 5);
+        var result = repository.GetTopProducts(
+            o => o.Date >= new DateTime(2026, 1, 1) && o.Date <= new DateTime(2026, 1, 31),
+            5);
 
         Assert.IsNotNull(result);
         Assert.AreEqual(1, result.Count);
-        Assert.AreEqual("Pizza Napolitana", result[0].Name);
+        Assert.AreEqual("Pizza Napolitana", result[0].Product.Name);
         Assert.AreEqual(5, result[0].Quantity);
     }
 
@@ -350,10 +352,12 @@ public sealed class OrderRepositoryTest
         _context.SaveChanges();
 
         var repository = new OrderRepository(_context!);
-        var result = repository.GetTopProducts(new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), 5);
+        var result = repository.GetTopProducts(
+            o => o.Date >= new DateTime(2026, 1, 1) && o.Date <= new DateTime(2026, 1, 31),
+            5);
 
-        Assert.AreEqual("Pasta Bolognesa", result[0].Name);
-        Assert.AreEqual("Pizza Napolitana", result[1].Name);
+        Assert.AreEqual("Pasta Bolognesa", result[0].Product.Name);
+        Assert.AreEqual("Pizza Napolitana", result[1].Product.Name);
     }
 
     [TestMethod]
@@ -389,7 +393,9 @@ public sealed class OrderRepositoryTest
         _context!.SaveChanges();
 
         var repository = new OrderRepository(_context!);
-        var result = repository.GetTopProducts(new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), 5);
+        var result = repository.GetTopProducts(
+            o => o.Date >= new DateTime(2026, 1, 1) && o.Date <= new DateTime(2026, 1, 31),
+            5);
 
         Assert.AreEqual(5, result.Count);
     }
