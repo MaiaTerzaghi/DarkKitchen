@@ -307,4 +307,56 @@ public sealed class OrderRepositoryTest
         Assert.AreEqual("Pizza Napolitana", result[0].Product.Name);
         Assert.AreEqual(5, result[0].Quantity);
     }
+
+    [TestMethod]
+    public void GetTopProducts_ValidRequest_ReturnsProductsOrderedByQuantity()
+    {
+        var product1 = new Product
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana",
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Price = 100.0,
+            Images = "pizza.jpg"
+        };
+
+        var product2 = new Product
+        {
+            Code = "P0002",
+            Name = "Pasta Bolognesa",
+            Description = "Rica pasta bolognesa",
+            CommercialLine = "Minutas",
+            Category = "Pastas",
+            Price = 80.0,
+            Images = "pasta.jpg"
+        };
+
+        var order = new Order
+        {
+            ClientId = 1,
+            DeliveryType = DeliveryType.Express,
+            Status = OrderStatus.Delivered,
+            Street = "18 de Julio",
+            DoorNumber = "1234",
+            Date = new DateTime(2026, 1, 10),
+            Items =
+            [
+                new OrderItem { Product = product1, Quantity = 5 },
+                new OrderItem { Product = product2, Quantity = 10 }
+            ]
+        };
+
+        _context!.Orders.Add(order);
+        _context.SaveChanges();
+
+        var repository = new OrderRepository(_context!);
+        var result = repository.GetTopProducts(
+            o => o.Date >= new DateTime(2026, 1, 1) && o.Date <= new DateTime(2026, 1, 31),
+            5);
+
+        Assert.AreEqual("Pasta Bolognesa", result[0].Product.Name);
+        Assert.AreEqual("Pizza Napolitana", result[1].Product.Name);
+    }
 }
