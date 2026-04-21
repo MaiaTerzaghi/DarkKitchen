@@ -83,4 +83,10 @@ public class OrderController(IOrderService orderService) : ControllerBase
         var response = _orderService.MarkAsNotDelivered(orderId);
         return Ok(response);
     }
+
+    [HttpGet("report")]
+    public IActionResult GetSalesReport([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
+    {
+        throw new NotImplementedException();
+    }
 }

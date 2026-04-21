@@ -302,4 +302,9 @@ public class OrderService(
             Images = p.Product.Images
         }).ToList();
     }
+
+    public List<SalesReportResponseDTO> GetSalesReport(int page, int pageSize)
+    {
+        throw new NotImplementedException();
+    }
 }

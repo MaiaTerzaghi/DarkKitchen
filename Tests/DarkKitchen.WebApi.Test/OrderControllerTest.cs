@@ -270,4 +270,31 @@ public class OrderControllerTest
         Assert.AreEqual("NotDelivered", response.Status);
         Assert.AreEqual(orderId, response.OrderId);
     }
+
+    [TestMethod]
+    public void GetSalesReport_ValidRequest_ReturnsOk()
+    {
+        var expectedResponse = new List<SalesReportResponseDTO>
+        {
+            new SalesReportResponseDTO
+            {
+                Year = 2026,
+                Month = 1,
+                Clients = [new ClientSalesDTO { ClientId = 1, Total = 500.0 }]
+            }
+        };
+
+        _orderServiceMock
+            .Setup(s => s.GetSalesReport(1, 20))
+            .Returns(expectedResponse);
+
+        var result = _controller.GetSalesReport(1, 20);
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = (OkObjectResult)result;
+        var response = (List<SalesReportResponseDTO>)okResult.Value!;
+        Assert.AreEqual(1, response.Count);
+        Assert.AreEqual(2026, response[0].Year);
+        Assert.AreEqual(1, response[0].Month);
+    }
 }
