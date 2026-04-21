@@ -212,4 +212,28 @@ public sealed class RepositoryTest
         Assert.AreEqual("Semana Turismo", result[0].Name);
         Assert.AreEqual("Black Friday", result[1].Name);
     }
+
+    [TestMethod]
+    public void GetAll_WithPagination_ReturnsCorrectPage()
+    {
+        for(var i = 1; i <= 5; i++)
+        {
+            _context!.Promotions.Add(new Promotion
+            {
+                Name = $"Promotion {i}",
+                DiscountPercentage = 10,
+                ValidFrom = new DateTime(2026, 1, 25),
+                ValidTo = new DateTime(2026, 1, 30)
+            });
+        }
+
+        _context!.SaveChanges();
+
+        var repository = new Repository<Promotion>(_context);
+        var result = repository.GetAll(page: 2, pageSize: 2);
+
+        Assert.AreEqual(2, result.Count);
+        Assert.AreEqual("Promotion 3", result[0].Name);
+        Assert.AreEqual("Promotion 4", result[1].Name);
+    }
 }
