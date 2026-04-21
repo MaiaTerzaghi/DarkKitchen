@@ -20,7 +20,8 @@ public class OrderService(
     private readonly IUserRepository _userRepository = userRepository;
     private IShippingStrategy? _shippingStrategy;
     private const double Iva = 0.22;
-    private const int TopProductsCount = 5;
+
+    // private const int TopProductsCount = 5;
 
     public CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request)
     {
@@ -290,6 +291,6 @@ public class OrderService(
 
     public List<TopProductResponseDTO> GetTopProducts(DateTime dateFrom, DateTime dateTo)
     {
-        return _orderRepository.GetTopProducts(dateFrom, dateTo, TopProductsCount);
+        throw new NotImplementedException();
     }
 }

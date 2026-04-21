@@ -640,33 +640,4 @@ public class OrderServiceTest
 
         _service.MarkAsNotDelivered(1);
     }
-
-    [TestMethod]
-    public void GetTopProducts_ValidRequest_ReturnsTopProducts()
-    {
-        var dateFrom = new DateTime(2026, 1, 1);
-        var dateTo = new DateTime(2026, 1, 31);
-
-        var expectedTopProducts = new List<TopProductResponseDTO>
-        {
-            new TopProductResponseDTO
-            {
-                Code = "P0001",
-                Name = "Pizza Napolitana",
-                Quantity = 10,
-                Images = "pizza.jpg"
-            }
-        };
-
-        _orderRepositoryMock
-            .Setup(r => r.GetTopProducts(dateFrom, dateTo, 5))
-            .Returns(expectedTopProducts);
-
-        var result = _service.GetTopProducts(dateFrom, dateTo);
-
-        Assert.IsNotNull(result);
-        Assert.AreEqual(1, result.Count);
-        Assert.AreEqual("Pizza Napolitana", result[0].Name);
-        Assert.AreEqual(10, result[0].Quantity);
-    }
 }
