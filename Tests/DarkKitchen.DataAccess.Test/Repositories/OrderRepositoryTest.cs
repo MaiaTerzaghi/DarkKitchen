@@ -437,4 +437,29 @@ public sealed class OrderRepositoryTest
         Assert.AreEqual(1, result[0].Month);
         Assert.AreEqual(1, result[0].ClientId);
     }
+
+    [TestMethod]
+    public void GetSalesReport_WithPagination_ReturnsCorrectPage()
+    {
+        for(var i = 1; i <= 25; i++)
+        {
+            _context!.Orders.Add(new Order
+            {
+                ClientId = i,
+                DeliveryType = DeliveryType.Express,
+                Status = OrderStatus.Delivered,
+                Street = "18 de Julio",
+                DoorNumber = "1234",
+                Date = new DateTime(2026, i % 12 + 1, 1),
+                Items = []
+            });
+        }
+
+        _context!.SaveChanges();
+
+        var repository = new OrderRepository(_context!);
+        var result = repository.GetSalesReport(2, 20);
+
+        Assert.AreEqual(5, result.Count);
+    }
 }
