@@ -69,6 +69,13 @@ public class OrderRepository(DarkKitchenContext context) : IOrderRepository
     Expression<Func<Order, bool>> predicate,
     int top)
     {
-        throw new NotImplementedException();
+        return _context.Orders
+            .Where(predicate)
+            .SelectMany(o => o.Items)
+            .GroupBy(i => i.Product)
+            .Select(g => new { Product = g.Key, Quantity = g.Sum(i => i.Quantity) })
+            .AsEnumerable()
+            .Select(g => (g.Product, g.Quantity))
+            .ToList();
     }
 }
