@@ -399,4 +399,42 @@ public sealed class OrderRepositoryTest
 
         Assert.AreEqual(5, result.Count);
     }
+
+    [TestMethod]
+    public void GetSalesReport_ValidRequest_ReturnsSalesGroupedByYearMonthAndClient()
+    {
+        var order1 = new Order
+        {
+            ClientId = 1,
+            DeliveryType = DeliveryType.Express,
+            Status = OrderStatus.Delivered,
+            Street = "18 de Julio",
+            DoorNumber = "1234",
+            Date = new DateTime(2026, 1, 10),
+            Items = []
+        };
+
+        var order2 = new Order
+        {
+            ClientId = 2,
+            DeliveryType = DeliveryType.Express,
+            Status = OrderStatus.Delivered,
+            Street = "18 de Julio",
+            DoorNumber = "1234",
+            Date = new DateTime(2026, 1, 15),
+            Items = []
+        };
+
+        _context!.Orders.AddRange(order1, order2);
+        _context.SaveChanges();
+
+        var repository = new OrderRepository(_context!);
+        var result = repository.GetSalesReport(1, 20);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(2, result.Count);
+        Assert.AreEqual(2026, result[0].Year);
+        Assert.AreEqual(1, result[0].Month);
+        Assert.AreEqual(1, result[0].ClientId);
+    }
 }
