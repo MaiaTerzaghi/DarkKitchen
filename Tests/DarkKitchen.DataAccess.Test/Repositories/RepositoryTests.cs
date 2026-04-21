@@ -95,4 +95,145 @@ public sealed class RepositoryTest
         Assert.IsNotNull(result);
         Assert.AreEqual("Black Friday Updated", result.Name);
     }
+
+    [TestMethod]
+    public void GetAll_WithoutFilters_ReturnsAllEntities()
+    {
+        var promotion1 = new Promotion
+        {
+            Name = "Black Friday",
+            DiscountPercentage = 10,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 1, 30)
+        };
+
+        var promotion2 = new Promotion
+        {
+            Name = "Semana Turismo",
+            DiscountPercentage = 15,
+            ValidFrom = new DateTime(2026, 3, 29),
+            ValidTo = new DateTime(2026, 4, 4)
+        };
+
+        _context!.Promotions.AddRange(promotion1, promotion2);
+        _context.SaveChanges();
+
+        var repository = new Repository<Promotion>(_context);
+        var result = repository.GetAll();
+
+        Assert.AreEqual(2, result.Count);
+    }
+
+    [TestMethod]
+    public void GetAll_WithPredicate_ReturnsFilteredEntities()
+    {
+        var promotion1 = new Promotion
+        {
+            Name = "Black Friday",
+            DiscountPercentage = 10,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 1, 30)
+        };
+
+        var promotion2 = new Promotion
+        {
+            Name = "Semana Turismo",
+            DiscountPercentage = 15,
+            ValidFrom = new DateTime(2026, 3, 29),
+            ValidTo = new DateTime(2026, 4, 4)
+        };
+
+        _context!.Promotions.AddRange(promotion1, promotion2);
+        _context.SaveChanges();
+
+        var repository = new Repository<Promotion>(_context);
+        var result = repository.GetAll(predicate: p => p.DiscountPercentage == 10);
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("Black Friday", result[0].Name);
+    }
+
+    [TestMethod]
+    public void GetAll_WithOrderBy_ReturnsOrderedEntities()
+    {
+        var promotion1 = new Promotion
+        {
+            Name = "Black Friday",
+            DiscountPercentage = 10,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 1, 30)
+        };
+
+        var promotion2 = new Promotion
+        {
+            Name = "Semana Turismo",
+            DiscountPercentage = 15,
+            ValidFrom = new DateTime(2026, 3, 29),
+            ValidTo = new DateTime(2026, 4, 4)
+        };
+
+        _context!.Promotions.AddRange(promotion1, promotion2);
+        _context.SaveChanges();
+
+        var repository = new Repository<Promotion>(_context);
+        var result = repository.GetAll(orderBy: p => p.Name);
+
+        Assert.AreEqual(2, result.Count);
+        Assert.AreEqual("Black Friday", result[0].Name);
+        Assert.AreEqual("Semana Turismo", result[1].Name);
+    }
+
+    [TestMethod]
+    public void GetAll_WithOrderByDescending_ReturnsOrderedEntitiesDescending()
+    {
+        var promotion1 = new Promotion
+        {
+            Name = "Black Friday",
+            DiscountPercentage = 10,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 1, 30)
+        };
+
+        var promotion2 = new Promotion
+        {
+            Name = "Semana Turismo",
+            DiscountPercentage = 15,
+            ValidFrom = new DateTime(2026, 3, 29),
+            ValidTo = new DateTime(2026, 4, 4)
+        };
+
+        _context!.Promotions.AddRange(promotion1, promotion2);
+        _context.SaveChanges();
+
+        var repository = new Repository<Promotion>(_context);
+        var result = repository.GetAll(orderBy: p => p.Name, descending: true);
+
+        Assert.AreEqual(2, result.Count);
+        Assert.AreEqual("Semana Turismo", result[0].Name);
+        Assert.AreEqual("Black Friday", result[1].Name);
+    }
+
+    [TestMethod]
+    public void GetAll_WithPagination_ReturnsCorrectPage()
+    {
+        for(var i = 1; i <= 5; i++)
+        {
+            _context!.Promotions.Add(new Promotion
+            {
+                Name = $"Promotion {i}",
+                DiscountPercentage = 10,
+                ValidFrom = new DateTime(2026, 1, 25),
+                ValidTo = new DateTime(2026, 1, 30)
+            });
+        }
+
+        _context!.SaveChanges();
+
+        var repository = new Repository<Promotion>(_context);
+        var result = repository.GetAll(page: 2, pageSize: 2);
+
+        Assert.AreEqual(2, result.Count);
+        Assert.AreEqual("Promotion 3", result[0].Name);
+        Assert.AreEqual("Promotion 4", result[1].Name);
+    }
 }

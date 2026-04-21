@@ -27,4 +27,31 @@ public class Repository<TEntity>(DbContext context) : IRepository<TEntity>
         _context.SaveChanges();
         return entity;
     }
+
+    public List<TEntity> GetAll(
+    Expression<Func<TEntity, bool>>? predicate = null,
+    Expression<Func<TEntity, object>>? orderBy = null,
+    bool descending = false,
+    int page = 1,
+    int pageSize = 20)
+    {
+        var query = _entities.AsQueryable();
+
+        if(predicate != null)
+        {
+            query = query.Where(predicate);
+        }
+
+        if(orderBy != null)
+        {
+            query = descending
+                ? query.OrderByDescending(orderBy)
+                : query.OrderBy(orderBy);
+        }
+
+        return query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+    }
 }
