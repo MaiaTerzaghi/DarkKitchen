@@ -74,6 +74,7 @@ public class OrderRepository(DarkKitchenContext context) : IOrderRepository
             .SelectMany(o => o.Items)
             .GroupBy(i => i.Product)
             .Select(g => new { Product = g.Key, Quantity = g.Sum(i => i.Quantity) })
+            .OrderByDescending(g => g.Quantity)
             .AsEnumerable()
             .Select(g => (g.Product, g.Quantity))
             .ToList();
