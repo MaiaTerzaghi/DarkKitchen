@@ -1,3 +1,4 @@
+using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.WebApi.Filters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -47,6 +48,34 @@ public class ExceptionFilterTest
         var result = context.Result as ObjectResult;
         Assert.IsNotNull(result);
         Assert.AreEqual(500, result.StatusCode);
+        Assert.IsTrue(context.ExceptionHandled);
+    }
+
+    [TestMethod]
+    public void OnException_WhenNotFoundException_Returns404()
+    {
+        var filter = new ExceptionFilter();
+        var context = CreateContext(new NotFoundException("Recurso no encontrado"));
+
+        filter.OnException(context);
+
+        var result = context.Result as ObjectResult;
+        Assert.IsNotNull(result);
+        Assert.AreEqual(404, result.StatusCode);
+        Assert.IsTrue(context.ExceptionHandled);
+    }
+
+    [TestMethod]
+    public void OnException_WhenConflictException_Returns409()
+    {
+        var filter = new ExceptionFilter();
+        var context = CreateContext(new ConflictException("Conflicto"));
+
+        filter.OnException(context);
+
+        var result = context.Result as ObjectResult;
+        Assert.IsNotNull(result);
+        Assert.AreEqual(409, result.StatusCode);
         Assert.IsTrue(context.ExceptionHandled);
     }
 }
