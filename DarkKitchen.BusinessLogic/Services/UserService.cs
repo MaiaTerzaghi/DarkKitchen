@@ -18,7 +18,7 @@ public class UserService(IUserRepository userRepository) : IUserService
             throw new ArgumentException("El mail ya esta registrado");
         }
 
-         var user = new User
+        var user = new User
         {
             Name = request.Name,
             LastName = request.LastName,

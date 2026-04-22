@@ -23,7 +23,7 @@ public class Product
         get => _code;
         set
         {
-            if(value.Length < MinCodeLength || value.Length > MaxCodeLength )
+            if(value.Length < MinCodeLength || value.Length > MaxCodeLength)
             {
                 throw new ArgumentException("El código debe tener entre 5 y 20 caracteres.");
             }
@@ -37,7 +37,7 @@ public class Product
         get => _name;
         set
         {
-            if(value.Length < MinNameLength || value.Length > MaxNameLength )
+            if(value.Length < MinNameLength || value.Length > MaxNameLength)
             {
                 throw new ArgumentException("El nombre debe tener entre 10 y 50 caracteres.");
             }
