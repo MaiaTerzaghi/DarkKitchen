@@ -1,7 +1,4 @@
-using DarkKitchen.DataAccess.Context;
 using DarkKitchen.DataAccess.Repositories;
-using DarkKitchen.Domain.Entities;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 namespace DarkKitchen.DataAccess.Test.Repositories;
@@ -9,117 +6,75 @@ namespace DarkKitchen.DataAccess.Test.Repositories;
 [TestClass]
 public sealed class RepositoryTest
 {
-    private SqliteConnection? _connection;
-    private DarkKitchenContext? _context;
+    private readonly DbContext _context = DbContextBuilder.BuildTestDbContext();
+    private readonly Repository<EntityTest> _repository;
+
+    public RepositoryTest()
+    {
+        _repository = new Repository<EntityTest>(_context);
+    }
 
     [TestInitialize]
     public void Initialize()
     {
-        _connection = new SqliteConnection("Data Source=:memory:");
-        _connection.Open();
-
-        var options = new DbContextOptionsBuilder<DarkKitchenContext>()
-            .UseSqlite(_connection)
-            .Options;
-
-        _context = new DarkKitchenContext(options);
         _context.Database.EnsureCreated();
     }
 
     [TestCleanup]
     public void Cleanup()
     {
-        _context?.Dispose();
-        _connection?.Dispose();
+        _context.Database.EnsureDeleted();
     }
 
     [TestMethod]
     public void Add_ValidEntity_ReturnsSavedEntityWithId()
     {
-        var promotion = new Promotion
-        {
-            Name = "Black Friday",
-            DiscountPercentage = 10,
-            ValidFrom = new DateTime(2026, 1, 25),
-            ValidTo = new DateTime(2026, 1, 30)
-        };
+        var entity = new EntityTest("Some Name");
 
-        var repository = new Repository<Promotion>(_context!);
-        var result = repository.Add(promotion);
+        var result = _repository.Add(entity);
 
         Assert.IsNotNull(result);
         Assert.AreNotEqual(0, result.Id);
-        Assert.AreEqual("Black Friday", result.Name);
+        Assert.AreEqual("Some Name", result.Name);
     }
 
     [TestMethod]
     public void Get_ExistingEntity_ReturnsEntity()
     {
-        var promotion = new Promotion
-        {
-            Name = "Black Friday",
-            DiscountPercentage = 10,
-            ValidFrom = new DateTime(2026, 1, 25),
-            ValidTo = new DateTime(2026, 1, 30)
-        };
+        var entity = new EntityTest("Some Name");
 
-        _context!.Promotions.Add(promotion);
+        _context.Add(entity);
         _context.SaveChanges();
 
-        var repository = new Repository<Promotion>(_context);
-        var result = repository.Get(p => p.Id == promotion.Id);
+        var result = _repository.Get(e => e.Id == entity.Id);
 
         Assert.IsNotNull(result);
-        Assert.AreEqual(promotion.Id, result.Id);
+        Assert.AreEqual(entity.Id, result.Id);
     }
 
     [TestMethod]
     public void Update_ExistingEntity_ReturnsUpdatedEntity()
     {
-        var promotion = new Promotion
-        {
-            Name = "Black Friday",
-            DiscountPercentage = 10,
-            ValidFrom = new DateTime(2026, 1, 25),
-            ValidTo = new DateTime(2026, 1, 30)
-        };
+        var entity = new EntityTest("Some Name");
 
-        _context!.Promotions.Add(promotion);
+        _context.Add(entity);
         _context.SaveChanges();
 
-        promotion.Name = "Black Friday Updated";
-
-        var repository = new Repository<Promotion>(_context);
-        var result = repository.Update(promotion);
+        entity.Name = "Updated Name";
+        var result = _repository.Update(entity);
 
         Assert.IsNotNull(result);
-        Assert.AreEqual("Black Friday Updated", result.Name);
+        Assert.AreEqual("Updated Name", result.Name);
     }
 
     [TestMethod]
     public void GetAll_WithoutFilters_ReturnsAllEntities()
     {
-        var promotion1 = new Promotion
-        {
-            Name = "Black Friday",
-            DiscountPercentage = 10,
-            ValidFrom = new DateTime(2026, 1, 25),
-            ValidTo = new DateTime(2026, 1, 30)
-        };
-
-        var promotion2 = new Promotion
-        {
-            Name = "Semana Turismo",
-            DiscountPercentage = 15,
-            ValidFrom = new DateTime(2026, 3, 29),
-            ValidTo = new DateTime(2026, 4, 4)
-        };
-
-        _context!.Promotions.AddRange(promotion1, promotion2);
+        _context.Add(new EntityTest("Entity One"));
+        _context.Add(new EntityTest("Entity Two"));
         _context.SaveChanges();
 
-        var repository = new Repository<Promotion>(_context);
-        var result = repository.GetAll();
+        var result = _repository.GetAll();
 
         Assert.AreEqual(2, result.Count);
     }
@@ -127,90 +82,42 @@ public sealed class RepositoryTest
     [TestMethod]
     public void GetAll_WithPredicate_ReturnsFilteredEntities()
     {
-        var promotion1 = new Promotion
-        {
-            Name = "Black Friday",
-            DiscountPercentage = 10,
-            ValidFrom = new DateTime(2026, 1, 25),
-            ValidTo = new DateTime(2026, 1, 30)
-        };
-
-        var promotion2 = new Promotion
-        {
-            Name = "Semana Turismo",
-            DiscountPercentage = 15,
-            ValidFrom = new DateTime(2026, 3, 29),
-            ValidTo = new DateTime(2026, 4, 4)
-        };
-
-        _context!.Promotions.AddRange(promotion1, promotion2);
+        _context.Add(new EntityTest("Entity One"));
+        _context.Add(new EntityTest("Entity Two"));
         _context.SaveChanges();
 
-        var repository = new Repository<Promotion>(_context);
-        var result = repository.GetAll(predicate: p => p.DiscountPercentage == 10);
+        var result = _repository.GetAll(predicate: e => e.Name == "Entity One");
 
         Assert.AreEqual(1, result.Count);
-        Assert.AreEqual("Black Friday", result[0].Name);
+        Assert.AreEqual("Entity One", result[0].Name);
     }
 
     [TestMethod]
     public void GetAll_WithOrderBy_ReturnsOrderedEntities()
     {
-        var promotion1 = new Promotion
-        {
-            Name = "Black Friday",
-            DiscountPercentage = 10,
-            ValidFrom = new DateTime(2026, 1, 25),
-            ValidTo = new DateTime(2026, 1, 30)
-        };
-
-        var promotion2 = new Promotion
-        {
-            Name = "Semana Turismo",
-            DiscountPercentage = 15,
-            ValidFrom = new DateTime(2026, 3, 29),
-            ValidTo = new DateTime(2026, 4, 4)
-        };
-
-        _context!.Promotions.AddRange(promotion1, promotion2);
+        _context.Add(new EntityTest("Beta"));
+        _context.Add(new EntityTest("Alpha"));
         _context.SaveChanges();
 
-        var repository = new Repository<Promotion>(_context);
-        var result = repository.GetAll(orderBy: p => p.Name);
+        var result = _repository.GetAll(orderBy: e => e.Name);
 
         Assert.AreEqual(2, result.Count);
-        Assert.AreEqual("Black Friday", result[0].Name);
-        Assert.AreEqual("Semana Turismo", result[1].Name);
+        Assert.AreEqual("Alpha", result[0].Name);
+        Assert.AreEqual("Beta", result[1].Name);
     }
 
     [TestMethod]
     public void GetAll_WithOrderByDescending_ReturnsOrderedEntitiesDescending()
     {
-        var promotion1 = new Promotion
-        {
-            Name = "Black Friday",
-            DiscountPercentage = 10,
-            ValidFrom = new DateTime(2026, 1, 25),
-            ValidTo = new DateTime(2026, 1, 30)
-        };
-
-        var promotion2 = new Promotion
-        {
-            Name = "Semana Turismo",
-            DiscountPercentage = 15,
-            ValidFrom = new DateTime(2026, 3, 29),
-            ValidTo = new DateTime(2026, 4, 4)
-        };
-
-        _context!.Promotions.AddRange(promotion1, promotion2);
+        _context.Add(new EntityTest("Alpha"));
+        _context.Add(new EntityTest("Beta"));
         _context.SaveChanges();
 
-        var repository = new Repository<Promotion>(_context);
-        var result = repository.GetAll(orderBy: p => p.Name, descending: true);
+        var result = _repository.GetAll(orderBy: e => e.Name, descending: true);
 
         Assert.AreEqual(2, result.Count);
-        Assert.AreEqual("Semana Turismo", result[0].Name);
-        Assert.AreEqual("Black Friday", result[1].Name);
+        Assert.AreEqual("Beta", result[0].Name);
+        Assert.AreEqual("Alpha", result[1].Name);
     }
 
     [TestMethod]
@@ -218,22 +125,15 @@ public sealed class RepositoryTest
     {
         for(var i = 1; i <= 5; i++)
         {
-            _context!.Promotions.Add(new Promotion
-            {
-                Name = $"Promotion {i}",
-                DiscountPercentage = 10,
-                ValidFrom = new DateTime(2026, 1, 25),
-                ValidTo = new DateTime(2026, 1, 30)
-            });
+            _context.Add(new EntityTest($"Entity {i}"));
         }
 
-        _context!.SaveChanges();
+        _context.SaveChanges();
 
-        var repository = new Repository<Promotion>(_context);
-        var result = repository.GetAll(page: 2, pageSize: 2);
+        var result = _repository.GetAll(page: 2, pageSize: 2);
 
         Assert.AreEqual(2, result.Count);
-        Assert.AreEqual("Promotion 3", result[0].Name);
-        Assert.AreEqual("Promotion 4", result[1].Name);
+        Assert.AreEqual("Entity 3", result[0].Name);
+        Assert.AreEqual("Entity 4", result[1].Name);
     }
 }

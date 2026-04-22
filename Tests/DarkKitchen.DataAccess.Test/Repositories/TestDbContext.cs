@@ -10,7 +10,7 @@ internal sealed class TestDbContext(DbContextOptions options) : DbContext(option
 internal sealed record class EntityTest()
 {
     public int Id { get; init; }
-    public string Name { get; init; } = null!;
+    public string Name { get; set; } = null!;
 
     public EntityTest(string name)
         : this()
