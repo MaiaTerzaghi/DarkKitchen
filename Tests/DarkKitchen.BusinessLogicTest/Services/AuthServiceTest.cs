@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.IDataAccess;
@@ -18,11 +19,16 @@ public sealed class AuthServiceTest
             Password = "Contrasena1!@#$%"
         };
 
-        var userRepositoryMock = new Mock<IUserRepository>();
-        userRepositoryMock.Setup(r => r.GetByEmail("juan@email.com"))
+        var userRepositoryMock = new Mock<IRepository<User>>();
+        var sessionRepositoryMock = new Mock<ISessionRepository>();
+
+        userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
                           .Returns(user);
 
-        var authService = new AuthService(userRepositoryMock.Object);
+        sessionRepositoryMock.Setup(r => r.Add(It.IsAny<Session>()))
+                    .Returns(new Session { User = user });
+
+        var authService = new AuthService(userRepositoryMock.Object, sessionRepositoryMock.Object);
 
         var result = authService.Login("juan@email.com", "Contrasena1!@#$%");
 
