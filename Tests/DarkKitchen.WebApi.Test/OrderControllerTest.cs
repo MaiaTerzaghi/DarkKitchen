@@ -1,7 +1,9 @@
+using DarkKitchen.Domain.Entities;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Controllers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -52,6 +54,12 @@ public class OrderControllerTest
             .Setup(s => s.CreateOrder(request))
             .Returns(expectedResponse);
 
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
+        _controller.HttpContext.Items["RequestingUser"] = new User { Id = 1 };
+
         var result = _controller.CreateOrder(request);
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
@@ -82,6 +90,12 @@ public class OrderControllerTest
             .Setup(s => s.CreateOrder(request))
             .Throws(new ArgumentException("El pedido debe tener al menos un producto."));
 
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
+        _controller.HttpContext.Items["RequestingUser"] = new User { Id = 1 };
+
         _controller.CreateOrder(request);
     }
 
@@ -93,6 +107,12 @@ public class OrderControllerTest
         _orderServiceMock
             .Setup(s => s.GetClientOrders(It.IsAny<GetClientOrdersRequestDTO>()))
             .Returns(orders);
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
+        _controller.HttpContext.Items["RequestingUser"] = new User { Id = 1 };
 
         var result = _controller.GetClientOrders(new GetClientOrdersRequestDTO { ClientId = 1 });
 

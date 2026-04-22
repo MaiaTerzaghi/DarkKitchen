@@ -1,3 +1,4 @@
+using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IBusinessLogic;
@@ -16,6 +17,8 @@ public class OrderController(IOrderService orderService) : ControllerBase
     [HttpPost("create")]
     public IActionResult CreateOrder([FromBody] CreateOrderRequestDTO request)
     {
+        var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
+        request.ClientId = requestingUser.Id;
         var response = _orderService.CreateOrder(request);
         return Ok(response);
     }
@@ -24,6 +27,8 @@ public class OrderController(IOrderService orderService) : ControllerBase
     [HttpGet]
     public IActionResult GetClientOrders([FromQuery] GetClientOrdersRequestDTO request)
     {
+        var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
+        request.ClientId = requestingUser.Id;
         var orders = _orderService.GetClientOrders(request);
         return Ok(orders);
     }
