@@ -14,4 +14,5 @@ public interface IOrderRepository
     List<(Product Product, int Quantity)> GetTopProducts(
     Expression<Func<Order, bool>> predicate,
     int top);
+    List<(int Year, int Month, int ClientId, double Total)> GetSalesReport(int page, int pageSize);
 }

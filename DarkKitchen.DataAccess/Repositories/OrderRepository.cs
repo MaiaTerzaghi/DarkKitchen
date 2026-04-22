@@ -80,4 +80,31 @@ public class OrderRepository(DarkKitchenContext context) : IOrderRepository
             .Select(g => (g.Product, g.Quantity))
             .ToList();
     }
+
+    public List<(int Year, int Month, int ClientId, double Total)> GetSalesReport(int page, int pageSize)
+    {
+        return _context.Orders
+            .SelectMany(o => o.Items, (o, i) => new
+            {
+                o.Date.Year,
+                o.Date.Month,
+                o.ClientId,
+                Total = i.Product.Price * i.Quantity
+            })
+            .GroupBy(o => new { o.Year, o.Month, o.ClientId })
+            .Select(g => new
+            {
+                g.Key.Year,
+                g.Key.Month,
+                g.Key.ClientId,
+                Total = g.Sum(o => o.Total)
+            })
+            .OrderByDescending(g => g.Year)
+            .ThenByDescending(g => g.Month)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .AsEnumerable()
+            .Select(g => (g.Year, g.Month, g.ClientId, g.Total))
+            .ToList();
+    }
 }

@@ -399,4 +399,124 @@ public sealed class OrderRepositoryTest
 
         Assert.AreEqual(5, result.Count);
     }
+
+    [TestMethod]
+    public void GetSalesReport_ValidRequest_ReturnsSalesGroupedByYearMonthAndClient()
+    {
+        var product = new Product
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana",
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Price = 100.0,
+            Images = "pizza.jpg"
+        };
+
+        var order1 = new Order
+        {
+            ClientId = 1,
+            DeliveryType = DeliveryType.Express,
+            Status = OrderStatus.Delivered,
+            Street = "18 de Julio",
+            DoorNumber = "1234",
+            Date = new DateTime(2026, 1, 10),
+            Items = [new OrderItem { Product = product, Quantity = 1 }]
+        };
+
+        var order2 = new Order
+        {
+            ClientId = 2,
+            DeliveryType = DeliveryType.Express,
+            Status = OrderStatus.Delivered,
+            Street = "18 de Julio",
+            DoorNumber = "1234",
+            Date = new DateTime(2026, 1, 15),
+            Items = [new OrderItem { Product = product, Quantity = 1 }]
+        };
+
+        _context!.Orders.AddRange(order1, order2);
+        _context.SaveChanges();
+
+        var repository = new OrderRepository(_context!);
+        var result = repository.GetSalesReport(1, 20);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(2, result.Count);
+        Assert.AreEqual(2026, result[0].Year);
+        Assert.AreEqual(1, result[0].Month);
+        Assert.AreEqual(1, result[0].ClientId);
+    }
+
+    [TestMethod]
+    public void GetSalesReport_WithPagination_ReturnsCorrectPage()
+    {
+        for(var i = 1; i <= 25; i++)
+        {
+            var product = new Product
+            {
+                Code = $"P{i:D4}",
+                Name = $"Producto {i} largo nombre",
+                Description = "Descripcion larga del producto para cumplir validacion",
+                CommercialLine = "Minutas",
+                Category = "Fritos",
+                Price = 100.0,
+                Images = "img.jpg"
+            };
+
+            _context!.Orders.Add(new Order
+            {
+                ClientId = i,
+                DeliveryType = DeliveryType.Express,
+                Status = OrderStatus.Delivered,
+                Street = "18 de Julio",
+                DoorNumber = "1234",
+                Date = new DateTime(2026, (i % 12) + 1, 1),
+                Items = [new OrderItem { Product = product, Quantity = 1 }]
+            });
+        }
+
+        _context!.SaveChanges();
+
+        var repository = new OrderRepository(_context!);
+        var result = repository.GetSalesReport(2, 20);
+
+        Assert.AreEqual(5, result.Count);
+    }
+
+    [TestMethod]
+    public void GetSalesReport_ValidRequest_ReturnsTotalCorrectly()
+    {
+        var product = new Product
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana",
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Price = 100.0,
+            Images = "pizza.jpg"
+        };
+
+        var order = new Order
+        {
+            ClientId = 1,
+            DeliveryType = DeliveryType.Express,
+            Status = OrderStatus.Delivered,
+            Street = "18 de Julio",
+            DoorNumber = "1234",
+            Date = new DateTime(2026, 1, 10),
+            Items = [new OrderItem { Product = product, Quantity = 3 }]
+        };
+
+        _context!.Orders.Add(order);
+        _context.SaveChanges();
+
+        var repository = new OrderRepository(_context!);
+        var result = repository.GetSalesReport(1, 20);
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual(300.0, result[0].Total);
+    }
 }

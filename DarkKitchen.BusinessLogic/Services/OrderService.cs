@@ -302,4 +302,22 @@ public class OrderService(
             Images = p.Product.Images
         }).ToList();
     }
+
+    public List<SalesReportResponseDTO> GetSalesReport(int page, int pageSize)
+    {
+        var report = _orderRepository.GetSalesReport(page, pageSize);
+
+        return report
+            .GroupBy(r => new { r.Year, r.Month })
+            .Select(g => new SalesReportResponseDTO
+            {
+                Year = g.Key.Year,
+                Month = g.Key.Month,
+                Clients = g.Select(r => new ClientSalesDTO
+                {
+                    ClientId = r.ClientId,
+                    Total = r.Total
+                }).ToList()
+            }).ToList();
+    }
 }
