@@ -7,6 +7,7 @@ public interface IRepository<TEntity>
     TEntity Add(TEntity entity);
     TEntity? Get(Expression<Func<TEntity, bool>> predicate);
     TEntity Update(TEntity entity);
+    void Delete(TEntity entity);
     List<TEntity> GetAll(
     Expression<Func<TEntity, bool>>? predicate = null,
     Expression<Func<TEntity, object>>? orderBy = null,

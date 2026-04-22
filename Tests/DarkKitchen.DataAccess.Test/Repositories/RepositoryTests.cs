@@ -136,4 +136,18 @@ public sealed class RepositoryTest
         Assert.AreEqual("Entity 3", result[0].Name);
         Assert.AreEqual("Entity 4", result[1].Name);
     }
+
+    [TestMethod]
+    public void Delete_ExistingEntity_RemovesFromDatabase()
+    {
+        var entity = new EntityTest("Some Name");
+
+        _context.Add(entity);
+        _context.SaveChanges();
+
+        _repository.Delete(entity);
+
+        var result = _repository.Get(e => e.Id == entity.Id);
+        Assert.IsNull(result);
+    }
 }
