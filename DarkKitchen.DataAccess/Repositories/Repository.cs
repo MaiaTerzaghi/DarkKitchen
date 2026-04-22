@@ -30,7 +30,8 @@ public class Repository<TEntity>(DbContext context) : IRepository<TEntity>
 
     public void Delete(TEntity entity)
     {
-        throw new NotImplementedException();
+        _entities.Remove(entity);
+        _context.SaveChanges();
     }
 
     public List<TEntity> GetAll(
