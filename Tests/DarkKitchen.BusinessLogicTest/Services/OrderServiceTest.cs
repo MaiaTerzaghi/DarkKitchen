@@ -697,4 +697,28 @@ public class OrderServiceTest
         Assert.AreEqual(500.0, result[0].Clients[0].Total);
         Assert.AreEqual(300.0, result[0].Clients[1].Total);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CreateOrder_WhenStreetIsEmpty_ThrowsException()
+    {
+        var request = new CreateOrderRequestDTO
+        {
+            ClientId = 1,
+            DeliveryType = "Express",
+            Address = new AddressDTO
+            {
+                Street = string.Empty,
+                DoorNumber = "1234",
+                Apartment = "2B"
+            },
+            Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 1 }]
+        };
+
+        _productRepositoryMock
+            .Setup(r => r.GetById(1))
+            .Returns(new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas", Name = "Pizza Napolitana", Code = "P0001", Description = "Rica pizza napolitana con tomate y albahaca", Category = "Fritos", Images = "pizza.jpg" });
+
+        _service.CreateOrder(request);
+    }
 }
