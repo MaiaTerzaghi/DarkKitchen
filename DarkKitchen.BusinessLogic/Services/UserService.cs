@@ -1,5 +1,6 @@
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
+using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
@@ -15,7 +16,7 @@ public class UserService(IUserRepository userRepository) : IUserService
         var existingUser = _userRepository.GetByEmail(request.Email);
         if(existingUser != null)
         {
-            throw new ArgumentException("El mail ya esta registrado");
+            throw new ConflictException("El mail ya esta registrado");
         }
 
         var user = new User
@@ -36,7 +37,7 @@ public class UserService(IUserRepository userRepository) : IUserService
         var existingUser = _userRepository.GetByEmail(request.Email);
         if(existingUser != null)
         {
-            throw new ArgumentException("El mail ya está registrado");
+            throw new ConflictException("El mail ya está registrado");
         }
 
         if(request.Role != UserRole.Administrative && request.Role != UserRole.Dispatcher)
@@ -79,7 +80,7 @@ public class UserService(IUserRepository userRepository) : IUserService
             throw new ArgumentException("Un usuario no puede modificarse a sí mismo");
         }
 
-        var user = _userRepository.GetById(id) ?? throw new ArgumentException("Usuario no encontrado");
+        var user = _userRepository.GetById(id) ?? throw new NotFoundException("Usuario no encontrado");
 
         user!.Name = request.Name;
         user.LastName = request.LastName;
@@ -108,7 +109,7 @@ public class UserService(IUserRepository userRepository) : IUserService
             throw new ArgumentException("Un usuario no puede eliminarse a sí mismo");
         }
 
-        _ = _userRepository.GetById(id) ?? throw new ArgumentException("Usuario no encontrado");
+        _ = _userRepository.GetById(id) ?? throw new NotFoundException("Usuario no encontrado");
 
         _userRepository.DeleteUser(id);
     }

@@ -1,5 +1,6 @@
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IDataAccess;
 using Moq;
@@ -404,7 +405,7 @@ public sealed class ProductServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(NotFoundException))]
     public void UpdateProduct_WhenProductNotFound_ThrowsException()
     {
         var request = new UpdateProductRequestDTO

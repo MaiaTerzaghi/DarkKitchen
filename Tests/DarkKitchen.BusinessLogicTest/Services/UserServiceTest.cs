@@ -1,6 +1,7 @@
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
+using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IDataAccess;
 using Moq;
@@ -36,7 +37,7 @@ public sealed class UserServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(ConflictException))]
     public void Register_WhenEmailAlreadyExists_ThrowsException()
     {
         var request = new RegisterClientDTO
@@ -291,7 +292,7 @@ public sealed class UserServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(ConflictException))]
     public void CreateStaffUser_WhenEmailAlreadyExists_ThrowsArgumentException()
     {
         var request = new CreateStaffUserRequestDTO
@@ -391,7 +392,7 @@ public sealed class UserServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(NotFoundException))]
     public void UpdateUser_WhenUserNotFound_ThrowsArgumentException()
     {
         var request = new UpdateUserRequestDTO
@@ -470,7 +471,7 @@ public sealed class UserServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(NotFoundException))]
     public void DeleteUser_WhenUserNotFound_ThrowsArgumentException()
     {
         var userRepositoryMock = new Mock<IUserRepository>();

@@ -1,4 +1,5 @@
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
@@ -44,7 +45,7 @@ public class ProductService(IProductRepository productRepository) : IProductServ
     public ProductResponseDTO UpdateProduct(int id, UpdateProductRequestDTO request)
     {
         var product = _productRepository.GetById(id)
-            ?? throw new ArgumentException($"Producto con id {id} no encontrado.");
+            ?? throw new NotFoundException($"Producto con id {id} no encontrado.");
 
         product.Code = request.Code;
         product.Name = request.Name;

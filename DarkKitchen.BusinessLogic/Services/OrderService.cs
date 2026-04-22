@@ -1,6 +1,7 @@
 using DarkKitchen.BusinessLogic.Shipping;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
+using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
@@ -25,7 +26,7 @@ public class OrderService(
     public CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request)
     {
         var client = _userRepository.GetById(request.ClientId)
-            ?? throw new ArgumentException($"Cliente con id {request.ClientId} no encontrado.");
+            ?? throw new NotFoundException($"Cliente con id {request.ClientId} no encontrado.");
 
         if(request.Items == null || request.Items.Count == 0)
         {
@@ -40,7 +41,7 @@ public class OrderService(
 
         var items = request.Items.Select(i =>
         {
-            var product = _productRepository.GetById(i.ProductId) ?? throw new ArgumentException($"Producto con id {i.ProductId} no encontrado.");
+            var product = _productRepository.GetById(i.ProductId) ?? throw new NotFoundException($"Producto con id {i.ProductId} no encontrado.");
 
             if(!product.IsActive)
             {
@@ -155,7 +156,7 @@ public class OrderService(
     public UpdateOrderStatusResponseDTO MarkAsPrepared(int orderId)
     {
         var order = _orderRepository.GetOrderById(orderId)
-            ?? throw new ArgumentException($"Pedido con id {orderId} no encontrado.");
+            ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
 
         if(order.Status != OrderStatus.Pending)
         {
@@ -177,7 +178,7 @@ public class OrderService(
 
     public OrderDetailResponseDTO GetOrderDetail(int orderId)
     {
-        var order = _orderRepository.GetOrderById(orderId) ?? throw new ArgumentException($"Pedido con id {orderId} no encontrado.");
+        var order = _orderRepository.GetOrderById(orderId) ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
 
         return new OrderDetailResponseDTO
         {
@@ -200,7 +201,7 @@ public class OrderService(
     public UpdateOrderStatusResponseDTO DeliverOrder(int orderId)
     {
         var order = _orderRepository.GetOrderById(orderId)
-        ?? throw new ArgumentException($"Pedido con id {orderId} no encontrado.");
+        ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
 
         if(order.Status != OrderStatus.OnTheWay)
         {
@@ -222,7 +223,7 @@ public class OrderService(
     public UpdateOrderStatusResponseDTO CancelOrder(int orderId)
     {
         var order = _orderRepository.GetOrderById(orderId)
-            ?? throw new ArgumentException($"Pedido con id {orderId} no encontrado.");
+            ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
 
         if(order.Status != OrderStatus.Pending)
         {
@@ -245,7 +246,7 @@ public class OrderService(
     public UpdateOrderStatusResponseDTO MarkAsOnTheWay(int orderId)
     {
         var order = _orderRepository.GetOrderById(orderId)
-         ?? throw new ArgumentException($"Pedido con id {orderId} no encontrado.");
+         ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
 
         if(order.Status != OrderStatus.Prepared)
         {
@@ -268,7 +269,7 @@ public class OrderService(
     public UpdateOrderStatusResponseDTO MarkAsNotDelivered(int orderId)
     {
         var order = _orderRepository.GetOrderById(orderId)
-            ?? throw new ArgumentException($"Pedido con id {orderId} no encontrado.");
+            ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
 
         if(order.Status != OrderStatus.OnTheWay)
         {
