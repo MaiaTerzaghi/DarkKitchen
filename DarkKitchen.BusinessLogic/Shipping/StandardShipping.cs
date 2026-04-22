@@ -4,5 +4,6 @@ namespace DarkKitchen.BusinessLogic.Shipping;
 
 public class StandardShipping : IShippingStrategy
 {
-    public double CalculateCost() => 20.0;
+    private const double Cost = 20.0;
+    public double CalculateCost() => Cost;
 }
