@@ -17,7 +17,7 @@ public sealed class UserControllerTest
     public void Register_WhenValidData_ReturnsCreated()
     {
         var userServiceMock = new Mock<IUserService>();
-        userServiceMock.Setup(s => s.Register(It.IsAny<User>()))
+        userServiceMock.Setup(s => s.Register(It.IsAny<RegisterClientDTO>()))
                        .Returns(1);
 
         var controller = new UserController(userServiceMock.Object);
@@ -40,7 +40,7 @@ public sealed class UserControllerTest
     public void Register_WhenServiceThrowsException_ReturnsBadRequest()
     {
         var userServiceMock = new Mock<IUserService>();
-        userServiceMock.Setup(s => s.Register(It.IsAny<User>()))
+        userServiceMock.Setup(s => s.Register(It.IsAny<RegisterClientDTO>()))
                     .Throws(new ArgumentException("Error"));
 
         var controller = new UserController(userServiceMock.Object);

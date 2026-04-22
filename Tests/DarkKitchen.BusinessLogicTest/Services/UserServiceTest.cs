@@ -13,25 +13,24 @@ public sealed class UserServiceTest
     [TestMethod]
     public void Register_WhenValidData_ReturnsId()
     {
-        var user = new User
+        var request = new RegisterClientDTO
         {
             Name = "Juan",
             LastName = "Perez",
             Email = "juan@email.com",
             Phone = "+59899123456",
             Password = "Contrasena1!@#$%",
-            Role = UserRole.Client
         };
 
         var userRepositoryMock = new Mock<IUserRepository>();
         userRepositoryMock.Setup(r => r.GetByEmail("juan@email.com"))
                         .Returns((User?)null);
-        userRepositoryMock.Setup(r => r.AddUser(user))
+        userRepositoryMock.Setup(r => r.AddUser(It.IsAny<User>()))
                         .Returns(1);
 
         var userService = new UserService(userRepositoryMock.Object);
 
-        var result = userService.Register(user);
+        var result = userService.Register(request);
 
         Assert.AreEqual(1, result);
     }
@@ -40,23 +39,22 @@ public sealed class UserServiceTest
     [ExpectedException(typeof(ArgumentException))]
     public void Register_WhenEmailAlreadyExists_ThrowsException()
     {
-        var user = new User
+        var request = new RegisterClientDTO
         {
             Name = "Juan",
             LastName = "Perez",
             Email = "juanexistente@email.com",
             Phone = "+59899123456",
             Password = "Contrasena1!@#$%",
-            Role = UserRole.Client
         };
 
         var userRepositoryMock = new Mock<IUserRepository>();
         userRepositoryMock.Setup(r => r.GetByEmail("juanexistente@email.com"))
-                        .Returns(user);
+                        .Returns(new User { Email = "juanexistente@email.com" });
 
         var userService = new UserService(userRepositoryMock.Object);
 
-        userService.Register(user);
+        userService.Register(request);
     }
 
     [TestMethod]
@@ -66,17 +64,16 @@ public sealed class UserServiceTest
         var userRepositoryMock = new Mock<IUserRepository>();
         var userService = new UserService(userRepositoryMock.Object);
 
-        var user = new User
+        var request = new RegisterClientDTO
         {
             Name = string.Empty,
             LastName = "Perez",
             Email = "juan@email.com",
             Phone = "+59899123456",
             Password = "Contrasena1!@#$%",
-            Role = UserRole.Client
         };
 
-        userService.Register(user);
+        userService.Register(request);
     }
 
     [TestMethod]
@@ -86,17 +83,16 @@ public sealed class UserServiceTest
         var userRepositoryMock = new Mock<IUserRepository>();
         var userService = new UserService(userRepositoryMock.Object);
 
-        var user = new User
+        var request = new RegisterClientDTO
         {
             Name = "Juan",
             LastName = "Pe",
             Email = "juan@email.com",
             Phone = "+59899123456",
             Password = "Contrasena1!@#$%",
-            Role = UserRole.Client
         };
 
-        userService.Register(user);
+        userService.Register(request);
     }
 
     [TestMethod]
@@ -106,17 +102,16 @@ public sealed class UserServiceTest
         var userRepositoryMock = new Mock<IUserRepository>();
         var userService = new UserService(userRepositoryMock.Object);
 
-        var user = new User
+        var request = new RegisterClientDTO
         {
             Name = "Juan",
             LastName = "Perez",
             Email = "emailinvalido",
             Phone = "+59899123456",
             Password = "Contrasena1!@#$%",
-            Role = UserRole.Client
         };
 
-        userService.Register(user);
+        userService.Register(request);
     }
 
     [TestMethod]
@@ -126,17 +121,16 @@ public sealed class UserServiceTest
         var userRepositoryMock = new Mock<IUserRepository>();
         var userService = new UserService(userRepositoryMock.Object);
 
-        var user = new User
+        var request = new RegisterClientDTO
         {
             Name = "Juan",
             LastName = "Perez",
             Email = "juan@email.com",
             Phone = "123",
             Password = "Contrasena1!@#$%",
-            Role = UserRole.Client
         };
 
-        userService.Register(user);
+        userService.Register(request);
     }
 
     [TestMethod]
@@ -146,17 +140,16 @@ public sealed class UserServiceTest
         var userRepositoryMock = new Mock<IUserRepository>();
         var userService = new UserService(userRepositoryMock.Object);
 
-        var user = new User
+        var request = new RegisterClientDTO
         {
             Name = "Juan",
             LastName = "Perez",
             Email = "juan@email.com",
             Phone = "+59899123456",
             Password = "password",
-            Role = UserRole.Client
         };
 
-        userService.Register(user);
+        userService.Register(request);
     }
 
     [TestMethod]
@@ -166,14 +159,13 @@ public sealed class UserServiceTest
         var userRepositoryMock = new Mock<IUserRepository>();
         var userService = new UserService(userRepositoryMock.Object);
 
-        var user = new User
+        var user = new RegisterClientDTO
         {
             Name = "Juan",
             LastName = "Perez",
             Email = "juan@email.com",
             Phone = "+59899123456",
             Password = "Corta1!@#$%",
-            Role = UserRole.Client
         };
 
         userService.Register(user);
@@ -186,14 +178,13 @@ public sealed class UserServiceTest
         var userRepositoryMock = new Mock<IUserRepository>();
         var userService = new UserService(userRepositoryMock.Object);
 
-        var user = new User
+        var user = new RegisterClientDTO
         {
             Name = "Juan",
             LastName = "Perez",
             Email = "juan@email.com",
             Phone = "+59899123456",
             Password = "contrasena1!@#$%",
-            Role = UserRole.Client
         };
 
         userService.Register(user);
@@ -206,14 +197,13 @@ public sealed class UserServiceTest
         var userRepositoryMock = new Mock<IUserRepository>();
         var userService = new UserService(userRepositoryMock.Object);
 
-        var user = new User
+        var user = new RegisterClientDTO
         {
             Name = "Juan",
             LastName = "Perez",
             Email = "juan@email.com",
             Phone = "+59899123456",
             Password = "CONTRASENA1!@#$%",
-            Role = UserRole.Client
         };
 
         userService.Register(user);
@@ -226,14 +216,13 @@ public sealed class UserServiceTest
         var userRepositoryMock = new Mock<IUserRepository>();
         var userService = new UserService(userRepositoryMock.Object);
 
-        var user = new User
+        var user = new RegisterClientDTO
         {
             Name = "Juan",
             LastName = "Perez",
             Email = "juan@email.com",
             Phone = "+59899123456",
             Password = "Contrasena!@#$%&*",
-            Role = UserRole.Client
         };
 
         userService.Register(user);
@@ -246,14 +235,13 @@ public sealed class UserServiceTest
         var userRepositoryMock = new Mock<IUserRepository>();
         var userService = new UserService(userRepositoryMock.Object);
 
-        var user = new User
+        var user = new RegisterClientDTO
         {
             Name = "Juan",
             LastName = "Perez",
             Email = "juan@email.com",
             Phone = "+59899123456",
             Password = "Contrasena11111",
-            Role = UserRole.Client
         };
 
         userService.Register(user);
@@ -266,14 +254,13 @@ public sealed class UserServiceTest
         var userRepositoryMock = new Mock<IUserRepository>();
         var userService = new UserService(userRepositoryMock.Object);
 
-        var user = new User
+        var user = new RegisterClientDTO
         {
             Name = "Juan",
             LastName = "Perez",
             Email = "juan@email.com",
             Phone = "+59899123456",
             Password = "Contrasena123!@#",
-            Role = UserRole.Client
         };
 
         userService.Register(user);

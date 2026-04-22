@@ -74,7 +74,7 @@ public class User
         get => _phone;
         set
         {
-            if(!Regex.IsMatch(value, PhonePattern))
+            if(!System.Text.RegularExpressions.Regex.IsMatch(value, PhonePattern))
             {
                 throw new ArgumentException("El teléfono no tiene un formato válido");
             }
