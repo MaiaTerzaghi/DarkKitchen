@@ -41,8 +41,8 @@ public sealed class SessionRepositoryTest
             Name = "Juan",
             LastName = "Perez",
             Email = "juan@test.com",
-            Password = "Password123!",
-            Phone = "091234567"
+            Password = "Contrasena1@%#!",
+            Phone = "+59891234567"
         };
 
         var session = new Session { User = user };
