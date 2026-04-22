@@ -40,11 +40,12 @@ public sealed class AuthServiceTest
     [ExpectedException(typeof(ArgumentException))]
     public void Login_WhenInvalidCredentials_ThrowsException()
     {
-        var userRepositoryMock = new Mock<IUserRepository>();
-        userRepositoryMock.Setup(r => r.GetByEmail("mal@email.com"))
+        var userRepositoryMock = new Mock<IRepository<User>>();
+        var sessionRepositoryMock = new Mock<ISessionRepository>();
+        userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
                         .Returns((User?)null);
 
-        var authService = new AuthService(userRepositoryMock.Object);
+        var authService = new AuthService(userRepositoryMock.Object, sessionRepositoryMock.Object);
 
         authService.Login("mal@test.com", "Contrasena1!@#$%");
     }

@@ -12,14 +12,14 @@ public class AuthService(IRepository<User> userRepository, ISessionRepository se
 #pragma warning restore CA1823
     public string Login(string email, string password)
     {
-        var user = _userRepository.GetByEmail(email);
+        var user = _userRepository.Get(u => u.Email == email);
         if(user == null || user.Password != password)
         {
             throw new ArgumentException("Credenciales inválidas");
         }
 
         var session = new Session { User = user };
-        _userRepository.AddSession(session);
+        _sessionRepository.Add(session);
         return session.Token;
     }
 }
