@@ -10,13 +10,23 @@ public class UserService(IUserRepository userRepository) : IUserService
 {
     private readonly IUserRepository _userRepository = userRepository;
 
-    public int Register(User user)
+    public int Register(RegisterClientDTO request)
     {
-        var existingUser = _userRepository.GetByEmail(user.Email);
+        var existingUser = _userRepository.GetByEmail(request.Email);
         if(existingUser != null)
         {
             throw new ArgumentException("El mail ya esta registrado");
         }
+
+        var user = new User
+        {
+            Name = request.Name,
+            LastName = request.LastName,
+            Email = request.Email,
+            Phone = request.Phone,
+            Password = request.Password,
+            Role = UserRole.Client
+        };
 
         return _userRepository.AddUser(user);
     }

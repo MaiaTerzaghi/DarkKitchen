@@ -2,7 +2,14 @@ namespace DarkKitchen.Domain.Entities;
 
 public class Product
 {
-    public int Id { get; set; }
+    private const int MinCodeLength = 5;
+    private const int MaxCodeLength = 20;
+    private const int MinNameLength = 10;
+    private const int MaxNameLength = 50;
+    private const int MinDescriptionLength = 20;
+    private const int MaxDescriptionLength = 500;
+    private const int MaxImages = 3;
+    private const string ImageExtension = ".jpg";
     private string _code = string.Empty;
     private string _name = string.Empty;
     private string _description = string.Empty;
@@ -10,12 +17,13 @@ public class Product
     private string _category = string.Empty;
     private double _price;
     private string _images = string.Empty;
+    public int Id { get; set; }
     public string Code
     {
         get => _code;
         set
         {
-            if(value.Length < 5 || value.Length > 20)
+            if(value.Length < MinCodeLength || value.Length > MaxCodeLength)
             {
                 throw new ArgumentException("El código debe tener entre 5 y 20 caracteres.");
             }
@@ -29,7 +37,7 @@ public class Product
         get => _name;
         set
         {
-            if(value.Length < 10 || value.Length > 50)
+            if(value.Length < MinNameLength || value.Length > MaxNameLength)
             {
                 throw new ArgumentException("El nombre debe tener entre 10 y 50 caracteres.");
             }
@@ -43,7 +51,7 @@ public class Product
         get => _description;
         set
         {
-            if(value.Length < 20 || value.Length > 500)
+            if(value.Length < MinDescriptionLength || value.Length > MaxDescriptionLength)
             {
                 throw new ArgumentException("La descripción debe tener entre 20 y 500 caracteres.");
             }
@@ -107,12 +115,12 @@ public class Product
 
             var images = value.Split(',');
 
-            if(images.Length > 3)
+            if(images.Length > MaxImages)
             {
                 throw new ArgumentException("Se permiten hasta 3 imágenes.");
             }
 
-            if(images.Any(img => !img.Trim().EndsWith(".jpg")))
+            if(images.Any(img => !img.Trim().EndsWith(ImageExtension)))
             {
                 throw new ArgumentException("Las imágenes deben ser en formato jpg.");
             }

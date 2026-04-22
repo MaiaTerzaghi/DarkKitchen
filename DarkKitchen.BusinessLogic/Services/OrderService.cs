@@ -19,7 +19,7 @@ public class OrderService(
     private readonly IPromotionRepository _promotionRepository = promotionRepository;
     private readonly IUserRepository _userRepository = userRepository;
     private IShippingStrategy? _shippingStrategy;
-    private const double Iva = 0.22;
+    private const double Vat = 0.22; // VAT es iva
     private const int TopProductsCount = 5;
 
     public CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request)
@@ -65,7 +65,7 @@ public class OrderService(
 
         var shippingCost = CalculateShipping(request.DeliveryType);
 
-        var total = (discountedSubtotal * (1 + Iva)) + shippingCost;
+        var total = (discountedSubtotal * (1 + Vat)) + shippingCost;
 
         var order = new Order
         {

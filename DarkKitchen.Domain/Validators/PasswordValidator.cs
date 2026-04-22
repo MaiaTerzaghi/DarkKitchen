@@ -4,6 +4,13 @@ namespace DarkKitchen.Domain.Validators;
 
 public static class PasswordValidator
 {
+    private const int MinLength = 15;
+    private const int MaxLength = 25;
+    private const string UppercasePattern = @"[A-Z]";
+    private const string LowercasePattern = @"[a-z]";
+    private const string NumberPattern = @"[0-9]";
+    private const string SymbolPattern = @"[^a-zA-Z0-9]";
+    private const string SequencePattern = @"012|123|234|345|456|567|678|789|987|876|765|654|543|432|321|210";
     public static void Validate(string password)
     {
         ValidateLength(password);
@@ -16,7 +23,7 @@ public static class PasswordValidator
 
     private static void ValidateLength(string password)
     {
-        if(password.Length < 15 || password.Length > 25)
+        if(password.Length < MinLength || password.Length > MaxLength)
         {
             throw new ArgumentException("La contraseña debe tener entre 15 y 25 caracteres");
         }
@@ -24,7 +31,7 @@ public static class PasswordValidator
 
     private static void ValidateUppercase(string password)
     {
-        if(!Regex.IsMatch(password, @"[A-Z]"))
+        if(!Regex.IsMatch(password, UppercasePattern))
         {
             throw new ArgumentException("La contraseña debe tener al menos una mayúscula");
         }
@@ -32,7 +39,7 @@ public static class PasswordValidator
 
     private static void ValidateLowercase(string password)
     {
-        if(!Regex.IsMatch(password, @"[a-z]"))
+        if(!Regex.IsMatch(password, LowercasePattern))
         {
             throw new ArgumentException("La contraseña debe tener al menos una minúscula");
         }
@@ -40,7 +47,7 @@ public static class PasswordValidator
 
     private static void ValidateNumber(string password)
     {
-        if(!Regex.IsMatch(password, @"[0-9]"))
+        if(!Regex.IsMatch(password, NumberPattern))
         {
             throw new ArgumentException("La contraseña debe tener al menos un número");
         }
@@ -48,7 +55,7 @@ public static class PasswordValidator
 
     private static void ValidateSymbol(string password)
     {
-        if(!Regex.IsMatch(password, @"[^a-zA-Z0-9]"))
+        if(!Regex.IsMatch(password, SymbolPattern))
         {
             throw new ArgumentException("La contraseña debe tener al menos un símbolo");
         }
@@ -56,7 +63,7 @@ public static class PasswordValidator
 
     private static void ValidateNoSequence(string password)
     {
-        if(Regex.IsMatch(password, @"012|123|234|345|456|567|678|789|987|876|765|654|543|432|321|210"))
+        if(Regex.IsMatch(password, SequencePattern))
         {
             throw new ArgumentException("La contraseña no debe tener secuencias de números");
         }
