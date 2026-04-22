@@ -13,7 +13,7 @@ public class UserController(IUserService userService) : ControllerBase
 {
     private readonly IUserService _userService = userService;
 
-    [HttpPost("register")]
+    [HttpPost]
     public IActionResult Register(RegisterClientDTO request)
     {
         var id = _userService.Register(request);
@@ -22,7 +22,7 @@ public class UserController(IUserService userService) : ControllerBase
     }
 
     [AuthorizeRoles(UserRole.Administrative)]
-    [HttpPost]
+    [HttpPost("staff")]
     public IActionResult CreateStaffUser(CreateStaffUserRequestDTO request)
     {
         var id = _userService.CreateStaffUser(request);

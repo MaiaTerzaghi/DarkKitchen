@@ -14,7 +14,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
     private readonly IOrderService _orderService = orderService;
 
     [AuthorizeRoles(UserRole.Client)]
-    [HttpPost("create")]
+    [HttpPost]
     public IActionResult CreateOrder([FromBody] CreateOrderRequestDTO request)
     {
         var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
@@ -34,7 +34,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
     }
 
     // [AuthorizeRoles(UserRole.Dispatcher)]
-    [HttpGet("date")]
+    [HttpGet("by-date")]
     public IActionResult GetOrders([FromQuery] GetOrdersRequestDTO request)
     {
         var response = _orderService.GetOrders(request);
@@ -74,7 +74,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
     }
 
     // [AuthorizeRoles(UserRole.Dispatcher)]
-    [HttpPatch("{id}/OnTheWay")]
+    [HttpPatch("{id}/on-the-Way")]
     public IActionResult MarkAsOnTheWay(int id)
     {
         var result = _orderService.MarkAsOnTheWay(id);
