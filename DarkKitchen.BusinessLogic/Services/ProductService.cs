@@ -9,9 +9,19 @@ public class ProductService(IProductRepository productRepository) : IProductServ
 {
     private readonly IProductRepository _productRepository = productRepository;
 
-    public List<Product> GetAll(string? name, string? category, string? line)
+    public List<ProductResponseDTO> GetAll(string? name, string? category, string? line)
     {
-        return _productRepository.GetAll(name, category, line);
+        var products = _productRepository.GetAll(name, category, line);
+
+        return products.Select(p => new ProductResponseDTO
+        {
+            Code = p.Code,
+            Name = p.Name,
+            Price = p.Price,
+            CommercialLine = p.CommercialLine,
+            Category = p.Category,
+            Images = p.Images
+        }).ToList();
     }
 
     public ProductResponseDTO CreateProduct(CreateProductRequestDTO request)

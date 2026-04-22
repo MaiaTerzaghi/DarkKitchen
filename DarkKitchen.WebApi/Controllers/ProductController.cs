@@ -1,6 +1,5 @@
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
-using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Filters;
 using Microsoft.AspNetCore.Mvc;
@@ -19,18 +18,7 @@ public class ProductController(IProductService productService, IOrderService ord
     public IActionResult GetAll([FromQuery] string? name, [FromQuery] string? category, [FromQuery] string? line)
     {
         var products = _productService.GetAll(name, category, line);
-
-        var response = products.Select(p => new ProductResponseDTO
-        {
-            Code = p.Code,
-            Name = p.Name,
-            Price = p.Price,
-            CommercialLine = p.CommercialLine,
-            Category = p.Category,
-            Images = p.Images,
-        });
-
-        return Ok(response);
+        return Ok(products);
     }
 
     [AuthorizeRoles(UserRole.Administrative)]
