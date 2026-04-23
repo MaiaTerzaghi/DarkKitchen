@@ -515,4 +515,42 @@ public sealed class UserServiceTest
 
         _userRepositoryMock.Verify(r => r.Add(It.Is<User>(u => u.Password == hashedPassword)), Times.Once);
     }
+
+    [TestMethod]
+    public void UpdateUser_WhenValidData_UpdatesUserWithHashedPassword()
+    {
+        var plainPassword = "Contrasena1!@#$%";
+        var hashedPassword = "hashed-contrasena";
+
+        var request = new UpdateUserRequestDTO
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@test.com",
+            Phone = "+59899123456",
+            Password = plainPassword,
+            Role = UserRole.Administrative
+        };
+
+        var existingUser = new User
+        {
+            Id = 1,
+            Name = "OldName",
+            LastName = "OldLastName",
+            Email = "juan@test.com",
+            Phone = "+59899123456",
+            Password = "old-hashed-password",
+            Role = UserRole.Administrative
+        };
+
+        _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+                        .Returns(existingUser);
+        _userRepositoryMock.Setup(r => r.Update(It.IsAny<User>())).Returns(existingUser);
+        _passwordManagerMock.Setup(p => p.ComputeHash(plainPassword))
+                        .Returns(hashedPassword);
+
+        _service.UpdateUser(1, request, 2);
+
+        _userRepositoryMock.Verify(r => r.Update(It.Is<User>(u => u.Password == hashedPassword)), Times.Once);
+    }
 }
