@@ -9,22 +9,22 @@ namespace DarkKitchen.BusinessLogic.Services;
 
 public class OrderService(
     IOrderRepository orderRepository,
-    IProductRepository productRepository,
+    IRepository<Product> productRepository,
     IPromotionRepository promotionRepository,
-    IUserRepository userRepository) : IOrderService
+    IRepository<User> userRepository) : IOrderService
 {
     private readonly IOrderRepository _orderRepository = orderRepository;
-    private readonly IProductRepository _productRepository = productRepository;
+    private readonly IRepository<Product> _productRepository = productRepository;
 
     private readonly IPromotionRepository _promotionRepository = promotionRepository;
-    private readonly IUserRepository _userRepository = userRepository;
+    private readonly IRepository<User> _userRepository = userRepository;
     private IShippingStrategy? _shippingStrategy;
     private const double Vat = 0.22; // VAT es iva
     private const int TopProductsCount = 5;
 
     public CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request)
     {
-        var client = _userRepository.GetById(request.ClientId)
+        var client = _userRepository.Get(u => u.Id == request.ClientId)
             ?? throw new ArgumentException($"Cliente con id {request.ClientId} no encontrado.");
 
         if(request.Items == null || request.Items.Count == 0)
@@ -32,36 +32,29 @@ public class OrderService(
             throw new ArgumentException("El pedido debe tener al menos un producto.");
         }
 
-        // Guardo en la variable deliveryType el tipo de delivery pero convertido en string
         if(!Enum.TryParse<DeliveryType>(request.DeliveryType, out var deliveryType))
         {
             throw new ArgumentException($"Tipo de entrega '{request.DeliveryType}' no válido.");
         }
 
-        var items = request.Items.Select(i =>
+        var itemsWithProducts = request.Items.Select(i =>
         {
-            var product = _productRepository.GetById(i.ProductId) ?? throw new ArgumentException($"Producto con id {i.ProductId} no encontrado.");
+            var product = _productRepository.Get(p => p.Id == i.ProductId)
+                ?? throw new ArgumentException($"Producto con id {i.ProductId} no encontrado.");
 
             if(!product.IsActive)
             {
                 throw new ArgumentException($"El producto {product.Name} está inactivo.");
             }
 
-            return new OrderItem
-            {
-                ProductId = i.ProductId,
-                Quantity = i.Quantity,
-                Product = product
-            };
+            return (Item: new OrderItem { ProductId = i.ProductId, Quantity = i.Quantity }, Product: product);
         }).ToList();
 
-        var subtotal = items.Sum(i => i.Product.Price * i.Quantity);
+        var subtotal = itemsWithProducts.Sum(i => i.Product.Price * i.Item.Quantity);
 
         var promotions = _promotionRepository.GetActivePromotions(DateTime.Today, null, null);
 
-        var discountedSubtotal = ApplyPromotions(subtotal, items, promotions);
-
-        // var shippingCost = CalculateShipping(deliveryType);
+        var discountedSubtotal = ApplyPromotions(subtotal, itemsWithProducts.Select(i => i.Item).ToList(), promotions);
 
         var shippingCost = CalculateShipping(request.DeliveryType);
 
@@ -75,11 +68,11 @@ public class OrderService(
             Street = request.Address.Street,
             DoorNumber = request.Address.DoorNumber,
             Apartment = request.Address.Apartment,
-            Items = items,
+            Items = itemsWithProducts.Select(i => i.Item).ToList(),
             Date = DateTime.Now,
         };
 
-        var saved = _orderRepository.Save(order);
+        var saved = _orderRepository.Add(order);
 
         return new CreateOrderResponseDTO
         {
@@ -123,7 +116,11 @@ public class OrderService(
 
     public List<GetClientOrdersResponseDTO> GetClientOrders(GetClientOrdersRequestDTO request)
     {
-        var orders = _orderRepository.GetClientOrders(request);
+        var orders = _orderRepository.GetClientOrders(
+        request.ClientId,
+        request.Status,
+        request.DateFrom,
+        request.DateTo);
         return orders.Select(o => new GetClientOrdersResponseDTO
         {
             OrderId = o.Id,
@@ -136,7 +133,11 @@ public class OrderService(
 
     public List<GetOrdersResponseDTO> GetOrders(GetOrdersRequestDTO request)
     {
-        var orders = _orderRepository.GetOrders(request);
+        var orders = _orderRepository.GetOrders(
+        request.DateFrom,
+        request.DateTo,
+        request.Street,
+        request.Status);
 
         return orders.Select(order => new GetOrdersResponseDTO
         {

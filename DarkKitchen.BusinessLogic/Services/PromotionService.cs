@@ -5,10 +5,10 @@ using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class PromotionService(IPromotionRepository promotionRepository, IProductRepository productRepository) : IPromotionService
+public class PromotionService(IPromotionRepository promotionRepository, IRepository<Product> productRepository) : IPromotionService
 {
     private readonly IPromotionRepository _promotionRepository = promotionRepository;
-    private readonly IProductRepository _productRepository = productRepository;
+    private readonly IRepository<Product> _productRepository = productRepository;
 
     public List<Promotion> GetActivePromotions(DateTime? date, string? productLine, string? product)
     {

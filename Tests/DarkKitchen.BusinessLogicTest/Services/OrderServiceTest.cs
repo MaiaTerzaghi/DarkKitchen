@@ -12,28 +12,26 @@ namespace DarkKitchen.BusinessLogicTest.Services;
 public class OrderServiceTest
 {
     private Mock<IOrderRepository> _orderRepositoryMock = null!;
-    private Mock<IProductRepository> _productRepositoryMock = null!;
+    private Mock<IRepository<Product>> _productRepositoryMock = null!;
 
     private Mock<IPromotionRepository> _promotionRepositoryMock = null!;
-    private Mock<IUserRepository> _userRepositoryMock = null!;
-
+    private Mock<IRepository<User>> _userRepositoryMock = null!;
     private OrderService _service = null!;
 
     [TestInitialize]
     public void Setup()
     {
         _orderRepositoryMock = new Mock<IOrderRepository>();
-        _productRepositoryMock = new Mock<IProductRepository>();
+        _productRepositoryMock = new Mock<IRepository<Product>>();
         _promotionRepositoryMock = new Mock<IPromotionRepository>();
-        _userRepositoryMock = new Mock<IUserRepository>();
+        _userRepositoryMock = new Mock<IRepository<User>>();
 
         _promotionRepositoryMock
         .Setup(r => r.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>()))
         .Returns([]);
 
-        _userRepositoryMock
-        .Setup(r => r.GetById(1))
-        .Returns(new User { Id = 1, Role = UserRole.Client });
+        _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+                            .Returns(new User { Id = 1, Role = UserRole.Client });
 
         _service = new OrderService(
             _orderRepositoryMock.Object,
@@ -61,12 +59,12 @@ public class OrderServiceTest
         };
 
         _productRepositoryMock
-            .Setup(r => r.GetById(1))
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
             .Returns(product);
 
         _orderRepositoryMock
-            .Setup(r => r.Save(It.IsAny<Order>()))
-            .Returns((Order o) =>
+             .Setup(r => r.Add(It.IsAny<Order>()))
+             .Returns((Order o) =>
             {
                 o.Id = 1;
                 return o;
@@ -100,11 +98,11 @@ public class OrderServiceTest
         };
 
         _productRepositoryMock
-            .Setup(r => r.GetById(1))
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
             .Returns(product);
 
         _orderRepositoryMock
-            .Setup(r => r.Save(It.IsAny<Order>()))
+            .Setup(r => r.Add(It.IsAny<Order>()))
             .Returns((Order o) =>
             {
                 o.Id = 1;
@@ -161,7 +159,7 @@ public class OrderServiceTest
         };
 
         _productRepositoryMock.
-        Setup(r => r.GetById(1)).
+        Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>())).
         Returns(product);
 
         _promotionRepositoryMock
@@ -169,7 +167,7 @@ public class OrderServiceTest
             .Returns([promotion]);
 
         _orderRepositoryMock.
-        Setup(r => r.Save(It.IsAny<Order>())).
+        Setup(r => r.Add(It.IsAny<Order>())).
         Returns((Order o) =>
         {
             o.Id = 1;
@@ -204,7 +202,7 @@ public class OrderServiceTest
         };
 
         _productRepositoryMock
-            .Setup(r => r.GetById(99))
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
             .Returns((Product)null!);
 
         _service.CreateOrder(request);
@@ -222,7 +220,7 @@ public class OrderServiceTest
         };
 
         _orderRepositoryMock
-            .Setup(r => r.GetClientOrders(It.IsAny<GetClientOrdersRequestDTO>()))
+            .Setup(r => r.GetClientOrders(It.IsAny<int>(), It.IsAny<OrderStatus?>(), It.IsAny<DateTime?>(), It.IsAny<DateTime?>()))
             .Returns([order]);
 
         var request = new GetClientOrdersRequestDTO { ClientId = 1 };
@@ -266,7 +264,7 @@ public class OrderServiceTest
         };
 
         _orderRepositoryMock
-            .Setup(r => r.GetOrders(request))
+            .Setup(r => r.GetOrders(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<string?>(), It.IsAny<OrderStatus?>()))
             .Returns(ordersFromRepo);
 
         var result = _service.GetOrders(request);
@@ -284,7 +282,7 @@ public class OrderServiceTest
     public void CreateOrder_ClientNotFound_ThrowsException()
     {
         _userRepositoryMock
-            .Setup(r => r.GetById(99))
+            .Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns((User)null!);
 
         var request = new CreateOrderRequestDTO
@@ -303,7 +301,7 @@ public class OrderServiceTest
     public void CreateOrder_InvalidDeliveryType_ThrowsException()
     {
         _productRepositoryMock
-            .Setup(r => r.GetById(1))
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
             .Returns(new Product { Id = 1, Price = 100.0 });
 
         var request = new CreateOrderRequestDTO
@@ -575,11 +573,11 @@ public class OrderServiceTest
         };
 
         _productRepositoryMock
-            .Setup(r => r.GetById(1))
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
             .Returns(product);
 
         _orderRepositoryMock
-            .Setup(r => r.Save(It.IsAny<Order>()))
+            .Setup(r => r.Add(It.IsAny<Order>()))
             .Returns((Order o) =>
             {
                 o.Id = 1;
@@ -716,7 +714,7 @@ public class OrderServiceTest
         };
 
         _productRepositoryMock
-            .Setup(r => r.GetById(1))
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
             .Returns(new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas", Name = "Pizza Napolitana", Code = "P0001", Description = "Rica pizza napolitana con tomate y albahaca", Category = "Fritos", Images = "pizza.jpg" });
 
         _service.CreateOrder(request);
@@ -740,7 +738,7 @@ public class OrderServiceTest
         };
 
         _productRepositoryMock
-            .Setup(r => r.GetById(1))
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
             .Returns(new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas", Name = "Pizza Napolitana", Code = "P0001", Description = "Rica pizza napolitana con tomate y albahaca", Category = "Fritos", Images = "pizza.jpg" });
 
         _service.CreateOrder(request);

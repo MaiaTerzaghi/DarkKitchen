@@ -28,6 +28,12 @@ public class Repository<TEntity>(DbContext context) : IRepository<TEntity>
         return entity;
     }
 
+    public void Delete(TEntity entity)
+    {
+        _entities.Remove(entity);
+        _context.SaveChanges();
+    }
+
     public List<TEntity> GetAll(
     Expression<Func<TEntity, bool>>? predicate = null,
     Expression<Func<TEntity, object>>? orderBy = null,
