@@ -58,7 +58,7 @@ public class UserService(IRepository<User> userRepository, IPasswordManager pass
             LastName = request.LastName,
             Email = request.Email,
             Phone = request.Phone,
-            Password = request.Password,
+            Password = _passwordManager.ComputeHash(request.Password),
             Role = request.Role
         };
 
