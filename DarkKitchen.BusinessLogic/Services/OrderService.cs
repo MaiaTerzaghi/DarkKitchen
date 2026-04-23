@@ -61,9 +61,7 @@ public class OrderService(
 
         var discountedSubtotal = ApplyPromotions(subtotal, items, promotions);
 
-        // var shippingCost = CalculateShipping(deliveryType);
-
-        var shippingCost = CalculateShipping(request.DeliveryType);
+        var shippingCost = CalculateShipping(deliveryType);
 
         var total = (discountedSubtotal * (1 + Vat)) + shippingCost;
 
@@ -109,12 +107,12 @@ public class OrderService(
     }
 
     // Implemento Strategy
-    private double CalculateShipping(string deliveryType)
+    private double CalculateShipping(DeliveryType deliveryType)
     {
         _shippingStrategy = deliveryType switch
         {
-            "Express" => new ExpressShipping(),
-            "Standard" => new StandardShipping(),
+            DeliveryType.Express => new ExpressShipping(),
+            DeliveryType.Standard => new StandardShipping(),
             _ => throw new ArgumentException("Tipo de entrega no válido")
         };
 
