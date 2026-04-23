@@ -1,4 +1,5 @@
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
@@ -70,7 +71,7 @@ public class PromotionService(IPromotionRepository promotionRepository, IReposit
         }
 
         var promotion = _promotionRepository.Get(p => p.Id == id)
-            ?? throw new ArgumentException($"Promoción con id {id} no encontrada.");
+            ?? throw new NotFoundException($"Promoción con id {id} no encontrada.");
 
         promotion.Name = request.Name;
         promotion.DiscountPercentage = request.DiscountPercentage;
@@ -92,10 +93,10 @@ public class PromotionService(IPromotionRepository promotionRepository, IReposit
     public void AddProductToPromotion(int promotionId, int productId)
     {
         var promotion = _promotionRepository.GetPromotionWithProducts(promotionId)
-        ?? throw new ArgumentException($"Promoción con id {promotionId} no encontrada.");
+        ?? throw new NotFoundException($"Promoción con id {promotionId} no encontrada.");
 
         var product = _productRepository.Get(p => p.Id == productId)
-            ?? throw new ArgumentException($"Producto con id {productId} no encontrado.");
+            ?? throw new NotFoundException($"Producto con id {productId} no encontrado.");
 
         if(_promotionRepository.ProductHasActivePromotion(productId))
         {
@@ -115,7 +116,7 @@ public class PromotionService(IPromotionRepository promotionRepository, IReposit
     public void RemoveProductFromPromotion(int promotionId, int productId)
     {
         var promotion = _promotionRepository.GetPromotionWithProducts(promotionId)
-        ?? throw new ArgumentException($"Promoción con id {promotionId} no encontrada.");
+        ?? throw new NotFoundException($"Promoción con id {promotionId} no encontrada.");
 
         var product = promotion.Products.FirstOrDefault(p => p.Id == productId)
             ?? throw new ArgumentException($"El producto con id {productId} no está en la promoción.");

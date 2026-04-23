@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IDataAccess;
 using Moq;
@@ -161,7 +162,7 @@ public sealed class PromotionServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(NotFoundException))]
     public void UpdatePromotion_PromotionNotFound_ThrowsException()
     {
         _promotionRepositoryMock
@@ -296,7 +297,7 @@ public sealed class PromotionServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(NotFoundException))]
     public void AddProductToPromotion_PromotionNotFound_ThrowsException()
     {
         _promotionRepositoryMock
@@ -307,7 +308,7 @@ public sealed class PromotionServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(NotFoundException))]
     public void AddProductToPromotion_ProductNotFound_ThrowsException()
     {
         var promotion = new Promotion
@@ -391,7 +392,7 @@ public sealed class PromotionServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(NotFoundException))]
     public void RemoveProductFromPromotion_PromotionNotFound_ThrowsException()
     {
         _promotionRepositoryMock
@@ -439,6 +440,14 @@ public sealed class PromotionServiceTest
         _promotionRepositoryMock
             .Setup(r => r.GetPromotionWithProducts(1))
             .Returns(promotion);
+
+        _productRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns(new Product { Id = 1 });
+
+        _promotionRepositoryMock
+            .Setup(r => r.ProductHasActivePromotion(1))
+            .Returns(false);
 
         _service.AddProductToPromotion(1, 1);
     }
