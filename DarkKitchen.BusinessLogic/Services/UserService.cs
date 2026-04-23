@@ -99,7 +99,7 @@ public class UserService(IRepository<User> userRepository, IPasswordManager pass
         user.LastName = request.LastName;
         user.Email = request.Email;
         user.Phone = request.Phone;
-        user.Password = request.Password;
+        user.Password = _passwordManager.ComputeHash(request.Password);
         user.Role = request.Role;
 
         var updated = _userRepository.Update(user);
