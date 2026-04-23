@@ -1,3 +1,4 @@
+using DarkKitchen.BusinessLogic.Security;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.DataAccess.Repositories;
@@ -29,6 +30,8 @@ public static class ServiceRegistration
         services.AddScoped<IPromotionRepository, PromotionRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<ISessionRepository, SessionRepository>();
+
+        services.AddSingleton<IPasswordManager, PasswordManager>();
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserService, UserService>();

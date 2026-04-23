@@ -4,14 +4,18 @@ using DarkKitchen.IDataAccess;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class AuthService(IRepository<User> userRepository, ISessionRepository sessionRepository) : IAuthService
+public class AuthService(IRepository<User> userRepository, ISessionRepository sessionRepository, IPasswordManager passwordManager) : IAuthService
 {
     private readonly IRepository<User> _userRepository = userRepository;
     private readonly ISessionRepository _sessionRepository = sessionRepository;
+    private readonly IPasswordManager _passwordManager = passwordManager;
+
     public string Login(string email, string password)
     {
         var user = _userRepository.Get(u => u.Email == email);
-        if(user == null || user.Password != password)
+        var hashedPassword = _passwordManager.ComputeHash(password);
+
+        if(user == null || user.Password != hashedPassword)
         {
             throw new ArgumentException("Credenciales inválidas");
         }

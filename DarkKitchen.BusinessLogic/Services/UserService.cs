@@ -1,15 +1,17 @@
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
+using DarkKitchen.Domain.Validators;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class UserService(IRepository<User> userRepository) : IUserService
+public class UserService(IRepository<User> userRepository, IPasswordManager passwordManager) : IUserService
 {
     private readonly IRepository<User> _userRepository = userRepository;
+    private readonly IPasswordManager _passwordManager = passwordManager;
 
     public int Register(RegisterClientDTO request)
     {
@@ -19,13 +21,15 @@ public class UserService(IRepository<User> userRepository) : IUserService
             throw new ConflictException("El mail ya esta registrado");
         }
 
+        PasswordValidator.Validate(request.Password);
+
         var user = new User
         {
             Name = request.Name,
             LastName = request.LastName,
             Email = request.Email,
             Phone = request.Phone,
-            Password = request.Password,
+            Password = _passwordManager.ComputeHash(request.Password),
             Role = UserRole.Client
         };
 
@@ -46,13 +50,15 @@ public class UserService(IRepository<User> userRepository) : IUserService
             throw new ArgumentException("El rol debe ser Administrativo o Preparador");
         }
 
+        PasswordValidator.Validate(request.Password);
+
         var user = new User
         {
             Name = request.Name,
             LastName = request.LastName,
             Email = request.Email,
             Phone = request.Phone,
-            Password = request.Password,
+            Password = _passwordManager.ComputeHash(request.Password),
             Role = request.Role
         };
 
@@ -87,11 +93,13 @@ public class UserService(IRepository<User> userRepository) : IUserService
 
         var user = _userRepository.Get(u => u.Id == id) ?? throw new NotFoundException("Usuario no encontrado");
 
+        PasswordValidator.Validate(request.Password);
+
         user!.Name = request.Name;
         user.LastName = request.LastName;
         user.Email = request.Email;
         user.Phone = request.Phone;
-        user.Password = request.Password;
+        user.Password = _passwordManager.ComputeHash(request.Password);
         user.Role = request.Role;
 
         var updated = _userRepository.Update(user);
