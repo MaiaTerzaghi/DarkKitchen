@@ -67,7 +67,7 @@ public class OrderServiceTest
              .Returns((Order o) =>
             {
                 o.Id = 1;
-                 return o;
+                return o;
             });
 
         var result = _service.CreateOrder(request);
