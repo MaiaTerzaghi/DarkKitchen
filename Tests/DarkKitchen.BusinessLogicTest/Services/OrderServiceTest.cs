@@ -59,7 +59,7 @@ public class OrderServiceTest
         };
 
         _productRepositoryMock
-            .Setup(r => r.GetById(1))
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
             .Returns(product);
 
         _orderRepositoryMock
@@ -98,7 +98,7 @@ public class OrderServiceTest
         };
 
         _productRepositoryMock
-            .Setup(r => r.GetById(1))
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
             .Returns(product);
 
         _orderRepositoryMock
@@ -159,7 +159,7 @@ public class OrderServiceTest
         };
 
         _productRepositoryMock.
-        Setup(r => r.GetById(1)).
+        Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>())).
         Returns(product);
 
         _promotionRepositoryMock
@@ -202,7 +202,7 @@ public class OrderServiceTest
         };
 
         _productRepositoryMock
-            .Setup(r => r.GetById(99))
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
             .Returns((Product)null!);
 
         _service.CreateOrder(request);
@@ -301,7 +301,7 @@ public class OrderServiceTest
     public void CreateOrder_InvalidDeliveryType_ThrowsException()
     {
         _productRepositoryMock
-            .Setup(r => r.GetById(1))
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
             .Returns(new Product { Id = 1, Price = 100.0 });
 
         var request = new CreateOrderRequestDTO
@@ -573,7 +573,7 @@ public class OrderServiceTest
         };
 
         _productRepositoryMock
-            .Setup(r => r.GetById(1))
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
             .Returns(product);
 
         _orderRepositoryMock
@@ -714,7 +714,7 @@ public class OrderServiceTest
         };
 
         _productRepositoryMock
-            .Setup(r => r.GetById(1))
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
             .Returns(new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas", Name = "Pizza Napolitana", Code = "P0001", Description = "Rica pizza napolitana con tomate y albahaca", Category = "Fritos", Images = "pizza.jpg" });
 
         _service.CreateOrder(request);
@@ -738,7 +738,7 @@ public class OrderServiceTest
         };
 
         _productRepositoryMock
-            .Setup(r => r.GetById(1))
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
             .Returns(new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas", Name = "Pizza Napolitana", Code = "P0001", Description = "Rica pizza napolitana con tomate y albahaca", Category = "Fritos", Images = "pizza.jpg" });
 
         _service.CreateOrder(request);

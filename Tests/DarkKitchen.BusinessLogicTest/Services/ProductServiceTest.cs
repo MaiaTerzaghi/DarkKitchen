@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.DTOs.Args.In;
@@ -19,7 +20,7 @@ public sealed class ProductServiceTest
         };
 
         var productRepositoryMock = new Mock<IProductRepository>();
-        productRepositoryMock.Setup(r => r.GetAll(null, null, null))
+        productRepositoryMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>(), null, false, 1, 20))
                              .Returns(products);
 
         var productService = new ProductService(productRepositoryMock.Object);
@@ -38,7 +39,7 @@ public sealed class ProductServiceTest
         };
 
         var productRepositoryMock = new Mock<IProductRepository>();
-        productRepositoryMock.Setup(r => r.GetAll("Pizza Napolitana", null, null))
+        productRepositoryMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>(), null, false, 1, 20))
                              .Returns(products);
 
         var productService = new ProductService(productRepositoryMock.Object);
@@ -391,7 +392,7 @@ public sealed class ProductServiceTest
         };
 
         var productRepositoryMock = new Mock<IProductRepository>();
-        productRepositoryMock.Setup(r => r.GetById(1))
+        productRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
                             .Returns(product);
         productRepositoryMock.Setup(r => r.Update(It.IsAny<Product>()))
                             .Returns(product);
@@ -420,7 +421,7 @@ public sealed class ProductServiceTest
         };
 
         var productRepositoryMock = new Mock<IProductRepository>();
-        productRepositoryMock.Setup(r => r.GetById(It.IsAny<int>()))
+        productRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
                             .Returns((Product?)null);
 
         var productService = new ProductService(productRepositoryMock.Object);
@@ -447,7 +448,7 @@ public sealed class ProductServiceTest
         };
 
         var productRepositoryMock = new Mock<IProductRepository>();
-        productRepositoryMock.Setup(r => r.GetManage(It.IsAny<GetProductsManageRequestDTO>()))
+        productRepositoryMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>(), null, false, 1, 20))
                             .Returns(products);
 
         var productService = new ProductService(productRepositoryMock.Object);
