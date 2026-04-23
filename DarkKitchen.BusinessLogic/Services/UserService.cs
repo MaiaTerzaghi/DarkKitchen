@@ -8,9 +8,10 @@ using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class UserService(IRepository<User> userRepository) : IUserService
+public class UserService(IRepository<User> userRepository, IPasswordManager passwordManager) : IUserService
 {
     private readonly IRepository<User> _userRepository = userRepository;
+    private readonly IPasswordManager _passwordManager = passwordManager;
 
     public int Register(RegisterClientDTO request)
     {
@@ -28,7 +29,7 @@ public class UserService(IRepository<User> userRepository) : IUserService
             LastName = request.LastName,
             Email = request.Email,
             Phone = request.Phone,
-            Password = request.Password,
+            Password = _passwordManager.ComputeHash(request.Password),
             Role = UserRole.Client
         };
 
