@@ -179,29 +179,6 @@ public class OrderService(
         }).ToList();
     }
 
-    public UpdateOrderStatusResponseDTO MarkAsPrepared(int orderId)
-    {
-        var order = _orderRepository.GetOrderById(orderId)
-            ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
-
-        if(order.Status != OrderStatus.Pending)
-        {
-            throw new ArgumentException("El pedido solo puede prepararse si está pendiente.");
-        }
-
-        order.Status = OrderStatus.Prepared;
-        order.UpdatedAt = DateTime.Now;
-
-        _orderRepository.Update(order);
-
-        return new UpdateOrderStatusResponseDTO
-        {
-            OrderId = order.Id,
-            Status = order.Status.ToString(),
-            UpdatedAt = order.UpdatedAt
-        };
-    }
-
     public OrderDetailResponseDTO GetOrderDetail(int orderId)
     {
         var order = _orderRepository.GetOrderById(orderId) ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
@@ -224,85 +201,32 @@ public class OrderService(
         };
     }
 
-    public UpdateOrderStatusResponseDTO DeliverOrder(int orderId)
-    {
-        var order = _orderRepository.GetOrderById(orderId)
-        ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
+    public UpdateOrderStatusResponseDTO MarkAsPrepared(int orderId) =>
+        TransitionOrder(orderId, OrderStatus.Pending, OrderStatus.Prepared, "El pedido solo puede prepararse si está pendiente.");
 
-        if(order.Status != OrderStatus.OnTheWay)
-        {
-            throw new ArgumentException("El pedido solo puede entregarse si está en camino.");
-        }
+    public UpdateOrderStatusResponseDTO DeliverOrder(int orderId) =>
+        TransitionOrder(orderId, OrderStatus.OnTheWay, OrderStatus.Delivered, "El pedido solo puede entregarse si está en camino.");
 
-        order.Status = OrderStatus.Delivered;
-        order.UpdatedAt = DateTime.Now;
-        _orderRepository.Update(order);
+    public UpdateOrderStatusResponseDTO CancelOrder(int orderId) =>
+        TransitionOrder(orderId, OrderStatus.Pending, OrderStatus.Cancelled, "El pedido solo puede cancelarse si está pendiente.");
 
-        return new UpdateOrderStatusResponseDTO
-        {
-            OrderId = order.Id,
-            Status = order.Status.ToString(),
-            UpdatedAt = order.UpdatedAt
-        };
-    }
+    public UpdateOrderStatusResponseDTO MarkAsOnTheWay(int orderId) =>
+        TransitionOrder(orderId, OrderStatus.Prepared, OrderStatus.OnTheWay, "El pedido solo puede ponerse en camino si está preparado.");
 
-    public UpdateOrderStatusResponseDTO CancelOrder(int orderId)
+    public UpdateOrderStatusResponseDTO MarkAsNotDelivered(int orderId) =>
+        TransitionOrder(orderId, OrderStatus.OnTheWay, OrderStatus.NotDelivered, "El pedido solo puede marcarse como no entregado si está en camino.");
+
+    private UpdateOrderStatusResponseDTO TransitionOrder(int orderId, OrderStatus requiredStatus, OrderStatus newStatus, string errorMessage)
     {
         var order = _orderRepository.GetOrderById(orderId)
             ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
 
-        if(order.Status != OrderStatus.Pending)
+        if(order.Status != requiredStatus)
         {
-            throw new ArgumentException("El pedido solo puede cancelarse si está pendiente.");
+            throw new ArgumentException(errorMessage);
         }
 
-        order.Status = OrderStatus.Cancelled;
-        order.UpdatedAt = DateTime.Now;
-
-        _orderRepository.Update(order);
-
-        return new UpdateOrderStatusResponseDTO
-        {
-            OrderId = order.Id,
-            Status = order.Status.ToString(),
-            UpdatedAt = order.UpdatedAt
-        };
-    }
-
-    public UpdateOrderStatusResponseDTO MarkAsOnTheWay(int orderId)
-    {
-        var order = _orderRepository.GetOrderById(orderId)
-         ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
-
-        if(order.Status != OrderStatus.Prepared)
-        {
-            throw new ArgumentException("El pedido solo puede ponerse en camino si está preparado.");
-        }
-
-        order.Status = OrderStatus.OnTheWay;
-        order.UpdatedAt = DateTime.Now;
-
-        _orderRepository.Update(order);
-
-        return new UpdateOrderStatusResponseDTO
-        {
-            OrderId = order.Id,
-            Status = order.Status.ToString(),
-            UpdatedAt = order.UpdatedAt
-        };
-    }
-
-    public UpdateOrderStatusResponseDTO MarkAsNotDelivered(int orderId)
-    {
-        var order = _orderRepository.GetOrderById(orderId)
-            ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
-
-        if(order.Status != OrderStatus.OnTheWay)
-        {
-            throw new ArgumentException("El pedido solo puede marcarse como no entregado si está en camino.");
-        }
-
-        order.Status = OrderStatus.NotDelivered;
+        order.Status = newStatus;
         order.UpdatedAt = DateTime.Now;
 
         _orderRepository.Update(order);
