@@ -487,4 +487,32 @@ public sealed class UserServiceTest
 
         _userRepositoryMock.Verify(r => r.Add(It.Is<User>(u => u.Password == hashedPassword)), Times.Once);
     }
+
+    [TestMethod]
+    public void CreateStaffUser_WhenValidData_SavesUserWithHashedPassword()
+    {
+        var plainPassword = "Contrasena1!@#$%";
+        var hashedPassword = "hashed-contrasena";
+
+        var request = new CreateStaffUserRequestDTO
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@test.com",
+            Phone = "+59899123456",
+            Password = plainPassword,
+            Role = UserRole.Administrative
+        };
+
+        _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+                        .Returns((User?)null);
+        _userRepositoryMock.Setup(r => r.Add(It.IsAny<User>()))
+                        .Returns(new User { Id = 1 });
+        _passwordManagerMock.Setup(p => p.ComputeHash(plainPassword))
+                        .Returns(hashedPassword);
+
+        _service.CreateStaffUser(request);
+
+        _userRepositoryMock.Verify(r => r.Add(It.Is<User>(u => u.Password == hashedPassword)), Times.Once);
+    }
 }
