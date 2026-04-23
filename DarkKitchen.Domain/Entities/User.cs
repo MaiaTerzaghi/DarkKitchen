@@ -1,6 +1,5 @@
 using System.Text.RegularExpressions;
 using DarkKitchen.Domain.Enums;
-using DarkKitchen.Domain.Validators;
 
 namespace DarkKitchen.Domain.Entities;
 
@@ -34,11 +33,7 @@ public class User
     public string Password
     {
         get => _password;
-        set
-        {
-            PasswordValidator.Validate(value);
-            _password = value;
-        }
+        set => _password = value;
     }
 
     public string Name
