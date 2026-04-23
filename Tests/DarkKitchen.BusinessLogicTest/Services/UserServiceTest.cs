@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
@@ -10,6 +11,16 @@ namespace DarkKitchen.BusinessLogicTest.Services;
 [TestClass]
 public sealed class UserServiceTest
 {
+    private Mock<IRepository<User>> _userRepositoryMock = null!;
+    private UserService _service = null!;
+
+    [TestInitialize]
+    public void Setup()
+    {
+        _userRepositoryMock = new Mock<IRepository<User>>();
+        _service = new UserService(_userRepositoryMock.Object);
+    }
+
     [TestMethod]
     public void Register_WhenValidData_ReturnsId()
     {
@@ -22,15 +33,14 @@ public sealed class UserServiceTest
             Password = "Contrasena1!@#$%",
         };
 
-        var userRepositoryMock = new Mock<IUserRepository>();
-        userRepositoryMock.Setup(r => r.GetByEmail("juan@email.com"))
+        var user = new User { Id = 1 };
+
+        _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
                         .Returns((User?)null);
-        userRepositoryMock.Setup(r => r.AddUser(It.IsAny<User>()))
-                        .Returns(1);
+        _userRepositoryMock.Setup(r => r.Add(It.IsAny<User>()))
+                        .Returns(user);
 
-        var userService = new UserService(userRepositoryMock.Object);
-
-        var result = userService.Register(request);
+        var result = _service.Register(request);
 
         Assert.AreEqual(1, result);
     }
@@ -48,22 +58,16 @@ public sealed class UserServiceTest
             Password = "Contrasena1!@#$%",
         };
 
-        var userRepositoryMock = new Mock<IUserRepository>();
-        userRepositoryMock.Setup(r => r.GetByEmail("juanexistente@email.com"))
+        _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
                         .Returns(new User { Email = "juanexistente@email.com" });
 
-        var userService = new UserService(userRepositoryMock.Object);
-
-        userService.Register(request);
+        _service.Register(request);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
     public void Register_WhenNameIsEmpty_ThrowsException()
     {
-        var userRepositoryMock = new Mock<IUserRepository>();
-        var userService = new UserService(userRepositoryMock.Object);
-
         var request = new RegisterClientDTO
         {
             Name = string.Empty,
@@ -73,16 +77,13 @@ public sealed class UserServiceTest
             Password = "Contrasena1!@#$%",
         };
 
-        userService.Register(request);
+        _service.Register(request);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
     public void Register_WhenLastNameIsTooShort_ThrowsException()
     {
-        var userRepositoryMock = new Mock<IUserRepository>();
-        var userService = new UserService(userRepositoryMock.Object);
-
         var request = new RegisterClientDTO
         {
             Name = "Juan",
@@ -92,16 +93,13 @@ public sealed class UserServiceTest
             Password = "Contrasena1!@#$%",
         };
 
-        userService.Register(request);
+        _service.Register(request);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
     public void Register_WhenEmailIsInvalid_ThrowsException()
     {
-        var userRepositoryMock = new Mock<IUserRepository>();
-        var userService = new UserService(userRepositoryMock.Object);
-
         var request = new RegisterClientDTO
         {
             Name = "Juan",
@@ -111,16 +109,13 @@ public sealed class UserServiceTest
             Password = "Contrasena1!@#$%",
         };
 
-        userService.Register(request);
+        _service.Register(request);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
     public void Register_WhenPhoneIsInvalid_ThrowsException()
     {
-        var userRepositoryMock = new Mock<IUserRepository>();
-        var userService = new UserService(userRepositoryMock.Object);
-
         var request = new RegisterClientDTO
         {
             Name = "Juan",
@@ -130,16 +125,13 @@ public sealed class UserServiceTest
             Password = "Contrasena1!@#$%",
         };
 
-        userService.Register(request);
+        _service.Register(request);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
     public void Register_WhenPasswordIsInvalid_ThrowsException()
     {
-        var userRepositoryMock = new Mock<IUserRepository>();
-        var userService = new UserService(userRepositoryMock.Object);
-
         var request = new RegisterClientDTO
         {
             Name = "Juan",
@@ -149,16 +141,13 @@ public sealed class UserServiceTest
             Password = "password",
         };
 
-        userService.Register(request);
+        _service.Register(request);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
     public void Register_WhenPasswordIsTooShort_ThrowsException()
     {
-        var userRepositoryMock = new Mock<IUserRepository>();
-        var userService = new UserService(userRepositoryMock.Object);
-
         var user = new RegisterClientDTO
         {
             Name = "Juan",
@@ -168,16 +157,13 @@ public sealed class UserServiceTest
             Password = "Corta1!@#$%",
         };
 
-        userService.Register(user);
+        _service.Register(user);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
     public void Register_WhenPasswordHasNoUppercase_ThrowsException()
     {
-        var userRepositoryMock = new Mock<IUserRepository>();
-        var userService = new UserService(userRepositoryMock.Object);
-
         var user = new RegisterClientDTO
         {
             Name = "Juan",
@@ -187,16 +173,13 @@ public sealed class UserServiceTest
             Password = "contrasena1!@#$%",
         };
 
-        userService.Register(user);
+        _service.Register(user);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
     public void Register_WhenPasswordHasNoLowercase_ThrowsException()
     {
-        var userRepositoryMock = new Mock<IUserRepository>();
-        var userService = new UserService(userRepositoryMock.Object);
-
         var user = new RegisterClientDTO
         {
             Name = "Juan",
@@ -206,16 +189,13 @@ public sealed class UserServiceTest
             Password = "CONTRASENA1!@#$%",
         };
 
-        userService.Register(user);
+        _service.Register(user);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
     public void Register_WhenPasswordHasNoNumber_ThrowsException()
     {
-        var userRepositoryMock = new Mock<IUserRepository>();
-        var userService = new UserService(userRepositoryMock.Object);
-
         var user = new RegisterClientDTO
         {
             Name = "Juan",
@@ -225,16 +205,13 @@ public sealed class UserServiceTest
             Password = "Contrasena!@#$%&*",
         };
 
-        userService.Register(user);
+        _service.Register(user);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
     public void Register_WhenPasswordHasNoSymbol_ThrowsException()
     {
-        var userRepositoryMock = new Mock<IUserRepository>();
-        var userService = new UserService(userRepositoryMock.Object);
-
         var user = new RegisterClientDTO
         {
             Name = "Juan",
@@ -244,16 +221,13 @@ public sealed class UserServiceTest
             Password = "Contrasena11111",
         };
 
-        userService.Register(user);
+        _service.Register(user);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
     public void Register_WhenPasswordHasSequence_ThrowsException()
     {
-        var userRepositoryMock = new Mock<IUserRepository>();
-        var userService = new UserService(userRepositoryMock.Object);
-
         var user = new RegisterClientDTO
         {
             Name = "Juan",
@@ -263,7 +237,7 @@ public sealed class UserServiceTest
             Password = "Contrasena123!@#",
         };
 
-        userService.Register(user);
+        _service.Register(user);
     }
 
     [TestMethod]
@@ -279,13 +253,14 @@ public sealed class UserServiceTest
             Role = UserRole.Administrative
         };
 
-        var userRepositoryMock = new Mock<IUserRepository>();
-        userRepositoryMock.Setup(r => r.AddUser(It.IsAny<User>()))
-                        .Returns(1);
+        var user = new User { Id = 1 };
 
-        var userService = new UserService(userRepositoryMock.Object);
+        _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+                            .Returns((User?)null);
+        _userRepositoryMock.Setup(r => r.Add(It.IsAny<User>()))
+                            .Returns(user);
 
-        var result = userService.CreateStaffUser(request);
+        var result = _service.CreateStaffUser(request);
 
         Assert.AreEqual(1, result);
     }
@@ -304,13 +279,10 @@ public sealed class UserServiceTest
             Role = UserRole.Administrative
         };
 
-        var userRepositoryMock = new Mock<IUserRepository>();
-        userRepositoryMock.Setup(r => r.GetByEmail("juan@test.com"))
+        _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
                         .Returns(new User { Email = "juan@test.com" });
 
-        var userService = new UserService(userRepositoryMock.Object);
-
-        userService.CreateStaffUser(request);
+        _service.CreateStaffUser(request);
     }
 
     [TestMethod]
@@ -327,13 +299,10 @@ public sealed class UserServiceTest
             Role = UserRole.Client
         };
 
-        var userRepositoryMock = new Mock<IUserRepository>();
-        userRepositoryMock.Setup(r => r.GetByEmail("juan@test.com"))
+        _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
                         .Returns((User?)null);
 
-        var userService = new UserService(userRepositoryMock.Object);
-
-        userService.CreateStaffUser(request);
+        _service.CreateStaffUser(request);
     }
 
     [TestMethod]
@@ -344,13 +313,10 @@ public sealed class UserServiceTest
             new() { Id = 1, Name = "Juan", LastName = "Perez", Email = "juan@test.com", Phone = "+59899123456", Role = UserRole.Administrative }
         };
 
-        var userRepositoryMock = new Mock<IUserRepository>();
-        userRepositoryMock.Setup(r => r.GetUsers(It.IsAny<string?>(), It.IsAny<string?>()))
-                        .Returns(users);
+        _userRepositoryMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>(), null, false, 1, 20))
+                            .Returns(users);
 
-        var userService = new UserService(userRepositoryMock.Object);
-
-        var result = userService.GetUsers(null, null);
+        var result = _service.GetUsers(null, null);
 
         Assert.AreEqual(1, result.Count);
     }
@@ -379,13 +345,11 @@ public sealed class UserServiceTest
             Role = UserRole.Administrative
         };
 
-        var userRepositoryMock = new Mock<IUserRepository>();
-        userRepositoryMock.Setup(r => r.GetById(1)).Returns(existingUser);
-        userRepositoryMock.Setup(r => r.UpdateUser(It.IsAny<User>())).Returns(existingUser);
+        _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+                        .Returns(existingUser);
+        _userRepositoryMock.Setup(r => r.Update(It.IsAny<User>())).Returns(existingUser);
 
-        var userService = new UserService(userRepositoryMock.Object);
-
-        var result = userService.UpdateUser(1, request, 2);
+        var result = _service.UpdateUser(1, request, 2);
 
         Assert.AreEqual("Juan", result.Name);
     }
@@ -404,12 +368,10 @@ public sealed class UserServiceTest
             Role = UserRole.Administrative
         };
 
-        var userRepositoryMock = new Mock<IUserRepository>();
-        userRepositoryMock.Setup(r => r.GetById(1)).Returns((User?)null);
+        _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+                      .Returns((User?)null);
 
-        var userService = new UserService(userRepositoryMock.Object);
-
-        userService.UpdateUser(1, request, 2);
+        _service.UpdateUser(1, request, 2);
     }
 
     [TestMethod]
@@ -437,12 +399,10 @@ public sealed class UserServiceTest
             Role = UserRole.Administrative
         };
 
-        var userRepositoryMock = new Mock<IUserRepository>();
-        userRepositoryMock.Setup(r => r.GetById(1)).Returns(existingUser);
+        _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+                .Returns(existingUser);
 
-        var userService = new UserService(userRepositoryMock.Object);
-
-        userService.UpdateUser(1, request, 1);
+        _service.UpdateUser(1, request, 1);
     }
 
     [TestMethod]
@@ -459,26 +419,22 @@ public sealed class UserServiceTest
             Role = UserRole.Administrative
         };
 
-        var userRepositoryMock = new Mock<IUserRepository>();
-        userRepositoryMock.Setup(r => r.GetById(1)).Returns(existingUser);
+        _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+                .Returns(existingUser);
 
-        var userService = new UserService(userRepositoryMock.Object);
+        _service.DeleteUser(1, 2);
 
-        userService.DeleteUser(1, 2);
-
-        userRepositoryMock.Verify(r => r.DeleteUser(1), Times.Once);
+        _userRepositoryMock.Verify(r => r.Delete(existingUser), Times.Once);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
     public void DeleteUser_WhenUserNotFound_ThrowsArgumentException()
     {
-        var userRepositoryMock = new Mock<IUserRepository>();
-        userRepositoryMock.Setup(r => r.GetById(1)).Returns((User?)null);
+        _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+                        .Returns((User?)null);
 
-        var userService = new UserService(userRepositoryMock.Object);
-
-        userService.DeleteUser(1, 2);
+        _service.DeleteUser(1, 2);
     }
 
     [TestMethod]
@@ -496,11 +452,8 @@ public sealed class UserServiceTest
             Role = UserRole.Administrative
         };
 
-        var userRepositoryMock = new Mock<IUserRepository>();
-        userRepositoryMock.Setup(r => r.GetById(1)).Returns(existingUser);
-
-        var userService = new UserService(userRepositoryMock.Object);
-
-        userService.DeleteUser(1, 1);
+        _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+                        .Returns(existingUser);
+        _service.DeleteUser(1, 1);
     }
 }

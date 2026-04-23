@@ -7,9 +7,7 @@ namespace DarkKitchen.BusinessLogic.Services;
 public class AuthService(IRepository<User> userRepository, ISessionRepository sessionRepository) : IAuthService
 {
     private readonly IRepository<User> _userRepository = userRepository;
-#pragma warning disable CA1823
     private readonly ISessionRepository _sessionRepository = sessionRepository;
-#pragma warning restore CA1823
     public string Login(string email, string password)
     {
         var user = _userRepository.Get(u => u.Email == email);

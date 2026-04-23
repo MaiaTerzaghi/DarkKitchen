@@ -6,13 +6,13 @@ using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class UserService(IUserRepository userRepository) : IUserService
+public class UserService(IRepository<User> userRepository) : IUserService
 {
-    private readonly IUserRepository _userRepository = userRepository;
+    private readonly IRepository<User> _userRepository = userRepository;
 
     public int Register(RegisterClientDTO request)
     {
-        var existingUser = _userRepository.GetByEmail(request.Email);
+        var existingUser = _userRepository.Get(u => u.Email == request.Email);
         if(existingUser != null)
         {
             throw new ArgumentException("El mail ya esta registrado");
@@ -28,12 +28,13 @@ public class UserService(IUserRepository userRepository) : IUserService
             Role = UserRole.Client
         };
 
-        return _userRepository.AddUser(user);
+        var savedUser = _userRepository.Add(user);
+        return savedUser.Id;
     }
 
     public int CreateStaffUser(CreateStaffUserRequestDTO request)
     {
-        var existingUser = _userRepository.GetByEmail(request.Email);
+        var existingUser = _userRepository.Get(u => u.Email == request.Email);
         if(existingUser != null)
         {
             throw new ArgumentException("El mail ya está registrado");
@@ -54,12 +55,16 @@ public class UserService(IUserRepository userRepository) : IUserService
             Role = request.Role
         };
 
-        return _userRepository.AddUser(user);
+        var savedUser = _userRepository.Add(user);
+        return savedUser.Id;
     }
 
     public List<UserResponseDTO> GetUsers(string? name, string? lastName)
     {
-        var users = _userRepository.GetUsers(name, lastName);
+        var users = _userRepository.GetAll(
+            predicate: u =>
+            (name == null || u.Name.Contains(name)) &&
+            (lastName == null || u.LastName.Contains(lastName)));
 
         return users.Select(u => new UserResponseDTO
         {
@@ -79,7 +84,7 @@ public class UserService(IUserRepository userRepository) : IUserService
             throw new ArgumentException("Un usuario no puede modificarse a sí mismo");
         }
 
-        var user = _userRepository.GetById(id) ?? throw new ArgumentException("Usuario no encontrado");
+        var user = _userRepository.Get(u => u.Id == id) ?? throw new ArgumentException("Usuario no encontrado");
 
         user!.Name = request.Name;
         user.LastName = request.LastName;
@@ -88,7 +93,7 @@ public class UserService(IUserRepository userRepository) : IUserService
         user.Password = request.Password;
         user.Role = request.Role;
 
-        var updated = _userRepository.UpdateUser(user);
+        var updated = _userRepository.Update(user);
 
         return new UserResponseDTO
         {
@@ -108,8 +113,8 @@ public class UserService(IUserRepository userRepository) : IUserService
             throw new ArgumentException("Un usuario no puede eliminarse a sí mismo");
         }
 
-        _ = _userRepository.GetById(id) ?? throw new ArgumentException("Usuario no encontrado");
+        var user = _userRepository.Get(u => u.Id == id) ?? throw new ArgumentException("Usuario no encontrado");
 
-        _userRepository.DeleteUser(id);
+        _userRepository.Delete(user);
     }
 }
