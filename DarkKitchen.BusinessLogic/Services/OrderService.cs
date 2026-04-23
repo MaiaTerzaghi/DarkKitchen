@@ -19,26 +19,53 @@ public class OrderService(
 
     private readonly IPromotionRepository _promotionRepository = promotionRepository;
     private readonly IRepository<User> _userRepository = userRepository;
-    private IShippingStrategy? _shippingStrategy;
-    private const double Vat = 0.22; // VAT es iva
+    private const double Vat = 0.22;
     private const int TopProductsCount = 5;
 
     public CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request)
     {
-        var client = _userRepository.Get(u => u.Id == request.ClientId)
-           ?? throw new NotFoundException($"Cliente con id {request.ClientId} no encontrado.");
+        ValidateClient(request.ClientId);
+        ValidateItems(request.Items);
+        var deliveryType = ParseDeliveryType(request.DeliveryType);
+        var itemsWithProducts = BuildOrderItems(request.Items);
+        var items = itemsWithProducts.Select(i => i.Item).ToList();
+        var subtotal = itemsWithProducts.Sum(i => i.Product.Price * i.Item.Quantity);
+        var promotions = _promotionRepository.GetActivePromotions(DateTime.Today, null, null);
+        var discountedSubtotal = ApplyPromotions(subtotal, items, promotions);
+        var shippingCost = CalculateShipping(deliveryType);
+        var total = CalculateTotal(discountedSubtotal, shippingCost);
+        var order = BuildOrder(request, deliveryType, items);
+        var saved = _orderRepository.Add(order);
+        return BuildOrderResponse(request.ClientId, saved.Id, subtotal, shippingCost, total);
+    }
 
-        if(request.Items == null || request.Items.Count == 0)
+    private void ValidateClient(int clientId)
+    {
+        _ = _userRepository.Get(u => u.Id == clientId)
+            ?? throw new NotFoundException($"Cliente con id {clientId} no encontrado.");
+    }
+
+    private static void ValidateItems(List<OrderItemRequestDTO>? items)
+    {
+        if(items == null || items.Count == 0)
         {
             throw new ArgumentException("El pedido debe tener al menos un producto.");
         }
+    }
 
-        if(!Enum.TryParse<DeliveryType>(request.DeliveryType, out var deliveryType))
+    private static DeliveryType ParseDeliveryType(string deliveryType)
+    {
+        if(!Enum.TryParse<DeliveryType>(deliveryType, out var result))
         {
-            throw new ArgumentException($"Tipo de entrega '{request.DeliveryType}' no válido.");
+            throw new ArgumentException($"Tipo de entrega '{deliveryType}' no válido.");
         }
 
-        var itemsWithProducts = request.Items.Select(i =>
+        return result;
+    }
+
+    private List<(OrderItem Item, Product Product)> BuildOrderItems(List<OrderItemRequestDTO> items)
+    {
+        return items.Select(i =>
         {
             var product = _productRepository.Get(p => p.Id == i.ProductId)
                 ?? throw new NotFoundException($"Producto con id {i.ProductId} no encontrado.");
@@ -50,18 +77,16 @@ public class OrderService(
 
             return (Item: new OrderItem { ProductId = i.ProductId, Quantity = i.Quantity }, Product: product);
         }).ToList();
+    }
 
-        var subtotal = itemsWithProducts.Sum(i => i.Product.Price * i.Item.Quantity);
+    private double CalculateTotal(double discountedSubtotal, double shippingCost)
+    {
+        return Math.Round((discountedSubtotal * (1 + Vat)) + shippingCost, 2);
+    }
 
-        var promotions = _promotionRepository.GetActivePromotions(DateTime.Today, null, null);
-
-        var discountedSubtotal = ApplyPromotions(subtotal, itemsWithProducts.Select(i => i.Item).ToList(), promotions);
-
-        var shippingCost = CalculateShipping(deliveryType);
-
-        var total = (discountedSubtotal * (1 + Vat)) + shippingCost;
-
-        var order = new Order
+    private static Order BuildOrder(CreateOrderRequestDTO request, DeliveryType deliveryType, List<OrderItem> items)
+    {
+        return new Order
         {
             ClientId = request.ClientId,
             DeliveryType = deliveryType,
@@ -69,19 +94,20 @@ public class OrderService(
             Street = request.Address.Street,
             DoorNumber = request.Address.DoorNumber,
             Apartment = request.Address.Apartment,
-            Items = itemsWithProducts.Select(i => i.Item).ToList(),
+            Items = items,
             Date = DateTime.Now,
         };
+    }
 
-        var saved = _orderRepository.Add(order);
-
+    private static CreateOrderResponseDTO BuildOrderResponse(int clientId, int orderId, double subtotal, double shippingCost, double total)
+    {
         return new CreateOrderResponseDTO
         {
-            ClientId = request.ClientId,
-            OrderId = saved.Id,
+            ClientId = clientId,
+            OrderId = orderId,
             Subtotal = subtotal,
             ShippingCost = shippingCost,
-            Total = Math.Round(total, 2)
+            Total = total
         };
     }
 
@@ -102,17 +128,16 @@ public class OrderService(
         return subtotal - discount;
     }
 
-    // Implemento Strategy
     private double CalculateShipping(DeliveryType deliveryType)
     {
-        _shippingStrategy = deliveryType switch
+        IShippingStrategy shippingStrategy = deliveryType switch
         {
             DeliveryType.Express => new ExpressShipping(),
             DeliveryType.Standard => new StandardShipping(),
             _ => throw new ArgumentException("Tipo de entrega no válido")
         };
 
-        return _shippingStrategy.CalculateCost();
+        return shippingStrategy.CalculateCost();
     }
 
     public List<GetClientOrdersResponseDTO> GetClientOrders(GetClientOrdersRequestDTO request)
