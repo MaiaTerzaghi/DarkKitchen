@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
+using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IDataAccess;
 using Moq;
@@ -185,7 +186,7 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(NotFoundException))]
     public void CreateOrder_ProductNotFound_ThrowsException()
     {
         var request = new CreateOrderRequestDTO
@@ -278,7 +279,7 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(NotFoundException))]
     public void CreateOrder_ClientNotFound_ThrowsException()
     {
         _userRepositoryMock
@@ -340,7 +341,7 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(NotFoundException))]
     public void MarkAsPrepared_OrderNotFound_ThrowsException()
     {
         _orderRepositoryMock
@@ -420,7 +421,7 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(NotFoundException))]
     public void DeliverOrder_WhenOrderNotFound_ThrowsException()
     {
         _orderRepositoryMock
@@ -475,7 +476,7 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(NotFoundException))]
     public void CancelOrder_OrderNotFound_ThrowsException()
     {
         _orderRepositoryMock
@@ -503,7 +504,7 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(NotFoundException))]
     public void MarkAsOnTheWay_OrderNotFound_ThrowsException()
     {
         _orderRepositoryMock
@@ -612,7 +613,7 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(NotFoundException))]
     public void MarkAsNotDelivered_OrderNotFound_ThrowsException()
     {
         _orderRepositoryMock
