@@ -3,13 +3,13 @@ using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class SessionService(IUserRepository userRepository) : ISessionService
+public class SessionService(ISessionRepository sessionRepository) : ISessionService
 {
-    private readonly IUserRepository _userRepository = userRepository;
+    private readonly ISessionRepository _sessionRepository = sessionRepository;
 
     public User GetUserFromToken(string token)
     {
-        var session = _userRepository.GetSessionByToken(token);
+        var session = _sessionRepository.GetSessionByToken(token);
         if(session == null || session.User == null)
         {
             throw new ArgumentException("Token inválido");

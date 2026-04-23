@@ -11,20 +11,20 @@ public class OrderService(
     IOrderRepository orderRepository,
     IProductRepository productRepository,
     IPromotionRepository promotionRepository,
-    IUserRepository userRepository) : IOrderService
+    IRepository<User> userRepository) : IOrderService
 {
     private readonly IOrderRepository _orderRepository = orderRepository;
     private readonly IProductRepository _productRepository = productRepository;
 
     private readonly IPromotionRepository _promotionRepository = promotionRepository;
-    private readonly IUserRepository _userRepository = userRepository;
+    private readonly IRepository<User> _userRepository = userRepository;
     private IShippingStrategy? _shippingStrategy;
     private const double Vat = 0.22; // VAT es iva
     private const int TopProductsCount = 5;
 
     public CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request)
     {
-        var client = _userRepository.GetById(request.ClientId)
+        var client = _userRepository.Get(u => u.Id == request.ClientId)
             ?? throw new ArgumentException($"Cliente con id {request.ClientId} no encontrado.");
 
         if(request.Items == null || request.Items.Count == 0)

@@ -15,11 +15,11 @@ public sealed class SessionServiceTest
         var user = new User { Id = 1, Email = "juan@email.com", Role = UserRole.Client };
         var session = new Session { Token = "valid-token", User = user };
 
-        var userRepositoryMock = new Mock<IUserRepository>();
-        userRepositoryMock.Setup(r => r.GetSessionByToken("valid-token"))
+        var sessionRepositoryMock = new Mock<ISessionRepository>();
+        sessionRepositoryMock.Setup(r => r.GetSessionByToken("valid-token"))
                           .Returns(session);
 
-        var sessionService = new SessionService(userRepositoryMock.Object);
+        var sessionService = new SessionService(sessionRepositoryMock.Object);
         var result = sessionService.GetUserFromToken("valid-token");
 
         Assert.IsNotNull(result);
@@ -30,11 +30,11 @@ public sealed class SessionServiceTest
     [ExpectedException(typeof(ArgumentException))]
     public void GetUserFromToken_WhenInvalidToken_ThrowsException()
     {
-        var userRepositoryMock = new Mock<IUserRepository>();
-        userRepositoryMock.Setup(r => r.GetSessionByToken("invalid-token"))
+        var sessionRepositoryMock = new Mock<ISessionRepository>();
+        sessionRepositoryMock.Setup(r => r.GetSessionByToken("invalid-token"))
                           .Returns((Session?)null);
 
-        var sessionService = new SessionService(userRepositoryMock.Object);
+        var sessionService = new SessionService(sessionRepositoryMock.Object);
         sessionService.GetUserFromToken("invalid-token");
     }
 }

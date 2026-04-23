@@ -15,8 +15,7 @@ public class OrderServiceTest
     private Mock<IProductRepository> _productRepositoryMock = null!;
 
     private Mock<IPromotionRepository> _promotionRepositoryMock = null!;
-    private Mock<IUserRepository> _userRepositoryMock = null!;
-
+    private Mock<IRepository<User>> _userRepositoryMock = null!;
     private OrderService _service = null!;
 
     [TestInitialize]
@@ -25,15 +24,14 @@ public class OrderServiceTest
         _orderRepositoryMock = new Mock<IOrderRepository>();
         _productRepositoryMock = new Mock<IProductRepository>();
         _promotionRepositoryMock = new Mock<IPromotionRepository>();
-        _userRepositoryMock = new Mock<IUserRepository>();
+        _userRepositoryMock = new Mock<IRepository<User>>();
 
         _promotionRepositoryMock
         .Setup(r => r.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>()))
         .Returns([]);
 
-        _userRepositoryMock
-        .Setup(r => r.GetById(1))
-        .Returns(new User { Id = 1, Role = UserRole.Client });
+        _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+                            .Returns(new User { Id = 1, Role = UserRole.Client });
 
         _service = new OrderService(
             _orderRepositoryMock.Object,
@@ -284,7 +282,7 @@ public class OrderServiceTest
     public void CreateOrder_ClientNotFound_ThrowsException()
     {
         _userRepositoryMock
-            .Setup(r => r.GetById(99))
+            .Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
             .Returns((User)null!);
 
         var request = new CreateOrderRequestDTO
