@@ -4,6 +4,7 @@ using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.DTOs.Args.In;
+using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 using Moq;
 
@@ -13,13 +14,15 @@ namespace DarkKitchen.BusinessLogicTest.Services;
 public sealed class UserServiceTest
 {
     private Mock<IRepository<User>> _userRepositoryMock = null!;
+    private Mock<IPasswordManager> _passwordManagerMock = null!;
     private UserService _service = null!;
 
     [TestInitialize]
     public void Setup()
     {
         _userRepositoryMock = new Mock<IRepository<User>>();
-        _service = new UserService(_userRepositoryMock.Object);
+        _passwordManagerMock = new Mock<IPasswordManager>();
+        _service = new UserService(_userRepositoryMock.Object, _passwordManagerMock.Object);
     }
 
     [TestMethod]
@@ -456,5 +459,32 @@ public sealed class UserServiceTest
         _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
                         .Returns(existingUser);
         _service.DeleteUser(1, 1);
+    }
+
+    [TestMethod]
+    public void Register_WhenValidData_SavesUserWithHashedPassword()
+    {
+        var plainPassword = "Contrasena1!@#$%";
+        var hashedPassword = "hashed-contrasena";
+
+        var request = new RegisterClientDTO
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@email.com",
+            Phone = "+59899123456",
+            Password = plainPassword,
+        };
+
+        _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+                        .Returns((User?)null);
+        _userRepositoryMock.Setup(r => r.Add(It.IsAny<User>()))
+                        .Returns(new User { Id = 1 });
+        _passwordManagerMock.Setup(p => p.ComputeHash(plainPassword))
+                        .Returns(hashedPassword);
+
+        _service.Register(request);
+
+        _userRepositoryMock.Verify(r => r.Add(It.Is<User>(u => u.Password == hashedPassword)), Times.Once);
     }
 }
