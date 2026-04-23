@@ -744,4 +744,57 @@ public class OrderServiceTest
 
         _service.CreateOrder(request);
     }
+
+    [TestMethod]
+    public void CreateOrder_WithPromotion_AppliesDiscountOnlyToPromotedProduct()
+    {
+        var pizza = new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas" };
+        var burger = new Product { Id = 2, Price = 200.0, CommercialLine = "Burgers" };
+
+        var promotion = new Promotion
+        {
+            Id = 1,
+            DiscountPercentage = 10,
+            Products = [pizza]
+        };
+
+        var request = new CreateOrderRequestDTO
+        {
+            ClientId = 1,
+            DeliveryType = "Standard",
+            Address = new AddressDTO { Street = "18 de Julio", DoorNumber = "1234", Apartment = "2B" },
+            Items =
+            [
+                new OrderItemRequestDTO { ProductId = 1, Quantity = 1 },
+                new OrderItemRequestDTO { ProductId = 2, Quantity = 1 }
+            ]
+        };
+
+        _productRepositoryMock
+            .SetupSequence(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns(pizza)
+            .Returns(burger);
+
+        _promotionRepositoryMock
+            .Setup(r => r.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>()))
+            .Returns([promotion]);
+
+        _orderRepositoryMock
+            .Setup(r => r.Add(It.IsAny<Order>()))
+            .Returns((Order o) =>
+            {
+                o.Id = 1;
+                return o;
+            });
+
+        var result = _service.CreateOrder(request);
+
+        var pizzaSubtotal = 100.0;
+        var burgerSubtotal = 200.0;
+        var discountOnPizza = pizzaSubtotal * 0.10;
+        var discountedTotal = pizzaSubtotal + burgerSubtotal - discountOnPizza;
+        var expectedTotal = Math.Round((discountedTotal * 1.22) + 20.0, 2);
+
+        Assert.AreEqual(expectedTotal, result.Total);
+    }
 }
