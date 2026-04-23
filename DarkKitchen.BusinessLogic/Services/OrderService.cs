@@ -80,7 +80,7 @@ public class OrderService(
             Date = DateTime.Now,
         };
 
-        var saved = _orderRepository.Save(order);
+        var saved = _orderRepository.Add(order);
 
         return new CreateOrderResponseDTO
         {
@@ -124,7 +124,11 @@ public class OrderService(
 
     public List<GetClientOrdersResponseDTO> GetClientOrders(GetClientOrdersRequestDTO request)
     {
-        var orders = _orderRepository.GetClientOrders(request);
+        var orders = _orderRepository.GetClientOrders(
+        request.ClientId,
+        request.Status,
+        request.DateFrom,
+        request.DateTo);
         return orders.Select(o => new GetClientOrdersResponseDTO
         {
             OrderId = o.Id,
@@ -137,7 +141,11 @@ public class OrderService(
 
     public List<GetOrdersResponseDTO> GetOrders(GetOrdersRequestDTO request)
     {
-        var orders = _orderRepository.GetOrders(request);
+        var orders = _orderRepository.GetOrders(
+        request.DateFrom,
+        request.DateTo,
+        request.Street,
+        request.Status);
 
         return orders.Select(order => new GetOrdersResponseDTO
         {

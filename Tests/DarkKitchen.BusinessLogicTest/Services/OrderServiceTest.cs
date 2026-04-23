@@ -63,11 +63,11 @@ public class OrderServiceTest
             .Returns(product);
 
         _orderRepositoryMock
-            .Setup(r => r.Save(It.IsAny<Order>()))
-            .Returns((Order o) =>
+             .Setup(r => r.Add(It.IsAny<Order>()))
+             .Returns((Order o) =>
             {
                 o.Id = 1;
-                return o;
+                 return o;
             });
 
         var result = _service.CreateOrder(request);
@@ -102,7 +102,7 @@ public class OrderServiceTest
             .Returns(product);
 
         _orderRepositoryMock
-            .Setup(r => r.Save(It.IsAny<Order>()))
+            .Setup(r => r.Add(It.IsAny<Order>()))
             .Returns((Order o) =>
             {
                 o.Id = 1;
@@ -167,7 +167,7 @@ public class OrderServiceTest
             .Returns([promotion]);
 
         _orderRepositoryMock.
-        Setup(r => r.Save(It.IsAny<Order>())).
+        Setup(r => r.Add(It.IsAny<Order>())).
         Returns((Order o) =>
         {
             o.Id = 1;
@@ -220,7 +220,7 @@ public class OrderServiceTest
         };
 
         _orderRepositoryMock
-            .Setup(r => r.GetClientOrders(It.IsAny<GetClientOrdersRequestDTO>()))
+            .Setup(r => r.GetClientOrders(It.IsAny<int>(), It.IsAny<OrderStatus?>(), It.IsAny<DateTime?>(), It.IsAny<DateTime?>()))
             .Returns([order]);
 
         var request = new GetClientOrdersRequestDTO { ClientId = 1 };
@@ -264,7 +264,7 @@ public class OrderServiceTest
         };
 
         _orderRepositoryMock
-            .Setup(r => r.GetOrders(request))
+            .Setup(r => r.GetOrders(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<string?>(), It.IsAny<OrderStatus?>()))
             .Returns(ordersFromRepo);
 
         var result = _service.GetOrders(request);
@@ -577,7 +577,7 @@ public class OrderServiceTest
             .Returns(product);
 
         _orderRepositoryMock
-            .Setup(r => r.Save(It.IsAny<Order>()))
+            .Setup(r => r.Add(It.IsAny<Order>()))
             .Returns((Order o) =>
             {
                 o.Id = 1;
