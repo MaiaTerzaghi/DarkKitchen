@@ -6,13 +6,17 @@ using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class ProductService(IProductRepository productRepository) : IProductService
+public class ProductService(IRepository<Product> productRepository) : IProductService
 {
-    private readonly IProductRepository _productRepository = productRepository;
+    private readonly IRepository<Product> _productRepository = productRepository;
 
     public List<Product> GetAll(string? name, string? category, string? line)
     {
-        return _productRepository.GetAll(name, category, line);
+        return _productRepository.GetAll(
+            predicate: p =>
+                (string.IsNullOrEmpty(name) || p.Name.Contains(name)) &&
+                (string.IsNullOrEmpty(category) || p.Category == category) &&
+                (string.IsNullOrEmpty(line) || p.CommercialLine == line));
     }
 
     public ProductResponseDTO CreateProduct(CreateProductRequestDTO request)
@@ -44,7 +48,7 @@ public class ProductService(IProductRepository productRepository) : IProductServ
 
     public ProductResponseDTO UpdateProduct(int id, UpdateProductRequestDTO request)
     {
-        var product = _productRepository.GetById(id)
+        var product = _productRepository.Get(p => p.Id == id)
             ?? throw new NotFoundException($"Producto con id {id} no encontrado.");
 
         product.Code = request.Code;
@@ -71,7 +75,15 @@ public class ProductService(IProductRepository productRepository) : IProductServ
 
     public List<ProductResponseDTO> GetManage(GetProductsManageRequestDTO request)
     {
-        var products = _productRepository.GetManage(request);
+        var products = _productRepository.GetAll(
+            predicate: p =>
+                (string.IsNullOrEmpty(request.Name) || p.Name.Contains(request.Name)) &&
+                (string.IsNullOrEmpty(request.Description) || p.Description.Contains(request.Description)) &&
+                (string.IsNullOrEmpty(request.Category) || p.Category.Contains(request.Category)) &&
+                (string.IsNullOrEmpty(request.CommercialLine) || p.CommercialLine.Contains(request.CommercialLine)) &&
+                (!request.IsActive.HasValue || p.IsActive == request.IsActive.Value) &&
+                (!request.PriceMin.HasValue || p.Price >= request.PriceMin.Value) &&
+                (!request.PriceMax.HasValue || p.Price <= request.PriceMax.Value));
 
         return products.Select(p => new ProductResponseDTO
         {

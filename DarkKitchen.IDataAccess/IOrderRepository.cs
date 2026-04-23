@@ -1,15 +1,21 @@
 using System.Linq.Expressions;
 using DarkKitchen.Domain.Entities;
-using DarkKitchen.DTOs.Args.In;
-
+using DarkKitchen.Domain.Enums;
 namespace DarkKitchen.IDataAccess;
 
-public interface IOrderRepository
+public interface IOrderRepository : IRepository<Order>
 {
-    Order Save(Order order);
-    List<Order> GetClientOrders(GetClientOrdersRequestDTO request);
-    List<Order> GetOrders(GetOrdersRequestDTO request);
-    Order Update(Order order);
+    List<Order> GetClientOrders(
+        int clientId,
+        OrderStatus? status,
+        DateTime? dateFrom,
+        DateTime? dateTo);
+
+    List<Order> GetOrders(
+        DateTime dateFrom,
+        DateTime dateTo,
+        string? street,
+        OrderStatus? status);
     Order? GetOrderById(int orderId);
     List<(Product Product, int Quantity)> GetTopProducts(
     Expression<Func<Order, bool>> predicate,
