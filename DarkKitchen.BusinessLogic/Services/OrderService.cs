@@ -75,7 +75,7 @@ public class OrderService(
                 throw new ArgumentException($"El producto {product.Name} está inactivo.");
             }
 
-            return (Item: new OrderItem { ProductId = i.ProductId, Quantity = i.Quantity }, Product: product);
+            return (Item: new OrderItem { ProductId = i.ProductId, Quantity = i.Quantity, Product = product }, Product: product);
         }).ToList();
     }
 
@@ -115,13 +115,16 @@ public class OrderService(
     {
         double discount = 0;
 
-        foreach(var promotion in promotions)
+        foreach(var item in items)
         {
-            var applies = items.Any(i => promotion.Products.Any(p => p.Id == i.ProductId));
+            var bestPromotion = promotions
+                .Where(p => p.Products.Any(prod => prod.Id == item.ProductId))
+                .MaxBy(p => p.DiscountPercentage);
 
-            if(applies)
+            if(bestPromotion != null)
             {
-                discount += subtotal * (double)(promotion.DiscountPercentage / 100);
+                var itemSubtotal = item.Product.Price * item.Quantity;
+                discount += itemSubtotal * (double)(bestPromotion.DiscountPercentage / 100);
             }
         }
 
