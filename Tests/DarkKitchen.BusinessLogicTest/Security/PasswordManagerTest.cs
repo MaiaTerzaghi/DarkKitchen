@@ -24,4 +24,16 @@ public sealed class PasswordManagerTest
 
         Assert.AreEqual(hash1, hash2);
     }
+
+    [TestMethod]
+    public void ComputeHash_WhenDifferentInputs_ReturnsDifferentHashes()
+    {
+        var password1 = "Contrasena1!@#$%";
+        var password2 = "OtraContrasena1!";
+
+        var hash1 = _passwordManager.ComputeHash(password1);
+        var hash2 = _passwordManager.ComputeHash(password2);
+
+        Assert.AreNotEqual(hash1, hash2);
+    }
 }
