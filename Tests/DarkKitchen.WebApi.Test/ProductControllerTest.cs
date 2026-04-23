@@ -1,4 +1,3 @@
-using DarkKitchen.Domain.Entities;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
@@ -14,10 +13,10 @@ public sealed class ProductControllerTest
     [TestMethod]
     public void GetAll_WhenNoFilters_ReturnsOk()
     {
-        var products = new List<Product>
+        var products = new List<ProductResponseDTO>
         {
-            new Product { Id = 1, Name = "Pizza Napolitana", Category = "Fritos", CommercialLine = "Minutas", Images = "im1.jpg" },
-            new Product { Id = 2, Name = "Pasta bolognese", Category = "Pastas", CommercialLine = "Minutas",  Images = "im2.jpg" },
+            new ProductResponseDTO { Name = "Pizza Napolitana", Category = "Fritos", CommercialLine = "Minutas", Images = "im1.jpg" },
+            new ProductResponseDTO { Name = "Pasta bolognese", Category = "Pastas", CommercialLine = "Minutas",  Images = "im2.jpg" },
         };
 
         var productServiceMock = new Mock<IProductService>();

@@ -1,3 +1,4 @@
+using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IBusinessLogic;
@@ -13,9 +14,11 @@ public class OrderController(IOrderService orderService) : ControllerBase
     private readonly IOrderService _orderService = orderService;
 
     [AuthorizeRoles(UserRole.Client)]
-    [HttpPost("create")]
+    [HttpPost]
     public IActionResult CreateOrder([FromBody] CreateOrderRequestDTO request)
     {
+        var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
+        request.ClientId = requestingUser.Id;
         var response = _orderService.CreateOrder(request);
         return Ok(response);
     }
@@ -24,12 +27,14 @@ public class OrderController(IOrderService orderService) : ControllerBase
     [HttpGet]
     public IActionResult GetClientOrders([FromQuery] GetClientOrdersRequestDTO request)
     {
+        var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
+        request.ClientId = requestingUser.Id;
         var orders = _orderService.GetClientOrders(request);
         return Ok(orders);
     }
 
     // [AuthorizeRoles(UserRole.Dispatcher)]
-    [HttpGet("date")]
+    [HttpGet("by-date")]
     public IActionResult GetOrders([FromQuery] GetOrdersRequestDTO request)
     {
         var response = _orderService.GetOrders(request);
@@ -69,7 +74,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
     }
 
     // [AuthorizeRoles(UserRole.Dispatcher)]
-    [HttpPatch("{id}/OnTheWay")]
+    [HttpPatch("{id}/on-the-Way")]
     public IActionResult MarkAsOnTheWay(int id)
     {
         var result = _orderService.MarkAsOnTheWay(id);
