@@ -2,7 +2,6 @@ using DarkKitchen.DataAccess.Context;
 using DarkKitchen.DataAccess.Repositories;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
-using DarkKitchen.DTOs.Args.In;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,27 +35,6 @@ public sealed class OrderRepositoryTest
     }
 
     [TestMethod]
-    public void Save_ValidOrder_ReturnsSavedOrderWithId()
-    {
-        var order = new Order
-        {
-            ClientId = 1,
-            DeliveryType = DeliveryType.Express,
-            Status = OrderStatus.Pending,
-            Street = "18 de Julio",
-            DoorNumber = "1234",
-            Apartment = "2B",
-            Items = []
-        };
-
-        var repository = new OrderRepository(_context!);
-        var result = repository.Save(order);
-
-        Assert.IsNotNull(result);
-        Assert.AreNotEqual(0, result.Id);
-    }
-
-    [TestMethod]
     public void GetClientOrders_WhenClientHasOrders_ReturnsOrders()
     {
         var order = new Order
@@ -73,9 +51,7 @@ public sealed class OrderRepositoryTest
         _context.SaveChanges();
 
         var repository = new OrderRepository(_context);
-        var request = new GetClientOrdersRequestDTO { ClientId = 1 };
-
-        var result = repository.GetClientOrders(request);
+        var result = repository.GetClientOrders(1, null, null, null);
 
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual(1, result[0].ClientId);
@@ -110,14 +86,7 @@ public sealed class OrderRepositoryTest
         _context.SaveChanges();
 
         var repository = new OrderRepository(_context);
-
-        var request = new GetOrdersRequestDTO
-        {
-            DateFrom = new DateTime(2026, 1, 1),
-            DateTo = new DateTime(2026, 1, 31)
-        };
-
-        var result = repository.GetOrders(request);
+        var result = repository.GetOrders(new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), null, null);
 
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual(order1.Id, result[0].Id);
@@ -152,15 +121,7 @@ public sealed class OrderRepositoryTest
         _context.SaveChanges();
 
         var repository = new OrderRepository(_context);
-
-        var request = new GetOrdersRequestDTO
-        {
-            DateFrom = new DateTime(2026, 1, 1),
-            DateTo = new DateTime(2026, 1, 31),
-            Street = "18 de Julio"
-        };
-
-        var result = repository.GetOrders(request);
+        var result = repository.GetOrders(new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), "18 de Julio", null);
 
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("18 de Julio", result[0].Street);
@@ -195,15 +156,7 @@ public sealed class OrderRepositoryTest
         _context.SaveChanges();
 
         var repository = new OrderRepository(_context);
-
-        var request = new GetOrdersRequestDTO
-        {
-            DateFrom = new DateTime(2026, 1, 1),
-            DateTo = new DateTime(2026, 1, 31),
-            Status = OrderStatus.Pending
-        };
-
-        var result = repository.GetOrders(request);
+        var result = repository.GetOrders(new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), null, OrderStatus.Pending);
 
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual(OrderStatus.Pending, result[0].Status);
@@ -231,31 +184,6 @@ public sealed class OrderRepositoryTest
         Assert.IsNotNull(result);
         Assert.AreEqual(order.Id, result.Id);
         Assert.AreEqual(OrderStatus.Pending, result.Status);
-    }
-
-    [TestMethod]
-    public void Update_ExistingOrder_ReturnsUpdatedOrder()
-    {
-        var order = new Order
-        {
-            ClientId = 1,
-            DeliveryType = DeliveryType.Express,
-            Status = OrderStatus.Pending,
-            Street = "18 de Julio",
-            DoorNumber = "1234",
-            Items = []
-        };
-
-        _context!.Orders.Add(order);
-        _context.SaveChanges();
-
-        order.Status = OrderStatus.Prepared;
-
-        var repository = new OrderRepository(_context);
-        var result = repository.Update(order);
-
-        Assert.IsNotNull(result);
-        Assert.AreEqual(OrderStatus.Prepared, result.Status);
     }
 
     [TestMethod]

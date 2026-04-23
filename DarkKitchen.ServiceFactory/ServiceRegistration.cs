@@ -1,6 +1,7 @@
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.DataAccess.Repositories;
+using DarkKitchen.Domain.Entities;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 using Microsoft.EntityFrameworkCore;
@@ -22,10 +23,12 @@ public static class ServiceRegistration
         services.AddDbContext<DarkKitchenContext>(options =>
             options.UseSqlServer(connectionString));
 
-        services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<DbContext, DarkKitchenContext>();
+        services.AddScoped<IRepository<User>, Repository<User>>();
+        services.AddScoped<IRepository<Product>, Repository<Product>>();
         services.AddScoped<IPromotionRepository, PromotionRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<ISessionRepository, SessionRepository>();
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserService, UserService>();

@@ -1,75 +1,68 @@
 using System.Linq.Expressions;
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.Domain.Entities;
-using DarkKitchen.DTOs.Args.In;
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.IDataAccess;
 using Microsoft.EntityFrameworkCore;
 
 namespace DarkKitchen.DataAccess.Repositories;
 
-public class OrderRepository(DarkKitchenContext context) : IOrderRepository
+public class OrderRepository(DarkKitchenContext context)
+    : Repository<Order>(context), IOrderRepository
 {
-    private readonly DarkKitchenContext _context = context;
-
-    public Order Save(Order order)
+    public List<Order> GetClientOrders(
+        int clientId,
+        OrderStatus? status,
+        DateTime? dateFrom,
+        DateTime? dateTo)
     {
-        _context.Orders.Add(order);
-        _context.SaveChanges();
-        return order;
-    }
-
-    public List<Order> GetClientOrders(GetClientOrdersRequestDTO request)
-    {
-        return _context.Orders
+        return context.Orders
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
-            .Where(o => o.ClientId == request.ClientId)
-            .Where(o => !request.Status.HasValue || o.Status == request.Status.Value)
-            .Where(o => !request.DateFrom.HasValue || o.Date >= request.DateFrom.Value)
-            .Where(o => !request.DateTo.HasValue || o.Date <= request.DateTo.Value)
+            .Where(o => o.ClientId == clientId)
+            .Where(o => !status.HasValue || o.Status == status.Value)
+            .Where(o => !dateFrom.HasValue || o.Date >= dateFrom.Value)
+            .Where(o => !dateTo.HasValue || o.Date <= dateTo.Value)
             .ToList();
     }
 
-    public List<Order> GetOrders(GetOrdersRequestDTO request)
+    public List<Order> GetOrders(
+        DateTime dateFrom,
+        DateTime dateTo,
+        string? street,
+        OrderStatus? status)
     {
-        var query = _context.Orders
+        var query = context.Orders
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
-            .Where(o => o.Date >= request.DateFrom && o.Date <= request.DateTo);
+            .Where(o => o.Date >= dateFrom && o.Date <= dateTo);
 
-        if(!string.IsNullOrEmpty(request.Street))
+        if(!string.IsNullOrEmpty(street))
         {
-            query = query.Where(o => o.Street.Contains(request.Street));
+            query = query.Where(o => o.Street.Contains(street));
         }
 
-        if(request.Status.HasValue)
+        if(status.HasValue)
         {
-            query = query.Where(o => o.Status == request.Status.Value);
+            query = query.Where(o => o.Status == status.Value);
         }
 
         return query.ToList();
     }
 
-    public Order Update(Order order)
-    {
-        _context.Orders.Update(order);
-        _context.SaveChanges();
-        return order;
-    }
-
     public Order? GetOrderById(int orderId)
     {
-        return _context.Orders
+        return context.Orders
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
             .FirstOrDefault(o => o.Id == orderId);
     }
 
     public List<(Product Product, int Quantity)> GetTopProducts(
-    Expression<Func<Order, bool>> predicate,
-    int top)
+        Expression<Func<Order, bool>> predicate,
+        int top)
     {
-        return _context.Orders
+        return context.Orders
             .Where(predicate)
             .SelectMany(o => o.Items)
             .GroupBy(i => i.Product)
@@ -81,9 +74,11 @@ public class OrderRepository(DarkKitchenContext context) : IOrderRepository
             .ToList();
     }
 
-    public List<(int Year, int Month, int ClientId, double Total)> GetSalesReport(int page, int pageSize)
+    public List<(int Year, int Month, int ClientId, double Total)> GetSalesReport(
+        int page,
+        int pageSize)
     {
-        return _context.Orders
+        return context.Orders
             .SelectMany(o => o.Items, (o, i) => new
             {
                 o.Date.Year,
