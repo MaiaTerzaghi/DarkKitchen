@@ -4,7 +4,7 @@ using DarkKitchen.IDataAccess;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class AuthService(IRepository<User> userRepository, ISessionRepository sessionRepository,  IPasswordManager passwordManager) : IAuthService
+public class AuthService(IRepository<User> userRepository, ISessionRepository sessionRepository, IPasswordManager passwordManager) : IAuthService
 {
     private readonly IRepository<User> _userRepository = userRepository;
     private readonly ISessionRepository _sessionRepository = sessionRepository;
