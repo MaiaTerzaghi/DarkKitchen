@@ -25,7 +25,7 @@ public static class ServiceRegistration
 
         services.AddScoped<DbContext, DarkKitchenContext>();
         services.AddScoped<IRepository<User>, Repository<User>>();
-        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IRepository<Product>, Repository<Product>>();
         services.AddScoped<IPromotionRepository, PromotionRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<ISessionRepository, SessionRepository>();

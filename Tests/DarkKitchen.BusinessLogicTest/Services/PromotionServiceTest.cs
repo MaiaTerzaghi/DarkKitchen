@@ -11,7 +11,7 @@ namespace DarkKitchen.BusinessLogicTest.Services;
 public sealed class PromotionServiceTest
 {
     private Mock<IPromotionRepository> _promotionRepositoryMock = null!;
-    private Mock<IProductRepository> _productRepositoryMock = null!;
+    private Mock<IRepository<Product>> _productRepositoryMock = null!;
 
     private PromotionService _service = null!;
 
@@ -19,7 +19,7 @@ public sealed class PromotionServiceTest
     public void Setup()
     {
         _promotionRepositoryMock = new Mock<IPromotionRepository>();
-        _productRepositoryMock = new Mock<IProductRepository>();
+        _productRepositoryMock = new Mock<IRepository<Product>>();
         _service = new PromotionService(_promotionRepositoryMock.Object, _productRepositoryMock.Object);
     }
 

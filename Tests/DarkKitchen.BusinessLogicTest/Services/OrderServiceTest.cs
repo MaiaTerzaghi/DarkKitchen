@@ -12,7 +12,7 @@ namespace DarkKitchen.BusinessLogicTest.Services;
 public class OrderServiceTest
 {
     private Mock<IOrderRepository> _orderRepositoryMock = null!;
-    private Mock<IProductRepository> _productRepositoryMock = null!;
+    private Mock<IRepository<Product>> _productRepositoryMock = null!;
 
     private Mock<IPromotionRepository> _promotionRepositoryMock = null!;
     private Mock<IRepository<User>> _userRepositoryMock = null!;
@@ -22,7 +22,7 @@ public class OrderServiceTest
     public void Setup()
     {
         _orderRepositoryMock = new Mock<IOrderRepository>();
-        _productRepositoryMock = new Mock<IProductRepository>();
+        _productRepositoryMock = new Mock<IRepository<Product>>();
         _promotionRepositoryMock = new Mock<IPromotionRepository>();
         _userRepositoryMock = new Mock<IRepository<User>>();
 

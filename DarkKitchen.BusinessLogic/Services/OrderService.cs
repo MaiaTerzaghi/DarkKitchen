@@ -9,12 +9,12 @@ namespace DarkKitchen.BusinessLogic.Services;
 
 public class OrderService(
     IOrderRepository orderRepository,
-    IProductRepository productRepository,
+    IRepository<Product> productRepository,
     IPromotionRepository promotionRepository,
     IRepository<User> userRepository) : IOrderService
 {
     private readonly IOrderRepository _orderRepository = orderRepository;
-    private readonly IProductRepository _productRepository = productRepository;
+    private readonly IRepository<Product> _productRepository = productRepository;
 
     private readonly IPromotionRepository _promotionRepository = promotionRepository;
     private readonly IRepository<User> _userRepository = userRepository;

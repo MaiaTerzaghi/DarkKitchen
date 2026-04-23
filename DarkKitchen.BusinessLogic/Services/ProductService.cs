@@ -5,9 +5,9 @@ using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class ProductService(IProductRepository productRepository) : IProductService
+public class ProductService(IRepository<Product> productRepository) : IProductService
 {
-    private readonly IProductRepository _productRepository = productRepository;
+    private readonly IRepository<Product> _productRepository = productRepository;
 
     public List<Product> GetAll(string? name, string? category, string? line)
     {

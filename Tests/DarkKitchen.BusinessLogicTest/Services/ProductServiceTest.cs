@@ -10,6 +10,16 @@ namespace DarkKitchen.BusinessLogicTest.Services;
 [TestClass]
 public sealed class ProductServiceTest
 {
+    private Mock<IRepository<Product>> _productRepositoryMock = null!;
+    private ProductService _service = null!;
+
+    [TestInitialize]
+    public void Setup()
+    {
+        _productRepositoryMock = new Mock<IRepository<Product>>();
+        _service = new ProductService(_productRepositoryMock.Object);
+    }
+
     [TestMethod]
     public void GetAll_WhenNoFilters_ReturnsAllProducts()
     {
@@ -19,7 +29,7 @@ public sealed class ProductServiceTest
             new Product { Id = 2, Name = "Pasta Bolognese" },
         };
 
-        var productRepositoryMock = new Mock<IProductRepository>();
+        var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>(), null, false, 1, 20))
                              .Returns(products);
 
@@ -38,7 +48,7 @@ public sealed class ProductServiceTest
             new Product { Id = 1, Name = "Pizza Napolitana" },
         };
 
-        var productRepositoryMock = new Mock<IProductRepository>();
+        var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>(), null, false, 1, 20))
                              .Returns(products);
 
@@ -76,7 +86,7 @@ public sealed class ProductServiceTest
             Images = "pizza.jpg"
         };
 
-        var productRepositoryMock = new Mock<IProductRepository>();
+        var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
                             .Returns(product);
 
@@ -102,7 +112,7 @@ public sealed class ProductServiceTest
             Images = "pizza.jpg"
         };
 
-        var productRepositoryMock = new Mock<IProductRepository>();
+        var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
                      .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
 
@@ -125,7 +135,7 @@ public sealed class ProductServiceTest
             Images = "pizza.jpg"
         };
 
-        var productRepositoryMock = new Mock<IProductRepository>();
+        var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
 
@@ -148,7 +158,7 @@ public sealed class ProductServiceTest
             Images = "pizza.jpg"
         };
 
-        var productRepositoryMock = new Mock<IProductRepository>();
+        var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
 
@@ -171,7 +181,7 @@ public sealed class ProductServiceTest
             Images = "pizza.jpg"
         };
 
-        var productRepositoryMock = new Mock<IProductRepository>();
+        var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
 
@@ -194,7 +204,7 @@ public sealed class ProductServiceTest
             Images = "pizza.jpg"
         };
 
-        var productRepositoryMock = new Mock<IProductRepository>();
+        var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
 
@@ -217,7 +227,7 @@ public sealed class ProductServiceTest
             Images = "pizza.jpg"
         };
 
-        var productRepositoryMock = new Mock<IProductRepository>();
+        var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
 
@@ -240,7 +250,7 @@ public sealed class ProductServiceTest
             Images = "pizza.jpg"
         };
 
-        var productRepositoryMock = new Mock<IProductRepository>();
+        var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
 
@@ -263,7 +273,7 @@ public sealed class ProductServiceTest
             Images = "pizza.jpg"
         };
 
-        var productRepositoryMock = new Mock<IProductRepository>();
+        var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
 
@@ -286,7 +296,7 @@ public sealed class ProductServiceTest
             Images = "pizza.jpg"
         };
 
-        var productRepositoryMock = new Mock<IProductRepository>();
+        var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
 
@@ -309,7 +319,7 @@ public sealed class ProductServiceTest
             Images = string.Empty
         };
 
-        var productRepositoryMock = new Mock<IProductRepository>();
+        var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
 
@@ -332,7 +342,7 @@ public sealed class ProductServiceTest
             Images = "pizza1.jpg,pizza2.jpg,pizza3.jpg,pizza4.jpg"
         };
 
-        var productRepositoryMock = new Mock<IProductRepository>();
+        var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
 
@@ -355,7 +365,7 @@ public sealed class ProductServiceTest
             Images = "pizza.png"
         };
 
-        var productRepositoryMock = new Mock<IProductRepository>();
+        var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
 
@@ -391,7 +401,7 @@ public sealed class ProductServiceTest
             IsActive = true
         };
 
-        var productRepositoryMock = new Mock<IProductRepository>();
+        var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
                             .Returns(product);
         productRepositoryMock.Setup(r => r.Update(It.IsAny<Product>()))
@@ -420,7 +430,7 @@ public sealed class ProductServiceTest
             IsActive = true
         };
 
-        var productRepositoryMock = new Mock<IProductRepository>();
+        var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
                             .Returns((Product?)null);
 
@@ -447,7 +457,7 @@ public sealed class ProductServiceTest
             }
         };
 
-        var productRepositoryMock = new Mock<IProductRepository>();
+        var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>(), null, false, 1, 20))
                             .Returns(products);
 
