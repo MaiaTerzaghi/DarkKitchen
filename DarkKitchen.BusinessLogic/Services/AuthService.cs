@@ -16,7 +16,7 @@ public class AuthService(IRepository<User> userRepository, ISessionRepository se
             throw new ArgumentException("Credenciales inválidas");
         }
 
-        var session = new Session { User = user };
+        var session = new Session { UserId = user.Id };
         _sessionRepository.Add(session);
         return session.Token;
     }

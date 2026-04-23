@@ -23,10 +23,12 @@ public static class ServiceRegistration
         services.AddDbContext<DarkKitchenContext>(options =>
             options.UseSqlServer(connectionString));
 
+        services.AddScoped<DbContext, DarkKitchenContext>();
         services.AddScoped<IRepository<User>, Repository<User>>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IPromotionRepository, PromotionRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<ISessionRepository, SessionRepository>();
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserService, UserService>();
