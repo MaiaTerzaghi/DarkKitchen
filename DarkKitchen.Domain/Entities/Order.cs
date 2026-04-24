@@ -40,5 +40,10 @@ public class Order
     }
 
     public string? Apartment { get; set; }
+    public double Subtotal { get; set; }
+    public double Discount { get; set; }
+    public double ShippingCost { get; set; }
+    public double Vat { get; set; }
+    public double Total { get; set; }
     public DateTime UpdatedAt { get; set; }
 }
