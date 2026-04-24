@@ -91,8 +91,10 @@ public class UserService(IRepository<User> userRepository) : IUserService
         user.LastName = request.LastName;
         user.Email = request.Email;
         user.Phone = request.Phone;
-        user.Password = request.Password;
-        user.Role = request.Role;
+        if(!string.IsNullOrEmpty(request.Password))
+        {
+            user.Password = request.Password;
+        }
 
         var updated = _userRepository.Update(user);
 
