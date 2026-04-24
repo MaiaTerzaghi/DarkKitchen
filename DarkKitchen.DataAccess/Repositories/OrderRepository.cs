@@ -35,6 +35,7 @@ public class OrderRepository(DarkKitchenContext context)
         var query = context.Orders
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
+            .Include(o => o.Client)
             .Where(o => o.Date >= dateFrom && o.Date <= dateTo);
 
         if(!string.IsNullOrEmpty(street))

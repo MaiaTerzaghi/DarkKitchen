@@ -171,7 +171,13 @@ public class OrderService(
         return orders.Select(order => new GetOrdersResponseDTO
         {
             OrderId = order.Id,
-            ClientName = order.ClientId.ToString(),
+            Client = new ClientInfoDTO
+            {
+                Id = order.Client.Id,
+                Name = order.Client.Name,
+                LastName = order.Client.LastName,
+                Phone = order.Client.Phone
+            },
             Date = order.Date,
             Status = order.Status.ToString(),
             Items = order.Items.Select(item => new OrderItemResponseDTO

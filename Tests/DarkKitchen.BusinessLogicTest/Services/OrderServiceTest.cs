@@ -247,8 +247,16 @@ public class OrderServiceTest
             {
                 Id = 1,
                 ClientId = 10,
-                Status = OrderStatus.Pending,
+                Client = new User
+                {
+                    Id = 10,
+                    Name = "Juan",
+                    LastName = "Perez",
+                    Email = "juan@test.com",
+                    Phone = "+59899000000"
+                },
                 Date = new DateTime(2026, 1, 10),
+                Status = OrderStatus.Pending,
                 Street = "18 de Julio",
                 DoorNumber = "1234",
                 Items =
