@@ -18,7 +18,7 @@ public static class SeedData
         var adminPassword = "Administrador1#$%";
 
         var existing = userRepository.Get(u => u.Email == adminEmail);
-        if (existing != null)
+        if(existing != null)
         {
             return;
         }
