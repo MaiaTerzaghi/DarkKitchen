@@ -75,7 +75,7 @@ public class OrderService(
                 throw new ArgumentException($"El producto {product.Name} está inactivo.");
             }
 
-            return (Item: new OrderItem { ProductId = i.ProductId, Quantity = i.Quantity, Product = product }, Product: product);
+            return (Item: new OrderItem { ProductId = i.ProductId, Quantity = i.Quantity, UnitPrice = product.Price, Product = product }, Product: product);
         }).ToList();
     }
 
