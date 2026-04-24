@@ -873,4 +873,48 @@ public class OrderServiceTest
         Assert.IsNotNull(savedOrder);
         Assert.AreEqual(200.0, savedOrder.Subtotal);
     }
+
+    [TestMethod]
+    public void CreateOrder_WithPromotion_PersistsDiscount()
+    {
+        var product = new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas" };
+
+        var promotion = new Promotion
+        {
+            Id = 1,
+            DiscountPercentage = 10,
+            Products = [product]
+        };
+
+        var request = new CreateOrderRequestDTO
+        {
+            ClientId = 1,
+            DeliveryType = "Standard",
+            Address = new AddressDTO { Street = "18 de Julio", DoorNumber = "1234", Apartment = "2B" },
+            Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
+        };
+
+        _productRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns(product);
+
+        _promotionRepositoryMock
+            .Setup(r => r.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>()))
+            .Returns([promotion]);
+
+        Order? savedOrder = null;
+        _orderRepositoryMock
+            .Setup(r => r.Add(It.IsAny<Order>()))
+            .Returns((Order o) =>
+            {
+                savedOrder = o;
+                o.Id = 1;
+                return o;
+            });
+
+        _service.CreateOrder(request);
+
+        Assert.IsNotNull(savedOrder);
+        Assert.AreEqual(20.0, savedOrder.Discount);
+    }
 }
