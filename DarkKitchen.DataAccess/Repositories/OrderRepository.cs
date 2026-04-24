@@ -79,14 +79,7 @@ public class OrderRepository(DarkKitchenContext context)
         int pageSize)
     {
         return context.Orders
-            .SelectMany(o => o.Items, (o, i) => new
-            {
-                o.Date.Year,
-                o.Date.Month,
-                o.ClientId,
-                Total = i.Product.Price * i.Quantity
-            })
-            .GroupBy(o => new { o.Year, o.Month, o.ClientId })
+            .GroupBy(o => new { o.Date.Year, o.Date.Month, o.ClientId })
             .Select(g => new
             {
                 g.Key.Year,
