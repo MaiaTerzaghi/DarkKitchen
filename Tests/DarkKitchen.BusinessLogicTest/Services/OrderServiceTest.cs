@@ -955,4 +955,42 @@ public class OrderServiceTest
         Assert.IsNotNull(savedOrder);
         Assert.AreEqual(50.0, savedOrder.ShippingCost);
     }
+
+    [TestMethod]
+    public void CreateOrder_ValidRequest_PersistsVat()
+    {
+        var product = new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas" };
+
+        var request = new CreateOrderRequestDTO
+        {
+            ClientId = 1,
+            DeliveryType = "Express",
+            Address = new AddressDTO
+            {
+                Street = "18 de Julio",
+                DoorNumber = "1234",
+                Apartment = "2B"
+            },
+            Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
+        };
+
+        _productRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns(product);
+
+        Order? savedOrder = null;
+        _orderRepositoryMock
+            .Setup(r => r.Add(It.IsAny<Order>()))
+            .Returns((Order o) =>
+            {
+                savedOrder = o;
+                o.Id = 1;
+                return o;
+            });
+
+        _service.CreateOrder(request);
+
+        Assert.IsNotNull(savedOrder);
+        Assert.AreEqual(44.0, savedOrder.Vat);
+    }
 }
