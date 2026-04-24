@@ -205,8 +205,8 @@ public class OrderService(
             {
                 ProductName = i.Product.Name,
                 Quantity = i.Quantity,
-                UnitPrice = i.Product.Price,
-                Subtotal = i.Product.Price * i.Quantity
+                UnitPrice = i.UnitPrice,
+                Subtotal = i.UnitPrice * i.Quantity
             }).ToList()
         };
     }
