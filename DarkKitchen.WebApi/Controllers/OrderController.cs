@@ -33,7 +33,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
         return Ok(orders);
     }
 
-    // [AuthorizeRoles(UserRole.Dispatcher)]
+    [AuthorizeRoles(UserRole.Dispatcher)]
     [HttpGet("by-date")]
     public IActionResult GetOrders([FromQuery] GetOrdersRequestDTO request)
     {
@@ -41,7 +41,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
         return Ok(response);
     }
 
-    // [AuthorizeRoles(UserRole.Dispatcher, UserRole.Administrative)]
+    [AuthorizeRoles(UserRole.Dispatcher, UserRole.Administrative)]
     [HttpPatch("{orderId}/prepared")]
     public IActionResult MarkAsPrepared(int orderId)
     {
@@ -65,7 +65,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
         return Ok(result);
     }
 
-    // [AuthorizeRoles(UserRole.Administrative)]
+    [AuthorizeRoles(UserRole.Administrative)]
     [HttpPatch("{orderId}/cancel")]
     public IActionResult CancelOrder(int orderId)
     {
@@ -73,7 +73,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
         return Ok(response);
     }
 
-    // [AuthorizeRoles(UserRole.Dispatcher)]
+    [AuthorizeRoles(UserRole.Dispatcher)]
     [HttpPatch("{id}/on-the-Way")]
     public IActionResult MarkAsOnTheWay(int id)
     {
@@ -81,7 +81,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
         return Ok(result);
     }
 
-    // [AuthorizeRoles(UserRole.Dispatcher)]
+    [AuthorizeRoles(UserRole.Dispatcher)]
     [HttpPatch("{orderId}/not-delivered")]
     public IActionResult MarkAsNotDelivered(int orderId)
     {
@@ -89,6 +89,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
         return Ok(response);
     }
 
+    [AuthorizeRoles(UserRole.Administrative)]
     [HttpGet("report")]
     public IActionResult GetSalesReport([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
     {
