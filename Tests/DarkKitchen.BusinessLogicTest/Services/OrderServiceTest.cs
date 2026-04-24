@@ -1078,4 +1078,29 @@ public class OrderServiceTest
 
         Assert.AreEqual(500.0, result.Total);
     }
+
+    [TestMethod]
+    public void GetOrderDetail_WhenOrderExists_ReturnsPersistedUnitPrice()
+    {
+        var product = new Product { Id = 1, Name = "Pizza napolitana", Price = 150.0 };
+        var order = new Order
+        {
+            Id = 1,
+            ClientId = 1,
+            Status = OrderStatus.Pending,
+            DeliveryType = DeliveryType.Express,
+            Date = DateTime.Now,
+            Total = 500.0,
+            Items = [new OrderItem { ProductId = 1, Quantity = 2, UnitPrice = 100.0, Product = product }]
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        var result = _service.GetOrderDetail(1);
+
+        Assert.AreEqual(100.0, result.Items[0].UnitPrice);
+        Assert.AreEqual(200.0, result.Items[0].Subtotal);
+    }
 }
