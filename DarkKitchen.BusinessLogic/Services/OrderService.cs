@@ -162,7 +162,7 @@ public class OrderService(
             OrderId = o.Id,
             ClientId = o.ClientId,
             Status = o.Status.ToString(),
-            Total = o.Items.Sum(i => i.Product.Price * i.Quantity),
+            Total = o.Total,
             ItemCount = o.Items.Sum(i => i.Quantity)
         }).ToList();
     }
