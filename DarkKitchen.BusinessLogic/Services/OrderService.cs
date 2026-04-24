@@ -34,8 +34,9 @@ public class OrderService(
         var discountedSubtotal = ApplyPromotions(subtotal, items, promotions);
         var discount = subtotal - discountedSubtotal;
         var shippingCost = CalculateShipping(deliveryType);
+        var vat = Math.Round(discountedSubtotal * Vat, 2);
         var total = CalculateTotal(discountedSubtotal, shippingCost);
-        var order = BuildOrder(request, deliveryType, items, subtotal, discount, shippingCost);
+        var order = BuildOrder(request, deliveryType, items, subtotal, discount, shippingCost, vat);
         var saved = _orderRepository.Add(order);
         return BuildOrderResponse(request.ClientId, saved.Id, subtotal, shippingCost, total);
     }
@@ -85,7 +86,7 @@ public class OrderService(
         return Math.Round((discountedSubtotal * (1 + Vat)) + shippingCost, 2);
     }
 
-    private static Order BuildOrder(CreateOrderRequestDTO request, DeliveryType deliveryType, List<OrderItem> items, double subtotal, double discount, double shippingCost)
+    private static Order BuildOrder(CreateOrderRequestDTO request, DeliveryType deliveryType, List<OrderItem> items, double subtotal, double discount, double shippingCost, double vat)
     {
         return new Order
         {
@@ -99,6 +100,7 @@ public class OrderService(
             Subtotal = subtotal,
             Discount = discount,
             ShippingCost = shippingCost,
+            Vat = vat,
             Date = DateTime.Now,
         };
     }
