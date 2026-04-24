@@ -435,6 +435,7 @@ public sealed class OrderRepositoryTest
             Street = "18 de Julio",
             DoorNumber = "1234",
             Date = new DateTime(2026, 1, 10),
+            Total = 500.0,
             Items = [new OrderItem { Product = product, Quantity = 3 }]
         };
 
@@ -445,6 +446,6 @@ public sealed class OrderRepositoryTest
         var result = repository.GetSalesReport(1, 20);
 
         Assert.AreEqual(1, result.Count);
-        Assert.AreEqual(300.0, result[0].Total);
+        Assert.AreEqual(500.0, result[0].Total);
     }
 }
