@@ -1031,4 +1031,27 @@ public class OrderServiceTest
         Assert.IsNotNull(savedOrder);
         Assert.AreEqual(294.0, savedOrder.Total);
     }
+
+    [TestMethod]
+    public void GetClientOrders_WhenCalled_ReturnsPersistedTotal()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            ClientId = 1,
+            Status = OrderStatus.Pending,
+            Total = 500.0,
+            Items = [new OrderItem { ProductId = 1, Quantity = 2, Product = new Product { Id = 1, Price = 100.0 } }]
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetClientOrders(It.IsAny<int>(), It.IsAny<OrderStatus?>(), It.IsAny<DateTime?>(), It.IsAny<DateTime?>()))
+            .Returns([order]);
+
+        var request = new GetClientOrdersRequestDTO { ClientId = 1 };
+
+        var result = _service.GetClientOrders(request);
+
+        Assert.AreEqual(500.0, result[0].Total);
+    }
 }
