@@ -26,7 +26,7 @@ public class ProductController(IProductService productService, IOrderService ord
     public IActionResult CreateProduct([FromBody] CreateProductRequestDTO request)
     {
         var product = _productService.CreateProduct(request);
-        return CreatedAtAction(nameof(CreateProduct), new { id = product.Code }, product);
+        return Ok(product);
     }
 
     [AuthorizeRoles(UserRole.Administrative)]

@@ -94,7 +94,7 @@ public sealed class ProductControllerTest
         var controller = new ProductController(productServiceMock.Object, new Mock<IOrderService>().Object);
         var result = controller.CreateProduct(request);
 
-        Assert.IsInstanceOfType(result, typeof(CreatedAtActionResult));
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
     }
 
     [TestMethod]

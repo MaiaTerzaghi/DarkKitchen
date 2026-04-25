@@ -32,7 +32,7 @@ public sealed class UserControllerTest
 
         var result = controller.Register(request);
 
-        Assert.IsInstanceOfType(result, typeof(CreatedAtActionResult));
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
     }
 
     [TestMethod]
