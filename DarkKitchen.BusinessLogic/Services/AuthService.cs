@@ -1,4 +1,5 @@
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 
@@ -17,7 +18,7 @@ public class AuthService(IRepository<User> userRepository, ISessionRepository se
 
         if(user == null || user.Password != hashedPassword)
         {
-            throw new ArgumentException("Credenciales inválidas");
+            throw new UnauthorizedException("Credenciales inválidas");
         }
 
         var session = new Session { UserId = user.Id };
