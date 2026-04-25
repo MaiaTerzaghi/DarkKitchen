@@ -231,7 +231,7 @@ public class OrderService(
 
         if(order.Status != requiredStatus)
         {
-            throw new ArgumentException(errorMessage);
+            throw new ConflictException(errorMessage);
         }
 
         order.Status = newStatus;
