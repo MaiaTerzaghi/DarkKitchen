@@ -78,4 +78,18 @@ public class ExceptionFilterTest
         Assert.AreEqual(409, result.StatusCode);
         Assert.IsTrue(context.ExceptionHandled);
     }
+
+    [TestMethod]
+    public void OnException_WhenUnauthorizedException_Returns401()
+    {
+        var filter = new ExceptionFilter();
+        var context = CreateContext(new UnauthorizedException("Credenciales inválidas"));
+
+        filter.OnException(context);
+
+        var result = context.Result as ObjectResult;
+        Assert.IsNotNull(result);
+        Assert.AreEqual(401, result.StatusCode);
+        Assert.IsTrue(context.ExceptionHandled);
+    }
 }

@@ -28,6 +28,16 @@ public class ExceptionFilter : Attribute, IExceptionFilter
             return;
         }
 
+        if(context.Exception is UnauthorizedException)
+        {
+            context.ExceptionHandled = true;
+            context.Result = new ObjectResult(new { message = context.Exception.Message })
+            {
+                StatusCode = StatusCodes.Status401Unauthorized
+            };
+            return;
+        }
+
         if(context.Exception is ArgumentException)
         {
             context.ExceptionHandled = true;

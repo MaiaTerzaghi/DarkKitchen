@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 using Moq;
@@ -43,7 +44,7 @@ public sealed class AuthServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(UnauthorizedException))]
     public void Login_WhenInvalidCredentials_ThrowsException()
     {
         var userRepositoryMock = new Mock<IRepository<User>>();

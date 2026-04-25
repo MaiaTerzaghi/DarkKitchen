@@ -360,7 +360,7 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(ConflictException))]
     public void MarkAsPrepared_OrderNotPending_ThrowsException()
     {
         var order = new Order
@@ -440,7 +440,7 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(ConflictException))]
     public void DeliverOrder_WhenOrderIsNotOnTheWay_ThrowsException()
     {
         var order = new Order
@@ -495,7 +495,7 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(ConflictException))]
     public void CancelOrder_OrderNotPending_ThrowsException()
     {
         var order = new Order
@@ -523,7 +523,7 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(ConflictException))]
     public void MarkAsOnTheWay_OrderNotPrepared_ThrowsException()
     {
         var order = new Order
@@ -632,7 +632,7 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(ConflictException))]
     public void MarkAsNotDelivered_OrderNotOnTheWay_ThrowsException()
     {
         var order = new Order

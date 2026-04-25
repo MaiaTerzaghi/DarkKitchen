@@ -42,10 +42,10 @@ public class OrderController(IOrderService orderService) : ControllerBase
     }
 
     [AuthorizeRoles(UserRole.Dispatcher, UserRole.Administrative)]
-    [HttpPatch("{orderId}/prepared")]
-    public IActionResult MarkAsPrepared(int orderId)
+    [HttpPatch("{id}/prepared")]
+    public IActionResult MarkAsPrepared(int id)
     {
-        var response = _orderService.MarkAsPrepared(orderId);
+        var response = _orderService.MarkAsPrepared(id);
         return Ok(response);
     }
 
@@ -66,15 +66,15 @@ public class OrderController(IOrderService orderService) : ControllerBase
     }
 
     [AuthorizeRoles(UserRole.Administrative)]
-    [HttpPatch("{orderId}/cancel")]
-    public IActionResult CancelOrder(int orderId)
+    [HttpPatch("{id}/cancel")]
+    public IActionResult CancelOrder(int id)
     {
-        var response = _orderService.CancelOrder(orderId);
+        var response = _orderService.CancelOrder(id);
         return Ok(response);
     }
 
     [AuthorizeRoles(UserRole.Dispatcher)]
-    [HttpPatch("{id}/on-the-Way")]
+    [HttpPatch("{id}/on-the-way")]
     public IActionResult MarkAsOnTheWay(int id)
     {
         var result = _orderService.MarkAsOnTheWay(id);
@@ -82,10 +82,10 @@ public class OrderController(IOrderService orderService) : ControllerBase
     }
 
     [AuthorizeRoles(UserRole.Dispatcher)]
-    [HttpPatch("{orderId}/not-delivered")]
-    public IActionResult MarkAsNotDelivered(int orderId)
+    [HttpPatch("{id}/not-delivered")]
+    public IActionResult MarkAsNotDelivered(int id)
     {
-        var response = _orderService.MarkAsNotDelivered(orderId);
+        var response = _orderService.MarkAsNotDelivered(id);
         return Ok(response);
     }
 
