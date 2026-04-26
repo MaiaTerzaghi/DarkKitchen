@@ -18,21 +18,6 @@ public class PromotionService(IPromotionRepository promotionRepository, IReposit
 
     public PromotionResponseDTO CreatePromotion(CreatePromotionRequestDTO request)
     {
-        if(string.IsNullOrWhiteSpace(request.Name))
-        {
-            throw new ArgumentException("El nombre de la promoción no puede estar vacío.");
-        }
-
-        if(request.DiscountPercentage <= 0 || request.DiscountPercentage > 100)
-        {
-            throw new ArgumentException("El porcentaje de descuento debe ser mayor que 0 y menor o igual a 100.");
-        }
-
-        if(request.ValidFrom > request.ValidTo)
-        {
-            throw new ArgumentException("La fecha de inicio no puede ser mayor que la fecha de fin.");
-        }
-
         var promotion = new Promotion
         {
             Name = request.Name,
@@ -55,21 +40,6 @@ public class PromotionService(IPromotionRepository promotionRepository, IReposit
 
     public PromotionResponseDTO UpdatePromotion(int id, UpdatePromotionRequestDTO request)
     {
-        if(string.IsNullOrWhiteSpace(request.Name))
-        {
-            throw new ArgumentException("El nombre de la promoción no puede estar vacío.");
-        }
-
-        if(request.DiscountPercentage <= 0 || request.DiscountPercentage > 100)
-        {
-            throw new ArgumentException("El porcentaje de descuento debe ser mayor que 0 y menor o igual a 100.");
-        }
-
-        if(request.ValidFrom > request.ValidTo)
-        {
-            throw new ArgumentException("La fecha de inicio no puede ser mayor que la fecha de fin.");
-        }
-
         var promotion = _promotionRepository.Get(p => p.Id == id)
             ?? throw new NotFoundException($"Promoción con id {id} no encontrada.");
 
