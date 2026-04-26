@@ -18,7 +18,7 @@ public class UserController(IUserService userService) : ControllerBase
     {
         var id = _userService.Register(request);
 
-        return CreatedAtAction(nameof(Register), new { id }, new { id });
+        return Ok(id);
     }
 
     [AuthorizeRoles(UserRole.Administrative)]

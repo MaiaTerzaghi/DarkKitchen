@@ -25,6 +25,29 @@ public sealed class OrderRepositoryTest
 
         _context = new DarkKitchenContext(options);
         _context.Database.EnsureCreated();
+
+        _context.Users.AddRange(
+            new User
+            {
+                Id = 1,
+                Name = "Juan",
+                LastName = "Perez",
+                Email = "client1@test.com",
+                Phone = "+59899000000",
+                Password = "hash",
+                Role = UserRole.Client
+            },
+            new User
+            {
+                Id = 2,
+                Name = "Ana",
+                LastName = "Lopez",
+                Email = "client2@test.com",
+                Phone = "+59899000001",
+                Password = "hash",
+                Role = UserRole.Client
+            });
+        _context.SaveChanges();
     }
 
     [TestCleanup]
@@ -395,12 +418,12 @@ public sealed class OrderRepositoryTest
 
             _context!.Orders.Add(new Order
             {
-                ClientId = i,
+                ClientId = 1,
                 DeliveryType = DeliveryType.Express,
                 Status = OrderStatus.Delivered,
                 Street = "18 de Julio",
                 DoorNumber = "1234",
-                Date = new DateTime(2026, (i % 12) + 1, 1),
+                Date = new DateTime(2000 + i, 1, 1),
                 Items = [new OrderItem { Product = product, Quantity = 1 }]
             });
         }

@@ -133,7 +133,13 @@ public class OrderControllerTest
             new GetOrdersResponseDTO
             {
                 OrderId = 1,
-                ClientName = "Juan Perez",
+                Client = new ClientInfoDTO
+                {
+                    Id = 1,
+                    Name = "Juan",
+                    LastName = "Perez",
+                    Phone = "+59899000000"
+                },
                 Date = new DateTime(2026, 1, 10),
                 Status = "Pending",
                 Items = [new OrderItemResponseDTO { ProductName = "Hamburguesa", Quantity = 2 }]
@@ -151,7 +157,9 @@ public class OrderControllerTest
         var response = (List<GetOrdersResponseDTO>)okResult.Value!;
         Assert.AreEqual(expectedOrders.Count, response.Count);
         Assert.AreEqual(expectedOrders[0].OrderId, response[0].OrderId);
-        Assert.AreEqual(expectedOrders[0].ClientName, response[0].ClientName);
+        Assert.AreEqual(expectedOrders[0].Client.Id, response[0].Client.Id);
+        Assert.AreEqual(expectedOrders[0].Client.Name, response[0].Client.Name);
+        Assert.AreEqual(expectedOrders[0].Client.LastName, response[0].Client.LastName);
     }
 
     [TestMethod]

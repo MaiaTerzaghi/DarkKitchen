@@ -7,6 +7,7 @@ public class Order
     private string _doorNumber = string.Empty;
     public int Id { get; set; }
     public int ClientId { get; set; }
+    public User Client { get; set; } = null!;
     public DeliveryType DeliveryType { get; set; }
     public OrderStatus Status { get; set; }
     public List<OrderItem> Items { get; set; } = [];

@@ -1,4 +1,5 @@
 using DarkKitchen.BusinessLogic.Shipping;
+using DarkKitchen.Domain;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
@@ -19,8 +20,6 @@ public class OrderService(
 
     private readonly IPromotionRepository _promotionRepository = promotionRepository;
     private readonly IRepository<User> _userRepository = userRepository;
-    private const double Vat = 0.22;
-    private const int TopProductsCount = 5;
 
     public CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request)
     {
@@ -81,7 +80,7 @@ public class OrderService(
 
     private double CalculateTotal(double discountedSubtotal, double shippingCost)
     {
-        return Math.Round((discountedSubtotal * (1 + Vat)) + shippingCost, 2);
+        return Math.Round((discountedSubtotal * (1 + AppConstants.Vat)) + shippingCost, 2);
     }
 
     private static Order BuildOrder(CreateOrderRequestDTO request, DeliveryType deliveryType, List<OrderItem> items)
@@ -171,7 +170,13 @@ public class OrderService(
         return orders.Select(order => new GetOrdersResponseDTO
         {
             OrderId = order.Id,
-            ClientName = order.ClientId.ToString(),
+            Client = new ClientInfoDTO
+            {
+                Id = order.Client.Id,
+                Name = order.Client.Name,
+                LastName = order.Client.LastName,
+                Phone = order.Client.Phone
+            },
             Date = order.Date,
             Status = order.Status.ToString(),
             Items = order.Items.Select(item => new OrderItemResponseDTO
@@ -226,7 +231,7 @@ public class OrderService(
 
         if(order.Status != requiredStatus)
         {
-            throw new ArgumentException(errorMessage);
+            throw new ConflictException(errorMessage);
         }
 
         order.Status = newStatus;
@@ -246,7 +251,7 @@ public class OrderService(
     {
         var topProducts = _orderRepository.GetTopProducts(
             o => o.Date >= dateFrom && o.Date <= dateTo,
-            TopProductsCount);
+            AppConstants.TopProductsCount);
 
         return topProducts.Select(p => new TopProductResponseDTO
         {

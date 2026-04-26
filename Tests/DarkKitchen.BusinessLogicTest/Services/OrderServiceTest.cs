@@ -247,8 +247,16 @@ public class OrderServiceTest
             {
                 Id = 1,
                 ClientId = 10,
-                Status = OrderStatus.Pending,
+                Client = new User
+                {
+                    Id = 10,
+                    Name = "Juan",
+                    LastName = "Perez",
+                    Email = "juan@test.com",
+                    Phone = "+59899000000"
+                },
                 Date = new DateTime(2026, 1, 10),
+                Status = OrderStatus.Pending,
                 Street = "18 de Julio",
                 DoorNumber = "1234",
                 Items =
@@ -352,7 +360,7 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(ConflictException))]
     public void MarkAsPrepared_OrderNotPending_ThrowsException()
     {
         var order = new Order
@@ -432,7 +440,7 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(ConflictException))]
     public void DeliverOrder_WhenOrderIsNotOnTheWay_ThrowsException()
     {
         var order = new Order
@@ -487,7 +495,7 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(ConflictException))]
     public void CancelOrder_OrderNotPending_ThrowsException()
     {
         var order = new Order
@@ -515,7 +523,7 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(ConflictException))]
     public void MarkAsOnTheWay_OrderNotPrepared_ThrowsException()
     {
         var order = new Order
@@ -624,7 +632,7 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(ConflictException))]
     public void MarkAsNotDelivered_OrderNotOnTheWay_ThrowsException()
     {
         var order = new Order
@@ -796,5 +804,47 @@ public class OrderServiceTest
         var expectedTotal = Math.Round((discountedTotal * 1.22) + 20.0, 2);
 
         Assert.AreEqual(expectedTotal, result.Total);
+    }
+
+    [TestMethod]
+    public void GetOrders_WhenOrderHasClient_MapsClientInfoCorrectly()
+    {
+        var client = new User
+        {
+            Id = 42,
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@test.com",
+            Phone = "+59899000000"
+        };
+        var order = new Order
+        {
+            Id = 1,
+            ClientId = 42,
+            Client = client,
+            Date = new DateTime(2026, 4, 20),
+            Status = OrderStatus.Pending,
+            Street = "Rivera",
+            DoorNumber = "1234",
+            Items = []
+        };
+
+        _ = _orderRepositoryMock
+            .Setup(r => r.GetOrders(
+                It.IsAny<DateTime>(), It.IsAny<DateTime>(),
+                It.IsAny<string?>(), It.IsAny<OrderStatus?>()))
+            .Returns([order]);
+
+        var result = _service.GetOrders(new GetOrdersRequestDTO
+        {
+            DateFrom = new DateTime(2026, 4, 1),
+            DateTo = new DateTime(2026, 4, 30)
+        });
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual(42, result[0].Client.Id);
+        Assert.AreEqual("Juan", result[0].Client.Name);
+        Assert.AreEqual("Perez", result[0].Client.LastName);
+        Assert.AreEqual("+59899000000", result[0].Client.Phone);
     }
 }

@@ -30,6 +30,7 @@ public class AuthorizeRolesAttribute(params UserRole[] roles) : Attribute, IAuth
             if(!_roles.Contains(user.Role))
             {
                 context.Result = new ObjectResult("No tiene permisos") { StatusCode = 403 };
+                return;
             }
 
             context.HttpContext.Items["RequestingUser"] = user; // Agregue esto para guardar
