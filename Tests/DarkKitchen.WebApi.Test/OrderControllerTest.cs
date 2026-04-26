@@ -325,4 +325,31 @@ public class OrderControllerTest
         Assert.AreEqual(2026, response[0].Year);
         Assert.AreEqual(1, response[0].Month);
     }
+
+    [TestMethod]
+    public void GetTopProducts_ValidRequest_ReturnsOkWithTopProducts()
+    {
+        var expectedResponse = new List<TopProductResponseDTO>
+        {
+            new TopProductResponseDTO
+            {
+                Code = "P0001",
+                Name = "Pizza Napolitana",
+                Quantity = 10,
+                Images = "pizza.jpg"
+            }
+        };
+
+        _orderServiceMock
+            .Setup(s => s.GetTopProducts(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+            .Returns(expectedResponse);
+
+        var result = _controller.GetTopProducts(new DateTime(2026, 1, 1), new DateTime(2026, 1, 31));
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = (OkObjectResult)result;
+        var response = (List<TopProductResponseDTO>)okResult.Value!;
+        Assert.AreEqual(1, response.Count);
+        Assert.AreEqual("Pizza Napolitana", response[0].Name);
+    }
 }

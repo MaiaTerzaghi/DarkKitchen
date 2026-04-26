@@ -96,4 +96,12 @@ public class OrderController(IOrderService orderService) : ControllerBase
         var response = _orderService.GetSalesReport(page, pageSize);
         return Ok(response);
     }
+
+    [AuthorizeRoles(UserRole.Administrative)]
+    [HttpGet("top-products")]
+    public IActionResult GetTopProducts([FromQuery] DateTime dateFrom, [FromQuery] DateTime dateTo)
+    {
+        var response = _orderService.GetTopProducts(dateFrom, dateTo);
+        return Ok(response);
+    }
 }
