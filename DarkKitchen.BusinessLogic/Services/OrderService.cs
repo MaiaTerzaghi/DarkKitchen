@@ -1,4 +1,3 @@
-using DarkKitchen.BusinessLogic.Shipping;
 using DarkKitchen.Domain;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
@@ -11,14 +10,11 @@ namespace DarkKitchen.BusinessLogic.Services;
 
 public class OrderService(
     IOrderRepository orderRepository,
-    IRepository<Product> productRepository,
-    IPromotionRepository promotionRepository,
+    IPricingService pricingService,
     IRepository<User> userRepository) : IOrderService
 {
     private readonly IOrderRepository _orderRepository = orderRepository;
-    private readonly IRepository<Product> _productRepository = productRepository;
-
-    private readonly IPromotionRepository _promotionRepository = promotionRepository;
+    private readonly IPricingService _pricingService = pricingService;
     private readonly IRepository<User> _userRepository = userRepository;
 
     public CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request)
@@ -26,16 +22,10 @@ public class OrderService(
         ValidateClient(request.ClientId);
         ValidateItems(request.Items);
         var deliveryType = ParseDeliveryType(request.DeliveryType);
-        var itemsWithProducts = BuildOrderItems(request.Items);
-        var items = itemsWithProducts.Select(i => i.Item).ToList();
-        var subtotal = itemsWithProducts.Sum(i => i.Product.Price * i.Item.Quantity);
-        var promotions = _promotionRepository.GetActivePromotions(DateTime.Today, null, null);
-        var discountedSubtotal = ApplyPromotions(subtotal, items, promotions);
-        var shippingCost = CalculateShipping(deliveryType);
-        var total = CalculateTotal(discountedSubtotal, shippingCost);
-        var order = BuildOrder(request, deliveryType, items);
+        var pricing = _pricingService.CalculateOrderPricing(request.Items, deliveryType);
+        var order = BuildOrder(request, deliveryType, pricing.Items);
         var saved = _orderRepository.Add(order);
-        return BuildOrderResponse(request.ClientId, saved.Id, subtotal, shippingCost, total);
+        return BuildOrderResponse(request.ClientId, saved.Id, pricing.Subtotal, pricing.ShippingCost, pricing.Total);
     }
 
     private void ValidateClient(int clientId)
@@ -62,27 +52,6 @@ public class OrderService(
         return result;
     }
 
-    private List<(OrderItem Item, Product Product)> BuildOrderItems(List<OrderItemRequestDTO> items)
-    {
-        return items.Select(i =>
-        {
-            var product = _productRepository.Get(p => p.Id == i.ProductId)
-                ?? throw new NotFoundException($"Producto con id {i.ProductId} no encontrado.");
-
-            if(!product.IsActive)
-            {
-                throw new ArgumentException($"El producto {product.Name} está inactivo.");
-            }
-
-            return (Item: new OrderItem { ProductId = i.ProductId, Quantity = i.Quantity, Product = product }, Product: product);
-        }).ToList();
-    }
-
-    private double CalculateTotal(double discountedSubtotal, double shippingCost)
-    {
-        return Math.Round((discountedSubtotal * (1 + AppConstants.Vat)) + shippingCost, 2);
-    }
-
     private static Order BuildOrder(CreateOrderRequestDTO request, DeliveryType deliveryType, List<OrderItem> items)
     {
         return new Order
@@ -107,38 +76,6 @@ public class OrderService(
             ShippingCost = shippingCost,
             Total = total
         };
-    }
-
-    private static double ApplyPromotions(double subtotal, List<OrderItem> items, List<Promotion> promotions)
-    {
-        double discount = 0;
-
-        foreach(var item in items)
-        {
-            var bestPromotion = promotions
-                .Where(p => p.Products.Any(prod => prod.Id == item.ProductId))
-                .MaxBy(p => p.DiscountPercentage);
-
-            if(bestPromotion != null)
-            {
-                var itemSubtotal = item.Product.Price * item.Quantity;
-                discount += itemSubtotal * (double)(bestPromotion.DiscountPercentage / 100);
-            }
-        }
-
-        return subtotal - discount;
-    }
-
-    private double CalculateShipping(DeliveryType deliveryType)
-    {
-        IShippingStrategy shippingStrategy = deliveryType switch
-        {
-            DeliveryType.Express => new ExpressShipping(),
-            DeliveryType.Standard => new StandardShipping(),
-            _ => throw new ArgumentException("Tipo de entrega no válido")
-        };
-
-        return shippingStrategy.CalculateCost();
     }
 
     public List<GetClientOrdersResponseDTO> GetClientOrders(GetClientOrdersRequestDTO request)
