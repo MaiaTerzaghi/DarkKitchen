@@ -93,14 +93,15 @@ public class UserService(IRepository<User> userRepository, IPasswordManager pass
 
         var user = _userRepository.Get(u => u.Id == id) ?? throw new NotFoundException("Usuario no encontrado");
 
-        PasswordValidator.Validate(request.Password);
-
         user!.Name = request.Name;
         user.LastName = request.LastName;
         user.Email = request.Email;
         user.Phone = request.Phone;
-        user.Password = _passwordManager.ComputeHash(request.Password);
-        user.Role = request.Role;
+        if(!string.IsNullOrEmpty(request.Password))
+        {
+            PasswordValidator.Validate(request.Password);
+            user.Password = _passwordManager.ComputeHash(request.Password);
+        }
 
         var updated = _userRepository.Update(user);
 

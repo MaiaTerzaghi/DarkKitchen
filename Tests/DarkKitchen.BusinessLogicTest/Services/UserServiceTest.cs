@@ -334,7 +334,7 @@ public sealed class UserServiceTest
             LastName = "Perez",
             Email = "juan@test.com",
             Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Password = null,
             Role = UserRole.Administrative
         };
 
@@ -552,5 +552,39 @@ public sealed class UserServiceTest
         _service.UpdateUser(1, request, 2);
 
         _userRepositoryMock.Verify(r => r.Update(It.Is<User>(u => u.Password == hashedPassword)), Times.Once);
+    }
+
+    [TestMethod]
+    public void UpdateUser_WhenPasswordIsNull_DoesNotUpdatePassword()
+    {
+        var request = new UpdateUserRequestDTO
+        {
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@test.com",
+            Phone = "+59899123456",
+            Password = null,
+            Role = UserRole.Administrative
+        };
+
+        var existingUser = new User
+        {
+            Id = 1,
+            Name = "OldName",
+            LastName = "OldLastName",
+            Email = "juan@test.com",
+            Phone = "+59899123456",
+            Password = "Contrasena1!@#$%",
+            Role = UserRole.Administrative
+        };
+
+        _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+                        .Returns(existingUser);
+        _userRepositoryMock.Setup(r => r.Update(It.IsAny<User>())).Returns(existingUser);
+
+        var result = _service.UpdateUser(1, request, 2);
+
+        Assert.AreEqual("Contrasena1!@#$%", existingUser.Password);
+        Assert.AreEqual("Juan", result.Name);
     }
 }

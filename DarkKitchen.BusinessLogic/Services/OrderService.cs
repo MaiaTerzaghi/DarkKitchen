@@ -94,7 +94,6 @@ public class OrderService(
             DoorNumber = request.Address.DoorNumber,
             Apartment = request.Address.Apartment,
             Items = items,
-            Date = DateTime.Now,
         };
     }
 
