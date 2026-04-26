@@ -643,4 +643,19 @@ public class OrderServiceTest
         Assert.AreEqual(50.0, result.ShippingCost);
         Assert.AreEqual(294.0, result.Total);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CreateOrder_InvalidDeliveryType_ThrowsException()
+    {
+        var request = new CreateOrderRequestDTO
+        {
+            ClientId = 1,
+            DeliveryType = "Drone",
+            Address = new AddressDTO { Street = "18 de Julio", DoorNumber = "1234" },
+            Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 1 }]
+        };
+
+        _service.CreateOrder(request);
+    }
 }
