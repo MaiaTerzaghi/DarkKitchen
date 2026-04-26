@@ -36,6 +36,7 @@ public class OrderService(
         var shippingCost = CalculateShipping(deliveryType);
         var vat = Math.Round(discountedSubtotal * Vat, 2);
         var total = CalculateTotal(discountedSubtotal, shippingCost);
+        items.ForEach(i => i.Product = null!);
         var order = BuildOrder(request, deliveryType, items, subtotal, discount, shippingCost, vat, total);
         var saved = _orderRepository.Add(order);
         return BuildOrderResponse(request.ClientId, saved.Id, subtotal, shippingCost, total);
