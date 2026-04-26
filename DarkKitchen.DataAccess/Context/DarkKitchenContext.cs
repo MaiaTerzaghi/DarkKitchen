@@ -27,5 +27,9 @@ public sealed class DarkKitchenContext(DbContextOptions<DarkKitchenContext> opti
             .HasMany(p => p.Products)
             .WithMany()
             .UsingEntity(j => j.ToTable("PromotionProducts"));
+
+        modelBuilder.Entity<Promotion>()
+            .Property(p => p.DiscountPercentage)
+            .HasPrecision(18, 2);
     }
 }
