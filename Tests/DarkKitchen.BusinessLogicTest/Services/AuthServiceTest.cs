@@ -58,4 +58,39 @@ public sealed class AuthServiceTest
 
         authService.Login("mal@test.com", "Contrasena1!@#$%");
     }
+
+    [TestMethod]
+    public void Logout_WhenValidToken_DeletesSession()
+    {
+        var session = new Session { Token = "token-valido", UserId = 1 };
+
+        var userRepositoryMock = new Mock<IRepository<User>>();
+        var sessionRepositoryMock = new Mock<ISessionRepository>();
+        var passwordManagerMock = new Mock<IPasswordManager>();
+
+        sessionRepositoryMock.Setup(r => r.GetSessionByToken("token-valido"))
+                             .Returns(session);
+
+        var authService = new AuthService(userRepositoryMock.Object, sessionRepositoryMock.Object, passwordManagerMock.Object);
+
+        authService.Logout("token-valido");
+
+        sessionRepositoryMock.Verify(r => r.Delete(session), Times.Once);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(UnauthorizedException))]
+    public void Logout_WhenInvalidToken_ThrowsException()
+    {
+        var userRepositoryMock = new Mock<IRepository<User>>();
+        var sessionRepositoryMock = new Mock<ISessionRepository>();
+        var passwordManagerMock = new Mock<IPasswordManager>();
+
+        sessionRepositoryMock.Setup(r => r.GetSessionByToken("token-invalido"))
+                             .Returns((Session?)null);
+
+        var authService = new AuthService(userRepositoryMock.Object, sessionRepositoryMock.Object, passwordManagerMock.Object);
+
+        authService.Logout("token-invalido");
+    }
 }
