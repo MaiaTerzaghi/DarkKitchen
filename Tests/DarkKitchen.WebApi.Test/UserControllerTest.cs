@@ -154,6 +154,6 @@ public sealed class UserControllerTest
 
         var result = controller.DeleteUser(1);
 
-        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        Assert.IsInstanceOfType(result, typeof(NoContentResult));
     }
 }

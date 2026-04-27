@@ -19,7 +19,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
     {
         var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
         var response = _orderService.CreateOrder(request, requestingUser.Id);
-        return Ok(response);
+        return CreatedAtAction(nameof(GetOrderDetail), new { id = response.OrderId }, response);
     }
 
     [AuthorizeRoles(UserRole.Client)]

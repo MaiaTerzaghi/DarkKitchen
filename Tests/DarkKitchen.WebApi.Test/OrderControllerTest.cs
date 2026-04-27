@@ -62,8 +62,8 @@ public class OrderControllerTest
 
         var result = _controller.CreateOrder(request);
 
-        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-        var okResult = (OkObjectResult)result;
+        Assert.IsInstanceOfType(result, typeof(CreatedAtActionResult));
+        var okResult = (CreatedAtActionResult)result;
         var response = (CreateOrderResponseDTO)okResult.Value!;
         Assert.AreEqual(expectedResponse.OrderId, response.OrderId);
         Assert.AreEqual(expectedResponse.Total, response.Total);

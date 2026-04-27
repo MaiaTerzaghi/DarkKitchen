@@ -52,6 +52,6 @@ public class UserController(IUserService userService) : ControllerBase
     {
         var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
         _userService.DeleteUser(id, requestingUser.Id);
-        return Ok(new { id });
+        return NoContent();
     }
 }
