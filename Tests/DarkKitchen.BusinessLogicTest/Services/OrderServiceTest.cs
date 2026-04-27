@@ -4,6 +4,7 @@ using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.DTOs.Args.In;
+using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 using Moq;
@@ -51,7 +52,7 @@ public class OrderServiceTest
             Items = []
         };
 
-        _service.CreateOrder(request);
+        _service.CreateOrder(request, 1);
     }
 
     [TestMethod]
@@ -69,9 +70,9 @@ public class OrderServiceTest
             .Setup(r => r.GetClientOrders(It.IsAny<int>(), It.IsAny<OrderStatus?>(), It.IsAny<DateTime?>(), It.IsAny<DateTime?>()))
             .Returns([order]);
 
-        var request = new GetClientOrdersRequestDTO { ClientId = 1 };
+        var request = new GetClientOrdersRequestDTO();
 
-        var result = _service.GetClientOrders(request);
+        var result = _service.GetClientOrders(request, 1);
 
         Assert.IsNotNull(result);
         Assert.AreEqual(1, result.Count);
@@ -147,7 +148,7 @@ public class OrderServiceTest
             Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 1 }]
         };
 
-        _service.CreateOrder(request);
+        _service.CreateOrder(request, 1);
     }
 
     [TestMethod]
@@ -477,10 +478,10 @@ public class OrderServiceTest
     [TestMethod]
     public void GetSalesReport_ValidRequest_ReturnsSalesReport()
     {
-        var expectedReport = new List<(int Year, int Month, int ClientId, double Total)>
+        var expectedReport = new List<(int Year, int Month, int ClientId, string ClientName, double Total)>
         {
-            (2026, 1, 1, 500.0),
-            (2026, 1, 2, 300.0)
+            (2026, 1, 1, "Juan Perez", 500.0),
+            (2026, 1, 2, "Juan Perez", 300.0)
         };
 
         _orderRepositoryMock
@@ -490,12 +491,12 @@ public class OrderServiceTest
         var result = _service.GetSalesReport(1, 20);
 
         Assert.IsNotNull(result);
-        Assert.AreEqual(1, result.Count);
-        Assert.AreEqual(2026, result[0].Year);
-        Assert.AreEqual(1, result[0].Month);
-        Assert.AreEqual(2, result[0].Clients.Count);
-        Assert.AreEqual(500.0, result[0].Clients[0].Total);
-        Assert.AreEqual(300.0, result[0].Clients[1].Total);
+        Assert.AreEqual(1, result.Months.Count);
+        Assert.AreEqual(2026, result.Months[0].Year);
+        Assert.AreEqual(1, result.Months[0].Month);
+        Assert.AreEqual(2, result.Months[0].Clients.Count);
+        Assert.AreEqual(500.0, result.Months[0].Clients[0].Total);
+        Assert.AreEqual(300.0, result.Months[0].Clients[1].Total);
     }
 
     [TestMethod]
@@ -525,7 +526,7 @@ public class OrderServiceTest
                 Total = 172.0
             });
 
-        _service.CreateOrder(request);
+        _service.CreateOrder(request, 1);
     }
 
     [TestMethod]
@@ -555,7 +556,7 @@ public class OrderServiceTest
                 Total = 172.0
             });
 
-        _service.CreateOrder(request);
+        _service.CreateOrder(request, 1);
     }
 
     [TestMethod]
@@ -638,7 +639,7 @@ public class OrderServiceTest
                 return o;
             });
 
-        _service.CreateOrder(request);
+        _service.CreateOrder(request, 1);
 
         Assert.IsNotNull(savedOrder);
         Assert.AreEqual(100.0, savedOrder.Items[0].UnitPrice);
@@ -682,7 +683,7 @@ public class OrderServiceTest
                 return o;
             });
 
-        _service.CreateOrder(request);
+        _service.CreateOrder(request, 1);
 
         Assert.IsNotNull(savedOrder);
         Assert.AreEqual(200.0, savedOrder.Subtotal);
@@ -721,7 +722,7 @@ public class OrderServiceTest
                 return o;
             });
 
-        _service.CreateOrder(request);
+        _service.CreateOrder(request, 1);
 
         Assert.IsNotNull(savedOrder);
         Assert.AreEqual(20.0, savedOrder.Discount);
@@ -765,7 +766,7 @@ public class OrderServiceTest
                 return o;
             });
 
-        _service.CreateOrder(request);
+        _service.CreateOrder(request, 1);
 
         Assert.IsNotNull(savedOrder);
         Assert.AreEqual(50.0, savedOrder.ShippingCost);
@@ -809,7 +810,7 @@ public class OrderServiceTest
                 return o;
             });
 
-        _service.CreateOrder(request);
+        _service.CreateOrder(request, 1);
 
         Assert.IsNotNull(savedOrder);
         Assert.AreEqual(44.0, savedOrder.Vat);
@@ -853,7 +854,7 @@ public class OrderServiceTest
                 return o;
             });
 
-        _service.CreateOrder(request);
+        _service.CreateOrder(request, 1);
 
         Assert.IsNotNull(savedOrder);
         Assert.AreEqual(294.0, savedOrder.Total);
@@ -875,9 +876,9 @@ public class OrderServiceTest
             .Setup(r => r.GetClientOrders(It.IsAny<int>(), It.IsAny<OrderStatus?>(), It.IsAny<DateTime?>(), It.IsAny<DateTime?>()))
             .Returns([order]);
 
-        var request = new GetClientOrdersRequestDTO { ClientId = 1 };
+        var request = new GetClientOrdersRequestDTO();
 
-        var result = _service.GetClientOrders(request);
+        var result = _service.GetClientOrders(request, 1);
 
         Assert.AreEqual(500.0, result[0].Total);
     }
@@ -929,5 +930,20 @@ public class OrderServiceTest
 
         Assert.AreEqual(100.0, result.Items[0].UnitPrice);
         Assert.AreEqual(200.0, result.Items[0].Subtotal);
+    }
+
+    [TestMethod]
+    public void GetSalesReport_ReturnsMonthlyTotal()
+    {
+        _orderRepositoryMock
+            .Setup(r => r.GetSalesReport(1, 20))
+            .Returns([
+                (2026, 4, 1, "Juan Perez", 500.0),
+                (2026, 4, 2, "Maria Lopez", 300.0)
+            ]);
+
+        var result = _service.GetSalesReport(1, 20);
+
+        Assert.AreEqual(800.0, result.Months[0].MonthlyTotal);
     }
 }

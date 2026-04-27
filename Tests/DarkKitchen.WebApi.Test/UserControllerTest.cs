@@ -32,7 +32,7 @@ public sealed class UserControllerTest
 
         var result = controller.Register(request);
 
-        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        Assert.IsInstanceOfType(result, typeof(CreatedResult));
     }
 
     [TestMethod]
@@ -76,7 +76,7 @@ public sealed class UserControllerTest
 
         var result = controller.CreateStaffUser(request);
 
-        Assert.IsInstanceOfType(result, typeof(CreatedAtActionResult));
+        Assert.IsInstanceOfType(result, typeof(CreatedResult));
     }
 
     [TestMethod]
@@ -154,6 +154,6 @@ public sealed class UserControllerTest
 
         var result = controller.DeleteUser(1);
 
-        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        Assert.IsInstanceOfType(result, typeof(NoContentResult));
     }
 }

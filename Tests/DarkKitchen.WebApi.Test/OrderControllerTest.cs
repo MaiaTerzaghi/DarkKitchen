@@ -51,7 +51,7 @@ public class OrderControllerTest
         };
 
         _orderServiceMock
-            .Setup(s => s.CreateOrder(request))
+            .Setup(s => s.CreateOrder(request, It.IsAny<int>()))
             .Returns(expectedResponse);
 
         _controller.ControllerContext = new ControllerContext
@@ -62,8 +62,8 @@ public class OrderControllerTest
 
         var result = _controller.CreateOrder(request);
 
-        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-        var okResult = (OkObjectResult)result;
+        Assert.IsInstanceOfType(result, typeof(CreatedAtActionResult));
+        var okResult = (CreatedAtActionResult)result;
         var response = (CreateOrderResponseDTO)okResult.Value!;
         Assert.AreEqual(expectedResponse.OrderId, response.OrderId);
         Assert.AreEqual(expectedResponse.Total, response.Total);
@@ -87,7 +87,7 @@ public class OrderControllerTest
         };
 
         _orderServiceMock
-            .Setup(s => s.CreateOrder(request))
+            .Setup(s => s.CreateOrder(request, It.IsAny<int>()))
             .Throws(new ArgumentException("El pedido debe tener al menos un producto."));
 
         _controller.ControllerContext = new ControllerContext
@@ -105,7 +105,7 @@ public class OrderControllerTest
         var orders = new List<GetClientOrdersResponseDTO>();
 
         _orderServiceMock
-            .Setup(s => s.GetClientOrders(It.IsAny<GetClientOrdersRequestDTO>()))
+            .Setup(s => s.GetClientOrders(It.IsAny<GetClientOrdersRequestDTO>(), It.IsAny<int>()))
             .Returns(orders);
 
         _controller.ControllerContext = new ControllerContext
@@ -114,7 +114,7 @@ public class OrderControllerTest
         };
         _controller.HttpContext.Items["RequestingUser"] = new User { Id = 1 };
 
-        var result = _controller.GetClientOrders(new GetClientOrdersRequestDTO { ClientId = 1 });
+        var result = _controller.GetClientOrders(new GetClientOrdersRequestDTO());
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
     }
@@ -302,14 +302,18 @@ public class OrderControllerTest
     [TestMethod]
     public void GetSalesReport_ValidRequest_ReturnsOk()
     {
-        var expectedResponse = new List<SalesReportResponseDTO>
+        var expectedResponse = new SalesReportWithTotalDTO
         {
+            Months = [
             new SalesReportResponseDTO
             {
                 Year = 2026,
                 Month = 1,
                 Clients = [new ClientSalesDTO { ClientId = 1, Total = 500.0 }]
             }
+
+            ],
+            GeneralTotal = 1026.0
         };
 
         _orderServiceMock
@@ -320,10 +324,10 @@ public class OrderControllerTest
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
         var okResult = (OkObjectResult)result;
-        var response = (List<SalesReportResponseDTO>)okResult.Value!;
-        Assert.AreEqual(1, response.Count);
-        Assert.AreEqual(2026, response[0].Year);
-        Assert.AreEqual(1, response[0].Month);
+        var response = (SalesReportWithTotalDTO)okResult.Value!;
+        Assert.AreEqual(1, response.Months.Count);
+        Assert.AreEqual(2026, response.Months[0].Year);
+        Assert.AreEqual(1, response.Months[0].Month);
     }
 
     [TestMethod]

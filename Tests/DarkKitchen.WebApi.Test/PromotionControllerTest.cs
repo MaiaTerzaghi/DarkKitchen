@@ -69,8 +69,8 @@ public sealed class PromotionControllerTest
 
         var result = _controller.CreatePromotion(request);
 
-        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-        var okResult = (OkObjectResult)result;
+        Assert.IsInstanceOfType(result, typeof(CreatedResult));
+        var okResult = (CreatedResult)result;
         var response = (PromotionResponseDTO)okResult.Value!;
         Assert.AreEqual(expectedResponse.Id, response.Id);
         Assert.AreEqual(expectedResponse.Name, response.Name);
@@ -136,6 +136,6 @@ public sealed class PromotionControllerTest
 
         var result = _controller.RemoveProductFromPromotion(promotionId, productId);
 
-        Assert.IsInstanceOfType(result, typeof(OkResult));
+        Assert.IsInstanceOfType(result, typeof(NoContentResult));
     }
 }

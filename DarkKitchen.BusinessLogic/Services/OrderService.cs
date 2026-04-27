@@ -17,15 +17,15 @@ public class OrderService(
     private readonly IPricingService _pricingService = pricingService;
     private readonly IRepository<User> _userRepository = userRepository;
 
-    public CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request)
+    public CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request, int clientId)
     {
-        ValidateClient(request.ClientId);
+        ValidateClient(clientId);
         ValidateItems(request.Items);
         var deliveryType = ParseDeliveryType(request.DeliveryType);
         var pricing = _pricingService.CalculateOrderPricing(request.Items, deliveryType);
-        var order = BuildOrder(request, deliveryType, pricing);
+        var order = BuildOrder(request, clientId, deliveryType, pricing);
         var saved = _orderRepository.Add(order);
-        return BuildOrderResponse(request.ClientId, saved.Id, pricing.Subtotal, pricing.ShippingCost, pricing.Total);
+        return BuildOrderResponse(clientId, saved.Id, pricing.Subtotal, pricing.ShippingCost, pricing.Total);
     }
 
     private void ValidateClient(int clientId)
@@ -52,11 +52,11 @@ public class OrderService(
         return result;
     }
 
-    private static Order BuildOrder(CreateOrderRequestDTO request, DeliveryType deliveryType, PricingResult pricing)
+    private static Order BuildOrder(CreateOrderRequestDTO request, int clientId, DeliveryType deliveryType, PricingResult pricing)
     {
         return new Order
         {
-            ClientId = request.ClientId,
+            ClientId = clientId,
             DeliveryType = deliveryType,
             Status = OrderStatus.Pending,
             Street = request.Address.Street,
@@ -83,17 +83,18 @@ public class OrderService(
         };
     }
 
-    public List<GetClientOrdersResponseDTO> GetClientOrders(GetClientOrdersRequestDTO request)
+    public List<GetClientOrdersResponseDTO> GetClientOrders(GetClientOrdersRequestDTO request, int clientId)
     {
         var orders = _orderRepository.GetClientOrders(
-        request.ClientId,
-        request.Status,
-        request.DateFrom,
-        request.DateTo);
+            clientId,
+            request.Status,
+            request.DateFrom,
+            request.DateTo);
         return orders.Select(o => new GetClientOrdersResponseDTO
         {
             OrderId = o.Id,
             ClientId = o.ClientId,
+            Date = o.Date,
             Status = o.Status.ToString(),
             Total = o.Total,
             ItemCount = o.Items.Sum(i => i.Quantity)
@@ -203,11 +204,11 @@ public class OrderService(
         }).ToList();
     }
 
-    public List<SalesReportResponseDTO> GetSalesReport(int page, int pageSize)
+    public SalesReportWithTotalDTO GetSalesReport(int page, int pageSize)
     {
         var report = _orderRepository.GetSalesReport(page, pageSize);
 
-        return report
+        var months = report
             .GroupBy(r => new { r.Year, r.Month })
             .Select(g => new SalesReportResponseDTO
             {
@@ -216,8 +217,16 @@ public class OrderService(
                 Clients = g.Select(r => new ClientSalesDTO
                 {
                     ClientId = r.ClientId,
+                    ClientName = r.ClientName,
                     Total = r.Total
-                }).ToList()
+                }).ToList(),
+                MonthlyTotal = g.Sum(r => r.Total)
             }).ToList();
+
+        return new SalesReportWithTotalDTO
+        {
+            Months = months,
+            GeneralTotal = months.Sum(m => m.MonthlyTotal)
+        };
     }
 }

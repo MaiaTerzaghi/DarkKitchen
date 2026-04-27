@@ -25,7 +25,7 @@ public class PromotionController(IPromotionService promotionService) : Controlle
     public IActionResult CreatePromotion([FromBody] CreatePromotionRequestDTO request)
     {
         var response = _promotionService.CreatePromotion(request);
-        return Ok(response);
+        return Created(string.Empty, response);
     }
 
     [AuthorizeRoles(UserRole.Administrative)]
@@ -49,6 +49,6 @@ public class PromotionController(IPromotionService promotionService) : Controlle
     public IActionResult RemoveProductFromPromotion(int id, [FromQuery] int productId)
     {
         _promotionService.RemoveProductFromPromotion(id, productId);
-        return Ok();
+        return NoContent();
     }
 }

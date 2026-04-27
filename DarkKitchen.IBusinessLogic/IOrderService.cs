@@ -4,8 +4,8 @@ using DarkKitchen.DTOs.Args.Output;
 namespace DarkKitchen.IBusinessLogic;
 public interface IOrderService
 {
-    CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request);
-    List<GetClientOrdersResponseDTO> GetClientOrders(GetClientOrdersRequestDTO request);
+    CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request, int clientId);
+    List<GetClientOrdersResponseDTO> GetClientOrders(GetClientOrdersRequestDTO request, int clientId);
     List<GetOrdersResponseDTO> GetOrders(GetOrdersRequestDTO request);
     UpdateOrderStatusResponseDTO MarkAsPrepared(int orderId);
     OrderDetailResponseDTO GetOrderDetail(int orderId);
@@ -14,5 +14,5 @@ public interface IOrderService
     UpdateOrderStatusResponseDTO MarkAsOnTheWay(int orderId);
     UpdateOrderStatusResponseDTO MarkAsNotDelivered(int orderId);
     List<TopProductResponseDTO> GetTopProducts(DateTime dateFrom, DateTime dateTo);
-    List<SalesReportResponseDTO> GetSalesReport(int page, int pageSize);
+    SalesReportWithTotalDTO GetSalesReport(int page, int pageSize);
 }
