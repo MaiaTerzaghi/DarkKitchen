@@ -18,7 +18,7 @@ public class UserController(IUserService userService) : ControllerBase
     {
         var id = _userService.Register(request);
 
-        return Ok(id);
+        return Created(string.Empty, new { id });
     }
 
     [AuthorizeRoles(UserRole.Administrative)]
@@ -26,7 +26,7 @@ public class UserController(IUserService userService) : ControllerBase
     public IActionResult CreateStaffUser(CreateStaffUserRequestDTO request)
     {
         var id = _userService.CreateStaffUser(request);
-        return CreatedAtAction(nameof(CreateStaffUser), new { id }, new { id });
+        return Created(string.Empty, new { id });
     }
 
     [AuthorizeRoles(UserRole.Administrative)]
