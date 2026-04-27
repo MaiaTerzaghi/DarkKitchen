@@ -217,6 +217,7 @@ public class OrderService(
                 Clients = g.Select(r => new ClientSalesDTO
                 {
                     ClientId = r.ClientId,
+                    ClientName = r.ClientName,
                     Total = r.Total
                 }).ToList()
             }).ToList();

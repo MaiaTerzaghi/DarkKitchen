@@ -478,10 +478,10 @@ public class OrderServiceTest
     [TestMethod]
     public void GetSalesReport_ValidRequest_ReturnsSalesReport()
     {
-        var expectedReport = new List<(int Year, int Month, int ClientId, double Total)>
+        var expectedReport = new List<(int Year, int Month, int ClientId, string ClientName, double Total)>
         {
-            (2026, 1, 1, 500.0),
-            (2026, 1, 2, 300.0)
+            (2026, 1, 1, "Juan Perez", 500.0),
+            (2026, 1, 2, "Juan Perez", 300.0)
         };
 
         _orderRepositoryMock

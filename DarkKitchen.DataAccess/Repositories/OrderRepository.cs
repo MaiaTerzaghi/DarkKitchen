@@ -75,17 +75,18 @@ public class OrderRepository(DarkKitchenContext context)
             .ToList();
     }
 
-    public List<(int Year, int Month, int ClientId, double Total)> GetSalesReport(
+    public List<(int Year, int Month, int ClientId, string ClientName, double Total)> GetSalesReport(
         int page,
         int pageSize)
     {
         return context.Orders
-            .GroupBy(o => new { o.Date.Year, o.Date.Month, o.ClientId })
+            .GroupBy(o => new { o.Date.Year, o.Date.Month, o.ClientId, ClientName = o.Client.Name + " " + o.Client.LastName })
             .Select(g => new
             {
                 g.Key.Year,
                 g.Key.Month,
                 g.Key.ClientId,
+                g.Key.ClientName,
                 Total = g.Sum(o => o.Total)
             })
             .OrderByDescending(g => g.Year)
@@ -93,7 +94,7 @@ public class OrderRepository(DarkKitchenContext context)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .AsEnumerable()
-            .Select(g => (g.Year, g.Month, g.ClientId, g.Total))
+            .Select(g => (g.Year, g.Month, g.ClientId, g.ClientName, g.Total))
             .ToList();
     }
 }
