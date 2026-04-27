@@ -65,7 +65,7 @@ public class Product
         get => _price;
         set
         {
-            if(value < 0)
+            if(value <= 0)
             {
                 throw new ArgumentException("El precio debe ser mayor a cero.");
             }
