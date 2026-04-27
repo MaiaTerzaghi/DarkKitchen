@@ -67,7 +67,7 @@ public class PricingService(
 
             if(bestPromotion != null)
             {
-                var itemSubtotal = item.Product.Price * item.Quantity;
+                var itemSubtotal = product.Price * item.Quantity;
                 discount += itemSubtotal * (double)(bestPromotion.DiscountPercentage / 100);
             }
         }
