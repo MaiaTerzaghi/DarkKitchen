@@ -20,6 +20,7 @@ public class AuthController(IAuthService authService) : ControllerBase
     [HttpDelete("logout")]
     public IActionResult Logout([FromHeader] string authorization)
     {
-        throw new NotImplementedException();
+        _authService.Logout(authorization);
+        return Ok();
     }
 }
