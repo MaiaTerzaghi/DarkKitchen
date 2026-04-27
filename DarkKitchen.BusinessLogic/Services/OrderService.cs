@@ -94,6 +94,7 @@ public class OrderService(
         {
             OrderId = o.Id,
             ClientId = o.ClientId,
+            Date = o.Date,
             Status = o.Status.ToString(),
             Total = o.Total,
             ItemCount = o.Items.Sum(i => i.Quantity)
