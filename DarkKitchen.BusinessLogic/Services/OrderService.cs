@@ -204,11 +204,11 @@ public class OrderService(
         }).ToList();
     }
 
-    public List<SalesReportResponseDTO> GetSalesReport(int page, int pageSize)
+    public SalesReportWithTotalDTO GetSalesReport(int page, int pageSize)
     {
         var report = _orderRepository.GetSalesReport(page, pageSize);
 
-        return report
+        var months = report
             .GroupBy(r => new { r.Year, r.Month })
             .Select(g => new SalesReportResponseDTO
             {
@@ -219,7 +219,14 @@ public class OrderService(
                     ClientId = r.ClientId,
                     ClientName = r.ClientName,
                     Total = r.Total
-                }).ToList()
+                }).ToList(),
+                MonthlyTotal = g.Sum(r => r.Total)
             }).ToList();
+
+        return new SalesReportWithTotalDTO
+        {
+            Months = months,
+            GeneralTotal = months.Sum(m => m.MonthlyTotal)
+        };
     }
 }

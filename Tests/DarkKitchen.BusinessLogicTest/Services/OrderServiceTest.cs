@@ -491,6 +491,12 @@ public class OrderServiceTest
         var result = _service.GetSalesReport(1, 20);
 
         Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.Months.Count);
+        Assert.AreEqual(2026, result.Months[0].Year);
+        Assert.AreEqual(1, result.Months[0].Month);
+        Assert.AreEqual(2, result.Months[0].Clients.Count);
+        Assert.AreEqual(500.0, result.Months[0].Clients[0].Total);
+        Assert.AreEqual(300.0, result.Months[0].Clients[1].Total);
     }
 
     [TestMethod]

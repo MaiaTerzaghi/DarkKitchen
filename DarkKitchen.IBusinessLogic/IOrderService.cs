@@ -14,5 +14,5 @@ public interface IOrderService
     UpdateOrderStatusResponseDTO MarkAsOnTheWay(int orderId);
     UpdateOrderStatusResponseDTO MarkAsNotDelivered(int orderId);
     List<TopProductResponseDTO> GetTopProducts(DateTime dateFrom, DateTime dateTo);
-    List<SalesReportResponseDTO> GetSalesReport(int page, int pageSize);
+    SalesReportWithTotalDTO GetSalesReport(int page, int pageSize);
 }
