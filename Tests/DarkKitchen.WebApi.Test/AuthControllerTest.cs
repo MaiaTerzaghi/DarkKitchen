@@ -44,4 +44,17 @@ public sealed class AuthControllerTest
 
         controller.Login(request);
     }
+
+    [TestMethod]
+    public void Logout_WhenValidToken_ReturnsOk()
+    {
+        var authServiceMock = new Mock<IAuthService>();
+        authServiceMock.Setup(s => s.Logout("token-valido"));
+
+        var controller = new AuthController(authServiceMock.Object);
+
+        var result = controller.Logout("token-valido");
+
+        Assert.IsInstanceOfType(result, typeof(OkResult));
+    }
 }
