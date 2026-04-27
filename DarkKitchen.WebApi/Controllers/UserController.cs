@@ -31,9 +31,9 @@ public class UserController(IUserService userService) : ControllerBase
 
     [AuthorizeRoles(UserRole.Administrative)]
     [HttpGet]
-    public IActionResult GetUsers([FromQuery] string? name, [FromQuery] string? lastName)
+    public IActionResult GetUsers([FromQuery] string? name, [FromQuery] string? lastName, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
     {
-        var users = _userService.GetUsers(name, lastName);
+        var users = _userService.GetUsers(name, lastName, page, pageSize);
         return Ok(users);
     }
 

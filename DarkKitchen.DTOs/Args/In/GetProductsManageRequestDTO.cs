@@ -1,6 +1,6 @@
 namespace DarkKitchen.DTOs.Args.In;
 
-public class GetProductsManageRequestDTO
+public class GetProductsManageRequestDTO : PaginationParamsDTO
 {
     public string? Name { get; set; }
     public string? Description { get; set; }

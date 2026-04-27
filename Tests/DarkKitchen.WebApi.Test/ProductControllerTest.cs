@@ -20,12 +20,12 @@ public sealed class ProductControllerTest
         };
 
         var productServiceMock = new Mock<IProductService>();
-        productServiceMock.Setup(s => s.GetAll(null, null, null))
+        productServiceMock.Setup(s => s.GetAll(null, null, null, 1, 20))
                           .Returns(products);
 
         var controller = new ProductController(productServiceMock.Object);
 
-        var result = controller.GetAll(null, null, null);
+        var result = controller.GetAll(null, null, null, 1, 20);
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
         var okResult = (OkObjectResult)result;
@@ -55,12 +55,12 @@ public sealed class ProductControllerTest
     public void GetAll_WhenServiceThrowsException_ReturnsBadRequest()
     {
         var productServiceMock = new Mock<IProductService>();
-        productServiceMock.Setup(s => s.GetAll(It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<string?>()))
+        productServiceMock.Setup(s => s.GetAll(It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<int>(), It.IsAny<int>()))
                         .Throws(new ArgumentException("Error"));
 
         var controller = new ProductController(productServiceMock.Object);
 
-        controller.GetAll(null, null, null);
+        controller.GetAll(null, null, null, 1, 20);
     }
 
     [TestMethod]
