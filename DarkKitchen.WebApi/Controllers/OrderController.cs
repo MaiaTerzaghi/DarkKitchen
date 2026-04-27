@@ -18,8 +18,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
     public IActionResult CreateOrder([FromBody] CreateOrderRequestDTO request)
     {
         var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
-        request.ClientId = requestingUser.Id;
-        var response = _orderService.CreateOrder(request);
+        var response = _orderService.CreateOrder(request, requestingUser.Id);
         return Ok(response);
     }
 
@@ -28,8 +27,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
     public IActionResult GetClientOrders([FromQuery] GetClientOrdersRequestDTO request)
     {
         var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
-        request.ClientId = requestingUser.Id;
-        var orders = _orderService.GetClientOrders(request);
+        var orders = _orderService.GetClientOrders(request, requestingUser.Id);
         return Ok(orders);
     }
 

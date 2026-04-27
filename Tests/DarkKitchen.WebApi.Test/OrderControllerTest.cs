@@ -51,7 +51,7 @@ public class OrderControllerTest
         };
 
         _orderServiceMock
-            .Setup(s => s.CreateOrder(request))
+            .Setup(s => s.CreateOrder(request, It.IsAny<int>()))
             .Returns(expectedResponse);
 
         _controller.ControllerContext = new ControllerContext
@@ -87,7 +87,7 @@ public class OrderControllerTest
         };
 
         _orderServiceMock
-            .Setup(s => s.CreateOrder(request))
+            .Setup(s => s.CreateOrder(request, It.IsAny<int>()))
             .Throws(new ArgumentException("El pedido debe tener al menos un producto."));
 
         _controller.ControllerContext = new ControllerContext
@@ -105,7 +105,7 @@ public class OrderControllerTest
         var orders = new List<GetClientOrdersResponseDTO>();
 
         _orderServiceMock
-            .Setup(s => s.GetClientOrders(It.IsAny<GetClientOrdersRequestDTO>()))
+            .Setup(s => s.GetClientOrders(It.IsAny<GetClientOrdersRequestDTO>(), It.IsAny<int>()))
             .Returns(orders);
 
         _controller.ControllerContext = new ControllerContext
@@ -114,7 +114,7 @@ public class OrderControllerTest
         };
         _controller.HttpContext.Items["RequestingUser"] = new User { Id = 1 };
 
-        var result = _controller.GetClientOrders(new GetClientOrdersRequestDTO { ClientId = 1 });
+        var result = _controller.GetClientOrders(new GetClientOrdersRequestDTO());
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
     }
