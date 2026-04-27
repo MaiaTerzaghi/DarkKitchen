@@ -21,6 +21,6 @@ public class AuthController(IAuthService authService) : ControllerBase
     public IActionResult Logout([FromHeader] string authorization)
     {
         _authService.Logout(authorization);
-        return Ok();
+        return Ok("Sesión cerrada correctamente");
     }
 }
