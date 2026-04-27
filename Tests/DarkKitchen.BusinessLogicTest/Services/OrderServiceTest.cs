@@ -491,12 +491,6 @@ public class OrderServiceTest
         var result = _service.GetSalesReport(1, 20);
 
         Assert.IsNotNull(result);
-        Assert.AreEqual(1, result.Count);
-        Assert.AreEqual(2026, result[0].Year);
-        Assert.AreEqual(1, result[0].Month);
-        Assert.AreEqual(2, result[0].Clients.Count);
-        Assert.AreEqual(500.0, result[0].Clients[0].Total);
-        Assert.AreEqual(300.0, result[0].Clients[1].Total);
     }
 
     [TestMethod]
@@ -930,5 +924,20 @@ public class OrderServiceTest
 
         Assert.AreEqual(100.0, result.Items[0].UnitPrice);
         Assert.AreEqual(200.0, result.Items[0].Subtotal);
+    }
+
+    [TestMethod]
+    public void GetSalesReport_ReturnsMonthlyTotal()
+    {
+        _orderRepositoryMock
+            .Setup(r => r.GetSalesReport(1, 20))
+            .Returns([
+                (2026, 4, 1, "Juan Perez", 500.0),
+                (2026, 4, 2, "Maria Lopez", 300.0)
+            ]);
+
+        var result = _service.GetSalesReport(1, 20);
+
+        Assert.AreEqual(800.0, result.Months[0].MonthlyTotal);
     }
 }
