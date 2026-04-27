@@ -14,9 +14,9 @@ public class ProductController(IProductService productService) : ControllerBase
 
     [AuthorizeRoles(UserRole.Client, UserRole.Administrative)]
     [HttpGet]
-    public IActionResult GetAll([FromQuery] string? name, [FromQuery] string? category, [FromQuery] string? line)
+    public IActionResult GetAll([FromQuery] string? name, [FromQuery] string? category, [FromQuery] string? line, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
     {
-        var products = _productService.GetAll(name, category, line);
+        var products = _productService.GetAll(name, category, line, page, pageSize);
         return Ok(products);
     }
 

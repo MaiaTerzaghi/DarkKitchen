@@ -10,13 +10,15 @@ public class ProductService(IRepository<Product> productRepository) : IProductSe
 {
     private readonly IRepository<Product> _productRepository = productRepository;
 
-    public List<ProductResponseDTO> GetAll(string? name, string? category, string? line)
+    public List<ProductResponseDTO> GetAll(string? name, string? category, string? line, int page = 1, int pageSize = 20)
     {
         var products = _productRepository.GetAll(
         predicate: p =>
             (string.IsNullOrEmpty(name) || p.Name.Contains(name)) &&
             (string.IsNullOrEmpty(category) || p.Category == category) &&
-            (string.IsNullOrEmpty(line) || p.CommercialLine == line));
+            (string.IsNullOrEmpty(line) || p.CommercialLine == line),
+        page: page,
+        pageSize: pageSize);
 
         return products.Select(p => new ProductResponseDTO
         {
