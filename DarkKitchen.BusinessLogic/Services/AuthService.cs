@@ -28,6 +28,9 @@ public class AuthService(IRepository<User> userRepository, ISessionRepository se
 
     public void Logout(string token)
     {
-        throw new NotImplementedException();
+        var session = _sessionRepository.GetSessionByToken(token)
+            ?? throw new UnauthorizedException("Token inválido");
+
+        _sessionRepository.Delete(session);
     }
 }
