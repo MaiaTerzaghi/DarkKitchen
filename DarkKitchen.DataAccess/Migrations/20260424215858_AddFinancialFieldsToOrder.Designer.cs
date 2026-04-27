@@ -4,6 +4,7 @@ using DarkKitchen.DataAccess.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DarkKitchen.DataAccess.Migrations
 {
     [DbContext(typeof(DarkKitchenContext))]
-    partial class DarkKitchenContextModelSnapshot : ModelSnapshot
+    [Migration("20260424215858_AddFinancialFieldsToOrder")]
+    partial class AddFinancialFieldsToOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -73,8 +76,6 @@ namespace DarkKitchen.DataAccess.Migrations
                         .HasColumnType("float");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ClientId");
 
                     b.ToTable("Orders");
                 });
@@ -250,17 +251,6 @@ namespace DarkKitchen.DataAccess.Migrations
                     b.HasIndex("PromotionId");
 
                     b.ToTable("PromotionProducts", (string)null);
-                });
-
-            modelBuilder.Entity("DarkKitchen.Domain.Entities.Order", b =>
-                {
-                    b.HasOne("DarkKitchen.Domain.Entities.User", "Client")
-                        .WithMany()
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Client");
                 });
 
             modelBuilder.Entity("DarkKitchen.Domain.Entities.OrderItem", b =>

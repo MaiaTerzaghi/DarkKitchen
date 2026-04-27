@@ -23,7 +23,7 @@ public class OrderService(
         ValidateItems(request.Items);
         var deliveryType = ParseDeliveryType(request.DeliveryType);
         var pricing = _pricingService.CalculateOrderPricing(request.Items, deliveryType);
-        var order = BuildOrder(request, deliveryType, pricing.Items);
+        var order = BuildOrder(request, deliveryType, pricing);
         var saved = _orderRepository.Add(order);
         return BuildOrderResponse(request.ClientId, saved.Id, pricing.Subtotal, pricing.ShippingCost, pricing.Total);
     }
@@ -52,7 +52,7 @@ public class OrderService(
         return result;
     }
 
-    private static Order BuildOrder(CreateOrderRequestDTO request, DeliveryType deliveryType, List<OrderItem> items)
+    private static Order BuildOrder(CreateOrderRequestDTO request, DeliveryType deliveryType, PricingResult pricing)
     {
         return new Order
         {
@@ -62,7 +62,12 @@ public class OrderService(
             Street = request.Address.Street,
             DoorNumber = request.Address.DoorNumber,
             Apartment = request.Address.Apartment,
-            Items = items,
+            Items = pricing.Items,
+            Subtotal = pricing.Subtotal,
+            Discount = pricing.Discount,
+            ShippingCost = pricing.ShippingCost,
+            Vat = pricing.Vat,
+            Total = pricing.Total,
         };
     }
 
@@ -90,7 +95,7 @@ public class OrderService(
             OrderId = o.Id,
             ClientId = o.ClientId,
             Status = o.Status.ToString(),
-            Total = o.Items.Sum(i => i.Product.Price * i.Quantity),
+            Total = o.Total,
             ItemCount = o.Items.Sum(i => i.Quantity)
         }).ToList();
     }
@@ -134,13 +139,13 @@ public class OrderService(
             Date = order.Date,
             Status = order.Status.ToString(),
             DeliveryType = order.DeliveryType.ToString(),
-            Total = order.Items.Sum(i => i.Product.Price * i.Quantity),
+            Total = order.Total,
             Items = order.Items.Select(i => new OrderItemDetailDTO
             {
                 ProductName = i.Product.Name,
                 Quantity = i.Quantity,
-                UnitPrice = i.Product.Price,
-                Subtotal = i.Product.Price * i.Quantity
+                UnitPrice = i.UnitPrice,
+                Subtotal = i.UnitPrice * i.Quantity
             }).ToList()
         };
     }

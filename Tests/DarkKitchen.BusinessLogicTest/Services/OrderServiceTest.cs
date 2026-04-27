@@ -599,4 +599,335 @@ public class OrderServiceTest
         Assert.AreEqual("Perez", result[0].Client.LastName);
         Assert.AreEqual("+59899000000", result[0].Client.Phone);
     }
+
+    [TestMethod]
+    public void CreateOrder_ValidRequest_FreezesUnitPriceInOrderItem()
+    {
+        var request = new CreateOrderRequestDTO
+        {
+            ClientId = 1,
+            DeliveryType = "Express",
+            Address = new AddressDTO
+            {
+                Street = "18 de Julio",
+                DoorNumber = "1234",
+                Apartment = "2B"
+            },
+            Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
+        };
+
+        _pricingServiceMock
+            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<DeliveryType>()))
+            .Returns(new PricingResult
+            {
+                Items = [new OrderItem { ProductId = 1, Quantity = 2, UnitPrice = 100.0 }],
+                Subtotal = 200.0,
+                Discount = 0,
+                ShippingCost = 50.0,
+                Vat = 44.0,
+                Total = 294.0
+            });
+
+        Order? savedOrder = null;
+        _orderRepositoryMock
+            .Setup(r => r.Add(It.IsAny<Order>()))
+            .Returns((Order o) =>
+            {
+                savedOrder = o;
+                o.Id = 1;
+                return o;
+            });
+
+        _service.CreateOrder(request);
+
+        Assert.IsNotNull(savedOrder);
+        Assert.AreEqual(100.0, savedOrder.Items[0].UnitPrice);
+    }
+
+    [TestMethod]
+    public void CreateOrder_ValidRequest_PersistsSubtotal()
+    {
+        var request = new CreateOrderRequestDTO
+        {
+            ClientId = 1,
+            DeliveryType = "Express",
+            Address = new AddressDTO
+            {
+                Street = "18 de Julio",
+                DoorNumber = "1234",
+                Apartment = "2B"
+            },
+            Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
+        };
+
+        _pricingServiceMock
+            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<DeliveryType>()))
+            .Returns(new PricingResult
+            {
+                Items = [new OrderItem { ProductId = 1, Quantity = 2, UnitPrice = 100.0 }],
+                Subtotal = 200.0,
+                Discount = 0,
+                ShippingCost = 50.0,
+                Vat = 44.0,
+                Total = 294.0
+            });
+
+        Order? savedOrder = null;
+        _orderRepositoryMock
+            .Setup(r => r.Add(It.IsAny<Order>()))
+            .Returns((Order o) =>
+            {
+                savedOrder = o;
+                o.Id = 1;
+                return o;
+            });
+
+        _service.CreateOrder(request);
+
+        Assert.IsNotNull(savedOrder);
+        Assert.AreEqual(200.0, savedOrder.Subtotal);
+    }
+
+    [TestMethod]
+    public void CreateOrder_WithPromotion_PersistsDiscount()
+    {
+        var request = new CreateOrderRequestDTO
+        {
+            ClientId = 1,
+            DeliveryType = "Standard",
+            Address = new AddressDTO { Street = "18 de Julio", DoorNumber = "1234", Apartment = "2B" },
+            Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
+        };
+
+        _pricingServiceMock
+            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<DeliveryType>()))
+            .Returns(new PricingResult
+            {
+                Items = [new OrderItem { ProductId = 1, Quantity = 2, UnitPrice = 100.0 }],
+                Subtotal = 200.0,
+                Discount = 20.0,
+                ShippingCost = 30.0,
+                Vat = 39.6,
+                Total = 249.6
+            });
+
+        Order? savedOrder = null;
+        _orderRepositoryMock
+            .Setup(r => r.Add(It.IsAny<Order>()))
+            .Returns((Order o) =>
+            {
+                savedOrder = o;
+                o.Id = 1;
+                return o;
+            });
+
+        _service.CreateOrder(request);
+
+        Assert.IsNotNull(savedOrder);
+        Assert.AreEqual(20.0, savedOrder.Discount);
+    }
+
+    [TestMethod]
+    public void CreateOrder_ExpressDelivery_PersistsShippingCost()
+    {
+        var request = new CreateOrderRequestDTO
+        {
+            ClientId = 1,
+            DeliveryType = "Express",
+            Address = new AddressDTO
+            {
+                Street = "18 de Julio",
+                DoorNumber = "1234",
+                Apartment = "2B"
+            },
+            Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
+        };
+
+        _pricingServiceMock
+            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<DeliveryType>()))
+            .Returns(new PricingResult
+            {
+                Items = [new OrderItem { ProductId = 1, Quantity = 2, UnitPrice = 100.0 }],
+                Subtotal = 200.0,
+                Discount = 0,
+                ShippingCost = 50.0,
+                Vat = 44.0,
+                Total = 294.0
+            });
+
+        Order? savedOrder = null;
+        _orderRepositoryMock
+            .Setup(r => r.Add(It.IsAny<Order>()))
+            .Returns((Order o) =>
+            {
+                savedOrder = o;
+                o.Id = 1;
+                return o;
+            });
+
+        _service.CreateOrder(request);
+
+        Assert.IsNotNull(savedOrder);
+        Assert.AreEqual(50.0, savedOrder.ShippingCost);
+    }
+
+    [TestMethod]
+    public void CreateOrder_ValidRequest_PersistsVat()
+    {
+        var request = new CreateOrderRequestDTO
+        {
+            ClientId = 1,
+            DeliveryType = "Express",
+            Address = new AddressDTO
+            {
+                Street = "18 de Julio",
+                DoorNumber = "1234",
+                Apartment = "2B"
+            },
+            Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
+        };
+
+        _pricingServiceMock
+            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<DeliveryType>()))
+            .Returns(new PricingResult
+            {
+                Items = [new OrderItem { ProductId = 1, Quantity = 2, UnitPrice = 100.0 }],
+                Subtotal = 200.0,
+                Discount = 0,
+                ShippingCost = 50.0,
+                Vat = 44.0,
+                Total = 294.0
+            });
+
+        Order? savedOrder = null;
+        _orderRepositoryMock
+            .Setup(r => r.Add(It.IsAny<Order>()))
+            .Returns((Order o) =>
+            {
+                savedOrder = o;
+                o.Id = 1;
+                return o;
+            });
+
+        _service.CreateOrder(request);
+
+        Assert.IsNotNull(savedOrder);
+        Assert.AreEqual(44.0, savedOrder.Vat);
+    }
+
+    [TestMethod]
+    public void CreateOrder_ValidRequest_PersistsTotal()
+    {
+        var request = new CreateOrderRequestDTO
+        {
+            ClientId = 1,
+            DeliveryType = "Express",
+            Address = new AddressDTO
+            {
+                Street = "18 de Julio",
+                DoorNumber = "1234",
+                Apartment = "2B"
+            },
+            Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
+        };
+
+        _pricingServiceMock
+            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<DeliveryType>()))
+            .Returns(new PricingResult
+            {
+                Items = [new OrderItem { ProductId = 1, Quantity = 2, UnitPrice = 100.0 }],
+                Subtotal = 200.0,
+                Discount = 0,
+                ShippingCost = 50.0,
+                Vat = 44.0,
+                Total = 294.0
+            });
+
+        Order? savedOrder = null;
+        _orderRepositoryMock
+            .Setup(r => r.Add(It.IsAny<Order>()))
+            .Returns((Order o) =>
+            {
+                savedOrder = o;
+                o.Id = 1;
+                return o;
+            });
+
+        _service.CreateOrder(request);
+
+        Assert.IsNotNull(savedOrder);
+        Assert.AreEqual(294.0, savedOrder.Total);
+    }
+
+    [TestMethod]
+    public void GetClientOrders_WhenCalled_ReturnsPersistedTotal()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            ClientId = 1,
+            Status = OrderStatus.Pending,
+            Total = 500.0,
+            Items = [new OrderItem { ProductId = 1, Quantity = 2, Product = new Product { Id = 1, Price = 100.0 } }]
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetClientOrders(It.IsAny<int>(), It.IsAny<OrderStatus?>(), It.IsAny<DateTime?>(), It.IsAny<DateTime?>()))
+            .Returns([order]);
+
+        var request = new GetClientOrdersRequestDTO { ClientId = 1 };
+
+        var result = _service.GetClientOrders(request);
+
+        Assert.AreEqual(500.0, result[0].Total);
+    }
+
+    [TestMethod]
+    public void GetOrderDetail_WhenOrderExists_ReturnsPersistedTotal()
+    {
+        var product = new Product { Id = 1, Name = "Pizza napolitana", Price = 100.0 };
+        var order = new Order
+        {
+            Id = 1,
+            ClientId = 1,
+            Status = OrderStatus.Pending,
+            DeliveryType = DeliveryType.Express,
+            Date = DateTime.Now,
+            Total = 500.0,
+            Items = [new OrderItem { ProductId = 1, Quantity = 2, Product = product }]
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        var result = _service.GetOrderDetail(1);
+
+        Assert.AreEqual(500.0, result.Total);
+    }
+
+    [TestMethod]
+    public void GetOrderDetail_WhenOrderExists_ReturnsPersistedUnitPrice()
+    {
+        var product = new Product { Id = 1, Name = "Pizza napolitana", Price = 150.0 };
+        var order = new Order
+        {
+            Id = 1,
+            ClientId = 1,
+            Status = OrderStatus.Pending,
+            DeliveryType = DeliveryType.Express,
+            Date = DateTime.Now,
+            Total = 500.0,
+            Items = [new OrderItem { ProductId = 1, Quantity = 2, UnitPrice = 100.0, Product = product }]
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        var result = _service.GetOrderDetail(1);
+
+        Assert.AreEqual(100.0, result.Items[0].UnitPrice);
+        Assert.AreEqual(200.0, result.Items[0].Subtotal);
+    }
 }
