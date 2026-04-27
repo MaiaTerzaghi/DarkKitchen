@@ -66,12 +66,14 @@ public class UserService(IRepository<User> userRepository, IPasswordManager pass
         return savedUser.Id;
     }
 
-    public List<UserResponseDTO> GetUsers(string? name, string? lastName)
+    public List<UserResponseDTO> GetUsers(string? name, string? lastName, int page = 1, int pageSize = 20)
     {
         var users = _userRepository.GetAll(
             predicate: u =>
             (name == null || u.Name.Contains(name)) &&
-            (lastName == null || u.LastName.Contains(lastName)));
+            (lastName == null || u.LastName.Contains(lastName)),
+            page: page,
+            pageSize: pageSize);
 
         return users.Select(u => new UserResponseDTO
         {
