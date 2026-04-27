@@ -16,4 +16,11 @@ public class AuthController(IAuthService authService) : ControllerBase
         var token = _authService.Login(request.Email, request.Password);
         return Ok(token);
     }
+
+    [HttpDelete("logout")]
+    public IActionResult Logout([FromHeader] string authorization)
+    {
+        _authService.Logout(authorization);
+        return Ok("Sesión cerrada correctamente");
+    }
 }

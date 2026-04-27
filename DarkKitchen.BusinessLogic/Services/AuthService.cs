@@ -25,4 +25,12 @@ public class AuthService(IRepository<User> userRepository, ISessionRepository se
         _sessionRepository.Add(session);
         return session.Token;
     }
+
+    public void Logout(string token)
+    {
+        var session = _sessionRepository.GetSessionByToken(token)
+            ?? throw new UnauthorizedException("Token inválido");
+
+        _sessionRepository.Delete(session);
+    }
 }
