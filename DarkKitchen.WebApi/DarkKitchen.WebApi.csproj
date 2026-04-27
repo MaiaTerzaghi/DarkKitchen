@@ -3,7 +3,6 @@
   <ItemGroup>
     <ProjectReference Include="..\DarkKitchen.DTOs\DarkKitchen.DTOs.csproj" />
     <ProjectReference Include= "..\DarkKitchen.IBusinessLogic\DarkKitchen.IBusinessLogic.csproj" />
-    <ProjectReference Include="..\DarkKitchen.IDataAccess\DarkKitchen.IDataAccess.csproj" />
     <ProjectReference Include="..\DarkKitchen.ServiceFactory\DarkKitchen.ServiceFactory.csproj" />
   </ItemGroup>
 

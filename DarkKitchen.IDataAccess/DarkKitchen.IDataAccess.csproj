@@ -2,7 +2,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DarkKitchen.Domain\DarkKitchen.Domain.csproj" />
-    <ProjectReference Include="..\DarkKitchen.DTOs\DarkKitchen.DTOs.csproj" />
 
   </ItemGroup>
 

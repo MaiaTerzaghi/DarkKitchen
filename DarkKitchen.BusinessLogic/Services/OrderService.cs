@@ -1,4 +1,4 @@
-using DarkKitchen.BusinessLogic.Shipping;
+using DarkKitchen.Domain;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
@@ -10,36 +10,22 @@ namespace DarkKitchen.BusinessLogic.Services;
 
 public class OrderService(
     IOrderRepository orderRepository,
-    IRepository<Product> productRepository,
-    IPromotionRepository promotionRepository,
+    IPricingService pricingService,
     IRepository<User> userRepository) : IOrderService
 {
     private readonly IOrderRepository _orderRepository = orderRepository;
-    private readonly IRepository<Product> _productRepository = productRepository;
-
-    private readonly IPromotionRepository _promotionRepository = promotionRepository;
+    private readonly IPricingService _pricingService = pricingService;
     private readonly IRepository<User> _userRepository = userRepository;
-    private const double Vat = 0.22;
-    private const int TopProductsCount = 5;
 
     public CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request)
     {
         ValidateClient(request.ClientId);
         ValidateItems(request.Items);
         var deliveryType = ParseDeliveryType(request.DeliveryType);
-        var itemsWithProducts = BuildOrderItems(request.Items);
-        var items = itemsWithProducts.Select(i => i.Item).ToList();
-        var subtotal = itemsWithProducts.Sum(i => i.Product.Price * i.Item.Quantity);
-        var promotions = _promotionRepository.GetActivePromotions(DateTime.Today, null, null);
-        var discountedSubtotal = ApplyPromotions(subtotal, items, promotions);
-        var discount = subtotal - discountedSubtotal;
-        var shippingCost = CalculateShipping(deliveryType);
-        var vat = Math.Round(discountedSubtotal * Vat, 2);
-        var total = CalculateTotal(discountedSubtotal, shippingCost);
-        items.ForEach(i => i.Product = null!);
-        var order = BuildOrder(request, deliveryType, items, subtotal, discount, shippingCost, vat, total);
+        var pricing = _pricingService.CalculateOrderPricing(request.Items, deliveryType);
+        var order = BuildOrder(request, deliveryType, pricing);
         var saved = _orderRepository.Add(order);
-        return BuildOrderResponse(request.ClientId, saved.Id, subtotal, shippingCost, total);
+        return BuildOrderResponse(request.ClientId, saved.Id, pricing.Subtotal, pricing.ShippingCost, pricing.Total);
     }
 
     private void ValidateClient(int clientId)
@@ -66,28 +52,7 @@ public class OrderService(
         return result;
     }
 
-    private List<(OrderItem Item, Product Product)> BuildOrderItems(List<OrderItemRequestDTO> items)
-    {
-        return items.Select(i =>
-        {
-            var product = _productRepository.Get(p => p.Id == i.ProductId)
-                ?? throw new NotFoundException($"Producto con id {i.ProductId} no encontrado.");
-
-            if(!product.IsActive)
-            {
-                throw new ArgumentException($"El producto {product.Name} está inactivo.");
-            }
-
-            return (Item: new OrderItem { ProductId = i.ProductId, Quantity = i.Quantity, UnitPrice = product.Price, Product = product }, Product: product);
-        }).ToList();
-    }
-
-    private double CalculateTotal(double discountedSubtotal, double shippingCost)
-    {
-        return Math.Round((discountedSubtotal * (1 + Vat)) + shippingCost, 2);
-    }
-
-    private static Order BuildOrder(CreateOrderRequestDTO request, DeliveryType deliveryType, List<OrderItem> items, double subtotal, double discount, double shippingCost, double vat, double total)
+    private static Order BuildOrder(CreateOrderRequestDTO request, DeliveryType deliveryType, PricingResult pricing)
     {
         return new Order
         {
@@ -97,13 +62,12 @@ public class OrderService(
             Street = request.Address.Street,
             DoorNumber = request.Address.DoorNumber,
             Apartment = request.Address.Apartment,
-            Items = items,
-            Subtotal = subtotal,
-            Discount = discount,
-            ShippingCost = shippingCost,
-            Vat = vat,
-            Total = total,
-            Date = DateTime.Now,
+            Items = pricing.Items,
+            Subtotal = pricing.Subtotal,
+            Discount = pricing.Discount,
+            ShippingCost = pricing.ShippingCost,
+            Vat = pricing.Vat,
+            Total = pricing.Total,
         };
     }
 
@@ -117,38 +81,6 @@ public class OrderService(
             ShippingCost = shippingCost,
             Total = total
         };
-    }
-
-    private static double ApplyPromotions(double subtotal, List<OrderItem> items, List<Promotion> promotions)
-    {
-        double discount = 0;
-
-        foreach(var item in items)
-        {
-            var bestPromotion = promotions
-                .Where(p => p.Products.Any(prod => prod.Id == item.ProductId))
-                .MaxBy(p => p.DiscountPercentage);
-
-            if(bestPromotion != null)
-            {
-                var itemSubtotal = item.Product.Price * item.Quantity;
-                discount += itemSubtotal * (double)(bestPromotion.DiscountPercentage / 100);
-            }
-        }
-
-        return subtotal - discount;
-    }
-
-    private double CalculateShipping(DeliveryType deliveryType)
-    {
-        IShippingStrategy shippingStrategy = deliveryType switch
-        {
-            DeliveryType.Express => new ExpressShipping(),
-            DeliveryType.Standard => new StandardShipping(),
-            _ => throw new ArgumentException("Tipo de entrega no válido")
-        };
-
-        return shippingStrategy.CalculateCost();
     }
 
     public List<GetClientOrdersResponseDTO> GetClientOrders(GetClientOrdersRequestDTO request)
@@ -179,7 +111,13 @@ public class OrderService(
         return orders.Select(order => new GetOrdersResponseDTO
         {
             OrderId = order.Id,
-            ClientName = order.ClientId.ToString(),
+            Client = new ClientInfoDTO
+            {
+                Id = order.Client.Id,
+                Name = order.Client.Name,
+                LastName = order.Client.LastName,
+                Phone = order.Client.Phone
+            },
             Date = order.Date,
             Status = order.Status.ToString(),
             Items = order.Items.Select(item => new OrderItemResponseDTO
@@ -234,7 +172,7 @@ public class OrderService(
 
         if(order.Status != requiredStatus)
         {
-            throw new ArgumentException(errorMessage);
+            throw new ConflictException(errorMessage);
         }
 
         order.Status = newStatus;
@@ -254,7 +192,7 @@ public class OrderService(
     {
         var topProducts = _orderRepository.GetTopProducts(
             o => o.Date >= dateFrom && o.Date <= dateTo,
-            TopProductsCount);
+            AppConstants.TopProductsCount);
 
         return topProducts.Select(p => new TopProductResponseDTO
         {

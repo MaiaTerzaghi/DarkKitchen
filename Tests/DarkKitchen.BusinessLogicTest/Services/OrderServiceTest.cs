@@ -4,6 +4,7 @@ using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.DTOs.Args.In;
+using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 using Moq;
 
@@ -13,9 +14,7 @@ namespace DarkKitchen.BusinessLogicTest.Services;
 public class OrderServiceTest
 {
     private Mock<IOrderRepository> _orderRepositoryMock = null!;
-    private Mock<IRepository<Product>> _productRepositoryMock = null!;
-
-    private Mock<IPromotionRepository> _promotionRepositoryMock = null!;
+    private Mock<IPricingService> _pricingServiceMock = null!;
     private Mock<IRepository<User>> _userRepositoryMock = null!;
     private OrderService _service = null!;
 
@@ -23,100 +22,16 @@ public class OrderServiceTest
     public void Setup()
     {
         _orderRepositoryMock = new Mock<IOrderRepository>();
-        _productRepositoryMock = new Mock<IRepository<Product>>();
-        _promotionRepositoryMock = new Mock<IPromotionRepository>();
+        _pricingServiceMock = new Mock<IPricingService>();
         _userRepositoryMock = new Mock<IRepository<User>>();
-
-        _promotionRepositoryMock
-        .Setup(r => r.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>()))
-        .Returns([]);
 
         _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
                             .Returns(new User { Id = 1, Role = UserRole.Client });
 
         _service = new OrderService(
             _orderRepositoryMock.Object,
-            _productRepositoryMock.Object,
-            _promotionRepositoryMock.Object,
+            _pricingServiceMock.Object,
             _userRepositoryMock.Object);
-    }
-
-    [TestMethod]
-    public void CreateOrder_ValidRequest_ReturnsCorrectTotals()
-    {
-        var product = new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas" };
-
-        var request = new CreateOrderRequestDTO
-        {
-            ClientId = 1,
-            DeliveryType = "Express",
-            Address = new AddressDTO
-            {
-                Street = "18 de Julio",
-                DoorNumber = "1234",
-                Apartment = "2B"
-            },
-            Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
-        };
-
-        _productRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns(product);
-
-        _orderRepositoryMock
-             .Setup(r => r.Add(It.IsAny<Order>()))
-             .Returns((Order o) =>
-            {
-                o.Id = 1;
-                return o;
-            });
-
-        var result = _service.CreateOrder(request);
-
-        Assert.AreEqual(1, result.ClientId);
-        Assert.AreEqual(1, result.OrderId);
-        Assert.AreEqual(200.0, result.Subtotal);
-        Assert.AreEqual(50.0, result.ShippingCost);
-        Assert.AreEqual(294.0, result.Total);
-    }
-
-    [TestMethod]
-    public void CreateOrder_StandardDelivery_ReturnsCorrectShipping()
-    {
-        var product = new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas" };
-
-        var request = new CreateOrderRequestDTO
-        {
-            ClientId = 1,
-            DeliveryType = "Standard",
-            Address = new AddressDTO
-            {
-                Street = "18 de Julio",
-                DoorNumber = "1234",
-                Apartment = "2B"
-            },
-            Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
-        };
-
-        _productRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns(product);
-
-        _orderRepositoryMock
-            .Setup(r => r.Add(It.IsAny<Order>()))
-            .Returns((Order o) =>
-            {
-                o.Id = 1;
-                return o;
-            });
-
-        var result = _service.CreateOrder(request);
-
-        Assert.AreEqual(1, result.ClientId);
-        Assert.AreEqual(1, result.OrderId);
-        Assert.AreEqual(200.0, result.Subtotal);
-        Assert.AreEqual(20.0, result.ShippingCost);
-        Assert.AreEqual(264.0, result.Total);
     }
 
     [TestMethod]
@@ -135,76 +50,6 @@ public class OrderServiceTest
             },
             Items = []
         };
-
-        _service.CreateOrder(request);
-    }
-
-    [TestMethod]
-    public void CreateOrder_WithPromotion_AppliesDiscountCorrectly()
-    {
-        var product = new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas" };
-
-        var promotion = new Promotion
-        {
-            Id = 1,
-            DiscountPercentage = 10, // 10% de descuento
-            Products = [product]
-        };
-
-        var request = new CreateOrderRequestDTO
-        {
-            ClientId = 1,
-            DeliveryType = "Standard",
-            Address = new AddressDTO { Street = "18 de Julio", DoorNumber = "1234", Apartment = "2B" },
-            Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
-        };
-
-        _productRepositoryMock.
-        Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>())).
-        Returns(product);
-
-        _promotionRepositoryMock
-            .Setup(r => r.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>()))
-            .Returns([promotion]);
-
-        _orderRepositoryMock.
-        Setup(r => r.Add(It.IsAny<Order>())).
-        Returns((Order o) =>
-        {
-            o.Id = 1;
-            return o;
-        });
-
-        var result = _service.CreateOrder(request);
-
-        var expectedSubtotal = 200.0;
-        var expectedDiscountedSubtotal = expectedSubtotal * 0.9;
-        var expectedShipping = 20.0;
-        var expectedTotal = Math.Round((expectedDiscountedSubtotal * 1.22) + expectedShipping, 2);
-
-        Assert.AreEqual(expectedTotal, result.Total);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(NotFoundException))]
-    public void CreateOrder_ProductNotFound_ThrowsException()
-    {
-        var request = new CreateOrderRequestDTO
-        {
-            ClientId = 1,
-            DeliveryType = "Express",
-            Address = new AddressDTO
-            {
-                Street = "18 de Julio",
-                DoorNumber = "1234",
-                Apartment = "2B"
-            },
-            Items = [new OrderItemRequestDTO { ProductId = 99, Quantity = 2 }]
-        };
-
-        _productRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns((Product)null!);
 
         _service.CreateOrder(request);
     }
@@ -247,8 +92,16 @@ public class OrderServiceTest
             {
                 Id = 1,
                 ClientId = 10,
-                Status = OrderStatus.Pending,
+                Client = new User
+                {
+                    Id = 10,
+                    Name = "Juan",
+                    LastName = "Perez",
+                    Email = "juan@test.com",
+                    Phone = "+59899000000"
+                },
                 Date = new DateTime(2026, 1, 10),
+                Status = OrderStatus.Pending,
                 Street = "18 de Julio",
                 DoorNumber = "1234",
                 Items =
@@ -298,25 +151,6 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void CreateOrder_InvalidDeliveryType_ThrowsException()
-    {
-        _productRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns(new Product { Id = 1, Price = 100.0 });
-
-        var request = new CreateOrderRequestDTO
-        {
-            ClientId = 1,
-            DeliveryType = "Drone",
-            Address = new AddressDTO { Street = "18 de Julio", DoorNumber = "1234" },
-            Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 1 }]
-        };
-
-        _service.CreateOrder(request);
-    }
-
-    [TestMethod]
     public void MarkAsPrepared_PendingOrder_ReturnsUpdatedStatus()
     {
         var order = new Order
@@ -352,7 +186,7 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(ConflictException))]
     public void MarkAsPrepared_OrderNotPending_ThrowsException()
     {
         var order = new Order
@@ -432,7 +266,7 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(ConflictException))]
     public void DeliverOrder_WhenOrderIsNotOnTheWay_ThrowsException()
     {
         var order = new Order
@@ -487,7 +321,7 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(ConflictException))]
     public void CancelOrder_OrderNotPending_ThrowsException()
     {
         var order = new Order
@@ -515,7 +349,7 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(ConflictException))]
     public void MarkAsOnTheWay_OrderNotPrepared_ThrowsException()
     {
         var order = new Order
@@ -556,39 +390,6 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void CreateOrder_InactiveProduct_ThrowsException()
-    {
-        var product = new Product { Id = 1, Price = 100.0, IsActive = false, CommercialLine = "Pizzas", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate y albahaca", Images = "pizza.jpg", Category = "Fritos", Code = "P0001" };
-
-        var request = new CreateOrderRequestDTO
-        {
-            ClientId = 1,
-            DeliveryType = "Express",
-            Address = new AddressDTO
-            {
-                Street = "18 de Julio",
-                DoorNumber = "1234"
-            },
-            Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
-        };
-
-        _productRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns(product);
-
-        _orderRepositoryMock
-            .Setup(r => r.Add(It.IsAny<Order>()))
-            .Returns((Order o) =>
-            {
-                o.Id = 1;
-                return o;
-            });
-
-        _service.CreateOrder(request);
-    }
-
-    [TestMethod]
     public void MarkAsNotDelivered_OnTheWayOrder_ReturnsUpdatedStatus()
     {
         var order = new Order
@@ -624,7 +425,7 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(ConflictException))]
     public void MarkAsNotDelivered_OrderNotOnTheWay_ThrowsException()
     {
         var order = new Order
@@ -714,9 +515,15 @@ public class OrderServiceTest
             Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 1 }]
         };
 
-        _productRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns(new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas", Name = "Pizza Napolitana", Code = "P0001", Description = "Rica pizza napolitana con tomate y albahaca", Category = "Fritos", Images = "pizza.jpg" });
+        _pricingServiceMock
+            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<DeliveryType>()))
+            .Returns(new PricingResult
+            {
+                Items = [new OrderItem { ProductId = 1, Quantity = 1 }],
+                Subtotal = 100.0,
+                ShippingCost = 50.0,
+                Total = 172.0
+            });
 
         _service.CreateOrder(request);
     }
@@ -738,71 +545,64 @@ public class OrderServiceTest
             Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 1 }]
         };
 
-        _productRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns(new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas", Name = "Pizza Napolitana", Code = "P0001", Description = "Rica pizza napolitana con tomate y albahaca", Category = "Fritos", Images = "pizza.jpg" });
+        _pricingServiceMock
+            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<DeliveryType>()))
+            .Returns(new PricingResult
+            {
+                Items = [new OrderItem { ProductId = 1, Quantity = 1 }],
+                Subtotal = 100.0,
+                ShippingCost = 50.0,
+                Total = 172.0
+            });
 
         _service.CreateOrder(request);
     }
 
     [TestMethod]
-    public void CreateOrder_WithPromotion_AppliesDiscountOnlyToPromotedProduct()
+    public void GetOrders_WhenOrderHasClient_MapsClientInfoCorrectly()
     {
-        var pizza = new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas" };
-        var burger = new Product { Id = 2, Price = 200.0, CommercialLine = "Burgers" };
-
-        var promotion = new Promotion
+        var client = new User
+        {
+            Id = 42,
+            Name = "Juan",
+            LastName = "Perez",
+            Email = "juan@test.com",
+            Phone = "+59899000000"
+        };
+        var order = new Order
         {
             Id = 1,
-            DiscountPercentage = 10,
-            Products = [pizza]
+            ClientId = 42,
+            Client = client,
+            Date = new DateTime(2026, 4, 20),
+            Status = OrderStatus.Pending,
+            Street = "Rivera",
+            DoorNumber = "1234",
+            Items = []
         };
 
-        var request = new CreateOrderRequestDTO
+        _ = _orderRepositoryMock
+            .Setup(r => r.GetOrders(
+                It.IsAny<DateTime>(), It.IsAny<DateTime>(),
+                It.IsAny<string?>(), It.IsAny<OrderStatus?>()))
+            .Returns([order]);
+
+        var result = _service.GetOrders(new GetOrdersRequestDTO
         {
-            ClientId = 1,
-            DeliveryType = "Standard",
-            Address = new AddressDTO { Street = "18 de Julio", DoorNumber = "1234", Apartment = "2B" },
-            Items =
-            [
-                new OrderItemRequestDTO { ProductId = 1, Quantity = 1 },
-                new OrderItemRequestDTO { ProductId = 2, Quantity = 1 }
-            ]
-        };
+            DateFrom = new DateTime(2026, 4, 1),
+            DateTo = new DateTime(2026, 4, 30)
+        });
 
-        _productRepositoryMock
-            .SetupSequence(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns(pizza)
-            .Returns(burger);
-
-        _promotionRepositoryMock
-            .Setup(r => r.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>()))
-            .Returns([promotion]);
-
-        _orderRepositoryMock
-            .Setup(r => r.Add(It.IsAny<Order>()))
-            .Returns((Order o) =>
-            {
-                o.Id = 1;
-                return o;
-            });
-
-        var result = _service.CreateOrder(request);
-
-        var pizzaSubtotal = 100.0;
-        var burgerSubtotal = 200.0;
-        var discountOnPizza = pizzaSubtotal * 0.10;
-        var discountedTotal = pizzaSubtotal + burgerSubtotal - discountOnPizza;
-        var expectedTotal = Math.Round((discountedTotal * 1.22) + 20.0, 2);
-
-        Assert.AreEqual(expectedTotal, result.Total);
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual(42, result[0].Client.Id);
+        Assert.AreEqual("Juan", result[0].Client.Name);
+        Assert.AreEqual("Perez", result[0].Client.LastName);
+        Assert.AreEqual("+59899000000", result[0].Client.Phone);
     }
 
     [TestMethod]
     public void CreateOrder_ValidRequest_FreezesUnitPriceInOrderItem()
     {
-        var product = new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas" };
-
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
@@ -816,9 +616,17 @@ public class OrderServiceTest
             Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
         };
 
-        _productRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns(product);
+        _pricingServiceMock
+            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<DeliveryType>()))
+            .Returns(new PricingResult
+            {
+                Items = [new OrderItem { ProductId = 1, Quantity = 2, UnitPrice = 100.0 }],
+                Subtotal = 200.0,
+                Discount = 0,
+                ShippingCost = 50.0,
+                Vat = 44.0,
+                Total = 294.0
+            });
 
         Order? savedOrder = null;
         _orderRepositoryMock
@@ -839,8 +647,6 @@ public class OrderServiceTest
     [TestMethod]
     public void CreateOrder_ValidRequest_PersistsSubtotal()
     {
-        var product = new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas" };
-
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
@@ -854,9 +660,17 @@ public class OrderServiceTest
             Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
         };
 
-        _productRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns(product);
+        _pricingServiceMock
+            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<DeliveryType>()))
+            .Returns(new PricingResult
+            {
+                Items = [new OrderItem { ProductId = 1, Quantity = 2, UnitPrice = 100.0 }],
+                Subtotal = 200.0,
+                Discount = 0,
+                ShippingCost = 50.0,
+                Vat = 44.0,
+                Total = 294.0
+            });
 
         Order? savedOrder = null;
         _orderRepositoryMock
@@ -877,15 +691,6 @@ public class OrderServiceTest
     [TestMethod]
     public void CreateOrder_WithPromotion_PersistsDiscount()
     {
-        var product = new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas" };
-
-        var promotion = new Promotion
-        {
-            Id = 1,
-            DiscountPercentage = 10,
-            Products = [product]
-        };
-
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
@@ -894,13 +699,17 @@ public class OrderServiceTest
             Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
         };
 
-        _productRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns(product);
-
-        _promotionRepositoryMock
-            .Setup(r => r.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>()))
-            .Returns([promotion]);
+        _pricingServiceMock
+            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<DeliveryType>()))
+            .Returns(new PricingResult
+            {
+                Items = [new OrderItem { ProductId = 1, Quantity = 2, UnitPrice = 100.0 }],
+                Subtotal = 200.0,
+                Discount = 20.0,
+                ShippingCost = 30.0,
+                Vat = 39.6,
+                Total = 249.6
+            });
 
         Order? savedOrder = null;
         _orderRepositoryMock
@@ -921,8 +730,6 @@ public class OrderServiceTest
     [TestMethod]
     public void CreateOrder_ExpressDelivery_PersistsShippingCost()
     {
-        var product = new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas" };
-
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
@@ -936,9 +743,17 @@ public class OrderServiceTest
             Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
         };
 
-        _productRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns(product);
+        _pricingServiceMock
+            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<DeliveryType>()))
+            .Returns(new PricingResult
+            {
+                Items = [new OrderItem { ProductId = 1, Quantity = 2, UnitPrice = 100.0 }],
+                Subtotal = 200.0,
+                Discount = 0,
+                ShippingCost = 50.0,
+                Vat = 44.0,
+                Total = 294.0
+            });
 
         Order? savedOrder = null;
         _orderRepositoryMock
@@ -959,8 +774,6 @@ public class OrderServiceTest
     [TestMethod]
     public void CreateOrder_ValidRequest_PersistsVat()
     {
-        var product = new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas" };
-
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
@@ -974,9 +787,17 @@ public class OrderServiceTest
             Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
         };
 
-        _productRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns(product);
+        _pricingServiceMock
+            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<DeliveryType>()))
+            .Returns(new PricingResult
+            {
+                Items = [new OrderItem { ProductId = 1, Quantity = 2, UnitPrice = 100.0 }],
+                Subtotal = 200.0,
+                Discount = 0,
+                ShippingCost = 50.0,
+                Vat = 44.0,
+                Total = 294.0
+            });
 
         Order? savedOrder = null;
         _orderRepositoryMock
@@ -997,8 +818,6 @@ public class OrderServiceTest
     [TestMethod]
     public void CreateOrder_ValidRequest_PersistsTotal()
     {
-        var product = new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas" };
-
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
@@ -1012,9 +831,17 @@ public class OrderServiceTest
             Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
         };
 
-        _productRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns(product);
+        _pricingServiceMock
+            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<DeliveryType>()))
+            .Returns(new PricingResult
+            {
+                Items = [new OrderItem { ProductId = 1, Quantity = 2, UnitPrice = 100.0 }],
+                Subtotal = 200.0,
+                Discount = 0,
+                ShippingCost = 50.0,
+                Vat = 44.0,
+                Total = 294.0
+            });
 
         Order? savedOrder = null;
         _orderRepositoryMock

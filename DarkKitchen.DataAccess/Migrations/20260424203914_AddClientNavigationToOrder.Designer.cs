@@ -4,6 +4,7 @@ using DarkKitchen.DataAccess.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DarkKitchen.DataAccess.Migrations
 {
     [DbContext(typeof(DarkKitchenContext))]
-    partial class DarkKitchenContextModelSnapshot : ModelSnapshot
+    [Migration("20260424203914_AddClientNavigationToOrder")]
+    partial class AddClientNavigationToOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,15 +46,9 @@ namespace DarkKitchen.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Discount")
-                        .HasColumnType("float");
-
                     b.Property<string>("DoorNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("ShippingCost")
-                        .HasColumnType("float");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -60,17 +57,8 @@ namespace DarkKitchen.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Subtotal")
-                        .HasColumnType("float");
-
-                    b.Property<double>("Total")
-                        .HasColumnType("float");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<double>("Vat")
-                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -95,9 +83,6 @@ namespace DarkKitchen.DataAccess.Migrations
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
-
-                    b.Property<double>("UnitPrice")
-                        .HasColumnType("float");
 
                     b.HasKey("Id");
 

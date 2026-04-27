@@ -20,7 +20,7 @@ public class PromotionController(IPromotionService promotionService) : Controlle
         return Ok(promotions);
     }
 
-    // [AuthorizeRoles(UserRole.Administrative)]
+    [AuthorizeRoles(UserRole.Administrative)]
     [HttpPost]
     public IActionResult CreatePromotion([FromBody] CreatePromotionRequestDTO request)
     {
@@ -28,7 +28,7 @@ public class PromotionController(IPromotionService promotionService) : Controlle
         return Ok(response);
     }
 
-    // [AuthorizeRoles(UserRole.Administrative)]
+    [AuthorizeRoles(UserRole.Administrative)]
     [HttpPut("{id}")]
     public IActionResult UpdatePromotion(int id, [FromBody] UpdatePromotionRequestDTO request)
     {
@@ -36,7 +36,7 @@ public class PromotionController(IPromotionService promotionService) : Controlle
         return Ok(response);
     }
 
-    // [AuthorizeRoles(UserRole.Administrative)]
+    [AuthorizeRoles(UserRole.Administrative)]
     [HttpPost("{id}/products")]
     public IActionResult AddProductToPromotion(int id, [FromQuery] int productId)
     {
@@ -44,7 +44,7 @@ public class PromotionController(IPromotionService promotionService) : Controlle
         return Ok();
     }
 
-    // [AuthorizeRoles(UserRole.Administrative)]
+    [AuthorizeRoles(UserRole.Administrative)]
     [HttpDelete("{id}/products")]
     public IActionResult RemoveProductFromPromotion(int id, [FromQuery] int productId)
     {

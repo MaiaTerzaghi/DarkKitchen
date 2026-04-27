@@ -31,5 +31,11 @@ public sealed class DarkKitchenContext(DbContextOptions<DarkKitchenContext> opti
         modelBuilder.Entity<Promotion>()
             .Property(p => p.DiscountPercentage)
             .HasPrecision(18, 2);
+
+        modelBuilder.Entity<Order>()
+            .HasOne(o => o.Client)
+            .WithMany()
+            .HasForeignKey(o => o.ClientId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

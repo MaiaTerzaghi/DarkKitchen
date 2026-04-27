@@ -33,7 +33,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
         return Ok(orders);
     }
 
-    // [AuthorizeRoles(UserRole.Dispatcher)]
+    [AuthorizeRoles(UserRole.Dispatcher)]
     [HttpGet("by-date")]
     public IActionResult GetOrders([FromQuery] GetOrdersRequestDTO request)
     {
@@ -41,11 +41,11 @@ public class OrderController(IOrderService orderService) : ControllerBase
         return Ok(response);
     }
 
-    // [AuthorizeRoles(UserRole.Dispatcher, UserRole.Administrative)]
-    [HttpPatch("{orderId}/prepared")]
-    public IActionResult MarkAsPrepared(int orderId)
+    [AuthorizeRoles(UserRole.Dispatcher, UserRole.Administrative)]
+    [HttpPatch("{id}/prepared")]
+    public IActionResult MarkAsPrepared(int id)
     {
-        var response = _orderService.MarkAsPrepared(orderId);
+        var response = _orderService.MarkAsPrepared(id);
         return Ok(response);
     }
 
@@ -65,34 +65,43 @@ public class OrderController(IOrderService orderService) : ControllerBase
         return Ok(result);
     }
 
-    // [AuthorizeRoles(UserRole.Administrative)]
-    [HttpPatch("{orderId}/cancel")]
-    public IActionResult CancelOrder(int orderId)
+    [AuthorizeRoles(UserRole.Administrative)]
+    [HttpPatch("{id}/cancel")]
+    public IActionResult CancelOrder(int id)
     {
-        var response = _orderService.CancelOrder(orderId);
+        var response = _orderService.CancelOrder(id);
         return Ok(response);
     }
 
-    // [AuthorizeRoles(UserRole.Dispatcher)]
-    [HttpPatch("{id}/on-the-Way")]
+    [AuthorizeRoles(UserRole.Dispatcher)]
+    [HttpPatch("{id}/on-the-way")]
     public IActionResult MarkAsOnTheWay(int id)
     {
         var result = _orderService.MarkAsOnTheWay(id);
         return Ok(result);
     }
 
-    // [AuthorizeRoles(UserRole.Dispatcher)]
-    [HttpPatch("{orderId}/not-delivered")]
-    public IActionResult MarkAsNotDelivered(int orderId)
+    [AuthorizeRoles(UserRole.Dispatcher)]
+    [HttpPatch("{id}/not-delivered")]
+    public IActionResult MarkAsNotDelivered(int id)
     {
-        var response = _orderService.MarkAsNotDelivered(orderId);
+        var response = _orderService.MarkAsNotDelivered(id);
         return Ok(response);
     }
 
+    [AuthorizeRoles(UserRole.Administrative)]
     [HttpGet("report")]
     public IActionResult GetSalesReport([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
     {
         var response = _orderService.GetSalesReport(page, pageSize);
+        return Ok(response);
+    }
+
+    [AuthorizeRoles(UserRole.Administrative)]
+    [HttpGet("top-products")]
+    public IActionResult GetTopProducts([FromQuery] DateTime dateFrom, [FromQuery] DateTime dateTo)
+    {
+        var response = _orderService.GetTopProducts(dateFrom, dateTo);
         return Ok(response);
     }
 }

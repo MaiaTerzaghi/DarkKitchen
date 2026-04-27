@@ -133,7 +133,13 @@ public class OrderControllerTest
             new GetOrdersResponseDTO
             {
                 OrderId = 1,
-                ClientName = "Juan Perez",
+                Client = new ClientInfoDTO
+                {
+                    Id = 1,
+                    Name = "Juan",
+                    LastName = "Perez",
+                    Phone = "+59899000000"
+                },
                 Date = new DateTime(2026, 1, 10),
                 Status = "Pending",
                 Items = [new OrderItemResponseDTO { ProductName = "Hamburguesa", Quantity = 2 }]
@@ -151,7 +157,9 @@ public class OrderControllerTest
         var response = (List<GetOrdersResponseDTO>)okResult.Value!;
         Assert.AreEqual(expectedOrders.Count, response.Count);
         Assert.AreEqual(expectedOrders[0].OrderId, response[0].OrderId);
-        Assert.AreEqual(expectedOrders[0].ClientName, response[0].ClientName);
+        Assert.AreEqual(expectedOrders[0].Client.Id, response[0].Client.Id);
+        Assert.AreEqual(expectedOrders[0].Client.Name, response[0].Client.Name);
+        Assert.AreEqual(expectedOrders[0].Client.LastName, response[0].Client.LastName);
     }
 
     [TestMethod]
@@ -316,5 +324,32 @@ public class OrderControllerTest
         Assert.AreEqual(1, response.Count);
         Assert.AreEqual(2026, response[0].Year);
         Assert.AreEqual(1, response[0].Month);
+    }
+
+    [TestMethod]
+    public void GetTopProducts_ValidRequest_ReturnsOkWithTopProducts()
+    {
+        var expectedResponse = new List<TopProductResponseDTO>
+        {
+            new TopProductResponseDTO
+            {
+                Code = "P0001",
+                Name = "Pizza Napolitana",
+                Quantity = 10,
+                Images = "pizza.jpg"
+            }
+        };
+
+        _orderServiceMock
+            .Setup(s => s.GetTopProducts(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+            .Returns(expectedResponse);
+
+        var result = _controller.GetTopProducts(new DateTime(2026, 1, 1), new DateTime(2026, 1, 31));
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = (OkObjectResult)result;
+        var response = (List<TopProductResponseDTO>)okResult.Value!;
+        Assert.AreEqual(1, response.Count);
+        Assert.AreEqual("Pizza Napolitana", response[0].Name);
     }
 }

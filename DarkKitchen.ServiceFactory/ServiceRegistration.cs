@@ -38,6 +38,7 @@ public static class ServiceRegistration
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IPromotionService, PromotionService>();
         services.AddScoped<ISessionService, SessionService>();
+        services.AddScoped<IPricingService, PricingService>();
         services.AddScoped<IOrderService, OrderService>();
     }
 }
