@@ -96,12 +96,12 @@ public sealed class UserControllerTest
         };
 
         var userServiceMock = new Mock<IUserService>();
-        userServiceMock.Setup(s => s.GetUsers(It.IsAny<string?>(), It.IsAny<string?>()))
+        userServiceMock.Setup(s => s.GetUsers(It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<int>(), It.IsAny<int>()))
                     .Returns(users);
 
         var controller = new UserController(userServiceMock.Object);
 
-        var result = controller.GetUsers(null, null);
+        var result = controller.GetUsers(null, null, 1, 20);
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
     }
