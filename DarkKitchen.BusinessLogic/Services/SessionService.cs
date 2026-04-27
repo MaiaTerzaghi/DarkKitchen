@@ -1,4 +1,5 @@
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 namespace DarkKitchen.BusinessLogic.Services;
@@ -12,7 +13,7 @@ public class SessionService(ISessionRepository sessionRepository) : ISessionServ
         var session = _sessionRepository.GetSessionByToken(token);
         if(session == null || session.User == null)
         {
-            throw new ArgumentException("Token inválido");
+            throw new UnauthorizedException("Token inválido");
         }
 
         return session.User;

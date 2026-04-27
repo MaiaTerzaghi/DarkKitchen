@@ -1,6 +1,7 @@
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
+using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.IDataAccess;
 using Moq;
 
@@ -27,7 +28,7 @@ public sealed class SessionServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(UnauthorizedException))]
     public void GetUserFromToken_WhenInvalidToken_ThrowsException()
     {
         var sessionRepositoryMock = new Mock<ISessionRepository>();
