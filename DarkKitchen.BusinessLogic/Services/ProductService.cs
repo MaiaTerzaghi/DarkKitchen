@@ -93,7 +93,9 @@ public class ProductService(IRepository<Product> productRepository) : IProductSe
                 (string.IsNullOrEmpty(request.CommercialLine) || p.CommercialLine.Contains(request.CommercialLine)) &&
                 (!request.IsActive.HasValue || p.IsActive == request.IsActive.Value) &&
                 (!request.PriceMin.HasValue || p.Price >= request.PriceMin.Value) &&
-                (!request.PriceMax.HasValue || p.Price <= request.PriceMax.Value));
+                (!request.PriceMax.HasValue || p.Price <= request.PriceMax.Value),
+            page: request.Page,
+            pageSize: request.PageSize);
 
         return products.Select(p => new ProductResponseDTO
         {
