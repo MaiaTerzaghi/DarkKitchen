@@ -17,10 +17,10 @@ public class AuthController(IAuthService authService) : ControllerBase
         return Ok(token);
     }
 
-    [HttpDelete("logout")]
+    [HttpDelete("sessions")]
     public IActionResult Logout([FromHeader] string authorization)
     {
         _authService.Logout(authorization);
-        return Ok("Sesión cerrada correctamente");
+        return NoContent();
     }
 }

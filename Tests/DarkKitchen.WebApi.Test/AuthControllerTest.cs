@@ -55,6 +55,6 @@ public sealed class AuthControllerTest
 
         var result = controller.Logout("token-valido");
 
-        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        Assert.IsInstanceOfType(result, typeof(NoContentResult));
     }
 }
