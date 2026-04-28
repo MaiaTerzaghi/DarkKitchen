@@ -7,7 +7,7 @@ public static class UserValidator
     private const int MinLastNameLength = 3;
     private const int MaxLastNameLength = 25;
     private const string EmailPattern = @"^[^@\s]+@[^@\s]+.[^@\s]+$";
-    private const string PhonePattern = @"^+\d{7,15}$";
+    private const string PhonePattern = @"^\+\d{7,15}$";
 
     public static void ValidateEmail(string email)
     {
