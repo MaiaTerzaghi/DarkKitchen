@@ -6,52 +6,29 @@ namespace DarkKitchen.WebApi.Filters;
 
 public class ExceptionFilter : Attribute, IExceptionFilter
 {
+    private readonly Dictionary<Type, int> _statusCodes = new()
+    {
+        { typeof(NotFoundException), StatusCodes.Status404NotFound },
+        { typeof(ConflictException), StatusCodes.Status409Conflict },
+        { typeof(UnauthorizedException), StatusCodes.Status401Unauthorized },
+        { typeof(ArgumentException), StatusCodes.Status400BadRequest }
+    };
+
     public void OnException(ExceptionContext context)
     {
-        if(context.Exception is NotFoundException)
-        {
-            context.ExceptionHandled = true;
-            context.Result = new ObjectResult(new { message = context.Exception.Message })
-            {
-                StatusCode = StatusCodes.Status404NotFound
-            };
-            return;
-        }
-
-        if(context.Exception is ConflictException)
-        {
-            context.ExceptionHandled = true;
-            context.Result = new ObjectResult(new { message = context.Exception.Message })
-            {
-                StatusCode = StatusCodes.Status409Conflict
-            };
-            return;
-        }
-
-        if(context.Exception is UnauthorizedException)
-        {
-            context.ExceptionHandled = true;
-            context.Result = new ObjectResult(new { message = context.Exception.Message })
-            {
-                StatusCode = StatusCodes.Status401Unauthorized
-            };
-            return;
-        }
-
-        if(context.Exception is ArgumentException)
-        {
-            context.ExceptionHandled = true;
-            context.Result = new ObjectResult(new { message = context.Exception.Message })
-            {
-                StatusCode = StatusCodes.Status400BadRequest
-            };
-            return;
-        }
-
         context.ExceptionHandled = true;
-        context.Result = new ObjectResult(new { message = "Error inesperado en el servidor." })
+
+        var statusCode = _statusCodes.GetValueOrDefault(
+            context.Exception.GetType(),
+            StatusCodes.Status500InternalServerError);
+
+        var message = statusCode == StatusCodes.Status500InternalServerError
+            ? "Error inesperado en el servidor."
+            : context.Exception.Message;
+
+        context.Result = new ObjectResult(new { message })
         {
-            StatusCode = StatusCodes.Status500InternalServerError
+            StatusCode = statusCode
         };
     }
 }

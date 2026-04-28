@@ -1,3 +1,5 @@
+using DarkKitchen.Domain.Validators;
+
 namespace DarkKitchen.Domain.Entities;
 
 public class Promotion
@@ -8,16 +10,14 @@ public class Promotion
     private DateTime _validTo;
 
     public int Id { get; set; }
+    public string ProductLine { get; set; } = string.Empty;
+    public List<Product> Products { get; set; } = [];
     public string Name
     {
         get => _name;
         set
         {
-            if(string.IsNullOrWhiteSpace(value))
-            {
-                throw new ArgumentException("El nombre de la promoción no puede estar vacío.");
-            }
-
+            PromotionValidator.ValidateName(value);
             _name = value;
         }
     }
@@ -27,11 +27,7 @@ public class Promotion
         get => _discountPercentage;
         set
         {
-            if(value <= 0 || value > 100)
-            {
-                throw new ArgumentException("El porcentaje de descuento debe ser mayor que 0 y menor o igual a 100.");
-            }
-
+            PromotionValidator.ValidateDiscountPercentage(value);
             _discountPercentage = value;
         }
     }
@@ -47,15 +43,8 @@ public class Promotion
         get => _validTo;
         set
         {
-            if(value < _validFrom)
-            {
-                throw new ArgumentException("La fecha de fin no puede ser menor que la fecha de inicio.");
-            }
-
+            PromotionValidator.ValidateDateRange(_validFrom, value);
             _validTo = value;
         }
     }
-
-    public string ProductLine { get; set; } = string.Empty;
-    public List<Product> Products { get; set; } = [];
 }
