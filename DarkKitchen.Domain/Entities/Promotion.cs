@@ -8,6 +8,8 @@ public class Promotion
     private DateTime _validTo;
 
     public int Id { get; set; }
+    public string ProductLine { get; set; } = string.Empty;
+    public List<Product> Products { get; set; } = [];
     public string Name
     {
         get => _name;
@@ -55,7 +57,4 @@ public class Promotion
             _validTo = value;
         }
     }
-
-    public string ProductLine { get; set; } = string.Empty;
-    public List<Product> Products { get; set; } = [];
 }
