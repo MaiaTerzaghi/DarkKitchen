@@ -1,4 +1,6 @@
 using DarkKitchen.Domain.Enums;
+using DarkKitchen.Domain.Validators;
+
 namespace DarkKitchen.Domain.Entities;
 
 public class Order
@@ -23,11 +25,7 @@ public class Order
         get => _street;
         set
         {
-            if(string.IsNullOrWhiteSpace(value))
-            {
-                throw new ArgumentException("La calle no puede estar vacía.");
-            }
-
+            OrderValidator.ValidateStreet(value);
             _street = value;
         }
     }
@@ -38,11 +36,7 @@ public class Order
         get => _doorNumber;
         set
         {
-            if(string.IsNullOrWhiteSpace(value))
-            {
-                throw new ArgumentException("El número de puerta no puede estar vacío.");
-            }
-
+            OrderValidator.ValidateDoorNumber(value);
             _doorNumber = value;
         }
     }
