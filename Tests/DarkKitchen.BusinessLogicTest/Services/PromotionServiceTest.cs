@@ -334,11 +334,11 @@ public sealed class PromotionServiceTest
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void AddProductToPromotion_ProductAlreadyHasPromotion_ThrowsException()
+    public void AddProductToPromotion_ProductAlreadyInPromotion_ThrowsException()
     {
-        var product = new Product { Id = 1, Name = "Pizza", Price = 100 };
+        var product = new Product { Id = 1, Name = "Pizza Napolitana", Price = 100 };
 
-        var newPromotion = new Promotion
+        var promotion = new Promotion
         {
             Id = 1,
             Name = "Black Friday",
@@ -350,14 +350,14 @@ public sealed class PromotionServiceTest
 
         _promotionRepositoryMock
             .Setup(r => r.GetPromotionWithProducts(1))
-            .Returns(newPromotion);
+            .Returns(promotion);
 
         _productRepositoryMock
             .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
             .Returns(product);
 
         _promotionRepositoryMock
-            .Setup(r => r.ProductHasActivePromotion(1))
+            .Setup(r => r.ProductExistsInPromotion(1, 1))
             .Returns(true);
 
         _service.AddProductToPromotion(1, 1);
@@ -446,7 +446,7 @@ public sealed class PromotionServiceTest
             .Returns(new Product { Id = 1 });
 
         _promotionRepositoryMock
-            .Setup(r => r.ProductHasActivePromotion(1))
+            .Setup(r => r.ProductExistsInPromotion(1, 1))
             .Returns(false);
 
         _service.AddProductToPromotion(1, 1);

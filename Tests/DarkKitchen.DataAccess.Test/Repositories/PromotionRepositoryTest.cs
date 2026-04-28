@@ -183,7 +183,7 @@ public sealed class PromotionRepositoryTest
     }
 
     [TestMethod]
-    public void ProductHasActivePromotion_WhenProductHasActivePromotion_ReturnsTrue()
+    public void ProductExistsInPromotion_WhenProductIsInPromotion_ReturnsTrue()
     {
         var product = new Product
         {
@@ -208,7 +208,7 @@ public sealed class PromotionRepositoryTest
         _context.SaveChanges();
 
         var repository = new PromotionRepository(_context);
-        var result = repository.ProductHasActivePromotion(product.Id);
+        var result = repository.ProductExistsInPromotion(promotion.Id, product.Id);
 
         Assert.IsTrue(result);
     }
