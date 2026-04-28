@@ -18,11 +18,10 @@ public class PromotionRepository(DarkKitchenContext context)
             .ToList();
     }
 
-    public bool ProductHasActivePromotion(int productId)
+    public bool ProductExistsInPromotion(int promotionId, int productId)
     {
         return context.Promotions
-            .Any(p => p.ValidFrom <= DateTime.Today
-                && p.ValidTo >= DateTime.Today
+            .Any(p => p.Id == promotionId
                 && p.Products.Any(pr => pr.Id == productId));
     }
 
