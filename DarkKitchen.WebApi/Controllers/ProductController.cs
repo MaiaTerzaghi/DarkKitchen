@@ -25,7 +25,7 @@ public class ProductController(IProductService productService) : ControllerBase
     public IActionResult CreateProduct([FromBody] CreateProductRequestDTO request)
     {
         var product = _productService.CreateProduct(request);
-        return Ok(product);
+        return Created(" ", product);
     }
 
     [AuthorizeRoles(UserRole.Administrative)]

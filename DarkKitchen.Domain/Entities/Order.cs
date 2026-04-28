@@ -11,6 +11,13 @@ public class Order
     public DeliveryType DeliveryType { get; set; }
     public OrderStatus Status { get; set; }
     public List<OrderItem> Items { get; set; } = [];
+    public string? Apartment { get; set; }
+    public double Subtotal { get; set; }
+    public double Discount { get; set; }
+    public double ShippingCost { get; set; }
+    public double Vat { get; set; }
+    public double Total { get; set; }
+    public DateTime UpdatedAt { get; set; }
     public string Street
     {
         get => _street;
@@ -39,12 +46,4 @@ public class Order
             _doorNumber = value;
         }
     }
-
-    public string? Apartment { get; set; }
-    public double Subtotal { get; set; }
-    public double Discount { get; set; }
-    public double ShippingCost { get; set; }
-    public double Vat { get; set; }
-    public double Total { get; set; }
-    public DateTime UpdatedAt { get; set; }
 }
