@@ -1,9 +1,11 @@
 using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
+using DarkKitchen.BusinessLogic.Shipping;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.DTOs.Args.In;
+using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 using Moq;
 
@@ -26,9 +28,16 @@ public class PricingServiceTest
             .Setup(r => r.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>()))
             .Returns([]);
 
+        var shippingStrategies = new List<IShippingStrategy>
+        {
+            new ExpressShipping(),
+            new StandardShipping()
+        };
+
         _service = new PricingService(
             _productRepositoryMock.Object,
-            _promotionRepositoryMock.Object);
+            _promotionRepositoryMock.Object,
+            shippingStrategies);
     }
 
     [TestMethod]

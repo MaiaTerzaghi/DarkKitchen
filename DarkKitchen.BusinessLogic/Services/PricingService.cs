@@ -1,4 +1,3 @@
-using DarkKitchen.BusinessLogic.Shipping;
 using DarkKitchen.Domain;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
@@ -12,10 +11,12 @@ namespace DarkKitchen.BusinessLogic.Services;
 
 public class PricingService(
     IRepository<Product> productRepository,
-    IPromotionRepository promotionRepository) : IPricingService
+    IPromotionRepository promotionRepository,
+    IEnumerable<IShippingStrategy> shippingStrategies) : IPricingService
 {
     private readonly IRepository<Product> _productRepository = productRepository;
     private readonly IPromotionRepository _promotionRepository = promotionRepository;
+    private readonly IEnumerable<IShippingStrategy> _shippingStrategies = shippingStrategies;
 
     public PricingResult CalculateOrderPricing(List<OrderItemRequestDTO> items, DeliveryType deliveryType)
     {
@@ -76,15 +77,11 @@ public class PricingService(
         return subtotal - discount;
     }
 
-    private static double CalculateShipping(DeliveryType deliveryType)
+    private double CalculateShipping(DeliveryType deliveryType)
     {
-        IShippingStrategy shippingStrategy = deliveryType switch
-        {
-            DeliveryType.Express => new ExpressShipping(),
-            DeliveryType.Standard => new StandardShipping(),
-            _ => throw new ArgumentException("Tipo de entrega no válido")
-        };
+        var strategy = _shippingStrategies.FirstOrDefault(s => s.Type == deliveryType)
+            ?? throw new ArgumentException("Tipo de entrega no válido");
 
-        return shippingStrategy.CalculateCost();
+        return strategy.CalculateCost();
     }
 }
