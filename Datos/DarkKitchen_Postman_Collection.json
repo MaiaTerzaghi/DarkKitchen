@@ -796,8 +796,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "if (pm.response.code === 200) {",
-                  "    var json = pm.response.json();",
-                  "    pm.environment.set(\"admin_token\", json.token);",
+                  "    pm.environment.set(\"admin_token\", pm.response.text());",
                   "}"
                 ]
               }
@@ -839,8 +838,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "if (pm.response.code === 200) {",
-                  "    var json = pm.response.json();",
-                  "    pm.environment.set(\"dispatcher_token\", json.token);",
+                  "    pm.environment.set(\"dispatcher_token\", pm.response.text());",
                   "}"
                 ]
               }
@@ -882,8 +880,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "if (pm.response.code === 200) {",
-                  "    var json = pm.response.json();",
-                  "    pm.environment.set(\"client_token\", json.token);",
+                  "    pm.environment.set(\"client_token\", pm.response.text());",
                   "}"
                 ]
               }
@@ -1017,8 +1014,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "if (pm.response.code === 200) {",
-                  "    var json = pm.response.json();",
-                  "    pm.environment.set(\"client_token\", json.token);",
+                  "    pm.environment.set(\"client_token\", pm.response.text());",
                   "}"
                 ]
               }
