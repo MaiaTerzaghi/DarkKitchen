@@ -56,6 +56,7 @@ public class OrderRepository(DarkKitchenContext context)
         return context.Orders
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
+            .Include(o => o.ShippingType)
             .FirstOrDefault(o => o.Id == orderId);
     }
 

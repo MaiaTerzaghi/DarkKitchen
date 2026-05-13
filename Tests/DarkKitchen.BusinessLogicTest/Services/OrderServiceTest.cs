@@ -17,6 +17,7 @@ public class OrderServiceTest
     private Mock<IOrderRepository> _orderRepositoryMock = null!;
     private Mock<IPricingService> _pricingServiceMock = null!;
     private Mock<IRepository<User>> _userRepositoryMock = null!;
+    private Mock<IRepository<ShippingType>> _shippingTypeRepositoryMock = null!;
     private OrderService _service = null!;
 
     [TestInitialize]
@@ -25,14 +26,19 @@ public class OrderServiceTest
         _orderRepositoryMock = new Mock<IOrderRepository>();
         _pricingServiceMock = new Mock<IPricingService>();
         _userRepositoryMock = new Mock<IRepository<User>>();
+        _shippingTypeRepositoryMock = new Mock<IRepository<ShippingType>>();
 
         _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
                             .Returns(new User { Id = 1, Role = UserRole.Client });
 
+        _shippingTypeRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<ShippingType, bool>>>()))
+                            .Returns(new ShippingType { Id = 1, Name = "Express", Cost = 50.0 });
+
         _service = new OrderService(
             _orderRepositoryMock.Object,
             _pricingServiceMock.Object,
-            _userRepositoryMock.Object);
+            _userRepositoryMock.Object,
+            _shippingTypeRepositoryMock.Object);
     }
 
     [TestMethod]
@@ -42,7 +48,7 @@ public class OrderServiceTest
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
-            DeliveryType = "Express",
+            ShippingType = "Express",
             Address = new AddressDTO
             {
                 Street = "18 de Julio",
@@ -143,7 +149,7 @@ public class OrderServiceTest
         var request = new CreateOrderRequestDTO
         {
             ClientId = 99,
-            DeliveryType = "Express",
+            ShippingType = "Express",
             Address = new AddressDTO { Street = "18 de Julio", DoorNumber = "1234" },
             Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 1 }]
         };
@@ -212,7 +218,7 @@ public class OrderServiceTest
             Id = 1,
             ClientId = 1,
             Status = OrderStatus.Pending,
-            DeliveryType = DeliveryType.Express,
+            ShippingTypeId = 1,
             Date = DateTime.Now,
             Items = [new OrderItem { ProductId = 1, Quantity = 2, Product = product }]
         };
@@ -237,7 +243,7 @@ public class OrderServiceTest
             Id = 1,
             ClientId = 1,
             Status = OrderStatus.OnTheWay,
-            DeliveryType = DeliveryType.Express,
+            ShippingTypeId = 1,
             Items = []
         };
 
@@ -275,7 +281,7 @@ public class OrderServiceTest
             Id = 1,
             ClientId = 1,
             Status = OrderStatus.Pending,
-            DeliveryType = DeliveryType.Express,
+            ShippingTypeId = 1,
             Items = []
         };
 
@@ -506,7 +512,7 @@ public class OrderServiceTest
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
-            DeliveryType = "Express",
+            ShippingType = "Express",
             Address = new AddressDTO
             {
                 Street = string.Empty,
@@ -517,7 +523,7 @@ public class OrderServiceTest
         };
 
         _pricingServiceMock
-            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<DeliveryType>()))
+            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<ShippingType>()))
             .Returns(new PricingResult
             {
                 Items = [new OrderItem { ProductId = 1, Quantity = 1 }],
@@ -536,7 +542,7 @@ public class OrderServiceTest
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
-            DeliveryType = "Express",
+            ShippingType = "Express",
             Address = new AddressDTO
             {
                 Street = "18 de Julio",
@@ -547,7 +553,7 @@ public class OrderServiceTest
         };
 
         _pricingServiceMock
-            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<DeliveryType>()))
+            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<ShippingType>()))
             .Returns(new PricingResult
             {
                 Items = [new OrderItem { ProductId = 1, Quantity = 1 }],
@@ -607,7 +613,7 @@ public class OrderServiceTest
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
-            DeliveryType = "Express",
+            ShippingType = "Express",
             Address = new AddressDTO
             {
                 Street = "18 de Julio",
@@ -618,7 +624,7 @@ public class OrderServiceTest
         };
 
         _pricingServiceMock
-            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<DeliveryType>()))
+            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<ShippingType>()))
             .Returns(new PricingResult
             {
                 Items = [new OrderItem { ProductId = 1, Quantity = 2, UnitPrice = 100.0 }],
@@ -651,7 +657,7 @@ public class OrderServiceTest
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
-            DeliveryType = "Express",
+            ShippingType = "Express",
             Address = new AddressDTO
             {
                 Street = "18 de Julio",
@@ -662,7 +668,7 @@ public class OrderServiceTest
         };
 
         _pricingServiceMock
-            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<DeliveryType>()))
+            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<ShippingType>()))
             .Returns(new PricingResult
             {
                 Items = [new OrderItem { ProductId = 1, Quantity = 2, UnitPrice = 100.0 }],
@@ -695,13 +701,13 @@ public class OrderServiceTest
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
-            DeliveryType = "Standard",
+            ShippingType = "Standard",
             Address = new AddressDTO { Street = "18 de Julio", DoorNumber = "1234", Apartment = "2B" },
             Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
         };
 
         _pricingServiceMock
-            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<DeliveryType>()))
+            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<ShippingType>()))
             .Returns(new PricingResult
             {
                 Items = [new OrderItem { ProductId = 1, Quantity = 2, UnitPrice = 100.0 }],
@@ -734,7 +740,7 @@ public class OrderServiceTest
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
-            DeliveryType = "Express",
+            ShippingType = "Express",
             Address = new AddressDTO
             {
                 Street = "18 de Julio",
@@ -745,7 +751,7 @@ public class OrderServiceTest
         };
 
         _pricingServiceMock
-            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<DeliveryType>()))
+            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<ShippingType>()))
             .Returns(new PricingResult
             {
                 Items = [new OrderItem { ProductId = 1, Quantity = 2, UnitPrice = 100.0 }],
@@ -778,7 +784,7 @@ public class OrderServiceTest
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
-            DeliveryType = "Express",
+            ShippingType = "Express",
             Address = new AddressDTO
             {
                 Street = "18 de Julio",
@@ -789,7 +795,7 @@ public class OrderServiceTest
         };
 
         _pricingServiceMock
-            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<DeliveryType>()))
+            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<ShippingType>()))
             .Returns(new PricingResult
             {
                 Items = [new OrderItem { ProductId = 1, Quantity = 2, UnitPrice = 100.0 }],
@@ -822,7 +828,7 @@ public class OrderServiceTest
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
-            DeliveryType = "Express",
+            ShippingType = "Express",
             Address = new AddressDTO
             {
                 Street = "18 de Julio",
@@ -833,7 +839,7 @@ public class OrderServiceTest
         };
 
         _pricingServiceMock
-            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<DeliveryType>()))
+            .Setup(s => s.CalculateOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<ShippingType>()))
             .Returns(new PricingResult
             {
                 Items = [new OrderItem { ProductId = 1, Quantity = 2, UnitPrice = 100.0 }],
@@ -892,7 +898,7 @@ public class OrderServiceTest
             Id = 1,
             ClientId = 1,
             Status = OrderStatus.Pending,
-            DeliveryType = DeliveryType.Express,
+            ShippingTypeId = 1,
             Date = DateTime.Now,
             Total = 500.0,
             Items = [new OrderItem { ProductId = 1, Quantity = 2, Product = product }]
@@ -916,7 +922,7 @@ public class OrderServiceTest
             Id = 1,
             ClientId = 1,
             Status = OrderStatus.Pending,
-            DeliveryType = DeliveryType.Express,
+            ShippingTypeId = 1,
             Date = DateTime.Now,
             Total = 500.0,
             Items = [new OrderItem { ProductId = 1, Quantity = 2, UnitPrice = 100.0, Product = product }]

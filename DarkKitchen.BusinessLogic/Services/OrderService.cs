@@ -11,19 +11,21 @@ namespace DarkKitchen.BusinessLogic.Services;
 public class OrderService(
     IOrderRepository orderRepository,
     IPricingService pricingService,
-    IRepository<User> userRepository) : IOrderService
+    IRepository<User> userRepository,
+    IRepository<ShippingType> shippingTypeRepository) : IOrderService
 {
     private readonly IOrderRepository _orderRepository = orderRepository;
     private readonly IPricingService _pricingService = pricingService;
     private readonly IRepository<User> _userRepository = userRepository;
+    private readonly IRepository<ShippingType> _shippingTypeRepository = shippingTypeRepository;
 
     public CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request, int clientId)
     {
         ValidateClient(clientId);
         ValidateItems(request.Items);
-        var deliveryType = ParseDeliveryType(request.DeliveryType);
-        var pricing = _pricingService.CalculateOrderPricing(request.Items, deliveryType);
-        var order = BuildOrder(request, clientId, deliveryType, pricing);
+        var shippingType = ResolveShippingType(request.ShippingType);
+        var pricing = _pricingService.CalculateOrderPricing(request.Items, shippingType);
+        var order = BuildOrder(request, clientId, shippingType, pricing);
         var saved = _orderRepository.Add(order);
         return BuildOrderResponse(clientId, saved.Id, pricing.Subtotal, pricing.ShippingCost, pricing.Total);
     }
@@ -42,22 +44,18 @@ public class OrderService(
         }
     }
 
-    private static DeliveryType ParseDeliveryType(string deliveryType)
+    private ShippingType ResolveShippingType(string shippingTypeName)
     {
-        if(!Enum.TryParse<DeliveryType>(deliveryType, out var result))
-        {
-            throw new ArgumentException($"Tipo de entrega '{deliveryType}' no válido.");
-        }
-
-        return result;
+        return _shippingTypeRepository.Get(st => st.Name == shippingTypeName)
+            ?? throw new ArgumentException($"Tipo de envío '{shippingTypeName}' no válido.");
     }
 
-    private static Order BuildOrder(CreateOrderRequestDTO request, int clientId, DeliveryType deliveryType, PricingResult pricing)
+    private static Order BuildOrder(CreateOrderRequestDTO request, int clientId, ShippingType shippingType, PricingResult pricing)
     {
         return new Order
         {
             ClientId = clientId,
-            DeliveryType = deliveryType,
+            ShippingTypeId = shippingType.Id,
             Status = OrderStatus.Pending,
             Street = request.Address.Street,
             DoorNumber = request.Address.DoorNumber,
@@ -139,7 +137,7 @@ public class OrderService(
             ClientId = order.ClientId,
             Date = order.Date,
             Status = order.Status.ToString(),
-            DeliveryType = order.DeliveryType.ToString(),
+            ShippingType = order.ShippingType?.Name ?? string.Empty,
             Total = order.Total,
             Items = order.Items.Select(i => new OrderItemDetailDTO
             {

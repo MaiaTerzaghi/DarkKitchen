@@ -28,7 +28,7 @@ public class OrderControllerTest
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
-            DeliveryType = "Express",
+            ShippingType = "Express",
             Address = new AddressDTO
             {
                 Street = "18 de Julio",
@@ -76,7 +76,7 @@ public class OrderControllerTest
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
-            DeliveryType = "Express",
+            ShippingType = "Express",
             Address = new AddressDTO
             {
                 Street = "18 de Julio",

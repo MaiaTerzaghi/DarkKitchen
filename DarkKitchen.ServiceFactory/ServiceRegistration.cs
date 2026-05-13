@@ -1,6 +1,5 @@
 using DarkKitchen.BusinessLogic.Security;
 using DarkKitchen.BusinessLogic.Services;
-using DarkKitchen.BusinessLogic.Shipping;
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.DataAccess.Repositories;
 using DarkKitchen.Domain.Entities;
@@ -40,8 +39,7 @@ public static class ServiceRegistration
         services.AddScoped<IPromotionService, PromotionService>();
         services.AddScoped<ISessionService, SessionService>();
 
-        services.AddScoped<IShippingStrategy, ExpressShipping>();
-        services.AddScoped<IShippingStrategy, StandardShipping>();
+        services.AddScoped<IRepository<ShippingType>, Repository<ShippingType>>();
 
         services.AddScoped<IPricingService, PricingService>();
         services.AddScoped<IOrderService, OrderService>();

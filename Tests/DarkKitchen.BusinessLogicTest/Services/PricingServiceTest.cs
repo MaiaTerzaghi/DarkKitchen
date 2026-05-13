@@ -1,11 +1,8 @@
 using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
-using DarkKitchen.BusinessLogic.Shipping;
 using DarkKitchen.Domain.Entities;
-using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.DTOs.Args.In;
-using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 using Moq;
 
@@ -28,16 +25,9 @@ public class PricingServiceTest
             .Setup(r => r.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>()))
             .Returns([]);
 
-        var shippingStrategies = new List<IShippingStrategy>
-        {
-            new ExpressShipping(),
-            new StandardShipping()
-        };
-
         _service = new PricingService(
             _productRepositoryMock.Object,
-            _promotionRepositoryMock.Object,
-            shippingStrategies);
+            _promotionRepositoryMock.Object);
     }
 
     [TestMethod]
@@ -54,7 +44,8 @@ public class PricingServiceTest
             new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }
         };
 
-        var result = _service.CalculateOrderPricing(items, DeliveryType.Express);
+        var expressShipping = new ShippingType { Id = 1, Name = "Express", Cost = 50.0 };
+        var result = _service.CalculateOrderPricing(items, expressShipping);
 
         Assert.AreEqual(200.0, result.Subtotal);
         Assert.AreEqual(50.0, result.ShippingCost);
@@ -75,7 +66,8 @@ public class PricingServiceTest
             new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }
         };
 
-        var result = _service.CalculateOrderPricing(items, DeliveryType.Standard);
+        var standardShipping = new ShippingType { Id = 2, Name = "Standard", Cost = 20.0 };
+        var result = _service.CalculateOrderPricing(items, standardShipping);
 
         Assert.AreEqual(200.0, result.Subtotal);
         Assert.AreEqual(20.0, result.ShippingCost);
@@ -107,7 +99,8 @@ public class PricingServiceTest
             new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }
         };
 
-        var result = _service.CalculateOrderPricing(items, DeliveryType.Standard);
+        var standardShipping = new ShippingType { Id = 2, Name = "Standard", Cost = 20.0 };
+        var result = _service.CalculateOrderPricing(items, standardShipping);
 
         var expectedSubtotal = 200.0;
         var expectedDiscountedSubtotal = expectedSubtotal * 0.9;
@@ -144,7 +137,8 @@ public class PricingServiceTest
             new OrderItemRequestDTO { ProductId = 2, Quantity = 1 }
         };
 
-        var result = _service.CalculateOrderPricing(items, DeliveryType.Standard);
+        var standardShipping = new ShippingType { Id = 2, Name = "Standard", Cost = 20.0 };
+        var result = _service.CalculateOrderPricing(items, standardShipping);
 
         var pizzaSubtotal = 100.0;
         var burgerSubtotal = 200.0;
@@ -168,7 +162,8 @@ public class PricingServiceTest
             new OrderItemRequestDTO { ProductId = 99, Quantity = 2 }
         };
 
-        _service.CalculateOrderPricing(items, DeliveryType.Express);
+        var expressShipping = new ShippingType { Id = 1, Name = "Express", Cost = 50.0 };
+        _service.CalculateOrderPricing(items, expressShipping);
     }
 
     [TestMethod]
@@ -186,22 +181,7 @@ public class PricingServiceTest
             new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }
         };
 
-        _service.CalculateOrderPricing(items, DeliveryType.Express);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void CalculateOrderPricing_InvalidDeliveryType_ThrowsException()
-    {
-        _productRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
-            .Returns(new Product { Id = 1, Price = 100.0 });
-
-        var items = new List<OrderItemRequestDTO>
-        {
-            new OrderItemRequestDTO { ProductId = 1, Quantity = 1 }
-        };
-
-        _service.CalculateOrderPricing(items, (DeliveryType)99);
+        var expressShipping = new ShippingType { Id = 1, Name = "Express", Cost = 50.0 };
+        _service.CalculateOrderPricing(items, expressShipping);
     }
 }
