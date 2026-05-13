@@ -10,7 +10,8 @@ public class Order
     public int Id { get; set; }
     public int ClientId { get; set; }
     public User Client { get; set; } = null!;
-    public DeliveryType DeliveryType { get; set; }
+    public int ShippingTypeId { get; set; }
+    public ShippingType ShippingType { get; set; } = null!;
     public OrderStatus Status { get; set; }
     public List<OrderItem> Items { get; set; } = [];
     public string? Apartment { get; set; }

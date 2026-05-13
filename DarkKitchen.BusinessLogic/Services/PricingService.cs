@@ -1,6 +1,5 @@
 using DarkKitchen.Domain;
 using DarkKitchen.Domain.Entities;
-using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
@@ -11,14 +10,12 @@ namespace DarkKitchen.BusinessLogic.Services;
 
 public class PricingService(
     IRepository<Product> productRepository,
-    IPromotionRepository promotionRepository,
-    IEnumerable<IShippingStrategy> shippingStrategies) : IPricingService
+    IPromotionRepository promotionRepository) : IPricingService
 {
     private readonly IRepository<Product> _productRepository = productRepository;
     private readonly IPromotionRepository _promotionRepository = promotionRepository;
-    private readonly IEnumerable<IShippingStrategy> _shippingStrategies = shippingStrategies;
 
-    public PricingResult CalculateOrderPricing(List<OrderItemRequestDTO> items, DeliveryType deliveryType)
+    public PricingResult CalculateOrderPricing(List<OrderItemRequestDTO> items, ShippingType shippingType)
     {
         var itemsWithProducts = BuildOrderItems(items);
         var orderItems = itemsWithProducts.Select(i => i.Item).ToList();
@@ -26,7 +23,7 @@ public class PricingService(
         var promotions = _promotionRepository.GetActivePromotions(DateTime.Today, null, null);
         var discountedSubtotal = ApplyPromotions(subtotal, itemsWithProducts, promotions);
         var discount = subtotal - discountedSubtotal;
-        var shippingCost = CalculateShipping(deliveryType);
+        var shippingCost = shippingType.Cost;
         var vat = Math.Round(discountedSubtotal * AppConstants.Vat, 2);
         var total = Math.Round((discountedSubtotal * (1 + AppConstants.Vat)) + shippingCost, 2);
 
@@ -75,13 +72,5 @@ public class PricingService(
         }
 
         return subtotal - discount;
-    }
-
-    private double CalculateShipping(DeliveryType deliveryType)
-    {
-        var strategy = _shippingStrategies.FirstOrDefault(s => s.Type == deliveryType)
-            ?? throw new ArgumentException("Tipo de entrega no válido");
-
-        return strategy.CalculateCost();
     }
 }

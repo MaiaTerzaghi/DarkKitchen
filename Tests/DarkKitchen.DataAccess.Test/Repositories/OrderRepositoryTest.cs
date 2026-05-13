@@ -47,6 +47,14 @@ public sealed class OrderRepositoryTest
                 Password = "hash",
                 Role = UserRole.Client
             });
+
+        _context.ShippingTypes.Add(new ShippingType
+        {
+            Id = 1,
+            Name = "Express",
+            Cost = 50.0
+        });
+
         _context.SaveChanges();
     }
 
@@ -63,7 +71,7 @@ public sealed class OrderRepositoryTest
         var order = new Order
         {
             ClientId = 1,
-            DeliveryType = DeliveryType.Express,
+            ShippingTypeId = 1,
             Status = OrderStatus.Pending,
             Street = "18 de Julio",
             DoorNumber = "1234",
@@ -86,7 +94,7 @@ public sealed class OrderRepositoryTest
         var order1 = new Order
         {
             ClientId = 1,
-            DeliveryType = DeliveryType.Express,
+            ShippingTypeId = 1,
             Status = OrderStatus.Pending,
             Street = "18 de Julio",
             DoorNumber = "1234",
@@ -97,7 +105,7 @@ public sealed class OrderRepositoryTest
         var order2 = new Order
         {
             ClientId = 2,
-            DeliveryType = DeliveryType.Express,
+            ShippingTypeId = 1,
             Status = OrderStatus.Pending,
             Street = "Av. Italia",
             DoorNumber = "5678",
@@ -121,7 +129,7 @@ public sealed class OrderRepositoryTest
         var order1 = new Order
         {
             ClientId = 1,
-            DeliveryType = DeliveryType.Express,
+            ShippingTypeId = 1,
             Status = OrderStatus.Pending,
             Street = "18 de Julio",
             DoorNumber = "1234",
@@ -132,7 +140,7 @@ public sealed class OrderRepositoryTest
         var order2 = new Order
         {
             ClientId = 2,
-            DeliveryType = DeliveryType.Express,
+            ShippingTypeId = 1,
             Status = OrderStatus.Pending,
             Street = "Av. Italia",
             DoorNumber = "5678",
@@ -156,7 +164,7 @@ public sealed class OrderRepositoryTest
         var order1 = new Order
         {
             ClientId = 1,
-            DeliveryType = DeliveryType.Express,
+            ShippingTypeId = 1,
             Status = OrderStatus.Pending,
             Street = "18 de Julio",
             DoorNumber = "1234",
@@ -167,7 +175,7 @@ public sealed class OrderRepositoryTest
         var order2 = new Order
         {
             ClientId = 2,
-            DeliveryType = DeliveryType.Express,
+            ShippingTypeId = 1,
             Status = OrderStatus.Delivered,
             Street = "Av. Italia",
             DoorNumber = "5678",
@@ -191,7 +199,7 @@ public sealed class OrderRepositoryTest
         var order = new Order
         {
             ClientId = 1,
-            DeliveryType = DeliveryType.Express,
+            ShippingTypeId = 1,
             Status = OrderStatus.Pending,
             Street = "18 de Julio",
             DoorNumber = "1234",
@@ -226,7 +234,7 @@ public sealed class OrderRepositoryTest
         var orderInRange = new Order
         {
             ClientId = 1,
-            DeliveryType = DeliveryType.Express,
+            ShippingTypeId = 1,
             Status = OrderStatus.Delivered,
             Street = "18 de Julio",
             DoorNumber = "1234",
@@ -237,7 +245,7 @@ public sealed class OrderRepositoryTest
         var orderOutOfRange = new Order
         {
             ClientId = 1,
-            DeliveryType = DeliveryType.Express,
+            ShippingTypeId = 1,
             Status = OrderStatus.Delivered,
             Street = "18 de Julio",
             DoorNumber = "1234",
@@ -287,7 +295,7 @@ public sealed class OrderRepositoryTest
         var order = new Order
         {
             ClientId = 1,
-            DeliveryType = DeliveryType.Express,
+            ShippingTypeId = 1,
             Status = OrderStatus.Delivered,
             Street = "18 de Julio",
             DoorNumber = "1234",
@@ -330,7 +338,7 @@ public sealed class OrderRepositoryTest
             var order = new Order
             {
                 ClientId = 1,
-                DeliveryType = DeliveryType.Express,
+                ShippingTypeId = 1,
                 Status = OrderStatus.Delivered,
                 Street = "18 de Julio",
                 DoorNumber = "1234",
@@ -368,7 +376,7 @@ public sealed class OrderRepositoryTest
         var order1 = new Order
         {
             ClientId = 1,
-            DeliveryType = DeliveryType.Express,
+            ShippingTypeId = 1,
             Status = OrderStatus.Delivered,
             Street = "18 de Julio",
             DoorNumber = "1234",
@@ -379,7 +387,7 @@ public sealed class OrderRepositoryTest
         var order2 = new Order
         {
             ClientId = 2,
-            DeliveryType = DeliveryType.Express,
+            ShippingTypeId = 1,
             Status = OrderStatus.Delivered,
             Street = "18 de Julio",
             DoorNumber = "1234",
@@ -419,7 +427,7 @@ public sealed class OrderRepositoryTest
             _context!.Orders.Add(new Order
             {
                 ClientId = 1,
-                DeliveryType = DeliveryType.Express,
+                ShippingTypeId = 1,
                 Status = OrderStatus.Delivered,
                 Street = "18 de Julio",
                 DoorNumber = "1234",
@@ -453,7 +461,7 @@ public sealed class OrderRepositoryTest
         var order = new Order
         {
             ClientId = 1,
-            DeliveryType = DeliveryType.Express,
+            ShippingTypeId = 1,
             Status = OrderStatus.Delivered,
             Street = "18 de Julio",
             DoorNumber = "1234",
