@@ -87,4 +87,17 @@ public sealed class ShippingTypeServiceTest
         Assert.AreEqual("Envío express", result.Name);
         Assert.AreEqual(250, result.Cost);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void Create_WhenNameIsEmpty_ThrowsArgumentException()
+    {
+        var request = new CreateShippingTypeRequestDTO
+        {
+            Name = "",
+            Cost = 250
+        };
+
+        _service.Create(request);
+    }
 }
