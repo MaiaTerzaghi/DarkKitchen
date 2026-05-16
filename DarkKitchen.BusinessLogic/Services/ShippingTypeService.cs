@@ -38,6 +38,19 @@ public class ShippingTypeService(IRepository<ShippingType> shippingTypeRepositor
 
     public ShippingTypeResponseDTO Create(CreateShippingTypeRequestDTO request)
     {
-        throw new NotImplementedException();
+        var shippingType = new ShippingType
+        {
+            Name = request.Name,
+            Cost = request.Cost
+        };
+
+        var saved = _shippingTypeRepository.Add(shippingType);
+
+        return new ShippingTypeResponseDTO
+        {
+            Id = saved.Id,
+            Name = saved.Name,
+            Cost = saved.Cost
+        };
     }
 }
