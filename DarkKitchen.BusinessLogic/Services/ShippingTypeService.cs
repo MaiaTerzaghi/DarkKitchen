@@ -1,5 +1,6 @@
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Exceptions;
+using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
@@ -33,5 +34,10 @@ public class ShippingTypeService(IRepository<ShippingType> shippingTypeRepositor
             Name = shippingType.Name,
             Cost = shippingType.Cost
         };
+    }
+
+    public ShippingTypeResponseDTO Create(CreateShippingTypeRequestDTO request)
+    {
+        throw new NotImplementedException();
     }
 }

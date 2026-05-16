@@ -1,3 +1,4 @@
+using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Controllers;
@@ -54,5 +55,29 @@ public sealed class ShippingTypeControllerTest
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
         var okResult = (OkObjectResult)result;
         Assert.IsNotNull(okResult.Value);
+    }
+
+    [TestMethod]
+    public void Create_WhenValid_ReturnsCreated()
+    {
+        var request = new CreateShippingTypeRequestDTO
+        {
+            Name = "Envío express",
+            Cost = 250
+        };
+
+        var response = new ShippingTypeResponseDTO
+        {
+            Id = 1,
+            Name = "Envío express",
+            Cost = 250
+        };
+
+        _serviceMock.Setup(s => s.Create(It.IsAny<CreateShippingTypeRequestDTO>()))
+                    .Returns(response);
+
+        var result = _controller.Create(request);
+
+        Assert.IsInstanceOfType(result, typeof(CreatedResult));
     }
 }

@@ -1,4 +1,5 @@
 using DarkKitchen.Domain.Enums;
+using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Filters;
 using Microsoft.AspNetCore.Mvc;
@@ -25,5 +26,12 @@ public class ShippingTypeController(IShippingTypeService shippingTypeService) : 
     {
         var shippingType = _shippingTypeService.GetById(id);
         return Ok(shippingType);
+    }
+
+    [AuthorizeRoles(UserRole.Administrative)]
+    [HttpPost]
+    public IActionResult Create([FromBody] CreateShippingTypeRequestDTO request)
+    {
+        throw new NotImplementedException();
     }
 }
