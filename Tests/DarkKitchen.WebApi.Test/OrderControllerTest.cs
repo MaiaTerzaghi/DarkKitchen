@@ -381,4 +381,29 @@ public class OrderControllerTest
         Assert.AreEqual(1, response.Count);
         Assert.AreEqual("Pizza Napolitana", response[0].Name);
     }
+
+    [TestMethod]
+    public void MarkDelayedAsPrepared_ValidOrderId_ReturnsOkWithUpdatedStatus()
+    {
+        var orderId = 1;
+
+        var expectedResponse = new UpdateOrderStatusResponseDTO
+        {
+            OrderId = orderId,
+            Status = "Prepared",
+            UpdatedAt = DateTime.Now
+        };
+
+        _orderServiceMock
+            .Setup(s => s.MarkDelayedAsPrepared(orderId))
+            .Returns(expectedResponse);
+
+        var result = _controller.MarkDelayedAsPrepared(orderId);
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = (OkObjectResult)result;
+        var response = (UpdateOrderStatusResponseDTO)okResult.Value!;
+        Assert.AreEqual("Prepared", response.Status);
+        Assert.AreEqual(orderId, response.OrderId);
+    }
 }

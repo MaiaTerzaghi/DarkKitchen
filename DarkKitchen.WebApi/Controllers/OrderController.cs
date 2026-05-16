@@ -95,6 +95,13 @@ public class OrderController(IOrderService orderService) : ControllerBase
         return Ok(response);
     }
 
+    [AuthorizeRoles(UserRole.Dispatcher, UserRole.Administrative)]
+    [HttpPatch("{id}/delayed-to-prepared")]
+    public IActionResult MarkDelayedAsPrepared(int id)
+    {
+        throw new NotImplementedException();
+    }
+
     [AuthorizeRoles(UserRole.Administrative)]
     [HttpGet("report")]
     public IActionResult GetSalesReport([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
