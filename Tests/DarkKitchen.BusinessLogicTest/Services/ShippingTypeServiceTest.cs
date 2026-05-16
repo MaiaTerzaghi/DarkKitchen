@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.IDataAccess;
 using Moq;
 
@@ -52,5 +53,15 @@ public sealed class ShippingTypeServiceTest
         Assert.AreEqual(1, result.Id);
         Assert.AreEqual("Envío express", result.Name);
         Assert.AreEqual(250, result.Cost);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(NotFoundException))]
+    public void GetById_WhenNotExists_ThrowsNotFoundException()
+    {
+        _repositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<ShippingType, bool>>>()))
+                       .Returns((ShippingType?)null);
+
+        _service.GetById(999);
     }
 }
