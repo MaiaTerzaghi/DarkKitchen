@@ -1,5 +1,6 @@
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Exceptions;
+using DarkKitchen.Domain.Validators;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
@@ -38,6 +39,8 @@ public class ShippingTypeService(IRepository<ShippingType> shippingTypeRepositor
 
     public ShippingTypeResponseDTO Create(CreateShippingTypeRequestDTO request)
     {
+        ShippingTypeValidator.ValidateName(request.Name);
+
         var shippingType = new ShippingType
         {
             Name = request.Name,

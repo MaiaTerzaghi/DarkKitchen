@@ -94,7 +94,7 @@ public sealed class ShippingTypeServiceTest
     {
         var request = new CreateShippingTypeRequestDTO
         {
-            Name = "",
+            Name = " ",
             Cost = 250
         };
 
