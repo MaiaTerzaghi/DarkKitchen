@@ -172,4 +172,24 @@ public sealed class ShippingTypeServiceTest
 
         _service.Create(request);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ConflictException))]
+    public void Update_WhenNameAlreadyUsedByAnother_ThrowsConflictException()
+    {
+        var request = new UpdateShippingTypeRequestDTO
+        {
+            Name = "Envío en el día",
+            Cost = 300
+        };
+
+        var current = new ShippingType { Id = 1, Name = "Envío express", Cost = 250 };
+        var other = new ShippingType { Id = 2, Name = "Envío en el día", Cost = 200 };
+
+        _repositoryMock.SetupSequence(r => r.Get(It.IsAny<Expression<Func<ShippingType, bool>>>()))
+                       .Returns(current)
+                       .Returns(other);
+
+        _service.Update(1, request);
+    }
 }
