@@ -331,6 +331,31 @@ public class OrderControllerTest
     }
 
     [TestMethod]
+    public void MarkAsDelayed_ValidOrderId_ReturnsOkWithUpdatedStatus()
+    {
+        var orderId = 1;
+
+        var expectedResponse = new UpdateOrderStatusResponseDTO
+        {
+            OrderId = orderId,
+            Status = "Delayed",
+            UpdatedAt = DateTime.Now
+        };
+
+        _orderServiceMock
+            .Setup(s => s.MarkAsDelayed(orderId))
+            .Returns(expectedResponse);
+
+        var result = _controller.MarkAsDelayed(orderId);
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = (OkObjectResult)result;
+        var response = (UpdateOrderStatusResponseDTO)okResult.Value!;
+        Assert.AreEqual("Delayed", response.Status);
+        Assert.AreEqual(orderId, response.OrderId);
+    }
+
+    [TestMethod]
     public void GetTopProducts_ValidRequest_ReturnsOkWithTopProducts()
     {
         var expectedResponse = new List<TopProductResponseDTO>

@@ -164,6 +164,11 @@ public class OrderService(
     public UpdateOrderStatusResponseDTO MarkAsNotDelivered(int orderId) =>
         TransitionOrder(orderId, OrderStatus.OnTheWay, OrderStatus.NotDelivered, "El pedido solo puede marcarse como no entregado si está en camino.");
 
+    public UpdateOrderStatusResponseDTO MarkAsDelayed(int orderId)
+    {
+        throw new NotImplementedException();
+    }
+
     private UpdateOrderStatusResponseDTO TransitionOrder(int orderId, OrderStatus requiredStatus, OrderStatus newStatus, string errorMessage)
     {
         var order = _orderRepository.GetOrderById(orderId)
