@@ -170,6 +170,11 @@ public class OrderService(
     public UpdateOrderStatusResponseDTO MarkDelayedAsPrepared(int orderId) =>
         TransitionOrder(orderId, OrderStatus.Delayed, OrderStatus.Prepared, "El pedido solo puede prepararse desde demorado si está en estado demorado.");
 
+    public UpdateOrderStatusResponseDTO MarkDelayedAsCancelled(int orderId)
+    {
+        throw new NotImplementedException();
+    }
+
     private UpdateOrderStatusResponseDTO TransitionOrder(int orderId, OrderStatus requiredStatus, OrderStatus newStatus, string errorMessage)
     {
         var order = _orderRepository.GetOrderById(orderId)

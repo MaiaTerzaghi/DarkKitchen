@@ -104,6 +104,13 @@ public class OrderController(IOrderService orderService) : ControllerBase
     }
 
     [AuthorizeRoles(UserRole.Administrative)]
+    [HttpPatch("{id}/delayed-to-cancelled")]
+    public IActionResult MarkDelayedAsCancelled(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    [AuthorizeRoles(UserRole.Administrative)]
     [HttpGet("report")]
     public IActionResult GetSalesReport([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
     {
