@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Exceptions;
+using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IDataAccess;
 using Moq;
 
@@ -63,5 +64,27 @@ public sealed class ShippingTypeServiceTest
                        .Returns((ShippingType?)null);
 
         _service.GetById(999);
+    }
+
+    [TestMethod]
+    public void Create_WhenValidData_ReturnsShippingTypeResponse()
+    {
+        var request = new CreateShippingTypeRequestDTO
+        {
+            Name = "Envío express",
+            Cost = 250
+        };
+
+        var saved = new ShippingType { Id = 1, Name = "Envío express", Cost = 250 };
+
+        _repositoryMock.Setup(r => r.Add(It.IsAny<ShippingType>()))
+                       .Returns(saved);
+
+        var result = _service.Create(request);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.Id);
+        Assert.AreEqual("Envío express", result.Name);
+        Assert.AreEqual(250, result.Cost);
     }
 }
