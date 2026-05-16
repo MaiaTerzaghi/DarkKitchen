@@ -100,4 +100,17 @@ public sealed class ShippingTypeServiceTest
 
         _service.Create(request);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void Create_WhenCostIsNegative_ThrowsArgumentException()
+    {
+        var request = new CreateShippingTypeRequestDTO
+        {
+            Name = "Envío express",
+            Cost = -10
+        };
+
+        _service.Create(request);
+    }
 }
