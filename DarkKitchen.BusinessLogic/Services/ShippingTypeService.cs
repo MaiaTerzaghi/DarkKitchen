@@ -72,6 +72,12 @@ public class ShippingTypeService(IRepository<ShippingType> shippingTypeRepositor
         var shippingType = _shippingTypeRepository.Get(st => st.Id == id)
             ?? throw new NotFoundException($"Tipo de envío con id {id} no encontrado.");
 
+        var duplicate = _shippingTypeRepository.Get(st => st.Name == request.Name && st.Id != id);
+        if (duplicate != null)
+        {
+            throw new ConflictException($"Ya existe un tipo de envío con el nombre '{request.Name}'.");
+        }
+
         shippingType.Name = request.Name;
         shippingType.Cost = request.Cost;
 

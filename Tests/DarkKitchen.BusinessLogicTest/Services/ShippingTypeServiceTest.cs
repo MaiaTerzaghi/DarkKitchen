@@ -126,8 +126,9 @@ public sealed class ShippingTypeServiceTest
             Cost = 300
         };
 
-        _repositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<ShippingType, bool>>>()))
-                       .Returns(existing);
+        _repositoryMock.SetupSequence(r => r.Get(It.IsAny<Expression<Func<ShippingType, bool>>>()))
+                       .Returns(existing)
+                       .Returns((ShippingType?)null);
         _repositoryMock.Setup(r => r.Update(It.IsAny<ShippingType>()))
                        .Returns(updated);
 
