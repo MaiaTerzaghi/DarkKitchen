@@ -37,4 +37,20 @@ public sealed class ShippingTypeServiceTest
         Assert.AreEqual("Envío express", result[0].Name);
         Assert.AreEqual(250, result[0].Cost);
     }
+
+    [TestMethod]
+    public void GetById_WhenExists_ReturnsShippingType()
+    {
+        var shippingType = new ShippingType { Id = 1, Name = "Envío express", Cost = 250 };
+
+        _repositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<ShippingType, bool>>>()))
+                       .Returns(shippingType);
+
+        var result = _service.GetById(1);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.Id);
+        Assert.AreEqual("Envío express", result.Name);
+        Assert.AreEqual(250, result.Cost);
+    }
 }
