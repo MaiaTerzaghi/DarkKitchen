@@ -976,4 +976,21 @@ public class OrderServiceTest
         Assert.AreEqual(1, result.OrderId);
         Assert.AreEqual("Delayed", result.Status);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ConflictException))]
+    public void MarkAsDelayed_OrderNotPending_ThrowsException()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            Status = OrderStatus.Prepared
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        _service.MarkAsDelayed(1);
+    }
 }
