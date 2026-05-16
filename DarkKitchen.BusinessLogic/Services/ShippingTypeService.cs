@@ -42,6 +42,12 @@ public class ShippingTypeService(IRepository<ShippingType> shippingTypeRepositor
         ShippingTypeValidator.ValidateName(request.Name);
         ShippingTypeValidator.ValidateCost(request.Cost);
 
+        var existing = _shippingTypeRepository.Get(st => st.Name == request.Name);
+        if (existing != null)
+        {
+            throw new ConflictException($"Ya existe un tipo de envío con el nombre '{request.Name}'.");
+        }
+
         var shippingType = new ShippingType
         {
             Name = request.Name,
