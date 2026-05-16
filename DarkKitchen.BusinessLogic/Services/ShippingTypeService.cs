@@ -1,4 +1,5 @@
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
@@ -23,6 +24,14 @@ public class ShippingTypeService(IRepository<ShippingType> shippingTypeRepositor
 
     public ShippingTypeResponseDTO GetById(int id)
     {
-        throw new NotImplementedException();
+        var shippingType = _shippingTypeRepository.Get(st => st.Id == id)
+            ?? throw new NotFoundException($"Tipo de envío con id {id} no encontrado.");
+
+        return new ShippingTypeResponseDTO
+        {
+            Id = shippingType.Id,
+            Name = shippingType.Name,
+            Cost = shippingType.Cost
+        };
     }
 }
