@@ -3,6 +3,7 @@ using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.DTOs.Args.In;
+using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IDataAccess;
 using Moq;
 
@@ -153,5 +154,23 @@ public sealed class ShippingTypeServiceTest
                        .Returns((ShippingType?)null);
 
         _service.Update(999, request);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ConflictException))]
+    public void Create_WhenNameAlreadyExists_ThrowsConflictException()
+    {
+        var request = new CreateShippingTypeRequestDTO
+        {
+            Name = "Envío express",
+            Cost = 250
+        };
+
+        var existing = new ShippingType { Id = 1, Name = "Envío express", Cost = 250 };
+
+        _repositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<ShippingType, bool>>>()))
+                       .Returns(existing);
+
+        _service.Create(request);
     }
 }
