@@ -40,6 +40,7 @@ public class ShippingTypeController(IShippingTypeService shippingTypeService) : 
     [HttpPut("{id}")]
     public IActionResult Update(int id, [FromBody] UpdateShippingTypeRequestDTO request)
     {
-        throw new NotImplementedException();
+        var shippingType = _shippingTypeService.Update(id, request);
+        return Ok(shippingType);
     }
 }
