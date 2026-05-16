@@ -43,7 +43,7 @@ public class ShippingTypeService(IRepository<ShippingType> shippingTypeRepositor
         ShippingTypeValidator.ValidateCost(request.Cost);
 
         var existing = _shippingTypeRepository.Get(st => st.Name == request.Name);
-        if (existing != null)
+        if(existing != null)
         {
             throw new ConflictException($"Ya existe un tipo de envío con el nombre '{request.Name}'.");
         }
@@ -73,7 +73,7 @@ public class ShippingTypeService(IRepository<ShippingType> shippingTypeRepositor
             ?? throw new NotFoundException($"Tipo de envío con id {id} no encontrado.");
 
         var duplicate = _shippingTypeRepository.Get(st => st.Name == request.Name && st.Id != id);
-        if (duplicate != null)
+        if(duplicate != null)
         {
             throw new ConflictException($"Ya existe un tipo de envío con el nombre '{request.Name}'.");
         }
