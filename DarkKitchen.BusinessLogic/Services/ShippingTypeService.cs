@@ -60,6 +60,22 @@ public class ShippingTypeService(IRepository<ShippingType> shippingTypeRepositor
 
     public ShippingTypeResponseDTO Update(int id, UpdateShippingTypeRequestDTO request)
     {
-        throw new NotImplementedException();
+        ShippingTypeValidator.ValidateName(request.Name);
+        ShippingTypeValidator.ValidateCost(request.Cost);
+
+        var shippingType = _shippingTypeRepository.Get(st => st.Id == id)
+            ?? throw new NotFoundException($"Tipo de envío con id {id} no encontrado.");
+
+        shippingType.Name = request.Name;
+        shippingType.Cost = request.Cost;
+
+        var updated = _shippingTypeRepository.Update(shippingType);
+
+        return new ShippingTypeResponseDTO
+        {
+            Id = updated.Id,
+            Name = updated.Name,
+            Cost = updated.Cost
+        };
     }
 }
