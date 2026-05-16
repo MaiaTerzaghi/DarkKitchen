@@ -113,4 +113,29 @@ public sealed class ShippingTypeServiceTest
 
         _service.Create(request);
     }
+
+    [TestMethod]
+    public void Update_WhenExists_ReturnsUpdatedShippingType()
+    {
+        var existing = new ShippingType { Id = 1, Name = "Envío express", Cost = 250 };
+        var updated = new ShippingType { Id = 1, Name = "Envío express modificado", Cost = 300 };
+
+        var request = new UpdateShippingTypeRequestDTO
+        {
+            Name = "Envío express modificado",
+            Cost = 300
+        };
+
+        _repositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<ShippingType, bool>>>()))
+                       .Returns(existing);
+        _repositoryMock.Setup(r => r.Update(It.IsAny<ShippingType>()))
+                       .Returns(updated);
+
+        var result = _service.Update(1, request);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.Id);
+        Assert.AreEqual("Envío express modificado", result.Name);
+        Assert.AreEqual(300, result.Cost);
+    }
 }
