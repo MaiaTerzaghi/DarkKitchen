@@ -18,4 +18,11 @@ public class ShippingTypeController(IShippingTypeService shippingTypeService) : 
         var shippingTypes = _shippingTypeService.GetAll();
         return Ok(shippingTypes);
     }
+
+    [AuthorizeRoles(UserRole.Administrative)]
+    [HttpGet("{id}")]
+    public IActionResult GetById(int id)
+    {
+        throw new NotImplementedException();
+    }
 }

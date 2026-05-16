@@ -36,4 +36,23 @@ public sealed class ShippingTypeControllerTest
         var okResult = (OkObjectResult)result;
         Assert.IsNotNull(okResult.Value);
     }
+
+    [TestMethod]
+    public void GetById_WhenExists_ReturnsOk()
+    {
+        var shippingType = new ShippingTypeResponseDTO
+        {
+            Id = 1,
+            Name = "Envío express",
+            Cost = 250
+        };
+
+        _serviceMock.Setup(s => s.GetById(1)).Returns(shippingType);
+
+        var result = _controller.GetById(1);
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = (OkObjectResult)result;
+        Assert.IsNotNull(okResult.Value);
+    }
 }

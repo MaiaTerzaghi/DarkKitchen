@@ -5,4 +5,5 @@ namespace DarkKitchen.IBusinessLogic;
 public interface IShippingTypeService
 {
     List<ShippingTypeResponseDTO> GetAll();
+    ShippingTypeResponseDTO GetById(int id);
 }

@@ -20,4 +20,9 @@ public class ShippingTypeService(IRepository<ShippingType> shippingTypeRepositor
             Cost = st.Cost
         }).ToList();
     }
+
+    public ShippingTypeResponseDTO GetById(int id)
+    {
+        throw new NotImplementedException();
+    }
 }
