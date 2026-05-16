@@ -952,4 +952,28 @@ public class OrderServiceTest
 
         Assert.AreEqual(800.0, result.Months[0].MonthlyTotal);
     }
+
+    [TestMethod]
+    public void MarkAsDelayed_PendingOrder_ReturnsDelayedStatus()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            Status = OrderStatus.Pending
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        _orderRepositoryMock
+            .Setup(r => r.Update(It.IsAny<Order>()))
+            .Returns(order);
+
+        var result = _service.MarkAsDelayed(1);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.OrderId);
+        Assert.AreEqual("Delayed", result.Status);
+    }
 }
