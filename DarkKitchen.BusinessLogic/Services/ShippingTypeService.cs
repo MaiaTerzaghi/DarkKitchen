@@ -40,6 +40,7 @@ public class ShippingTypeService(IRepository<ShippingType> shippingTypeRepositor
     public ShippingTypeResponseDTO Create(CreateShippingTypeRequestDTO request)
     {
         ShippingTypeValidator.ValidateName(request.Name);
+        ShippingTypeValidator.ValidateCost(request.Cost);
 
         var shippingType = new ShippingType
         {
