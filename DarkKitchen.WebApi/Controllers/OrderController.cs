@@ -99,7 +99,8 @@ public class OrderController(IOrderService orderService) : ControllerBase
     [HttpPatch("{id}/delayed-to-prepared")]
     public IActionResult MarkDelayedAsPrepared(int id)
     {
-        throw new NotImplementedException();
+        var response = _orderService.MarkDelayedAsPrepared(id);
+        return Ok(response);
     }
 
     [AuthorizeRoles(UserRole.Administrative)]
