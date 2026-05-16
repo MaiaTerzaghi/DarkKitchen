@@ -107,7 +107,8 @@ public class OrderController(IOrderService orderService) : ControllerBase
     [HttpPatch("{id}/delayed-to-cancelled")]
     public IActionResult MarkDelayedAsCancelled(int id)
     {
-        throw new NotImplementedException();
+        var response = _orderService.MarkDelayedAsCancelled(id);
+        return Ok(response);
     }
 
     [AuthorizeRoles(UserRole.Administrative)]
