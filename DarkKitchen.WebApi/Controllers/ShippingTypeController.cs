@@ -23,6 +23,7 @@ public class ShippingTypeController(IShippingTypeService shippingTypeService) : 
     [HttpGet("{id}")]
     public IActionResult GetById(int id)
     {
-        throw new NotImplementedException();
+        var shippingType = _shippingTypeService.GetById(id);
+        return Ok(shippingType);
     }
 }
