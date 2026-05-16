@@ -78,6 +78,6 @@ public sealed class ShippingTypeControllerTest
 
         var result = _controller.Create(request);
 
-        Assert.IsInstanceOfType(result, typeof(CreatedResult));
+        Assert.IsInstanceOfType(result, typeof(CreatedAtActionResult));
     }
 }

@@ -32,6 +32,7 @@ public class ShippingTypeController(IShippingTypeService shippingTypeService) : 
     [HttpPost]
     public IActionResult Create([FromBody] CreateShippingTypeRequestDTO request)
     {
-        throw new NotImplementedException();
+        var shippingType = _shippingTypeService.Create(request);
+        return CreatedAtAction(nameof(GetById), new { id = shippingType.Id }, shippingType);
     }
 }
