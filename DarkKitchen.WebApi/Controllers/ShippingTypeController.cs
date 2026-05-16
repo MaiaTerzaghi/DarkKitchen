@@ -1,5 +1,4 @@
 using DarkKitchen.Domain.Enums;
-using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Filters;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +15,7 @@ public class ShippingTypeController(IShippingTypeService shippingTypeService) : 
     [HttpGet]
     public IActionResult GetAll()
     {
-        throw new NotImplementedException();
+        var shippingTypes = _shippingTypeService.GetAll();
+        return Ok(shippingTypes);
     }
 }
