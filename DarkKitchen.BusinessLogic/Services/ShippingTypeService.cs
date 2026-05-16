@@ -57,4 +57,9 @@ public class ShippingTypeService(IRepository<ShippingType> shippingTypeRepositor
             Cost = saved.Cost
         };
     }
+
+    public ShippingTypeResponseDTO Update(int id, UpdateShippingTypeRequestDTO request)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -80,4 +80,30 @@ public sealed class ShippingTypeControllerTest
 
         Assert.IsInstanceOfType(result, typeof(CreatedAtActionResult));
     }
+
+    [TestMethod]
+    public void Update_WhenValid_ReturnsOk()
+    {
+        var request = new UpdateShippingTypeRequestDTO
+        {
+            Name = "Envío express modificado",
+            Cost = 300
+        };
+
+        var response = new ShippingTypeResponseDTO
+        {
+            Id = 1,
+            Name = "Envío express modificado",
+            Cost = 300
+        };
+
+        _serviceMock.Setup(s => s.Update(1, It.IsAny<UpdateShippingTypeRequestDTO>()))
+                    .Returns(response);
+
+        var result = _controller.Update(1, request);
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = (OkObjectResult)result;
+        Assert.IsNotNull(okResult.Value);
+    }
 }

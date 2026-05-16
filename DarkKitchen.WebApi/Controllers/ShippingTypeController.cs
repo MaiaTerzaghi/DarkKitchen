@@ -35,4 +35,11 @@ public class ShippingTypeController(IShippingTypeService shippingTypeService) : 
         var shippingType = _shippingTypeService.Create(request);
         return CreatedAtAction(nameof(GetById), new { id = shippingType.Id }, shippingType);
     }
+
+    [AuthorizeRoles(UserRole.Administrative)]
+    [HttpPut("{id}")]
+    public IActionResult Update(int id, [FromBody] UpdateShippingTypeRequestDTO request)
+    {
+        throw new NotImplementedException();
+    }
 }
