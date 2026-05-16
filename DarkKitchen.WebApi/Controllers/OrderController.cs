@@ -91,7 +91,8 @@ public class OrderController(IOrderService orderService) : ControllerBase
     [HttpPatch("{id}/delayed")]
     public IActionResult MarkAsDelayed(int id)
     {
-        throw new NotImplementedException();
+        var response = _orderService.MarkAsDelayed(id);
+        return Ok(response);
     }
 
     [AuthorizeRoles(UserRole.Administrative)]
