@@ -138,4 +138,20 @@ public sealed class ShippingTypeServiceTest
         Assert.AreEqual("Envío express modificado", result.Name);
         Assert.AreEqual(300, result.Cost);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(NotFoundException))]
+    public void Update_WhenNotExists_ThrowsNotFoundException()
+    {
+        var request = new UpdateShippingTypeRequestDTO
+        {
+            Name = "Envío express",
+            Cost = 250
+        };
+
+        _repositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<ShippingType, bool>>>()))
+                       .Returns((ShippingType?)null);
+
+        _service.Update(999, request);
+    }
 }
