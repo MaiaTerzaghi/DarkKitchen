@@ -40,6 +40,7 @@ public static class ServiceRegistration
         services.AddScoped<ISessionService, SessionService>();
 
         services.AddScoped<IRepository<ShippingType>, Repository<ShippingType>>();
+        services.AddScoped<IShippingTypeService, ShippingTypeService>();
 
         services.AddScoped<IPricingService, PricingService>();
         services.AddScoped<IOrderService, OrderService>();
