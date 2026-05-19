@@ -43,4 +43,11 @@ public class Order
             _doorNumber = value;
         }
     }
+
+    public void Prepare() => State.Prepare(this);
+    public void Cancel() => State.Cancel(this);
+    public void MarkOnTheWay() => State.MarkOnTheWay(this);
+    public void Deliver() => State.Deliver(this);
+    public void MarkNotDelivered() => State.MarkNotDelivered(this);
+    public void MarkDelayed() => State.MarkDelayed(this);
 }

@@ -2,7 +2,6 @@ using DarkKitchen.Domain;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
-using DarkKitchen.Domain.States;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
@@ -151,29 +150,29 @@ public class OrderService(
     }
 
     public UpdateOrderStatusResponseDTO MarkAsPrepared(int orderId) =>
-    ApplyTransition(orderId, (state, order) => state.Prepare(order));
+        ApplyTransition(orderId, order => order.Prepare());
 
     public UpdateOrderStatusResponseDTO DeliverOrder(int orderId) =>
-        ApplyTransition(orderId, (state, order) => state.Deliver(order));
+        ApplyTransition(orderId, order => order.Deliver());
 
     public UpdateOrderStatusResponseDTO CancelOrder(int orderId) =>
-        ApplyTransition(orderId, (state, order) => state.Cancel(order));
+        ApplyTransition(orderId, order => order.Cancel());
 
     public UpdateOrderStatusResponseDTO MarkAsOnTheWay(int orderId) =>
-        ApplyTransition(orderId, (state, order) => state.MarkOnTheWay(order));
+        ApplyTransition(orderId, order => order.MarkOnTheWay());
 
     public UpdateOrderStatusResponseDTO MarkAsNotDelivered(int orderId) =>
-        ApplyTransition(orderId, (state, order) => state.MarkNotDelivered(order));
+        ApplyTransition(orderId, order => order.MarkNotDelivered());
 
     public UpdateOrderStatusResponseDTO MarkAsDelayed(int orderId) =>
-        ApplyTransition(orderId, (state, order) => state.MarkDelayed(order));
+        ApplyTransition(orderId, order => order.MarkDelayed());
 
-    private UpdateOrderStatusResponseDTO ApplyTransition(int orderId, Action<IOrderState, Order> transition)
+    private UpdateOrderStatusResponseDTO ApplyTransition(int orderId, Action<Order> transition)
     {
         var order = _orderRepository.GetOrderById(orderId)
             ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
 
-        transition(order.State, order);
+        transition(order);
 
         order.UpdatedAt = DateTime.Now;
         _orderRepository.Update(order);
