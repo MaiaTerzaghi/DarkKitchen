@@ -13,6 +13,6 @@ public static class OrderStateFactory
         OrderStatus.NotDelivered => new NotDeliveredState(),
         OrderStatus.Cancelled => new CancelledState(),
         OrderStatus.Delayed => new DelayedState(),
-        _ => throw new ArgumentOutOfRangeException(nameof(status), status, "Estado de pedido desconocido.")
+        _ => throw new ArgumentException($"Estado de pedido desconocido: {status}.", nameof(status))
     };
 }

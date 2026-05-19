@@ -1095,8 +1095,8 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentOutOfRangeException))]
-    public void OrderStateFactory_InvalidStatus_ThrowsArgumentOutOfRangeException()
+    [ExpectedException(typeof(ArgumentException))]
+    public void OrderStateFactory_InvalidStatus_ThrowsArgumentException()
     {
         OrderStateFactory.Create((OrderStatus)999);
     }
