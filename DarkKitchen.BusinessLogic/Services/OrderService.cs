@@ -2,6 +2,7 @@ using DarkKitchen.Domain;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
+using DarkKitchen.Domain.States;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
@@ -149,75 +150,32 @@ public class OrderService(
         };
     }
 
-    public UpdateOrderStatusResponseDTO MarkAsPrepared(int orderId)
-    {
-        var order = _orderRepository.GetOrderById(orderId)
-            ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
-
-        if (order.Status != OrderStatus.Pending && order.Status != OrderStatus.Delayed)
-        {
-            throw new ConflictException("El pedido solo puede prepararse si está pendiente o demorado.");
-        }
-
-        order.Status = OrderStatus.Prepared;
-        order.UpdatedAt = DateTime.Now;
-        _orderRepository.Update(order);
-
-        return new UpdateOrderStatusResponseDTO
-        {
-            OrderId = order.Id,
-            Status = order.Status.ToString(),
-            UpdatedAt = order.UpdatedAt
-        };
-    }
+    public UpdateOrderStatusResponseDTO MarkAsPrepared(int orderId) =>
+    ApplyTransition(orderId, (state, order) => state.Prepare(order));
 
     public UpdateOrderStatusResponseDTO DeliverOrder(int orderId) =>
-        TransitionOrder(orderId, OrderStatus.OnTheWay, OrderStatus.Delivered, "El pedido solo puede entregarse si está en camino.");
+        ApplyTransition(orderId, (state, order) => state.Deliver(order));
 
-    public UpdateOrderStatusResponseDTO CancelOrder(int orderId)
-    {
-        var order = _orderRepository.GetOrderById(orderId)
-            ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
-
-        if (order.Status != OrderStatus.Pending && order.Status != OrderStatus.Delayed)
-        {
-            throw new ConflictException("El pedido solo puede cancelarse si está pendiente o demorado.");
-        }
-
-        order.Status = OrderStatus.Cancelled;
-        order.UpdatedAt = DateTime.Now;
-        _orderRepository.Update(order);
-
-        return new UpdateOrderStatusResponseDTO
-        {
-            OrderId = order.Id,
-            Status = order.Status.ToString(),
-            UpdatedAt = order.UpdatedAt
-        };
-    }
+    public UpdateOrderStatusResponseDTO CancelOrder(int orderId) =>
+        ApplyTransition(orderId, (state, order) => state.Cancel(order));
 
     public UpdateOrderStatusResponseDTO MarkAsOnTheWay(int orderId) =>
-        TransitionOrder(orderId, OrderStatus.Prepared, OrderStatus.OnTheWay, "El pedido solo puede ponerse en camino si está preparado.");
+        ApplyTransition(orderId, (state, order) => state.MarkOnTheWay(order));
 
     public UpdateOrderStatusResponseDTO MarkAsNotDelivered(int orderId) =>
-        TransitionOrder(orderId, OrderStatus.OnTheWay, OrderStatus.NotDelivered, "El pedido solo puede marcarse como no entregado si está en camino.");
+        ApplyTransition(orderId, (state, order) => state.MarkNotDelivered(order));
 
     public UpdateOrderStatusResponseDTO MarkAsDelayed(int orderId) =>
-        TransitionOrder(orderId, OrderStatus.Pending, OrderStatus.Delayed, "El pedido solo puede marcarse como demorado si está pendiente.");
+        ApplyTransition(orderId, (state, order) => state.MarkDelayed(order));
 
-    private UpdateOrderStatusResponseDTO TransitionOrder(int orderId, OrderStatus requiredStatus, OrderStatus newStatus, string errorMessage)
+    private UpdateOrderStatusResponseDTO ApplyTransition(int orderId, Action<IOrderState, Order> transition)
     {
         var order = _orderRepository.GetOrderById(orderId)
             ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
 
-        if(order.Status != requiredStatus)
-        {
-            throw new ConflictException(errorMessage);
-        }
+        transition(order.State, order);
 
-        order.Status = newStatus;
         order.UpdatedAt = DateTime.Now;
-
         _orderRepository.Update(order);
 
         return new UpdateOrderStatusResponseDTO
