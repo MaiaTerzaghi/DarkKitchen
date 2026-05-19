@@ -95,22 +95,6 @@ public class OrderController(IOrderService orderService) : ControllerBase
         return Ok(response);
     }
 
-    [AuthorizeRoles(UserRole.Dispatcher, UserRole.Administrative)]
-    [HttpPatch("{id}/delayed-to-prepared")]
-    public IActionResult MarkDelayedAsPrepared(int id)
-    {
-        var response = _orderService.MarkDelayedAsPrepared(id);
-        return Ok(response);
-    }
-
-    [AuthorizeRoles(UserRole.Administrative)]
-    [HttpPatch("{id}/delayed-to-cancelled")]
-    public IActionResult MarkDelayedAsCancelled(int id)
-    {
-        var response = _orderService.MarkDelayedAsCancelled(id);
-        return Ok(response);
-    }
-
     [AuthorizeRoles(UserRole.Administrative)]
     [HttpGet("report")]
     public IActionResult GetSalesReport([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
