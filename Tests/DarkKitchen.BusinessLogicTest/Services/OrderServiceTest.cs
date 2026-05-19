@@ -1058,5 +1058,38 @@ public class OrderServiceTest
 
         _service.MarkAsPrepared(1);
     }
-    
+
+    [TestMethod]
+    [ExpectedException(typeof(ConflictException))]
+    public void MarkAsPrepared_DeliveredOrder_ThrowsConflictException()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            Status = OrderStatus.Delivered
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        _service.MarkAsPrepared(1);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ConflictException))]
+    public void MarkAsPrepared_NotDeliveredOrder_ThrowsConflictException()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            Status = OrderStatus.NotDelivered
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        _service.MarkAsPrepared(1);
+    }
 }
