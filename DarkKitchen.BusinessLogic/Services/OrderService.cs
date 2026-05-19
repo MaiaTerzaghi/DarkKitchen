@@ -174,8 +174,27 @@ public class OrderService(
     public UpdateOrderStatusResponseDTO DeliverOrder(int orderId) =>
         TransitionOrder(orderId, OrderStatus.OnTheWay, OrderStatus.Delivered, "El pedido solo puede entregarse si está en camino.");
 
-    public UpdateOrderStatusResponseDTO CancelOrder(int orderId) =>
-        TransitionOrder(orderId, OrderStatus.Pending, OrderStatus.Cancelled, "El pedido solo puede cancelarse si está pendiente.");
+    public UpdateOrderStatusResponseDTO CancelOrder(int orderId)
+    {
+        var order = _orderRepository.GetOrderById(orderId)
+            ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
+
+        if (order.Status != OrderStatus.Pending && order.Status != OrderStatus.Delayed)
+        {
+            throw new ConflictException("El pedido solo puede cancelarse si está pendiente o demorado.");
+        }
+
+        order.Status = OrderStatus.Cancelled;
+        order.UpdatedAt = DateTime.Now;
+        _orderRepository.Update(order);
+
+        return new UpdateOrderStatusResponseDTO
+        {
+            OrderId = order.Id,
+            Status = order.Status.ToString(),
+            UpdatedAt = order.UpdatedAt
+        };
+    }
 
     public UpdateOrderStatusResponseDTO MarkAsOnTheWay(int orderId) =>
         TransitionOrder(orderId, OrderStatus.Prepared, OrderStatus.OnTheWay, "El pedido solo puede ponerse en camino si está preparado.");
