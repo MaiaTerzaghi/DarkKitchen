@@ -1041,4 +1041,28 @@ public class OrderServiceTest
         Assert.AreEqual(1, result.OrderId);
         Assert.AreEqual("Cancelled", result.Status);
     }
+
+    [TestMethod]
+    public void MarkAsPrepared_DelayedOrder_ReturnsPreparedStatus()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            Status = OrderStatus.Delayed
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        _orderRepositoryMock
+            .Setup(r => r.Update(It.IsAny<Order>()))
+            .Returns(order);
+
+        var result = _service.MarkAsPrepared(1);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.OrderId);
+        Assert.AreEqual("Prepared", result.Status);
+    }
 }
