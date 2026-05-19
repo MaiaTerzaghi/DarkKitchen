@@ -3,6 +3,7 @@ using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
+using DarkKitchen.Domain.States;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
@@ -1091,5 +1092,12 @@ public class OrderServiceTest
             .Returns(order);
 
         _service.MarkAsPrepared(1);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentOutOfRangeException))]
+    public void OrderStateFactory_InvalidStatus_ThrowsArgumentOutOfRangeException()
+    {
+        OrderStateFactory.Create((OrderStatus)999);
     }
 }
