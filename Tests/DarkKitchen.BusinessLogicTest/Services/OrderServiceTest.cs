@@ -1041,4 +1041,22 @@ public class OrderServiceTest
         Assert.AreEqual(1, result.OrderId);
         Assert.AreEqual("Cancelled", result.Status);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ConflictException))]
+    public void MarkAsPrepared_CancelledOrder_ThrowsConflictException()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            Status = OrderStatus.Cancelled
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        _service.MarkAsPrepared(1);
+    }
+    
 }
