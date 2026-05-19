@@ -149,8 +149,27 @@ public class OrderService(
         };
     }
 
-    public UpdateOrderStatusResponseDTO MarkAsPrepared(int orderId) =>
-        TransitionOrder(orderId, OrderStatus.Pending, OrderStatus.Prepared, "El pedido solo puede prepararse si está pendiente.");
+    public UpdateOrderStatusResponseDTO MarkAsPrepared(int orderId)
+    {
+        var order = _orderRepository.GetOrderById(orderId)
+            ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
+
+        if (order.Status != OrderStatus.Pending && order.Status != OrderStatus.Delayed)
+        {
+            throw new ConflictException("El pedido solo puede prepararse si está pendiente o demorado.");
+        }
+
+        order.Status = OrderStatus.Prepared;
+        order.UpdatedAt = DateTime.Now;
+        _orderRepository.Update(order);
+
+        return new UpdateOrderStatusResponseDTO
+        {
+            OrderId = order.Id,
+            Status = order.Status.ToString(),
+            UpdatedAt = order.UpdatedAt
+        };
+    }
 
     public UpdateOrderStatusResponseDTO DeliverOrder(int orderId) =>
         TransitionOrder(orderId, OrderStatus.OnTheWay, OrderStatus.Delivered, "El pedido solo puede entregarse si está en camino.");
