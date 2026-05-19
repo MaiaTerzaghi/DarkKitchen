@@ -1,4 +1,5 @@
 using DarkKitchen.Domain.Enums;
+using DarkKitchen.Domain.States;
 using DarkKitchen.Domain.Validators;
 
 namespace DarkKitchen.Domain.Entities;
@@ -13,6 +14,7 @@ public class Order
     public int ShippingTypeId { get; set; }
     public ShippingType ShippingType { get; set; } = null!;
     public OrderStatus Status { get; set; }
+    public IOrderState State => OrderStateFactory.Create(Status);
     public List<OrderItem> Items { get; set; } = [];
     public string? Apartment { get; set; }
     public double Subtotal { get; set; }
