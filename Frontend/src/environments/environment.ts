@@ -1,1 +1,1 @@
-export default { darkKitchenApi: 'http://localhost:5041/api' };
+export default { darkKitchenApi: 'https://localhost:7243/api' };
