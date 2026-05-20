@@ -7,7 +7,7 @@ import { AuthService } from '../../../backend/services/auth/auth.service';
   selector: 'app-login-form',
   templateUrl: './login-form.component.html',
   standalone: false,
-  styles: [],
+  styleUrls: ['./login-form.component.css'],
 })
 export class LoginFormComponent {
   loginForm = new FormGroup({
@@ -16,16 +16,23 @@ export class LoginFormComponent {
   });
 
   errorMessage: string = '';
+  showPassword: boolean = false;
 
   constructor(
     private readonly _authService: AuthService,
     private readonly _router: Router
   ) {}
 
+  public togglePassword(): void {
+    this.showPassword = !this.showPassword;
+  }
+
   public onSubmit(): void {
     if (this.loginForm.invalid) {
       return;
     }
+
+    this.errorMessage = '';
 
     const credentials = {
       email: this.loginForm.value.email!,
