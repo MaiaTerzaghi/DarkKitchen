@@ -13,6 +13,7 @@ public interface IOrderService
     UpdateOrderStatusResponseDTO CancelOrder(int orderId);
     UpdateOrderStatusResponseDTO MarkAsOnTheWay(int orderId);
     UpdateOrderStatusResponseDTO MarkAsNotDelivered(int orderId);
+    UpdateOrderStatusResponseDTO MarkAsDelayed(int orderId);
     List<TopProductResponseDTO> GetTopProducts(DateTime dateFrom, DateTime dateTo);
     SalesReportWithTotalDTO GetSalesReport(int page, int pageSize);
 }

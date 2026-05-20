@@ -3,6 +3,7 @@ using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
+using DarkKitchen.Domain.States;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
@@ -951,5 +952,152 @@ public class OrderServiceTest
         var result = _service.GetSalesReport(1, 20);
 
         Assert.AreEqual(800.0, result.Months[0].MonthlyTotal);
+    }
+
+    [TestMethod]
+    public void MarkAsDelayed_PendingOrder_ReturnsDelayedStatus()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            Status = OrderStatus.Pending
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        _orderRepositoryMock
+            .Setup(r => r.Update(It.IsAny<Order>()))
+            .Returns(order);
+
+        var result = _service.MarkAsDelayed(1);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.OrderId);
+        Assert.AreEqual("Delayed", result.Status);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ConflictException))]
+    public void MarkAsDelayed_OrderNotPending_ThrowsException()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            Status = OrderStatus.Prepared
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        _service.MarkAsDelayed(1);
+    }
+
+    [TestMethod]
+    public void MarkAsPrepared_DelayedOrder_ReturnsPreparedStatus()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            Status = OrderStatus.Delayed
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        _orderRepositoryMock
+            .Setup(r => r.Update(It.IsAny<Order>()))
+            .Returns(order);
+
+        var result = _service.MarkAsPrepared(1);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.OrderId);
+        Assert.AreEqual("Prepared", result.Status);
+    }
+
+    [TestMethod]
+    public void CancelOrder_DelayedOrder_ReturnsCancelledStatus()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            Status = OrderStatus.Delayed
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        _orderRepositoryMock
+            .Setup(r => r.Update(It.IsAny<Order>()))
+            .Returns(order);
+
+        var result = _service.CancelOrder(1);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.OrderId);
+        Assert.AreEqual("Cancelled", result.Status);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ConflictException))]
+    public void MarkAsPrepared_CancelledOrder_ThrowsConflictException()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            Status = OrderStatus.Cancelled
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        _service.MarkAsPrepared(1);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ConflictException))]
+    public void MarkAsPrepared_DeliveredOrder_ThrowsConflictException()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            Status = OrderStatus.Delivered
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        _service.MarkAsPrepared(1);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ConflictException))]
+    public void MarkAsPrepared_NotDeliveredOrder_ThrowsConflictException()
+    {
+        var order = new Order
+        {
+            Id = 1,
+            Status = OrderStatus.NotDelivered
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetOrderById(1))
+            .Returns(order);
+
+        _service.MarkAsPrepared(1);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void OrderStateFactory_InvalidStatus_ThrowsArgumentException()
+    {
+        OrderStateFactory.Create((OrderStatus)999);
     }
 }

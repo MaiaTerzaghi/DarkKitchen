@@ -87,6 +87,14 @@ public class OrderController(IOrderService orderService) : ControllerBase
         return Ok(response);
     }
 
+    [AuthorizeRoles(UserRole.Dispatcher)]
+    [HttpPatch("{id}/delayed")]
+    public IActionResult MarkAsDelayed(int id)
+    {
+        var response = _orderService.MarkAsDelayed(id);
+        return Ok(response);
+    }
+
     [AuthorizeRoles(UserRole.Administrative)]
     [HttpGet("report")]
     public IActionResult GetSalesReport([FromQuery] int page = 1, [FromQuery] int pageSize = 20)

@@ -39,5 +39,7 @@ public sealed class DarkKitchenContext(DbContextOptions<DarkKitchenContext> opti
             .WithMany()
             .HasForeignKey(o => o.ClientId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Order>().Ignore(o => o.State);
     }
 }

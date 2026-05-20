@@ -150,33 +150,31 @@ public class OrderService(
     }
 
     public UpdateOrderStatusResponseDTO MarkAsPrepared(int orderId) =>
-        TransitionOrder(orderId, OrderStatus.Pending, OrderStatus.Prepared, "El pedido solo puede prepararse si está pendiente.");
+        ApplyTransition(orderId, order => order.Prepare());
 
     public UpdateOrderStatusResponseDTO DeliverOrder(int orderId) =>
-        TransitionOrder(orderId, OrderStatus.OnTheWay, OrderStatus.Delivered, "El pedido solo puede entregarse si está en camino.");
+        ApplyTransition(orderId, order => order.Deliver());
 
     public UpdateOrderStatusResponseDTO CancelOrder(int orderId) =>
-        TransitionOrder(orderId, OrderStatus.Pending, OrderStatus.Cancelled, "El pedido solo puede cancelarse si está pendiente.");
+        ApplyTransition(orderId, order => order.Cancel());
 
     public UpdateOrderStatusResponseDTO MarkAsOnTheWay(int orderId) =>
-        TransitionOrder(orderId, OrderStatus.Prepared, OrderStatus.OnTheWay, "El pedido solo puede ponerse en camino si está preparado.");
+        ApplyTransition(orderId, order => order.MarkOnTheWay());
 
     public UpdateOrderStatusResponseDTO MarkAsNotDelivered(int orderId) =>
-        TransitionOrder(orderId, OrderStatus.OnTheWay, OrderStatus.NotDelivered, "El pedido solo puede marcarse como no entregado si está en camino.");
+        ApplyTransition(orderId, order => order.MarkNotDelivered());
 
-    private UpdateOrderStatusResponseDTO TransitionOrder(int orderId, OrderStatus requiredStatus, OrderStatus newStatus, string errorMessage)
+    public UpdateOrderStatusResponseDTO MarkAsDelayed(int orderId) =>
+        ApplyTransition(orderId, order => order.MarkDelayed());
+
+    private UpdateOrderStatusResponseDTO ApplyTransition(int orderId, Action<Order> transition)
     {
         var order = _orderRepository.GetOrderById(orderId)
             ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
 
-        if(order.Status != requiredStatus)
-        {
-            throw new ConflictException(errorMessage);
-        }
+        transition(order);
 
-        order.Status = newStatus;
         order.UpdatedAt = DateTime.Now;
-
         _orderRepository.Update(order);
 
         return new UpdateOrderStatusResponseDTO
