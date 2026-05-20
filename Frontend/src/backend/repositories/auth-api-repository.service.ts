@@ -15,6 +15,8 @@ export class AuthApiRepositoryService extends ApiRepository {
   }
 
   public login(credentials: LoginRequest): Observable<LoginResponse> {
-    return this.post(credentials, 'login'); // El primer parámetro es el body (email y password), el segundo es el la ruta extra que concatena el padre .
+    return this._http.post(`${this.fullEndpoint}/login`, credentials, {
+      responseType: 'text',
+    });
   }
 }
