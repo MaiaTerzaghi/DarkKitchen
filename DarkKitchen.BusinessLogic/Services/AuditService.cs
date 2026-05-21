@@ -23,6 +23,11 @@ public class AuditService : IAuditService
             throw new ArgumentException("La fecha-hora desde debe ser menor que la fecha-hora hasta.");
         }
 
+        if(request.EntityName is null)
+        {
+            throw new ArgumentException("El filtro de entidad es obligatorio.");
+        }
+
         return [];
     }
 }
