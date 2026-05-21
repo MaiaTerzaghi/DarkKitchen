@@ -54,6 +54,7 @@ public class ProductService(IRepository<Product> productRepository, IAuditSubjec
         {
             EntityName = AuditedEntity.Product,
             EntityId = saved.Id,
+            Description = $"Alta de producto '{saved.Name}' ({saved.Code}).",
             ResponsibleUser = responsibleUser
         });
 
