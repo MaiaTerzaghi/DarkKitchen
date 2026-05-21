@@ -28,6 +28,11 @@ public class AuditService : IAuditService
             throw new ArgumentException("El filtro de entidad es obligatorio.");
         }
 
+        if(request.EntityId is null)
+        {
+            throw new ArgumentException("El filtro de id de entidad es obligatorio.");
+        }
+
         return [];
     }
 }
