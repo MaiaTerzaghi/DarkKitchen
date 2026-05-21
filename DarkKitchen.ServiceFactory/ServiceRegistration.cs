@@ -3,13 +3,14 @@ using DarkKitchen.BusinessLogic.Security;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.DataAccess.Repositories;
+using DarkKitchen.Domain.Auditing;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using DarkKitchen.Domain.Auditing;
+
 namespace DarkKitchen.ServiceFactory;
 
 public static class ServiceRegistration

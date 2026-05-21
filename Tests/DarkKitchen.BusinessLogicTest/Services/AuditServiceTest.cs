@@ -118,7 +118,7 @@ public sealed class AuditServiceTest
         };
         _auditRepositoryMock
             .Setup(r => r.GetByEntity(It.IsAny<AuditedEntity>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-            .Returns(new List<AuditLog> { log });
+            .Returns([log]);
         var request = new GetAuditLogsRequestDTO
         {
             EntityName = AuditedEntity.Product,

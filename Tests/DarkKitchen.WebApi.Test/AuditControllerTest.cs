@@ -15,7 +15,7 @@ public sealed class AuditControllerTest
     {
         var auditServiceMock = new Mock<IAuditService>();
         auditServiceMock.Setup(s => s.GetLogs(It.IsAny<GetAuditLogsRequestDTO>()))
-            .Returns(new List<AuditLogResponseDTO>());
+            .Returns([]);
         var controller = new AuditController(auditServiceMock.Object);
 
         var result = controller.GetLogs(new GetAuditLogsRequestDTO());
