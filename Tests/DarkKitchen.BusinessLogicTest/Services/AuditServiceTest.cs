@@ -42,4 +42,18 @@ public sealed class AuditServiceTest
 
         service.GetLogs(request);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void GetLogs_WhenEntityNameIsMissing_ThrowsArgumentException()
+    {
+        var service = new AuditService();
+        var request = new GetAuditLogsRequestDTO
+        {
+            DateFrom = new DateTime(2026, 4, 23, 8, 0, 0),
+            DateTo = new DateTime(2026, 4, 23, 10, 0, 0)
+        };
+
+        service.GetLogs(request);
+    }
 }
