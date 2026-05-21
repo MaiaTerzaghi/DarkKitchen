@@ -8,6 +8,13 @@ public class AuditService : IAuditService
 {
     public List<AuditLogResponseDTO> GetLogs(GetAuditLogsRequestDTO request)
     {
+        ValidateFilters(request);
+
+        return [];
+    }
+
+    private static void ValidateFilters(GetAuditLogsRequestDTO request)
+    {
         if(request.DateFrom is null)
         {
             throw new ArgumentException("El filtro fecha-hora desde es obligatorio.");
@@ -32,7 +39,5 @@ public class AuditService : IAuditService
         {
             throw new ArgumentException("El filtro de id de entidad es obligatorio.");
         }
-
-        return [];
     }
 }
