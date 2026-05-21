@@ -18,6 +18,11 @@ public class AuditService : IAuditService
             throw new ArgumentException("El filtro fecha-hora hasta es obligatorio.");
         }
 
+        if(request.DateFrom.Value >= request.DateTo.Value)
+        {
+            throw new ArgumentException("La fecha-hora desde debe ser menor que la fecha-hora hasta.");
+        }
+
         return [];
     }
 }
