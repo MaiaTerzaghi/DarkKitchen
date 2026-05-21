@@ -8,6 +8,7 @@ namespace DarkKitchen.BusinessLogic.Services;
 public class AuditService(IAuditRepository auditRepository) : IAuditService
 {
     private readonly IAuditRepository _auditRepository = auditRepository;
+
     public List<AuditLogResponseDTO> GetLogs(GetAuditLogsRequestDTO request)
     {
         ValidateFilters(request);
@@ -18,7 +19,15 @@ public class AuditService(IAuditRepository auditRepository) : IAuditService
             request.DateFrom!.Value,
             request.DateTo!.Value);
 
-        return logs.Select(log => new AuditLogResponseDTO()).ToList();
+        return logs.Select(log => new AuditLogResponseDTO
+        {
+            Id = log.Id,
+            Timestamp = log.Timestamp,
+            EntityName = log.EntityName.ToString(),
+            EntityId = log.EntityId,
+            Description = log.Description,
+            ResponsibleUser = log.ResponsibleUser
+        }).ToList();
     }
 
     private static void ValidateFilters(GetAuditLogsRequestDTO request)
