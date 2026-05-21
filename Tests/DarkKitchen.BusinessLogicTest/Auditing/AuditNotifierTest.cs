@@ -11,7 +11,7 @@ public sealed class AuditNotifierTest
     public void Notify_WhenObserverAttached_CallsUpdateOnObserver()
     {
         var observerMock = new Mock<IAuditObserver>();
-        var notifier = new AuditNotifier();
+        var notifier = new AuditNotifier([]);
         notifier.Attach(observerMock.Object);
         var auditEvent = new AuditEvent();
 
@@ -25,7 +25,7 @@ public sealed class AuditNotifierTest
     {
         var firstObserver = new Mock<IAuditObserver>();
         var secondObserver = new Mock<IAuditObserver>();
-        var notifier = new AuditNotifier();
+        var notifier = new AuditNotifier([]);
         notifier.Attach(firstObserver.Object);
         notifier.Attach(secondObserver.Object);
 
