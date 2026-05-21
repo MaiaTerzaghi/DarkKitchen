@@ -31,4 +31,17 @@ public sealed class AuditLogObserverTest
             log.Description == "Alta de producto." &&
             log.ResponsibleUser == "admin@email.com")), Times.Once);
     }
+
+    [TestMethod]
+    public void Update_WhenEventReceived_SetsTimestamp()
+    {
+        var auditRepositoryMock = new Mock<IAuditRepository>();
+        var observer = new AuditLogObserver(auditRepositoryMock.Object);
+        var before = DateTime.UtcNow;
+
+        observer.Update(new AuditEvent());
+
+        auditRepositoryMock.Verify(r => r.Add(It.Is<AuditLog>(log =>
+            log.Timestamp >= before)), Times.Once);
+    }
 }
