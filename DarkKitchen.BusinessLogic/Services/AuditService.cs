@@ -1,16 +1,24 @@
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
+using DarkKitchen.IDataAccess;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class AuditService : IAuditService
+public class AuditService(IAuditRepository auditRepository) : IAuditService
 {
+    private readonly IAuditRepository _auditRepository = auditRepository;
     public List<AuditLogResponseDTO> GetLogs(GetAuditLogsRequestDTO request)
     {
         ValidateFilters(request);
 
-        return [];
+        var logs = _auditRepository.GetByEntity(
+            request.EntityName!.Value,
+            request.EntityId!.Value,
+            request.DateFrom!.Value,
+            request.DateTo!.Value);
+
+        return logs.Select(log => new AuditLogResponseDTO()).ToList();
     }
 
     private static void ValidateFilters(GetAuditLogsRequestDTO request)
