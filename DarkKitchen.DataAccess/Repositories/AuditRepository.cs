@@ -11,7 +11,8 @@ public class AuditLogRepository(DarkKitchenContext context)
     public List<AuditLog> GetByEntity(AuditedEntity entityName, int entityId, DateTime from, DateTime to)
     {
         return context.AuditLogs
-            .Where(a => a.EntityId == entityId
+            .Where(a => a.EntityName == entityName
+                && a.EntityId == entityId
                 && a.Timestamp >= from
                 && a.Timestamp <= to)
             .ToList();
