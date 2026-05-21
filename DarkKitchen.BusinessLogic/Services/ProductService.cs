@@ -1,4 +1,6 @@
+using DarkKitchen.Domain.Auditing;
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
@@ -6,9 +8,10 @@ using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class ProductService(IRepository<Product> productRepository) : IProductService
+public class ProductService(IRepository<Product> productRepository, IAuditSubject audit) : IProductService
 {
     private readonly IRepository<Product> _productRepository = productRepository;
+    private readonly IAuditSubject _audit = audit;
 
     public List<ProductResponseDTO> GetAll(string? name, string? category, string? line, int page = 1, int pageSize = 20)
     {
@@ -46,6 +49,13 @@ public class ProductService(IRepository<Product> productRepository) : IProductSe
         };
 
         var saved = _productRepository.Add(product);
+
+        _audit.Notify(new AuditEvent
+        {
+            EntityName = AuditedEntity.Product,
+            EntityId = saved.Id,
+            ResponsibleUser = responsibleUser
+        });
 
         return new ProductResponseDTO
         {
