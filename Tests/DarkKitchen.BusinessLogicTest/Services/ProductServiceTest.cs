@@ -500,4 +500,30 @@ public sealed class ProductServiceTest
             e.EntityId == 5 &&
             e.ResponsibleUser == "admin@email.com")), Times.Once);
     }
+
+    [TestMethod]
+    public void CreateProduct_WhenValidData_NotifiesAuditWithDescription()
+    {
+        var auditSubjectMock = new Mock<IAuditSubject>();
+        var productRepositoryMock = new Mock<IRepository<Product>>();
+        productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
+            .Returns(new Product { Id = 5, Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
+
+        var productService = new ProductService(productRepositoryMock.Object, auditSubjectMock.Object);
+        var request = new CreateProductRequestDTO
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = "pizza.jpg"
+        };
+
+        productService.CreateProduct(request, "admin@email.com");
+
+        auditSubjectMock.Verify(a => a.Notify(It.Is<AuditEvent>(e =>
+            e.Description.Contains("P0001"))), Times.Once);
+    }
 }
