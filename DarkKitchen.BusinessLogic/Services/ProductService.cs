@@ -31,7 +31,7 @@ public class ProductService(IRepository<Product> productRepository) : IProductSe
         }).ToList();
     }
 
-    public ProductResponseDTO CreateProduct(CreateProductRequestDTO request)
+    public ProductResponseDTO CreateProduct(CreateProductRequestDTO request, string responsibleUser)
     {
         var product = new Product
         {

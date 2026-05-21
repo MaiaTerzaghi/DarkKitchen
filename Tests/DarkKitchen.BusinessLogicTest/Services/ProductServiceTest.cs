@@ -92,7 +92,7 @@ public sealed class ProductServiceTest
                             .Returns(product);
 
         var productService = new ProductService(productRepositoryMock.Object);
-        var result = productService.CreateProduct(request);
+        var result = productService.CreateProduct(request, "admin@email.com");
 
         Assert.IsNotNull(result);
         Assert.AreEqual("P0001", result.Code);
@@ -118,7 +118,7 @@ public sealed class ProductServiceTest
                      .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
 
         var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -141,7 +141,7 @@ public sealed class ProductServiceTest
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
 
         var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -164,7 +164,7 @@ public sealed class ProductServiceTest
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
 
         var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -187,7 +187,7 @@ public sealed class ProductServiceTest
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
 
         var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -210,7 +210,7 @@ public sealed class ProductServiceTest
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
 
         var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -233,7 +233,7 @@ public sealed class ProductServiceTest
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
 
         var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -256,7 +256,7 @@ public sealed class ProductServiceTest
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
 
         var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -279,7 +279,7 @@ public sealed class ProductServiceTest
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
 
         var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -302,7 +302,7 @@ public sealed class ProductServiceTest
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
 
         var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -325,7 +325,7 @@ public sealed class ProductServiceTest
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
 
         var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -348,7 +348,7 @@ public sealed class ProductServiceTest
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
 
         var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -371,7 +371,7 @@ public sealed class ProductServiceTest
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
 
         var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]

@@ -90,10 +90,13 @@ public sealed class ProductControllerTest
         };
 
         var productServiceMock = new Mock<IProductService>();
-        productServiceMock.Setup(s => s.CreateProduct(It.IsAny<CreateProductRequestDTO>()))
+        productServiceMock.Setup(s => s.CreateProduct(It.IsAny<CreateProductRequestDTO>(), It.IsAny<string>()))
                         .Returns(response);
 
         var controller = new ProductController(productServiceMock.Object);
+        controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
+        controller.HttpContext.Items["RequestingUser"] = new User { Id = 1, Email = "admin@email.com" };
+
         var result = controller.CreateProduct(request);
 
         Assert.IsInstanceOfType(result, typeof(CreatedResult));
