@@ -34,4 +34,15 @@ public sealed class AuditNotifierTest
         firstObserver.Verify(o => o.Update(It.IsAny<AuditEvent>()), Times.Once);
         secondObserver.Verify(o => o.Update(It.IsAny<AuditEvent>()), Times.Once);
     }
+
+    [TestMethod]
+    public void Notify_WhenObserversInjectedInConstructor_CallsUpdate()
+    {
+        var observerMock = new Mock<IAuditObserver>();
+        var notifier = new AuditNotifier([observerMock.Object]);
+
+        notifier.Notify(new AuditEvent());
+
+        observerMock.Verify(o => o.Update(It.IsAny<AuditEvent>()), Times.Once);
+    }
 }
