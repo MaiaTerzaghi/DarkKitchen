@@ -1,3 +1,4 @@
+using DarkKitchen.BusinessLogic.Auditing;
 using DarkKitchen.BusinessLogic.Security;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.DataAccess.Context;
@@ -8,7 +9,7 @@ using DarkKitchen.IDataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
+using DarkKitchen.Domain.Auditing;
 namespace DarkKitchen.ServiceFactory;
 
 public static class ServiceRegistration
@@ -33,6 +34,9 @@ public static class ServiceRegistration
         services.AddScoped<IAuditRepository, AuditLogRepository>();
 
         services.AddSingleton<IPasswordManager, PasswordManager>();
+
+        services.AddScoped<IAuditObserver, AuditLogObserver>();
+        services.AddScoped<IAuditSubject, AuditNotifier>();
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserService, UserService>();
