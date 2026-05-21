@@ -4,9 +4,15 @@ namespace DarkKitchen.BusinessLogic.Auditing;
 
 public sealed class AuditNotifier : IAuditSubject
 {
-    private IAuditObserver? _observer;
+    private readonly List<IAuditObserver> _observers = [];
 
-    public void Attach(IAuditObserver observer) => _observer = observer;
+    public void Attach(IAuditObserver observer) => _observers.Add(observer);
 
-    public void Notify(AuditEvent auditEvent) => _observer?.Update(auditEvent);
+    public void Notify(AuditEvent auditEvent)
+    {
+        foreach(var observer in _observers)
+        {
+            observer.Update(auditEvent);
+        }
+    }
 }
