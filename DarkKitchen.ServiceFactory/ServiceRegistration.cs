@@ -30,6 +30,7 @@ public static class ServiceRegistration
         services.AddScoped<IPromotionRepository, PromotionRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<ISessionRepository, SessionRepository>();
+        services.AddScoped<IAuditRepository, AuditLogRepository>();
 
         services.AddSingleton<IPasswordManager, PasswordManager>();
 
@@ -38,6 +39,7 @@ public static class ServiceRegistration
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IPromotionService, PromotionService>();
         services.AddScoped<ISessionService, SessionService>();
+        services.AddScoped<IAuditService, AuditService>();
 
         services.AddScoped<IRepository<ShippingType>, Repository<ShippingType>>();
         services.AddScoped<IShippingTypeService, ShippingTypeService>();
