@@ -56,4 +56,27 @@ public sealed class AuditLogRepositoryTest
 
         Assert.AreEqual(1, result.Count);
     }
+
+    [TestMethod]
+    public void GetByEntity_WhenTimestampOutOfRange_ReturnsEmpty()
+    {
+        _context!.AuditLogs.Add(new AuditLog
+        {
+            Timestamp = new DateTime(2026, 4, 23, 12, 0, 0),
+            EntityName = AuditedEntity.Product,
+            EntityId = 12345,
+            Description = "Alta de producto.",
+            ResponsibleUser = "admin@email.com"
+        });
+        _context.SaveChanges();
+
+        var repository = new AuditLogRepository(_context);
+        var result = repository.GetByEntity(
+            AuditedEntity.Product,
+            12345,
+            new DateTime(2026, 4, 23, 8, 0, 0),
+            new DateTime(2026, 4, 23, 10, 0, 0));
+
+        Assert.AreEqual(0, result.Count);
+    }
 }
