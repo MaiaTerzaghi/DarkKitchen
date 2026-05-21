@@ -1,7 +1,9 @@
+using DarkKitchen.Domain.Entities;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Controllers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -158,5 +160,22 @@ public sealed class ProductControllerTest
         var result = controller.GetManage(request);
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+    }
+
+    [TestMethod]
+    public void CreateProduct_PassesResponsibleUserFromContextToService()
+    {
+        var productServiceMock = new Mock<IProductService>();
+        productServiceMock.Setup(s => s.CreateProduct(It.IsAny<CreateProductRequestDTO>(), It.IsAny<string>()))
+            .Returns(new ProductResponseDTO());
+
+        var controller = new ProductController(productServiceMock.Object);
+        controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
+        controller.HttpContext.Items["RequestingUser"] = new User { Id = 1, Email = "admin@email.com" };
+
+        var request = new CreateProductRequestDTO();
+        controller.CreateProduct(request);
+
+        productServiceMock.Verify(s => s.CreateProduct(request, "admin@email.com"), Times.Once);
     }
 }
