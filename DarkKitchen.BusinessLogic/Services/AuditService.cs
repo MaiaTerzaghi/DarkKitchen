@@ -13,6 +13,11 @@ public class AuditService : IAuditService
             throw new ArgumentException("El filtro fecha-hora desde es obligatorio.");
         }
 
+        if(request.DateTo is null)
+        {
+            throw new ArgumentException("El filtro fecha-hora hasta es obligatorio.");
+        }
+
         return [];
     }
 }
