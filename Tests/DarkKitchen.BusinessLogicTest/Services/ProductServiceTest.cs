@@ -526,4 +526,49 @@ public sealed class ProductServiceTest
         auditSubjectMock.Verify(a => a.Notify(It.Is<AuditEvent>(e =>
             e.Description.Contains("P0001"))), Times.Once);
     }
+
+    [TestMethod]
+    public void UpdateProduct_WhenProductExists_NotifiesAuditSubject()
+    {
+        var auditSubjectMock = new Mock<IAuditSubject>();
+        var product = new Product
+        {
+            Id = 3,
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = "pizza.jpg",
+            IsActive = true
+        };
+
+        var productRepositoryMock = new Mock<IRepository<Product>>();
+        productRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
+                            .Returns(product);
+        productRepositoryMock.Setup(r => r.Update(It.IsAny<Product>()))
+                            .Returns(product);
+
+        var productService = new ProductService(productRepositoryMock.Object, auditSubjectMock.Object);
+        var request = new UpdateProductRequestDTO
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = "pizza.jpg",
+            IsActive = true
+        };
+
+        productService.UpdateProduct(3, request, "admin@email.com");
+
+        auditSubjectMock.Verify(a => a.Notify(It.Is<AuditEvent>(e =>
+            e.EntityName == AuditedEntity.Product &&
+            e.EntityId == 3 &&
+            e.ResponsibleUser == "admin@email.com" &&
+            e.Description.Contains("P0001"))), Times.Once);
+    }
 }
