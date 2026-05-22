@@ -1,7 +1,7 @@
 <div class="modal-overlay" *ngIf="visible" (click)="onClose()">
   <div class="modal-card" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h2>Nueva Promoción</h2>
+      <h2>{{ isEditMode ? 'Editar Promoción' : 'Nueva Promoción' }}</h2>
       <button class="close-btn" (click)="onClose()">
         <span class="material-icons">close</span>
       </button>
@@ -73,7 +73,10 @@
           class="btn-submit"
           [disabled]="promotionForm.invalid || loading"
         >
-          {{ loading ? 'Creando...' : 'Crear Promoción' }}
+          {{ loading
+            ? (isEditMode ? 'Guardando...' : 'Creando...')
+            : (isEditMode ? 'Guardar Cambios' : 'Crear Promoción')
+          }}
         </button>
       </div>
     </form>

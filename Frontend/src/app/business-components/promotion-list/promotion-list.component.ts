@@ -16,7 +16,8 @@ export class PromotionListComponent implements OnInit {
   errorMessage: string = '';
   loading: boolean = false;
   showFilters: boolean = false;
-  showCreateForm: boolean = false;
+  showForm: boolean = false;
+  selectedPromotion: PromotionResponse | null = null;
   searchText: string = '';
   isAdmin: boolean = false;
 
@@ -97,15 +98,23 @@ export class PromotionListComponent implements OnInit {
   }
 
   public openCreateForm(): void {
-    this.showCreateForm = true;
+    this.selectedPromotion = null;
+    this.showForm = true;
+  }
+
+  public openEditForm(promo: PromotionResponse): void {
+    this.selectedPromotion = promo;
+    this.showForm = true;
   }
 
   public onFormClose(): void {
-    this.showCreateForm = false;
+    this.showForm = false;
+    this.selectedPromotion = null;
   }
 
   public onPromotionSaved(): void {
-    this.showCreateForm = false;
+    this.showForm = false;
+    this.selectedPromotion = null;
     this.loadPromotions();
   }
 }

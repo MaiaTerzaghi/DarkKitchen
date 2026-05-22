@@ -1,6 +1,14 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { PromotionService } from '../../../backend/services/promotion/promotion.service';
+import PromotionResponse from '../../../backend/services/promotion/models/PromotionResponse';
 
 @Component({
   selector: 'app-promotion-form',
@@ -8,8 +16,9 @@ import { PromotionService } from '../../../backend/services/promotion/promotion.
   standalone: false,
   styleUrls: ['./promotion-form.component.css'],
 })
-export class PromotionFormComponent {
+export class PromotionFormComponent implements OnChanges {
   @Input() visible: boolean = false;
+  @Input() promotionToEdit: PromotionResponse | null = null;
   @Output() close = new EventEmitter<void>();
   @Output() saved = new EventEmitter<void>();
 
@@ -27,7 +36,22 @@ export class PromotionFormComponent {
   errorMessage: string = '';
   loading: boolean = false;
 
+  get isEditMode(): boolean {
+    return this.promotionToEdit !== null;
+  }
+
   constructor(private readonly _promotionService: PromotionService) {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['promotionToEdit'] && this.promotionToEdit) {
+      this.promotionForm.patchValue({
+        name: this.promotionToEdit.name,
+        discountPercentage: this.promotionToEdit.discountPercentage,
+        validFrom: this.promotionToEdit.validFrom.substring(0, 10),
+        validTo: this.promotionToEdit.validTo.substring(0, 10),
+      });
+    }
+  }
 
   public onSubmit(): void {
     if (this.promotionForm.invalid) {
@@ -44,14 +68,19 @@ export class PromotionFormComponent {
       validTo: this.promotionForm.value.validTo!,
     };
 
-    this._promotionService.create(data).subscribe({
+    const request$ = this.isEditMode
+      ? this._promotionService.update(this.promotionToEdit!.id, data)
+      : this._promotionService.create(data);
+
+    request$.subscribe({
       next: () => {
         this.loading = false;
         this.promotionForm.reset();
         this.saved.emit();
       },
       error: (err) => {
-        this.errorMessage = err || 'Error al crear la promoción';
+        const action = this.isEditMode ? 'actualizar' : 'crear';
+        this.errorMessage = err || `Error al ${action} la promoción`;
         this.loading = false;
       },
     });

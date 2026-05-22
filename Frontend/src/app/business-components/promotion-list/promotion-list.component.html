@@ -9,9 +9,10 @@
   </button>
 </div>
 
-<!-- Modal crear promoción -->
+<!-- Modal crear/editar promoción -->
 <app-promotion-form
-  [visible]="showCreateForm"
+  [visible]="showForm"
+  [promotionToEdit]="selectedPromotion"
   (close)="onFormClose()"
   (saved)="onPromotionSaved()"
 ></app-promotion-form>
@@ -115,7 +116,7 @@
         </span>
       </div>
       <div class="promo-actions" *ngIf="isAdmin">
-        <button class="action-btn edit-btn">
+        <button class="action-btn edit-btn" (click)="openEditForm(promo)">
           <span class="material-icons">edit</span>
         </button>
         <button class="action-btn delete-btn">
