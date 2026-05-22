@@ -492,7 +492,7 @@ public sealed class ProductServiceTest
         productRepositoryMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>(), null, false, 1, 20))
                             .Returns(products);
 
-        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
+        var productService = new ProductService(productRepositoryMock.Object);
         var result = productService.GetManage(new GetProductsManageRequestDTO());
 
         Assert.AreEqual(42, result[0].Id);
