@@ -5,6 +5,28 @@ import { noAuthGuard } from '../guards/no-auth.guard';
 
 const routes: Routes = [
   {
+    path: 'admin',
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('./admin/admin.module').then((m) => m.AdminModule),
+  },
+  {
+    path: 'dispatcher',
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('./dispatcher/dispatcher.module').then(
+        (m) => m.DispatcherModule
+      ),
+  },
+  {
+    path: 'customer',
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('./customer/customer.module').then(
+        (m) => m.CustomerModule
+      ),
+  },
+  {
     path: 'home',
     canActivate: [authGuard],
     loadChildren: () =>

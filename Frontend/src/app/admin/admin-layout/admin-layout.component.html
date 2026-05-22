@@ -1,0 +1,74 @@
+<div class="layout-wrapper">
+  <!-- Background -->
+  <div class="bg-gradient"></div>
+  <div class="blob blob-purple"></div>
+  <div class="blob blob-orange"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.collapsed]="!sidebarOpen">
+    <div class="sidebar-content">
+      <!-- Logo -->
+      <div class="sidebar-header">
+        <div class="logo-icon">
+          <span class="material-icons">restaurant</span>
+        </div>
+        <div class="logo-text" *ngIf="sidebarOpen">
+          <h2>DarkKitchen</h2>
+          <p>Admin Panel</p>
+        </div>
+      </div>
+
+      <!-- Menu -->
+      <nav class="sidebar-nav">
+        <a
+          *ngFor="let item of menuItems"
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: item.route === '/admin' }"
+          class="nav-item"
+        >
+          <span class="material-icons">{{ item.icon }}</span>
+          <span class="nav-label" *ngIf="sidebarOpen">{{ item.label }}</span>
+        </a>
+      </nav>
+
+      <!-- User section -->
+      <div class="sidebar-footer">
+        <div class="user-info" *ngIf="sidebarOpen">
+          <div class="user-avatar">AD</div>
+          <div class="user-details">
+            <p class="user-name">Administrador</p>
+            <p class="user-role">admin</p>
+          </div>
+        </div>
+        <button class="nav-item logout-btn" (click)="logout()">
+          <span class="material-icons">logout</span>
+          <span class="nav-label" *ngIf="sidebarOpen">Cerrar sesión</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <div class="main-content" [class.sidebar-collapsed]="!sidebarOpen">
+    <!-- Header -->
+    <header class="top-header">
+      <div class="header-left">
+        <button class="toggle-btn" (click)="toggleSidebar()">
+          <span class="material-icons">{{ sidebarOpen ? 'close' : 'menu' }}</span>
+        </button>
+      </div>
+      <div class="header-right">
+        <button class="notification-btn">
+          <span class="material-icons">notifications</span>
+          <span class="notification-dot"></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Page content -->
+    <main class="page-content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
