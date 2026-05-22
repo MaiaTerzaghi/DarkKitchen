@@ -4,6 +4,7 @@ import { PromotionApiRepositoryService } from '../../repositories/promotion-api-
 import PromotionResponse from './models/PromotionResponse';
 import PromotionFilter from './models/PromotionFilter';
 import CreatePromotionRequest from './models/CreatePromotionRequest';
+import UpdatePromotionRequest from './models/UpdatePromotionRequest';
 
 @Injectable({
   providedIn: 'root',
@@ -23,5 +24,12 @@ export class PromotionService {
     data: CreatePromotionRequest
   ): Observable<PromotionResponse> {
     return this._repository.create(data);
+  }
+
+  public update(
+    id: number,
+    data: UpdatePromotionRequest
+  ): Observable<PromotionResponse> {
+    return this._repository.update(id, data);
   }
 }
