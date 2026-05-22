@@ -3,11 +3,18 @@
     <h1>Gestión de Promociones</h1>
     <p>Administra descuentos y ofertas para tus productos</p>
   </div>
-  <button class="btn-new" *ngIf="isAdmin">
+  <button class="btn-new" *ngIf="isAdmin" (click)="openCreateForm()">
     <span class="material-icons">add</span>
     Nueva Promoción
   </button>
 </div>
+
+<!-- Modal crear promoción -->
+<app-promotion-form
+  [visible]="showCreateForm"
+  (close)="onFormClose()"
+  (saved)="onPromotionSaved()"
+></app-promotion-form>
 
 <!-- Barra de búsqueda -->
 <div class="search-bar">

@@ -16,6 +16,7 @@ export class PromotionListComponent implements OnInit {
   errorMessage: string = '';
   loading: boolean = false;
   showFilters: boolean = false;
+  showCreateForm: boolean = false;
   searchText: string = '';
   isAdmin: boolean = false;
 
@@ -93,5 +94,18 @@ export class PromotionListComponent implements OnInit {
   public isVigente(promo: PromotionResponse): boolean {
     const now = new Date();
     return new Date(promo.validFrom) <= now && new Date(promo.validTo) >= now;
+  }
+
+  public openCreateForm(): void {
+    this.showCreateForm = true;
+  }
+
+  public onFormClose(): void {
+    this.showCreateForm = false;
+  }
+
+  public onPromotionSaved(): void {
+    this.showCreateForm = false;
+    this.loadPromotions();
   }
 }
