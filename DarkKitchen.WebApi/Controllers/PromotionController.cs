@@ -1,3 +1,4 @@
+using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IBusinessLogic;
@@ -24,7 +25,8 @@ public class PromotionController(IPromotionService promotionService) : Controlle
     [HttpPost]
     public IActionResult CreatePromotion([FromBody] CreatePromotionRequestDTO request)
     {
-        var response = _promotionService.CreatePromotion(request);
+        var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
+        var response = _promotionService.CreatePromotion(request, requestingUser.Email);
         return Created(string.Empty, response);
     }
 

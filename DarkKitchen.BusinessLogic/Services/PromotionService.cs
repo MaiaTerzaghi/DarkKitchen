@@ -16,7 +16,7 @@ public class PromotionService(IPromotionRepository promotionRepository, IReposit
         return _promotionRepository.GetActivePromotions(date, productLine, product);
     }
 
-    public PromotionResponseDTO CreatePromotion(CreatePromotionRequestDTO request)
+    public PromotionResponseDTO CreatePromotion(CreatePromotionRequestDTO request, string responsibleUser)
     {
         var promotion = new Promotion
         {
