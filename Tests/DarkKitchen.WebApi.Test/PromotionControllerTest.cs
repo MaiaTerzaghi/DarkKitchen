@@ -157,4 +157,17 @@ public sealed class PromotionControllerTest
 
         _promotionServiceMock.Verify(s => s.CreatePromotion(request, "admin@email.com"), Times.Once);
     }
+
+    [TestMethod]
+    public void UpdatePromotion_PassesResponsibleUserFromContextToService()
+    {
+        _promotionServiceMock
+            .Setup(s => s.UpdatePromotion(It.IsAny<int>(), It.IsAny<UpdatePromotionRequestDTO>(), It.IsAny<string>()))
+            .Returns(new PromotionResponseDTO());
+
+        var request = new UpdatePromotionRequestDTO();
+        _controller.UpdatePromotion(5, request);
+
+        _promotionServiceMock.Verify(s => s.UpdatePromotion(5, request, "admin@email.com"), Times.Once);
+    }
 }
