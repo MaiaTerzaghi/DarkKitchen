@@ -181,4 +181,21 @@ public sealed class ProductControllerTest
 
         productServiceMock.Verify(s => s.CreateProduct(request, "admin@email.com"), Times.Once);
     }
+
+    [TestMethod]
+    public void UpdateProduct_PassesResponsibleUserFromContextToService()
+    {
+        var productServiceMock = new Mock<IProductService>();
+        productServiceMock.Setup(s => s.UpdateProduct(It.IsAny<int>(), It.IsAny<UpdateProductRequestDTO>(), It.IsAny<string>()))
+            .Returns(new ProductResponseDTO());
+
+        var controller = new ProductController(productServiceMock.Object);
+        controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
+        controller.HttpContext.Items["RequestingUser"] = new User { Id = 1, Email = "admin@email.com" };
+
+        var request = new UpdateProductRequestDTO();
+        controller.UpdateProduct(7, request);
+
+        productServiceMock.Verify(s => s.UpdateProduct(7, request, "admin@email.com"), Times.Once);
+    }
 }
