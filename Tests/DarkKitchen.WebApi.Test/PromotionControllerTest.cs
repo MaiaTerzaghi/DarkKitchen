@@ -105,7 +105,7 @@ public sealed class PromotionControllerTest
         };
 
         _promotionServiceMock
-            .Setup(s => s.UpdatePromotion(promotionId, request))
+            .Setup(s => s.UpdatePromotion(promotionId, request, It.IsAny<string>()))
             .Returns(expectedResponse);
 
         var result = _controller.UpdatePromotion(promotionId, request);

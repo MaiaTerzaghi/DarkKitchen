@@ -157,7 +157,7 @@ public sealed class PromotionServiceTest
             .Setup(r => r.Update(It.IsAny<Promotion>()))
             .Returns(promotion);
 
-        var result = _service.UpdatePromotion(1, request);
+        var result = _service.UpdatePromotion(1, request, "admin@email.com");
 
         Assert.IsNotNull(result);
         Assert.AreEqual(1, result.Id);
@@ -180,7 +180,7 @@ public sealed class PromotionServiceTest
             ValidTo = new DateTime(2026, 1, 30)
         };
 
-        _service.UpdatePromotion(99, request);
+        _service.UpdatePromotion(1, request, "admin@email.com");
     }
 
     [TestMethod]
@@ -208,7 +208,7 @@ public sealed class PromotionServiceTest
             ValidTo = new DateTime(2026, 1, 25)
         };
 
-        _service.UpdatePromotion(1, request);
+        _service.UpdatePromotion(1, request, "admin@email.com");
     }
 
     [TestMethod]
@@ -236,7 +236,7 @@ public sealed class PromotionServiceTest
             ValidTo = new DateTime(2026, 1, 30)
         };
 
-        _service.UpdatePromotion(1, request);
+        _service.UpdatePromotion(1, request, "admin@email.com");
     }
 
     [TestMethod]
@@ -264,7 +264,7 @@ public sealed class PromotionServiceTest
             ValidTo = new DateTime(2026, 1, 30)
         };
 
-        _service.UpdatePromotion(1, request);
+        _service.UpdatePromotion(1, request, "admin@email.com");
     }
 
     [TestMethod]

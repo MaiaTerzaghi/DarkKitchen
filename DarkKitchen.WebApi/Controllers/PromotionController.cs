@@ -34,7 +34,8 @@ public class PromotionController(IPromotionService promotionService) : Controlle
     [HttpPut("{id}")]
     public IActionResult UpdatePromotion(int id, [FromBody] UpdatePromotionRequestDTO request)
     {
-        var response = _promotionService.UpdatePromotion(id, request);
+        var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
+        var response = _promotionService.UpdatePromotion(id, request, requestingUser.Email);
         return Ok(response);
     }
 

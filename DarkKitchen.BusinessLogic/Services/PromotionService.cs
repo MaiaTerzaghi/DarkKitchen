@@ -49,7 +49,7 @@ public class PromotionService(IPromotionRepository promotionRepository, IReposit
         };
     }
 
-    public PromotionResponseDTO UpdatePromotion(int id, UpdatePromotionRequestDTO request)
+    public PromotionResponseDTO UpdatePromotion(int id, UpdatePromotionRequestDTO request, string responsibleUser)
     {
         var promotion = _promotionRepository.Get(p => p.Id == id)
             ?? throw new NotFoundException($"Promoción con id {id} no encontrada.");
