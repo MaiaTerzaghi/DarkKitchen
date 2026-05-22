@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import ApiRepository from './api-repository';
 import environments from '../../environments/environment';
 import LoginRequest from '../services/auth/models/LoginRequest';
-import { LoginResponse } from '../services/auth/models/LoginResponse';
+import LoginResponse from '../services/auth/models/LoginResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -15,8 +15,9 @@ export class AuthApiRepositoryService extends ApiRepository {
   }
 
   public login(credentials: LoginRequest): Observable<LoginResponse> {
-    return this._http.post(`${this.fullEndpoint}/login`, credentials, {
-      responseType: 'text',
-    });
+    return this._http.post<LoginResponse>(
+      `${this.fullEndpoint}/login`,
+      credentials
+    );
   }
 }

@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Exceptions;
+using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 using Moq;
@@ -40,7 +41,9 @@ public sealed class AuthServiceTest
         var result = authService.Login("juan@email.com", "Contrasena1!@#$%");
 
         Assert.IsNotNull(result);
-        Assert.IsInstanceOfType(result, typeof(string));
+        Assert.IsInstanceOfType(result, typeof(LoginResponseDTO));
+        Assert.IsNotNull(result.Token);
+        Assert.IsNotNull(result.Role);
     }
 
     [TestMethod]

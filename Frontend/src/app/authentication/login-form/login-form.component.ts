@@ -40,8 +40,21 @@ export class LoginFormComponent {
     };
 
     this._authService.login(credentials).subscribe({
-      next: () => {
-        this._router.navigate(['/home']);
+      next: (response) => {
+        switch (response.role) {
+          case 'Administrative':
+            this._router.navigate(['/admin']);
+            break;
+          case 'Dispatcher':
+            this._router.navigate(['/dispatcher']);
+            break;
+          case 'Client':
+            this._router.navigate(['/customer']);
+            break;
+          default:
+            this._router.navigate(['/home']);
+            break;
+        }
       },
       error: (err) => {
         this.errorMessage = 'Credenciales inválidas';
