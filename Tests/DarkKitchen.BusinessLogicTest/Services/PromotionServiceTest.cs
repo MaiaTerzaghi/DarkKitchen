@@ -489,4 +489,40 @@ public sealed class PromotionServiceTest
             e.ResponsibleUser == "admin@email.com" &&
             e.Description.Contains("Black Friday"))), Times.Once);
     }
+
+    [TestMethod]
+    public void UpdatePromotion_WhenPromotionExists_NotifiesAuditSubject()
+    {
+        var promotion = new Promotion
+        {
+            Id = 4,
+            Name = "Black Friday",
+            DiscountPercentage = 10,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 1, 30)
+        };
+
+        _promotionRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Returns(promotion);
+        _promotionRepositoryMock
+            .Setup(r => r.Update(It.IsAny<Promotion>()))
+            .Returns(promotion);
+
+        var request = new UpdatePromotionRequestDTO
+        {
+            Name = "Black Friday Updated",
+            DiscountPercentage = 20,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 1, 30)
+        };
+
+        _service.UpdatePromotion(4, request, "admin@email.com");
+
+        _auditSubjectMock.Verify(a => a.Notify(It.Is<AuditEvent>(e =>
+            e.EntityName == AuditedEntity.Promotion &&
+            e.EntityId == 4 &&
+            e.ResponsibleUser == "admin@email.com" &&
+            e.Description.Contains("Black Friday Updated"))), Times.Once);
+    }
 }
