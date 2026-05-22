@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { PromotionApiRepositoryService } from '../../repositories/promotion-api-repository.service';
 import PromotionResponse from './models/PromotionResponse';
 import PromotionFilter from './models/PromotionFilter';
+import CreatePromotionRequest from './models/CreatePromotionRequest';
 
 @Injectable({
   providedIn: 'root',
@@ -16,5 +17,11 @@ export class PromotionService {
     filters: PromotionFilter = {}
   ): Observable<PromotionResponse[]> {
     return this._repository.getActivePromotions(filters);
+  }
+
+  public create(
+    data: CreatePromotionRequest
+  ): Observable<PromotionResponse> {
+    return this._repository.create(data);
   }
 }

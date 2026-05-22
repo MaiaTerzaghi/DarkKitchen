@@ -5,6 +5,7 @@ import ApiRepository from './api-repository';
 import environments from '../../environments/environment';
 import PromotionResponse from '../services/promotion/models/PromotionResponse';
 import PromotionFilter from '../services/promotion/models/PromotionFilter';
+import CreatePromotionRequest from '../services/promotion/models/CreatePromotionRequest';
 
 @Injectable({
   providedIn: 'root',
@@ -31,5 +32,11 @@ export class PromotionApiRepositoryService extends ApiRepository {
 
     const query = params.join('&');
     return this.get<PromotionResponse[]>('', query);
+  }
+
+  public create(
+    data: CreatePromotionRequest
+  ): Observable<PromotionResponse> {
+    return this.post<PromotionResponse>(data);
   }
 }
