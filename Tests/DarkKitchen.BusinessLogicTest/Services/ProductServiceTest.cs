@@ -468,4 +468,35 @@ public sealed class ProductServiceTest
         Assert.IsNotNull(result);
         Assert.AreEqual(1, result.Count);
     }
+
+    [TestMethod]
+    public void GetManage_MapsIdDescriptionAndActiveStatus()
+    {
+        var products = new List<Product>
+        {
+            new Product
+            {
+                Id = 42,
+                Code = "P0001",
+                Name = "Pizza Napolitana",
+                Description = "Rica pizza napolitana con tomate y albahaca",
+                Price = 100.0,
+                CommercialLine = "Minutas",
+                Category = "Fritos",
+                Images = "pizza.jpg",
+                IsActive = false
+            }
+        };
+
+        var productRepositoryMock = new Mock<IRepository<Product>>();
+        productRepositoryMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>(), null, false, 1, 20))
+                            .Returns(products);
+
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
+        var result = productService.GetManage(new GetProductsManageRequestDTO());
+
+        Assert.AreEqual(42, result[0].Id);
+        Assert.AreEqual("Rica pizza napolitana con tomate y albahaca", result[0].Description);
+        Assert.IsFalse(result[0].IsActive);
+    }
 }
