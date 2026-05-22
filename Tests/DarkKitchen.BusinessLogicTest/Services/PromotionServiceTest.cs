@@ -451,4 +451,39 @@ public sealed class PromotionServiceTest
 
         _service.AddProductToPromotion(1, 1);
     }
+
+    [TestMethod]
+    public void CreatePromotion_ValidRequest_NotifiesAuditSubject()
+    {
+        var auditSubjectMock = new Mock<IAuditSubject>();
+        var savedPromotion = new Promotion
+        {
+            Id = 7,
+            Name = "Black Friday",
+            DiscountPercentage = 10,
+            ValidFrom = DateTime.Today.AddDays(-1),
+            ValidTo = DateTime.Today.AddDays(30)
+        };
+
+        _promotionRepositoryMock
+            .Setup(r => r.Add(It.IsAny<Promotion>()))
+            .Returns(savedPromotion);
+
+        var service = new PromotionService(_promotionRepositoryMock.Object, _productRepositoryMock.Object, auditSubjectMock.Object);
+        var request = new CreatePromotionRequestDTO
+        {
+            Name = "Black Friday",
+            DiscountPercentage = 10,
+            ValidFrom = DateTime.Today.AddDays(-1),
+            ValidTo = DateTime.Today.AddDays(30)
+        };
+
+        service.CreatePromotion(request, "admin@email.com");
+
+        auditSubjectMock.Verify(a => a.Notify(It.Is<AuditEvent>(e =>
+            e.EntityName == AuditedEntity.Promotion &&
+            e.EntityId == 7 &&
+            e.ResponsibleUser == "admin@email.com" &&
+            e.Description.Contains("Black Friday"))), Times.Once);
+    }
 }
