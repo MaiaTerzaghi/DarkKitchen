@@ -1,6 +1,8 @@
 using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
+using DarkKitchen.Domain.Auditing;
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IDataAccess;
@@ -13,7 +15,7 @@ public sealed class PromotionServiceTest
 {
     private Mock<IPromotionRepository> _promotionRepositoryMock = null!;
     private Mock<IRepository<Product>> _productRepositoryMock = null!;
-
+    private Mock<IAuditSubject> _auditSubjectMock = null!;
     private PromotionService _service = null!;
 
     [TestInitialize]
@@ -21,7 +23,8 @@ public sealed class PromotionServiceTest
     {
         _promotionRepositoryMock = new Mock<IPromotionRepository>();
         _productRepositoryMock = new Mock<IRepository<Product>>();
-        _service = new PromotionService(_promotionRepositoryMock.Object, _productRepositoryMock.Object);
+        _auditSubjectMock = new Mock<IAuditSubject>();
+        _service = new PromotionService(_promotionRepositoryMock.Object, _productRepositoryMock.Object, _auditSubjectMock.Object);
     }
 
     [TestMethod]

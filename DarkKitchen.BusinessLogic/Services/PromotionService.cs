@@ -1,4 +1,6 @@
+using DarkKitchen.Domain.Auditing;
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
@@ -6,10 +8,11 @@ using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class PromotionService(IPromotionRepository promotionRepository, IRepository<Product> productRepository) : IPromotionService
+public class PromotionService(IPromotionRepository promotionRepository, IRepository<Product> productRepository, IAuditSubject audit) : IPromotionService
 {
     private readonly IPromotionRepository _promotionRepository = promotionRepository;
     private readonly IRepository<Product> _productRepository = productRepository;
+    private readonly IAuditSubject _audit = audit;
 
     public List<Promotion> GetActivePromotions(DateTime? date, string? productLine, string? product)
     {
@@ -27,6 +30,14 @@ public class PromotionService(IPromotionRepository promotionRepository, IReposit
         };
 
         var saved = _promotionRepository.Add(promotion);
+
+        _audit.Notify(new AuditEvent
+        {
+            EntityName = AuditedEntity.Promotion,
+            EntityId = saved.Id,
+            Description = $"Alta de promoción '{saved.Name}' (id {saved.Id}).",
+            ResponsibleUser = responsibleUser
+        });
 
         return new PromotionResponseDTO
         {
