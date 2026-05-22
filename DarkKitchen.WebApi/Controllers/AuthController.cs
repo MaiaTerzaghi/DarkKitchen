@@ -13,8 +13,8 @@ public class AuthController(IAuthService authService) : ControllerBase
     [HttpPost("login")]
     public IActionResult Login(LoginRequestDTO request)
     {
-        var token = _authService.Login(request.Email, request.Password);
-        return Ok(token);
+        var response = _authService.Login(request.Email, request.Password);
+        return Ok(response);
     }
 
     [HttpDelete("sessions")]
