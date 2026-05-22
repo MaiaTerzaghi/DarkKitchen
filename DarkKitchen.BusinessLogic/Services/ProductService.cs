@@ -85,6 +85,14 @@ public class ProductService(IRepository<Product> productRepository, IAuditSubjec
 
         var updated = _productRepository.Update(product);
 
+        _audit.Notify(new AuditEvent
+        {
+            EntityName = AuditedEntity.Product,
+            EntityId = updated.Id,
+            Description = $"Modificación de producto '{updated.Name}' ({updated.Code}).",
+            ResponsibleUser = responsibleUser
+        });
+
         return new ProductResponseDTO
         {
             Code = updated.Code,
