@@ -15,7 +15,7 @@ public class PromotionService(IPromotionRepository promotionRepository, IReposit
     {
         var promotions = _promotionRepository.GetActivePromotions(date, productLine, product);
 
-        return promotions.Select(p => MapToDTO(p)).ToList();
+        return promotions.Select(MapToDTO).ToList();
     }
 
     private static PromotionResponseDTO MapToDTO(Promotion promotion)
