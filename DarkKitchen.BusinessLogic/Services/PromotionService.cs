@@ -61,6 +61,14 @@ public class PromotionService(IPromotionRepository promotionRepository, IReposit
 
         var updated = _promotionRepository.Update(promotion);
 
+        _audit.Notify(new AuditEvent
+        {
+            EntityName = AuditedEntity.Promotion,
+            EntityId = updated.Id,
+            Description = $"Modificación de promoción '{updated.Name}' (id {updated.Id}).",
+            ResponsibleUser = responsibleUser
+        });
+
         return new PromotionResponseDTO
         {
             Id = updated.Id,
