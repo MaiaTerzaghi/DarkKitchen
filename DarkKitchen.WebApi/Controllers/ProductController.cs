@@ -34,7 +34,8 @@ public class ProductController(IProductService productService) : ControllerBase
     [HttpPut("{id}")]
     public IActionResult UpdateProduct(int id, [FromBody] UpdateProductRequestDTO request)
     {
-        var product = _productService.UpdateProduct(id, request);
+        var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
+        var product = _productService.UpdateProduct(id, request, requestingUser.Email);
         return Ok(product);
     }
 

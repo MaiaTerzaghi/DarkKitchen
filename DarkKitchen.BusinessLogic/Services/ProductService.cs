@@ -69,7 +69,7 @@ public class ProductService(IRepository<Product> productRepository, IAuditSubjec
         };
     }
 
-    public ProductResponseDTO UpdateProduct(int id, UpdateProductRequestDTO request)
+    public ProductResponseDTO UpdateProduct(int id, UpdateProductRequestDTO request, string responsibleUser)
     {
         var product = _productRepository.Get(p => p.Id == id)
             ?? throw new NotFoundException($"Producto con id {id} no encontrado.");

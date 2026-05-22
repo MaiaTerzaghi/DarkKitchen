@@ -413,7 +413,7 @@ public sealed class ProductServiceTest
                             .Returns(product);
 
         var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
-        var result = productService.UpdateProduct(1, request);
+        var result = productService.UpdateProduct(1, request, "admin@email.com");
 
         Assert.IsNotNull(result);
         Assert.AreEqual("P0001", result.Code);
@@ -440,7 +440,7 @@ public sealed class ProductServiceTest
                             .Returns((Product?)null);
 
         var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
-        productService.UpdateProduct(999, request);
+        productService.UpdateProduct(999, request, "admin@email.com");
     }
 
     [TestMethod]
