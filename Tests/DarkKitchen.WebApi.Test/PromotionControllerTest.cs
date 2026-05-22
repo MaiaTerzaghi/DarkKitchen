@@ -138,4 +138,17 @@ public sealed class PromotionControllerTest
 
         Assert.IsInstanceOfType(result, typeof(NoContentResult));
     }
+
+    [TestMethod]
+    public void CreatePromotion_PassesResponsibleUserFromContextToService()
+    {
+        _promotionServiceMock
+            .Setup(s => s.CreatePromotion(It.IsAny<CreatePromotionRequestDTO>(), It.IsAny<string>()))
+            .Returns(new PromotionResponseDTO());
+
+        var request = new CreatePromotionRequestDTO();
+        _controller.CreatePromotion(request);
+
+        _promotionServiceMock.Verify(s => s.CreatePromotion(request, "admin@email.com"), Times.Once);
+    }
 }
