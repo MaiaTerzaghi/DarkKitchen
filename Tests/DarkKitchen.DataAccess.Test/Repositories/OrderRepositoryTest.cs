@@ -228,7 +228,7 @@ public sealed class OrderRepositoryTest
             CommercialLine = "Minutas",
             Category = "Fritos",
             Price = 100.0,
-            Images = "pizza.jpg"
+            Images = "/9j/2Q=="
         };
 
         var orderInRange = new Order
@@ -278,7 +278,7 @@ public sealed class OrderRepositoryTest
             CommercialLine = "Minutas",
             Category = "Fritos",
             Price = 100.0,
-            Images = "pizza.jpg"
+            Images = "/9j/2Q=="
         };
 
         var product2 = new Product
@@ -289,7 +289,7 @@ public sealed class OrderRepositoryTest
             CommercialLine = "Minutas",
             Category = "Pastas",
             Price = 80.0,
-            Images = "pasta.jpg"
+            Images = "/9j/2Q=="
         };
 
         var order = new Order
@@ -332,7 +332,7 @@ public sealed class OrderRepositoryTest
                 CommercialLine = "Minutas",
                 Category = "Fritos",
                 Price = 100.0,
-                Images = "img.jpg"
+                Images = "/9j/2Q=="
             };
 
             var order = new Order
@@ -370,7 +370,7 @@ public sealed class OrderRepositoryTest
             CommercialLine = "Minutas",
             Category = "Fritos",
             Price = 100.0,
-            Images = "pizza.jpg"
+            Images = "/9j/2Q=="
         };
 
         var order1 = new Order
@@ -421,7 +421,7 @@ public sealed class OrderRepositoryTest
                 CommercialLine = "Minutas",
                 Category = "Fritos",
                 Price = 100.0,
-                Images = "img.jpg"
+                Images = "/9j/2Q=="
             };
 
             _context!.Orders.Add(new Order
@@ -455,7 +455,7 @@ public sealed class OrderRepositoryTest
             CommercialLine = "Minutas",
             Category = "Fritos",
             Price = 100.0,
-            Images = "pizza.jpg"
+            Images = "/9j/2Q=="
         };
 
         var order = new Order

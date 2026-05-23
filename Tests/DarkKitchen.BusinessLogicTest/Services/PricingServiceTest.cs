@@ -170,7 +170,7 @@ public class PricingServiceTest
     [ExpectedException(typeof(ArgumentException))]
     public void CalculateOrderPricing_InactiveProduct_ThrowsException()
     {
-        var product = new Product { Id = 1, Price = 100.0, IsActive = false, CommercialLine = "Pizzas", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate y albahaca", Images = "pizza.jpg", Category = "Fritos", Code = "P0001" };
+        var product = new Product { Id = 1, Price = 100.0, IsActive = false, CommercialLine = "Pizzas", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate y albahaca", Images = "/9j/2Q==", Category = "Fritos", Code = "P0001" };
 
         _productRepositoryMock
             .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))

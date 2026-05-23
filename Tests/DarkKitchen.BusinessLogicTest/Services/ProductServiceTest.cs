@@ -13,6 +13,7 @@ public sealed class ProductServiceTest
 {
     private Mock<IRepository<Product>> _productRepositoryMock = null!;
     private ProductService _service = null!;
+    private const string ValidJpgBase64 = "/9j/2Q==";
 
     [TestInitialize]
     public void Setup()
@@ -72,7 +73,7 @@ public sealed class ProductServiceTest
             Price = 100.0,
             CommercialLine = "Minutas",
             Category = "Fritos",
-            Images = "pizza.jpg"
+            Images = ValidJpgBase64
         };
 
         var product = new Product
@@ -84,7 +85,7 @@ public sealed class ProductServiceTest
             Price = 100.0,
             CommercialLine = "Minutas",
             Category = "Fritos",
-            Images = "pizza.jpg"
+            Images = ValidJpgBase64
         };
 
         var productRepositoryMock = new Mock<IRepository<Product>>();
@@ -110,12 +111,12 @@ public sealed class ProductServiceTest
             Price = 100.0,
             CommercialLine = "Minutas",
             Category = "Fritos",
-            Images = "pizza.jpg"
+            Images = ValidJpgBase64
         };
 
         var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
-                     .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
+                     .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = ValidJpgBase64 });
 
         var productService = new ProductService(productRepositoryMock.Object);
         productService.CreateProduct(request);
@@ -133,12 +134,12 @@ public sealed class ProductServiceTest
             Price = 100.0,
             CommercialLine = "Minutas",
             Category = "Fritos",
-            Images = "pizza.jpg"
+            Images = ValidJpgBase64
         };
 
         var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
-                            .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
+                            .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = ValidJpgBase64 });
 
         var productService = new ProductService(productRepositoryMock.Object);
         productService.CreateProduct(request);
@@ -156,12 +157,12 @@ public sealed class ProductServiceTest
             Price = 100.0,
             CommercialLine = "Minutas",
             Category = "Fritos",
-            Images = "pizza.jpg"
+            Images = ValidJpgBase64
         };
 
         var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
-                            .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
+                            .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = ValidJpgBase64 });
 
         var productService = new ProductService(productRepositoryMock.Object);
         productService.CreateProduct(request);
@@ -179,12 +180,12 @@ public sealed class ProductServiceTest
             Price = 100.0,
             CommercialLine = "Minutas",
             Category = "Fritos",
-            Images = "pizza.jpg"
+            Images = ValidJpgBase64
         };
 
         var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
-                            .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
+                            .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = ValidJpgBase64 });
 
         var productService = new ProductService(productRepositoryMock.Object);
         productService.CreateProduct(request);
@@ -202,12 +203,12 @@ public sealed class ProductServiceTest
             Price = 100.0,
             CommercialLine = "Minutas",
             Category = "Fritos",
-            Images = "pizza.jpg"
+            Images = ValidJpgBase64
         };
 
         var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
-                            .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
+                            .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = ValidJpgBase64 });
 
         var productService = new ProductService(productRepositoryMock.Object);
         productService.CreateProduct(request);
@@ -225,12 +226,12 @@ public sealed class ProductServiceTest
             Price = 100.0,
             CommercialLine = "Minutas",
             Category = "Fritos",
-            Images = "pizza.jpg"
+            Images = ValidJpgBase64
         };
 
         var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
-                            .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
+                            .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = ValidJpgBase64 });
 
         var productService = new ProductService(productRepositoryMock.Object);
         productService.CreateProduct(request);
@@ -248,12 +249,12 @@ public sealed class ProductServiceTest
             Price = 100.0,
             CommercialLine = string.Empty,
             Category = "Fritos",
-            Images = "pizza.jpg"
+            Images = ValidJpgBase64
         };
 
         var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
-                            .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
+                            .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = ValidJpgBase64 });
 
         var productService = new ProductService(productRepositoryMock.Object);
         productService.CreateProduct(request);
@@ -271,12 +272,12 @@ public sealed class ProductServiceTest
             Price = 100.0,
             CommercialLine = "Minutas",
             Category = string.Empty,
-            Images = "pizza.jpg"
+            Images = ValidJpgBase64
         };
 
         var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
-                            .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
+                            .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = ValidJpgBase64 });
 
         var productService = new ProductService(productRepositoryMock.Object);
         productService.CreateProduct(request);
@@ -294,12 +295,12 @@ public sealed class ProductServiceTest
             Price = -1.0,
             CommercialLine = "Minutas",
             Category = "Fritos",
-            Images = "pizza.jpg"
+            Images = ValidJpgBase64
         };
 
         var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
-                            .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
+                            .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = ValidJpgBase64 });
 
         var productService = new ProductService(productRepositoryMock.Object);
         productService.CreateProduct(request);
@@ -322,7 +323,7 @@ public sealed class ProductServiceTest
 
         var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
-                            .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
+                            .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = ValidJpgBase64 });
 
         var productService = new ProductService(productRepositoryMock.Object);
         productService.CreateProduct(request);
@@ -345,7 +346,7 @@ public sealed class ProductServiceTest
 
         var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
-                            .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
+                            .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = ValidJpgBase64 });
 
         var productService = new ProductService(productRepositoryMock.Object);
         productService.CreateProduct(request);
@@ -368,7 +369,7 @@ public sealed class ProductServiceTest
 
         var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
-                            .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = "pizza.jpg" });
+                            .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = ValidJpgBase64 });
 
         var productService = new ProductService(productRepositoryMock.Object);
         productService.CreateProduct(request);
@@ -385,7 +386,7 @@ public sealed class ProductServiceTest
             Price = 100.0,
             CommercialLine = "Minutas",
             Category = "Fritos",
-            Images = "pizza.jpg",
+            Images = ValidJpgBase64,
             IsActive = true
         };
 
@@ -398,7 +399,7 @@ public sealed class ProductServiceTest
             Price = 100.0,
             CommercialLine = "Minutas",
             Category = "Fritos",
-            Images = "pizza.jpg",
+            Images = ValidJpgBase64,
             IsActive = true
         };
 
@@ -427,7 +428,7 @@ public sealed class ProductServiceTest
             Price = 100.0,
             CommercialLine = "Minutas",
             Category = "Fritos",
-            Images = "pizza.jpg",
+            Images = ValidJpgBase64,
             IsActive = true
         };
 
@@ -453,7 +454,7 @@ public sealed class ProductServiceTest
                 Price = 100.0,
                 CommercialLine = "Minutas",
                 Category = "Fritos",
-                Images = "pizza.jpg",
+                Images = ValidJpgBase64,
                 IsActive = true
             }
         };
@@ -483,7 +484,7 @@ public sealed class ProductServiceTest
                 Price = 100.0,
                 CommercialLine = "Minutas",
                 Category = "Fritos",
-                Images = "pizza.jpg",
+                Images = ValidJpgBase64,
                 IsActive = false
             }
         };
