@@ -1,0 +1,126 @@
+<div class="page-header">
+  <div class="header-text">
+    <h1>Gestión de Productos</h1>
+    <p>Administra el catálogo de productos</p>
+  </div>
+  <button class="btn-new" *ngIf="isAdmin" (click)="openCreateForm()">
+    <span class="material-icons">add</span>
+    Nuevo Producto
+  </button>
+</div>
+
+<!-- Modal crear/editar producto -->
+<app-product-form
+  [visible]="showForm"
+  [productToEdit]="selectedProduct"
+  (close)="onFormClose()"
+  (saved)="onProductSaved()"
+></app-product-form>
+
+<!-- Barra de búsqueda -->
+<div class="search-bar">
+  <div class="search-input-wrapper">
+    <span class="material-icons search-icon">search</span>
+    <input
+      type="text"
+      [(ngModel)]="searchText"
+      (ngModelChange)="applySearch()"
+      placeholder="Buscar productos..."
+      class="search-input"
+    />
+  </div>
+  <button class="btn-filter-toggle" (click)="toggleFilters()" [class.active]="showFilters">
+    <span class="material-icons">tune</span>
+    Filtrar
+  </button>
+</div>
+
+<!-- Filtros desplegables -->
+<div class="filters-panel" *ngIf="showFilters">
+  <div class="filters-grid">
+    <div class="filter-group">
+      <label>Categoría</label>
+      <input type="text" [(ngModel)]="filterCategory" placeholder="Ej: Fritos" class="filter-input" />
+    </div>
+    <div class="filter-group">
+      <label>Línea comercial</label>
+      <input type="text" [(ngModel)]="filterCommercialLine" placeholder="Ej: Minutas clásicas" class="filter-input" />
+    </div>
+    <div class="filter-group">
+      <label>Estado</label>
+      <select [(ngModel)]="filterActive" class="filter-input">
+        <option value="">Todos</option>
+        <option value="true">Activos</option>
+        <option value="false">Inactivos</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Precio mínimo</label>
+      <input type="number" [(ngModel)]="filterPriceMin" placeholder="0" class="filter-input" />
+    </div>
+    <div class="filter-group">
+      <label>Precio máximo</label>
+      <input type="number" [(ngModel)]="filterPriceMax" placeholder="0" class="filter-input" />
+    </div>
+  </div>
+  <div class="filters-actions">
+    <button class="btn-apply" (click)="loadProducts()">
+      <span class="material-icons">search</span>
+      Aplicar
+    </button>
+    <button class="btn-clear" (click)="clearFilters()">
+      <span class="material-icons">clear</span>
+      Limpiar
+    </button>
+  </div>
+</div>
+
+<!-- Error -->
+<div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+<!-- Loading -->
+<div class="loading" *ngIf="loading">
+  <span class="material-icons spinning">sync</span>
+  Cargando productos...
+</div>
+
+<!-- Grilla de productos -->
+<div class="products-grid" *ngIf="!loading && filteredProducts.length > 0">
+  <div class="product-card" *ngFor="let product of filteredProducts" [class.inactive]="!product.isActive">
+    <div class="product-image">
+      <span class="material-icons">inventory_2</span>
+      <span class="badge-status" [class.active]="product.isActive">
+        {{ product.isActive ? 'Activo' : 'Inactivo' }}
+      </span>
+    </div>
+    <div class="product-body">
+      <h3>{{ product.name }}</h3>
+      <p class="product-desc">{{ product.description }}</p>
+      <span class="category-chip">{{ product.category }}</span>
+      <div class="product-meta">
+        <span class="product-price">${{ product.price }}</span>
+        <span class="product-code">{{ product.code }}</span>
+      </div>
+      <div class="product-actions" *ngIf="isAdmin">
+        <button class="action-btn edit-btn" (click)="openEditForm(product)">
+          <span class="material-icons">edit</span>
+          Editar
+        </button>
+        <button
+          class="action-btn toggle-btn"
+          [class.deactivate]="product.isActive"
+          (click)="toggleActive(product)"
+        >
+          <span class="material-icons">{{ product.isActive ? 'visibility_off' : 'visibility' }}</span>
+          {{ product.isActive ? 'Desactivar' : 'Activar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Sin resultados -->
+<div class="empty-state" *ngIf="!loading && filteredProducts.length === 0 && !errorMessage">
+  <span class="material-icons">inventory_2</span>
+  <p>No hay productos para mostrar</p>
+</div>
