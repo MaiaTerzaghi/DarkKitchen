@@ -6,34 +6,9 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  Validators,
-} from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ProductService } from '../../../backend/services/product/product.service';
 import ProductResponse from '../../../backend/services/product/models/ProductResponse';
-
-function imagesValidator(control: AbstractControl): ValidationErrors | null {
-  const value: string = control.value ?? '';
-  if (!value.trim()) {
-    return null; // el 'required' ya cubre el vacío
-  }
-  const list = value
-    .split(',')
-    .map((s) => s.trim())
-    .filter((s) => s.length > 0);
-
-  if (list.length > 3) {
-    return { imagesMax: true };
-  }
-  if (list.some((img) => !img.toLowerCase().endsWith('.jpg'))) {
-    return { imagesJpg: true };
-  }
-  return null;
-}
 
 @Component({
   selector: 'app-product-form',
@@ -46,6 +21,9 @@ export class ProductFormComponent implements OnChanges {
   @Input() productToEdit: ProductResponse | null = null;
   @Output() close = new EventEmitter<void>();
   @Output() saved = new EventEmitter<void>();
+
+  private static readonly MaxImages = 3;
+  private static readonly MaxImageBytes = 500 * 1024;
 
   productForm = new FormGroup({
     code: new FormControl('', [
@@ -69,9 +47,11 @@ export class ProductFormComponent implements OnChanges {
     ]),
     commercialLine: new FormControl('', [Validators.required]),
     category: new FormControl('', [Validators.required]),
-    images: new FormControl('', [Validators.required, imagesValidator]),
+    images: new FormControl('', [Validators.required]),
   });
 
+  previews: string[] = [];
+  imageError: string = '';
   errorMessage: string = '';
   loading: boolean = false;
 
@@ -92,7 +72,54 @@ export class ProductFormComponent implements OnChanges {
         category: this.productToEdit.category,
         images: this.productToEdit.images,
       });
+      this.previews = this.toImageList(this.productToEdit.images);
     }
+  }
+
+  public async onImagesSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const files = input.files;
+    this.imageError = '';
+
+    if (!files || files.length === 0) {
+      return;
+    }
+
+    if (this.previews.length + files.length > ProductFormComponent.MaxImages) {
+      this.imageError = 'Se permiten hasta 3 imágenes.';
+      input.value = '';
+      return;
+    }
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+
+      if (file.type !== 'image/jpeg') {
+        this.imageError = 'Las imágenes deben ser en formato .jpg.';
+        input.value = '';
+        return;
+      }
+      if (file.size > ProductFormComponent.MaxImageBytes) {
+        this.imageError = 'Cada imagen debe pesar como máximo 500 KB.';
+        input.value = '';
+        return;
+      }
+
+      this.previews.push(await this.readAsBase64(file));
+    }
+
+    this.updateImagesControl();
+    input.value = ''; // permite volver a elegir y agregar más
+  }
+
+  public removeImage(index: number): void {
+    this.previews.splice(index, 1);
+    this.updateImagesControl();
+  }
+
+  private updateImagesControl(): void {
+    this.productForm.patchValue({ images: this.previews.join(',') });
+    this.productForm.get('images')?.markAsDirty();
   }
 
   public onSubmit(): void {
@@ -123,7 +150,7 @@ export class ProductFormComponent implements OnChanges {
     request$.subscribe({
       next: () => {
         this.loading = false;
-        this.productForm.reset();
+        this.resetForm();
         this.saved.emit();
       },
       error: (err) => {
@@ -135,8 +162,32 @@ export class ProductFormComponent implements OnChanges {
   }
 
   public onClose(): void {
-    this.productForm.reset();
-    this.errorMessage = '';
+    this.resetForm();
     this.close.emit();
+  }
+
+  private resetForm(): void {
+    this.productForm.reset();
+    this.previews = [];
+    this.imageError = '';
+    this.errorMessage = '';
+  }
+
+  private readAsBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        resolve(result.split(',')[1]); 
+      };
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  private toImageList(images: string): string[] {
+    return images
+      ? images.split(',').map((i) => i.trim()).filter((i) => i.length > 0)
+      : [];
   }
 }

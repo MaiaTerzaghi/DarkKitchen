@@ -88,7 +88,12 @@
 <div class="products-grid" *ngIf="!loading && filteredProducts.length > 0">
   <div class="product-card" *ngFor="let product of filteredProducts" [class.inactive]="!product.isActive">
     <div class="product-image">
-      <span class="material-icons">inventory_2</span>
+      <img
+        *ngIf="imageList(product.images).length > 0"
+        [src]="'data:image/jpeg;base64,' + imageList(product.images)[0]"
+        [alt]="product.name"
+      />
+      <span *ngIf="imageList(product.images).length === 0" class="material-icons">inventory_2</span>
       <span class="badge-status" [class.active]="product.isActive">
         {{ product.isActive ? 'Activo' : 'Inactivo' }}
       </span>

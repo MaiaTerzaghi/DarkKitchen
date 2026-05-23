@@ -82,21 +82,32 @@
       </div>
 
       <div class="field-group">
-        <label for="images">Imágenes (.jpg)</label>
-        <div class="input-wrapper">
-          <span class="material-icons input-icon">image</span>
-          <input id="images" type="text" formControlName="images" placeholder="foto1.jpg, foto2.jpg" />
+        <label for="images">Imágenes (.jpg, máx. 500 KB c/u)</label>
+        <input
+          id="images"
+          type="file"
+          accept="image/jpeg"
+          multiple
+          (change)="onImagesSelected($event)"
+          class="file-input"
+        />
+        <small class="field-hint">Hasta 3 imágenes .jpg, al menos una, máximo 500 KB cada una.</small>
+
+        <div class="image-previews" *ngIf="previews.length > 0">
+          <div class="preview-item" *ngFor="let img of previews; let i = index">
+            <img [src]="'data:image/jpeg;base64,' + img" alt="preview" />
+            <button type="button" class="preview-remove" (click)="removeImage(i)" title="Quitar">
+              <span class="material-icons">close</span>
+            </button>
+          </div>
         </div>
-        <small class="field-hint">Hasta 3 imágenes .jpg separadas por coma, al menos una.</small>
-        <small class="field-error"
-          *ngIf="productForm.get('images')?.touched && productForm.get('images')?.errors?.['required']">
+
+        <small class="field-error" *ngIf="imageError">{{ imageError }}</small>
+        <small
+          class="field-error"
+          *ngIf="!imageError && previews.length === 0 && productForm.dirty"
+        >
           Se requiere al menos una imagen.
-        </small>
-        <small class="field-error" *ngIf="productForm.get('images')?.errors?.['imagesMax']">
-          Se permiten hasta 3 imágenes.
-        </small>
-        <small class="field-error" *ngIf="productForm.get('images')?.errors?.['imagesJpg']">
-          Las imágenes deben ser en formato .jpg.
         </small>
       </div>
 

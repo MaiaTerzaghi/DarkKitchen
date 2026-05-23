@@ -60,7 +60,12 @@
 <div class="catalog-grid" *ngIf="!loading && filteredProducts.length > 0">
   <div class="catalog-card" *ngFor="let product of filteredProducts">
     <div class="catalog-img">
-      <span class="material-icons">restaurant</span>
+      <img
+        *ngIf="imageList(product.images).length > 0"
+        [src]="'data:image/jpeg;base64,' + imageList(product.images)[0]"
+        [alt]="product.name"
+      />
+      <span *ngIf="imageList(product.images).length === 0" class="material-icons">restaurant</span>
     </div>
     <div class="catalog-body">
       <h3>{{ product.name }}</h3>
@@ -69,10 +74,12 @@
       <div class="catalog-bottom">
         <span class="catalog-price">${{ product.price }}</span>
       </div>
-      <div class="catalog-images" *ngIf="imageList(product.images).length > 0">
-        <a *ngFor="let img of imageList(product.images); let i = index" [href]="img" target="_blank" class="img-link">
-          <span class="material-icons">image</span> Foto {{ i + 1 }}
-        </a>
+      <div class="catalog-images" *ngIf="imageList(product.images).length > 1">
+        <img
+          *ngFor="let img of imageList(product.images)"
+          [src]="'data:image/jpeg;base64,' + img"
+          alt="foto"
+        />
       </div>
     </div>
   </div>

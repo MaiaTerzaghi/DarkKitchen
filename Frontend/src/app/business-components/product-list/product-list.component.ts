@@ -70,6 +70,12 @@ export class ProductListComponent implements OnInit {
       },
     });
   }
+  
+  public imageList(images: string): string[] {
+    return images
+      ? images.split(',').map((i) => i.trim()).filter((i) => i.length > 0)
+      : [];
+  }
 
   public applySearch(): void {
     if (!this.searchText) {
