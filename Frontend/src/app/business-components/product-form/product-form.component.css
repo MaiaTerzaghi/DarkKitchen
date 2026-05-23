@@ -1,0 +1,42 @@
+.modal-card {
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.field-group textarea {
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: #ffffff;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.field-group textarea::placeholder {
+  color: #6b7280;
+}
+
+.field-group textarea:focus {
+  outline: none;
+  border-color: rgba(168, 85, 247, 0.5);
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
+}
+
+.field-hint {
+  display: block;
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 6px;
+}
+
+.field-error {
+  display: block;
+  font-size: 12px;
+  color: #f87171;
+  margin-top: 6px;
+}
