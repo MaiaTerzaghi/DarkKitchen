@@ -499,4 +499,94 @@ public sealed class ProductServiceTest
         Assert.AreEqual("Rica pizza napolitana con tomate y albahaca", result[0].Description);
         Assert.IsFalse(result[0].IsActive);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CreateProduct_WhenImagesAreOnlyCommas_ThrowsException()
+    {
+        var request = new CreateProductRequestDTO
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = ",,"
+        };
+
+        var productRepositoryMock = new Mock<IRepository<Product>>();
+        var productService = new ProductService(productRepositoryMock.Object);
+        productService.CreateProduct(request);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CreateProduct_WhenImageTooLarge_ThrowsException()
+    {
+        var bigBytes = new byte[(500 * 1024) + 1];
+        bigBytes[0] = 0xFF;
+        bigBytes[1] = 0xD8;
+        bigBytes[2] = 0xFF;
+        var bigImage = Convert.ToBase64String(bigBytes);
+
+        var request = new CreateProductRequestDTO
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = bigImage
+        };
+
+        var productRepositoryMock = new Mock<IRepository<Product>>();
+        var productService = new ProductService(productRepositoryMock.Object);
+        productService.CreateProduct(request);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CreateProduct_WhenImageIsNotJpeg_ThrowsException()
+    {
+        var notJpeg = Convert.ToBase64String(new byte[] { 0x01, 0x02, 0x03 });
+
+        var request = new CreateProductRequestDTO
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = notJpeg
+        };
+
+        var productRepositoryMock = new Mock<IRepository<Product>>();
+        var productService = new ProductService(productRepositoryMock.Object);
+        productService.CreateProduct(request);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CreateProduct_WhenImageTooShortToBeJpeg_ThrowsException()
+    {
+        var tooShort = Convert.ToBase64String(new byte[] { 0xFF, 0xD8 });
+
+        var request = new CreateProductRequestDTO
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = tooShort
+        };
+
+        var productRepositoryMock = new Mock<IRepository<Product>>();
+        var productService = new ProductService(productRepositoryMock.Object);
+        productService.CreateProduct(request);
+    }
 }
