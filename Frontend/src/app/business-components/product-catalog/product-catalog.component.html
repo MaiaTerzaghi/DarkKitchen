@@ -70,12 +70,7 @@
         <span class="catalog-price">${{ product.price }}</span>
       </div>
       <div class="catalog-images" *ngIf="imageList(product.images).length > 0">
-        
-          *ngFor="let img of imageList(product.images); let i = index"
-          [href]="img"
-          target="_blank"
-          class="img-link"
-        >
+        <a *ngFor="let img of imageList(product.images); let i = index" [href]="img" target="_blank" class="img-link">
           <span class="material-icons">image</span> Foto {{ i + 1 }}
         </a>
       </div>
