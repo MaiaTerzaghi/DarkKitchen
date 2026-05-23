@@ -460,7 +460,7 @@ public class OrderServiceTest
             Id = 1,
             Code = "P0001",
             Name = "Pizza Napolitana",
-            Images = "pizza.jpg"
+            Images = "/9j/2Q=="
         };
 
         var topProducts = new List<(Product Product, int Quantity)>

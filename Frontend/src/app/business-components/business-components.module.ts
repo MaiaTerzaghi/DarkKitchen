@@ -3,10 +3,25 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PromotionListComponent } from './promotion-list/promotion-list.component';
 import { PromotionFormComponent } from './promotion-form/promotion-form.component';
+import { ProductListComponent } from './product-list/product-list.component';
+import { ProductFormComponent } from './product-form/product-form.component';
+import { ProductCatalogComponent } from './product-catalog/product-catalog.component';
 
 @NgModule({
-  declarations: [PromotionListComponent, PromotionFormComponent],
+  declarations: [
+    PromotionListComponent,
+    PromotionFormComponent,
+    ProductListComponent,
+    ProductFormComponent,
+    ProductCatalogComponent,
+  ],
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
-  exports: [PromotionListComponent, PromotionFormComponent],
+  exports: [
+    PromotionListComponent,
+    PromotionFormComponent,
+    ProductListComponent,
+    ProductFormComponent,
+    ProductCatalogComponent,
+  ],
 })
 export class BusinessComponentsModule {}
