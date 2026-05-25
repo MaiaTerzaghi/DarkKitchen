@@ -1,6 +1,8 @@
 using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
+using DarkKitchen.Domain.Auditing;
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IDataAccess;
@@ -13,13 +15,15 @@ public sealed class ProductServiceTest
 {
     private Mock<IRepository<Product>> _productRepositoryMock = null!;
     private ProductService _service = null!;
+    private Mock<IAuditSubject> _auditSubjectMock = null!;
     private const string ValidJpgBase64 = "/9j/2Q==";
 
     [TestInitialize]
     public void Setup()
     {
         _productRepositoryMock = new Mock<IRepository<Product>>();
-        _service = new ProductService(_productRepositoryMock.Object);
+        _auditSubjectMock = new Mock<IAuditSubject>();
+        _service = new ProductService(_productRepositoryMock.Object, _auditSubjectMock.Object);
     }
 
     [TestMethod]
@@ -35,7 +39,7 @@ public sealed class ProductServiceTest
         productRepositoryMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>(), null, false, 1, 20))
                              .Returns(products);
 
-        var productService = new ProductService(productRepositoryMock.Object);
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
 
         var result = productService.GetAll(null, null, null);
 
@@ -54,7 +58,7 @@ public sealed class ProductServiceTest
         productRepositoryMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>(), null, false, 1, 20))
                              .Returns(products);
 
-        var productService = new ProductService(productRepositoryMock.Object);
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
 
         var result = productService.GetAll("Pizza Napolitana", null, null);
 
@@ -92,8 +96,8 @@ public sealed class ProductServiceTest
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
                             .Returns(product);
 
-        var productService = new ProductService(productRepositoryMock.Object);
-        var result = productService.CreateProduct(request);
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
+        var result = productService.CreateProduct(request, "admin@email.com");
 
         Assert.IsNotNull(result);
         Assert.AreEqual("P0001", result.Code);
@@ -118,8 +122,8 @@ public sealed class ProductServiceTest
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
                      .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = ValidJpgBase64 });
 
-        var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -141,8 +145,8 @@ public sealed class ProductServiceTest
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = ValidJpgBase64 });
 
-        var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -164,8 +168,8 @@ public sealed class ProductServiceTest
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = ValidJpgBase64 });
 
-        var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -187,8 +191,8 @@ public sealed class ProductServiceTest
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = ValidJpgBase64 });
 
-        var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -210,8 +214,8 @@ public sealed class ProductServiceTest
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = ValidJpgBase64 });
 
-        var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -233,8 +237,8 @@ public sealed class ProductServiceTest
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = ValidJpgBase64 });
 
-        var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -256,8 +260,8 @@ public sealed class ProductServiceTest
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = ValidJpgBase64 });
 
-        var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -279,8 +283,8 @@ public sealed class ProductServiceTest
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = ValidJpgBase64 });
 
-        var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -302,8 +306,8 @@ public sealed class ProductServiceTest
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = ValidJpgBase64 });
 
-        var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -325,8 +329,8 @@ public sealed class ProductServiceTest
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = ValidJpgBase64 });
 
-        var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -348,8 +352,8 @@ public sealed class ProductServiceTest
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = ValidJpgBase64 });
 
-        var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -371,8 +375,8 @@ public sealed class ProductServiceTest
         productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
                             .Returns(new Product { Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = ValidJpgBase64 });
 
-        var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -409,8 +413,8 @@ public sealed class ProductServiceTest
         productRepositoryMock.Setup(r => r.Update(It.IsAny<Product>()))
                             .Returns(product);
 
-        var productService = new ProductService(productRepositoryMock.Object);
-        var result = productService.UpdateProduct(1, request);
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
+        var result = productService.UpdateProduct(1, request, "admin@email.com");
 
         Assert.IsNotNull(result);
         Assert.AreEqual("P0001", result.Code);
@@ -436,8 +440,8 @@ public sealed class ProductServiceTest
         productRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
                             .Returns((Product?)null);
 
-        var productService = new ProductService(productRepositoryMock.Object);
-        productService.UpdateProduct(999, request);
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
+        productService.UpdateProduct(999, request, "admin@email.com");
     }
 
     [TestMethod]
@@ -463,7 +467,7 @@ public sealed class ProductServiceTest
         productRepositoryMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>(), null, false, 1, 20))
                             .Returns(products);
 
-        var productService = new ProductService(productRepositoryMock.Object);
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
         var result = productService.GetManage(new GetProductsManageRequestDTO());
 
         Assert.IsNotNull(result);
@@ -493,12 +497,111 @@ public sealed class ProductServiceTest
         productRepositoryMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>(), null, false, 1, 20))
                             .Returns(products);
 
-        var productService = new ProductService(productRepositoryMock.Object);
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
         var result = productService.GetManage(new GetProductsManageRequestDTO());
 
         Assert.AreEqual(42, result[0].Id);
         Assert.AreEqual("Rica pizza napolitana con tomate y albahaca", result[0].Description);
         Assert.IsFalse(result[0].IsActive);
+    }
+
+    [TestMethod]
+    public void CreateProduct_WhenValidData_NotifiesAuditSubject()
+    {
+        var auditSubjectMock = new Mock<IAuditSubject>();
+        var productRepositoryMock = new Mock<IRepository<Product>>();
+        productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
+            .Returns(new Product { Id = 5, Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = ValidJpgBase64 });
+
+        var productService = new ProductService(productRepositoryMock.Object, auditSubjectMock.Object);
+        var request = new CreateProductRequestDTO
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = ValidJpgBase64
+        };
+
+        productService.CreateProduct(request, "admin@email.com");
+
+        auditSubjectMock.Verify(a => a.Notify(It.Is<AuditEvent>(e =>
+            e.EntityName == AuditedEntity.Product &&
+            e.EntityId == 5 &&
+            e.ResponsibleUser == "admin@email.com")), Times.Once);
+    }
+
+    [TestMethod]
+    public void CreateProduct_WhenValidData_NotifiesAuditWithDescription()
+    {
+        var auditSubjectMock = new Mock<IAuditSubject>();
+        var productRepositoryMock = new Mock<IRepository<Product>>();
+        productRepositoryMock.Setup(r => r.Add(It.IsAny<Product>()))
+            .Returns(new Product { Id = 5, Code = "P0001", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate", CommercialLine = "Minutas", Category = "Fritos", Images = ValidJpgBase64 });
+
+        var productService = new ProductService(productRepositoryMock.Object, auditSubjectMock.Object);
+        var request = new CreateProductRequestDTO
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = ValidJpgBase64
+        };
+
+        productService.CreateProduct(request, "admin@email.com");
+
+        auditSubjectMock.Verify(a => a.Notify(It.Is<AuditEvent>(e =>
+            e.Description.Contains("P0001"))), Times.Once);
+    }
+
+    [TestMethod]
+    public void UpdateProduct_WhenProductExists_NotifiesAuditSubject()
+    {
+        var auditSubjectMock = new Mock<IAuditSubject>();
+        var product = new Product
+        {
+            Id = 3,
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = ValidJpgBase64,
+            IsActive = true
+        };
+
+        var productRepositoryMock = new Mock<IRepository<Product>>();
+        productRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
+                            .Returns(product);
+        productRepositoryMock.Setup(r => r.Update(It.IsAny<Product>()))
+                            .Returns(product);
+
+        var productService = new ProductService(productRepositoryMock.Object, auditSubjectMock.Object);
+        var request = new UpdateProductRequestDTO
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = ValidJpgBase64,
+            IsActive = true
+        };
+
+        productService.UpdateProduct(3, request, "admin@email.com");
+
+        auditSubjectMock.Verify(a => a.Notify(It.Is<AuditEvent>(e =>
+            e.EntityName == AuditedEntity.Product &&
+            e.EntityId == 3 &&
+            e.ResponsibleUser == "admin@email.com" &&
+            e.Description.Contains("P0001"))), Times.Once);
     }
 
     [TestMethod]
@@ -517,8 +620,8 @@ public sealed class ProductServiceTest
         };
 
         var productRepositoryMock = new Mock<IRepository<Product>>();
-        var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -543,8 +646,8 @@ public sealed class ProductServiceTest
         };
 
         var productRepositoryMock = new Mock<IRepository<Product>>();
-        var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -565,8 +668,8 @@ public sealed class ProductServiceTest
         };
 
         var productRepositoryMock = new Mock<IRepository<Product>>();
-        var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
+        productService.CreateProduct(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -587,7 +690,7 @@ public sealed class ProductServiceTest
         };
 
         var productRepositoryMock = new Mock<IRepository<Product>>();
-        var productService = new ProductService(productRepositoryMock.Object);
-        productService.CreateProduct(request);
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
+        productService.CreateProduct(request, "admin@email.com");
     }
 }

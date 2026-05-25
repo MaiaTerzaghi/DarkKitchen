@@ -1,7 +1,9 @@
+using DarkKitchen.BusinessLogic.Auditing;
 using DarkKitchen.BusinessLogic.Security;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.DataAccess.Repositories;
+using DarkKitchen.Domain.Auditing;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
@@ -30,14 +32,19 @@ public static class ServiceRegistration
         services.AddScoped<IPromotionRepository, PromotionRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<ISessionRepository, SessionRepository>();
+        services.AddScoped<IAuditRepository, AuditLogRepository>();
 
         services.AddSingleton<IPasswordManager, PasswordManager>();
+
+        services.AddScoped<IAuditObserver, AuditLogObserver>();
+        services.AddScoped<IAuditSubject, AuditNotifier>();
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IPromotionService, PromotionService>();
         services.AddScoped<ISessionService, SessionService>();
+        services.AddScoped<IAuditService, AuditService>();
 
         services.AddScoped<IRepository<ShippingType>, Repository<ShippingType>>();
         services.AddScoped<IShippingTypeService, ShippingTypeService>();

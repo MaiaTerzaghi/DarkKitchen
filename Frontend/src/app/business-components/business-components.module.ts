@@ -7,6 +7,7 @@ import { ProductListComponent } from './product-list/product-list.component';
 import { ProductFormComponent } from './product-form/product-form.component';
 import { ProductCatalogComponent } from './product-catalog/product-catalog.component';
 import { OrderListComponent } from './order-list/order-list.component';
+import { AuditLogListComponent } from './audit-log-list/audit-log-list.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { OrderListComponent } from './order-list/order-list.component';
     ProductFormComponent,
     ProductCatalogComponent,
     OrderListComponent,
+    AuditLogListComponent,
   ],
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   exports: [
@@ -25,6 +27,7 @@ import { OrderListComponent } from './order-list/order-list.component';
     ProductFormComponent,
     ProductCatalogComponent,
     OrderListComponent,
+    AuditLogListComponent,
   ],
 })
 export class BusinessComponentsModule {}

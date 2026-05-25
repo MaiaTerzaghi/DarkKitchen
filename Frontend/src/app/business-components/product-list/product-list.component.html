@@ -104,7 +104,7 @@
       <span class="category-chip">{{ product.category }}</span>
       <div class="product-meta">
         <span class="product-price">${{ product.price }}</span>
-        <span class="product-code">{{ product.code }}</span>
+        <span class="product-code">ID {{ product.id }} · {{ product.code }}</span>
       </div>
       <div class="product-actions" *ngIf="isAdmin">
         <button class="action-btn edit-btn" (click)="openEditForm(product)">

@@ -15,6 +15,7 @@ export class AdminLayoutComponent {
     { icon: 'dashboard', label: 'Dashboard', route: '/admin' },
     { icon: 'local_offer', label: 'Promociones', route: '/admin/promotions' },
     { icon: 'inventory_2', label: 'Productos', route: '/admin/products' },
+    { icon: 'history', label: 'Auditoría', route: '/admin/audit' },
   ];
 
   constructor(
