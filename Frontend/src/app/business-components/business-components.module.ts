@@ -8,11 +8,13 @@ import { ProductFormComponent } from './product-form/product-form.component';
 import { ProductCatalogComponent } from './product-catalog/product-catalog.component';
 import { OrderListComponent } from './order-list/order-list.component';
 import { AuditLogListComponent } from './audit-log-list/audit-log-list.component';
+import { PromotionProductsComponent } from './promotion-products/promotion-products.component';
 
 @NgModule({
   declarations: [
     PromotionListComponent,
     PromotionFormComponent,
+    PromotionProductsComponent,
     ProductListComponent,
     ProductFormComponent,
     ProductCatalogComponent,
@@ -23,6 +25,7 @@ import { AuditLogListComponent } from './audit-log-list/audit-log-list.component
   exports: [
     PromotionListComponent,
     PromotionFormComponent,
+    PromotionProductsComponent,
     ProductListComponent,
     ProductFormComponent,
     ProductCatalogComponent,
