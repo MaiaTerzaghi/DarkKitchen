@@ -399,14 +399,14 @@
   color: #a855f7;
 }
 
-.delete-btn {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
+.products-btn {
+  background: rgba(52, 211, 153, 0.1);
+  color: #34d399;
 }
 
-.delete-btn:hover {
-  background: rgba(239, 68, 68, 0.2);
-  color: #f87171;
+.products-btn:hover {
+  background: rgba(52, 211, 153, 0.2);
+  color: #6ee7b7;
 }
 
 /* ===== EMPTY STATE ===== */

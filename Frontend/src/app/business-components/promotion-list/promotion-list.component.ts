@@ -17,7 +17,9 @@ export class PromotionListComponent implements OnInit {
   loading: boolean = false;
   showFilters: boolean = false;
   showForm: boolean = false;
+  showProducts: boolean = false;
   selectedPromotion: PromotionResponse | null = null;
+  productsPromotion: PromotionResponse | null = null;
   searchText: string = '';
   isAdmin: boolean = false;
 
@@ -115,6 +117,21 @@ export class PromotionListComponent implements OnInit {
   public onPromotionSaved(): void {
     this.showForm = false;
     this.selectedPromotion = null;
+    this.loadPromotions();
+  }
+
+  public openProducts(promo: PromotionResponse): void {
+    this.productsPromotion = promo;
+    this.showProducts = true;
+  }
+
+  public onProductsClose(): void {
+    this.showProducts = false;
+    this.productsPromotion = null;
+  }
+
+  public onProductsChanged(): void {
+    // Recarga para reflejar los cambios en los chips
     this.loadPromotions();
   }
 }

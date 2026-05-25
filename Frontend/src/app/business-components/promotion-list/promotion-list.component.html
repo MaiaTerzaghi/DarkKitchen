@@ -17,6 +17,14 @@
   (saved)="onPromotionSaved()"
 ></app-promotion-form>
 
+<!-- Modal gestión de productos -->
+<app-promotion-products
+  [visible]="showProducts"
+  [promotion]="productsPromotion"
+  (close)="onProductsClose()"
+  (changed)="onProductsChanged()"
+></app-promotion-products>
+
 <!-- Barra de búsqueda -->
 <div class="search-bar">
   <div class="search-input-wrapper">
@@ -119,8 +127,8 @@
         <button class="action-btn edit-btn" (click)="openEditForm(promo)">
           <span class="material-icons">edit</span>
         </button>
-        <button class="action-btn delete-btn">
-          <span class="material-icons">delete</span>
+        <button class="action-btn products-btn" (click)="openProducts(promo)">
+          <span class="material-icons">inventory_2</span>
         </button>
       </div>
     </div>

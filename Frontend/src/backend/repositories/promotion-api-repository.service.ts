@@ -47,4 +47,18 @@ export class PromotionApiRepositoryService extends ApiRepository {
   ): Observable<PromotionResponse> {
     return this.putById<PromotionResponse>(id.toString(), data);
   }
+
+  public addProduct(
+    promotionId: number,
+    productId: number
+  ): Observable<void> {
+    return this.post<void>(null, `${promotionId}/products?productId=${productId}`);
+  }
+
+  public removeProduct(
+    promotionId: number,
+    productId: number
+  ): Observable<void> {
+    return this.delete<void>(`${promotionId}/products`, `productId=${productId}`);
+  }
 }
