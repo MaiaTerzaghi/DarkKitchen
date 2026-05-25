@@ -32,4 +32,18 @@ export class PromotionService {
   ): Observable<PromotionResponse> {
     return this._repository.update(id, data);
   }
+
+  public addProduct(
+    promotionId: number,
+    productId: number
+  ): Observable<void> {
+    return this._repository.addProduct(promotionId, productId);
+  }
+
+  public removeProduct(
+    promotionId: number,
+    productId: number
+  ): Observable<void> {
+    return this._repository.removeProduct(promotionId, productId);
+  }
 }
