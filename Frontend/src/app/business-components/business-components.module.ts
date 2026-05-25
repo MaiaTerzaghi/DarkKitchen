@@ -9,6 +9,7 @@ import { ProductCatalogComponent } from './product-catalog/product-catalog.compo
 import { OrderListComponent } from './order-list/order-list.component';
 import { AuditLogListComponent } from './audit-log-list/audit-log-list.component';
 import { PromotionProductsComponent } from './promotion-products/promotion-products.component';
+import { OrderByDateComponent } from './order-by-date/order-by-date.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { PromotionProductsComponent } from './promotion-products/promotion-produ
     ProductCatalogComponent,
     OrderListComponent,
     AuditLogListComponent,
+    OrderByDateComponent,
   ],
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   exports: [
@@ -31,6 +33,7 @@ import { PromotionProductsComponent } from './promotion-products/promotion-produ
     ProductCatalogComponent,
     OrderListComponent,
     AuditLogListComponent,
+    OrderByDateComponent,
   ],
 })
 export class BusinessComponentsModule {}

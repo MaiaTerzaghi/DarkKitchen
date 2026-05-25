@@ -5,6 +5,8 @@ import ApiRepository from './api-repository';
 import environments from '../../environments/environment';
 import OrderResponse from '../services/order/models/OrderResponse';
 import OrderFilter from '../services/order/models/OrderFilter';
+import OrderByDateResponse from '../services/order/models/OrderByDateResponse';
+import OrderByDateFilter from '../services/order/models/OrderByDateFilter';
 
 @Injectable({
   providedIn: 'root',
@@ -29,5 +31,24 @@ export class OrderApiRepositoryService extends ApiRepository {
 
     const query = params.join('&');
     return this.get<OrderResponse[]>('', query);
+  }
+
+  public getOrdersByDate(
+    filters: OrderByDateFilter
+  ): Observable<OrderByDateResponse[]> {
+    const params: string[] = [
+      `DateFrom=${filters.dateFrom}`,
+      `DateTo=${filters.dateTo}`,
+    ];
+
+    if (filters.street) {
+      params.push(`Street=${filters.street}`);
+    }
+    if (filters.status !== undefined && filters.status !== null) {
+      params.push(`Status=${filters.status}`);
+    }
+
+    const query = params.join('&');
+    return this.get<OrderByDateResponse[]>('by-date', query);
   }
 }
