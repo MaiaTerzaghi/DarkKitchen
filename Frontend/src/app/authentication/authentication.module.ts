@@ -8,9 +8,10 @@ import { MatCardModule } from '@angular/material/card';
 import { AuthenticationRoutingModule } from './authentication-routing.module';
 import { AuthenticationPageComponent } from './authentication-page/authentication-page.component';
 import { LoginFormComponent } from './login-form/login-form.component';
+import { RegisterFormComponent } from './register-form/register-form.component';
 
 @NgModule({
-  declarations: [AuthenticationPageComponent, LoginFormComponent],
+  declarations: [AuthenticationPageComponent, LoginFormComponent, RegisterFormComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,

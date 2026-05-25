@@ -120,12 +120,15 @@ public class ProductService(IRepository<Product> productRepository, IAuditSubjec
 
         return products.Select(p => new ProductResponseDTO
         {
+            Id = p.Id,
             Code = p.Code,
             Name = p.Name,
+            Description = p.Description,
             Price = p.Price,
             CommercialLine = p.CommercialLine,
             Category = p.Category,
-            Images = p.Images
+            Images = p.Images,
+            IsActive = p.IsActive
         }).ToList();
     }
 }

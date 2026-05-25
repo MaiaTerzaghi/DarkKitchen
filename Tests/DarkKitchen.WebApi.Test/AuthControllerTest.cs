@@ -1,4 +1,5 @@
 using DarkKitchen.DTOs.Args.In;
+using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +14,7 @@ public sealed class AuthControllerTest
     {
         var authServiceMock = new Mock<IAuthService>();
         authServiceMock.Setup(s => s.Login("juan@email.com", "Contrasena1!@#$%"))
-                       .Returns("token-generado");
+                       .Returns(new LoginResponseDTO { Token = "token-generado", Role = "Administrative" });
 
         var controller = new AuthController(authServiceMock.Object);
         var request = new LoginRequestDTO

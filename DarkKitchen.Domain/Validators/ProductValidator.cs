@@ -9,7 +9,7 @@ public static class ProductValidator
     private const int MinDescriptionLength = 20;
     private const int MaxDescriptionLength = 500;
     private const int MaxImages = 3;
-    private const string ImageExtension = ".jpg";
+    private const int MaxImageBytes = 500 * 1024; // 500 KB
 
     public static void ValidateCode(string code)
     {
@@ -69,16 +69,46 @@ public static class ProductValidator
             throw new ArgumentException("Se requiere al menos una imagen.");
         }
 
-        var imageList = images.Split(',');
+        var imageList = images.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+        if(imageList.Length == 0)
+        {
+            throw new ArgumentException("Se requiere al menos una imagen.");
+        }
 
         if(imageList.Length > MaxImages)
         {
             throw new ArgumentException($"Se permiten hasta {MaxImages} imágenes.");
         }
 
-        if(imageList.Any(img => !img.Trim().EndsWith(ImageExtension)))
+        foreach(var image in imageList)
         {
-            throw new ArgumentException($"Las imágenes deben ser en formato {ImageExtension}.");
+            ValidateSingleImage(image.Trim());
         }
+    }
+
+    private static void ValidateSingleImage(string base64Image)
+    {
+        var buffer = new byte[(base64Image.Length * 3 / 4) + 4];
+
+        if(!Convert.TryFromBase64String(base64Image, buffer, out var byteCount))
+        {
+            throw new ArgumentException("Las imágenes deben estar en base64 válido.");
+        }
+
+        if(byteCount > MaxImageBytes)
+        {
+            throw new ArgumentException("Cada imagen debe pesar como máximo 500 KB.");
+        }
+
+        if(!IsJpeg(buffer))
+        {
+            throw new ArgumentException("Las imágenes deben ser en formato .jpg.");
+        }
+    }
+
+    private static bool IsJpeg(byte[] bytes)
+    {
+        return bytes.Length >= 3 && bytes[0] == 0xFF && bytes[1] == 0xD8 && bytes[2] == 0xFF;
     }
 }

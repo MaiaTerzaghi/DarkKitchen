@@ -1,0 +1,134 @@
+<div class="page-header">
+  <div class="header-text">
+    <h1>Gestión de Promociones</h1>
+    <p>Administra descuentos y ofertas para tus productos</p>
+  </div>
+  <button class="btn-new" *ngIf="isAdmin" (click)="openCreateForm()">
+    <span class="material-icons">add</span>
+    Nueva Promoción
+  </button>
+</div>
+
+<!-- Modal crear/editar promoción -->
+<app-promotion-form
+  [visible]="showForm"
+  [promotionToEdit]="selectedPromotion"
+  (close)="onFormClose()"
+  (saved)="onPromotionSaved()"
+></app-promotion-form>
+
+<!-- Barra de búsqueda -->
+<div class="search-bar">
+  <div class="search-input-wrapper">
+    <span class="material-icons search-icon">search</span>
+    <input
+      type="text"
+      [(ngModel)]="searchText"
+      (ngModelChange)="applySearch()"
+      placeholder="Buscar promociones..."
+      class="search-input"
+    />
+  </div>
+  <button class="btn-filter-toggle" (click)="toggleFilters()" [class.active]="showFilters">
+    <span class="material-icons">tune</span>
+    Filtrar
+  </button>
+</div>
+
+<!-- Filtros desplegables -->
+<div class="filters-panel" *ngIf="showFilters">
+  <div class="filters-grid">
+    <div class="filter-group">
+      <label>Fecha</label>
+      <input type="date" [(ngModel)]="filterDate" class="filter-input" />
+    </div>
+    <div class="filter-group">
+      <label>Línea de producto</label>
+      <input
+        type="text"
+        [(ngModel)]="filterProductLine"
+        placeholder="Ej: Pizzas"
+        class="filter-input"
+      />
+    </div>
+    <div class="filter-group">
+      <label>Producto</label>
+      <input
+        type="text"
+        [(ngModel)]="filterProduct"
+        placeholder="Ej: Pizza Margherita"
+        class="filter-input"
+      />
+    </div>
+  </div>
+  <div class="filters-actions">
+    <button class="btn-apply" (click)="loadPromotions()">
+      <span class="material-icons">search</span>
+      Aplicar
+    </button>
+    <button class="btn-clear" (click)="clearFilters()">
+      <span class="material-icons">clear</span>
+      Limpiar
+    </button>
+  </div>
+</div>
+
+<!-- Error -->
+<div class="error-message" *ngIf="errorMessage">
+  {{ errorMessage }}
+</div>
+
+<!-- Loading -->
+<div class="loading" *ngIf="loading">
+  <span class="material-icons spinning">sync</span>
+  Cargando promociones...
+</div>
+
+<!-- Lista de promociones -->
+<div class="promotions-list" *ngIf="!loading && filteredPromotions.length > 0">
+  <div class="promotion-card" *ngFor="let promo of filteredPromotions">
+    <div class="promo-main">
+      <div class="promo-icon">
+        <span class="material-icons">local_offer</span>
+      </div>
+      <div class="promo-info">
+        <h3>{{ promo.name }}</h3>
+        <p class="promo-dates">
+          {{ promo.validFrom | date:'dd/MM/yyyy' }} → {{ promo.validTo | date:'dd/MM/yyyy' }}
+        </p>
+      </div>
+      <div class="promo-right">
+        <span class="badge-vigente" *ngIf="isVigente(promo)">Vigente</span>
+        <span class="promo-discount">{{ promo.discountPercentage }}%</span>
+      </div>
+    </div>
+
+    <div class="promo-footer">
+      <div class="product-chips">
+        <span
+          class="chip"
+          *ngFor="let product of promo.products | slice:0:2"
+        >
+          {{ product.name }}
+        </span>
+        <span class="chip chip-more" *ngIf="promo.products && promo.products.length > 2">
+          +{{ promo.products.length - 2 }} más
+        </span>
+      </div>
+      <div class="promo-actions" *ngIf="isAdmin">
+        <button class="action-btn edit-btn" (click)="openEditForm(promo)">
+          <span class="material-icons">edit</span>
+        </button>
+        <button class="action-btn delete-btn">
+          <span class="material-icons">delete</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Sin resultados -->
+<div class="empty-state" *ngIf="!loading && filteredPromotions.length === 0 && !errorMessage">
+  <span class="material-icons">local_offer</span>
+  <p>No hay promociones vigentes</p>
+</div>

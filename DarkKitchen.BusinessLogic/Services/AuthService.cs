@@ -1,5 +1,6 @@
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Exceptions;
+using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 
@@ -11,7 +12,7 @@ public class AuthService(IRepository<User> userRepository, ISessionRepository se
     private readonly ISessionRepository _sessionRepository = sessionRepository;
     private readonly IPasswordManager _passwordManager = passwordManager;
 
-    public string Login(string email, string password)
+    public LoginResponseDTO Login(string email, string password)
     {
         var user = _userRepository.Get(u => u.Email == email);
         var hashedPassword = _passwordManager.ComputeHash(password);
@@ -23,7 +24,12 @@ public class AuthService(IRepository<User> userRepository, ISessionRepository se
 
         var session = new Session { UserId = user.Id };
         _sessionRepository.Add(session);
-        return session.Token;
+
+        return new LoginResponseDTO
+        {
+            Token = session.Token,
+            Role = user.Role.ToString()
+        };
     }
 
     public void Logout(string token)
