@@ -1,7 +1,9 @@
+using DarkKitchen.Domain.Entities;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Controllers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -88,10 +90,13 @@ public sealed class ProductControllerTest
         };
 
         var productServiceMock = new Mock<IProductService>();
-        productServiceMock.Setup(s => s.CreateProduct(It.IsAny<CreateProductRequestDTO>()))
+        productServiceMock.Setup(s => s.CreateProduct(It.IsAny<CreateProductRequestDTO>(), It.IsAny<string>()))
                         .Returns(response);
 
         var controller = new ProductController(productServiceMock.Object);
+        controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
+        controller.HttpContext.Items["RequestingUser"] = new User { Id = 1, Email = "admin@email.com" };
+
         var result = controller.CreateProduct(request);
 
         Assert.IsInstanceOfType(result, typeof(CreatedResult));
@@ -123,10 +128,14 @@ public sealed class ProductControllerTest
         };
 
         var productServiceMock = new Mock<IProductService>();
-        productServiceMock.Setup(s => s.UpdateProduct(It.IsAny<int>(), It.IsAny<UpdateProductRequestDTO>()))
-                        .Returns(response);
+        productServiceMock.Setup(s => s.UpdateProduct(It.IsAny<int>(), It.IsAny<UpdateProductRequestDTO>(), It.IsAny<string>()))
+                .Returns(response);
 
-        var controller = new ProductController(productServiceMock.Object);
+        var controller = new ProductController(productServiceMock.Object)
+        {
+            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() }
+        };
+        controller.HttpContext.Items["RequestingUser"] = new User { Id = 1, Email = "admin@email.com" };
         var result = controller.UpdateProduct(1, request);
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
@@ -158,5 +167,39 @@ public sealed class ProductControllerTest
         var result = controller.GetManage(request);
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+    }
+
+    [TestMethod]
+    public void CreateProduct_PassesResponsibleUserFromContextToService()
+    {
+        var productServiceMock = new Mock<IProductService>();
+        productServiceMock.Setup(s => s.CreateProduct(It.IsAny<CreateProductRequestDTO>(), It.IsAny<string>()))
+            .Returns(new ProductResponseDTO());
+
+        var controller = new ProductController(productServiceMock.Object);
+        controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
+        controller.HttpContext.Items["RequestingUser"] = new User { Id = 1, Email = "admin@email.com" };
+
+        var request = new CreateProductRequestDTO();
+        controller.CreateProduct(request);
+
+        productServiceMock.Verify(s => s.CreateProduct(request, "admin@email.com"), Times.Once);
+    }
+
+    [TestMethod]
+    public void UpdateProduct_PassesResponsibleUserFromContextToService()
+    {
+        var productServiceMock = new Mock<IProductService>();
+        productServiceMock.Setup(s => s.UpdateProduct(It.IsAny<int>(), It.IsAny<UpdateProductRequestDTO>(), It.IsAny<string>()))
+            .Returns(new ProductResponseDTO());
+
+        var controller = new ProductController(productServiceMock.Object);
+        controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
+        controller.HttpContext.Items["RequestingUser"] = new User { Id = 1, Email = "admin@email.com" };
+
+        var request = new UpdateProductRequestDTO();
+        controller.UpdateProduct(7, request);
+
+        productServiceMock.Verify(s => s.UpdateProduct(7, request, "admin@email.com"), Times.Once);
     }
 }

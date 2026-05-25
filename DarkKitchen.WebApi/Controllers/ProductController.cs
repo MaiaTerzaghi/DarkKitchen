@@ -1,3 +1,4 @@
+using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IBusinessLogic;
@@ -24,7 +25,8 @@ public class ProductController(IProductService productService) : ControllerBase
     [HttpPost]
     public IActionResult CreateProduct([FromBody] CreateProductRequestDTO request)
     {
-        var product = _productService.CreateProduct(request);
+        var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
+        var product = _productService.CreateProduct(request, requestingUser.Email);
         return Created(" ", product);
     }
 
@@ -32,7 +34,8 @@ public class ProductController(IProductService productService) : ControllerBase
     [HttpPut("{id}")]
     public IActionResult UpdateProduct(int id, [FromBody] UpdateProductRequestDTO request)
     {
-        var product = _productService.UpdateProduct(id, request);
+        var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
+        var product = _productService.UpdateProduct(id, request, requestingUser.Email);
         return Ok(product);
     }
 
