@@ -4,6 +4,7 @@ import { CustomerLayoutComponent } from './customer-layout/customer-layout.compo
 import { CustomerDashboardComponent } from './customer-dashboard/customer-dashboard.component';
 import { PromotionListComponent } from '../business-components/promotion-list/promotion-list.component';
 import { ProductCatalogComponent } from '../business-components/product-catalog/product-catalog.component';
+import { OrderListComponent } from '../business-components/order-list/order-list.component';
 
 const routes: Routes = [
   {
@@ -21,6 +22,10 @@ const routes: Routes = [
       {
         path: 'catalog',
         component: ProductCatalogComponent,
+      },
+      {
+        path: 'orders',
+        component: OrderListComponent,
       },
     ],
   },

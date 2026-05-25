@@ -6,6 +6,7 @@ import { PromotionFormComponent } from './promotion-form/promotion-form.componen
 import { ProductListComponent } from './product-list/product-list.component';
 import { ProductFormComponent } from './product-form/product-form.component';
 import { ProductCatalogComponent } from './product-catalog/product-catalog.component';
+import { OrderListComponent } from './order-list/order-list.component';
 import { AuditLogListComponent } from './audit-log-list/audit-log-list.component';
 
 @NgModule({
@@ -15,6 +16,7 @@ import { AuditLogListComponent } from './audit-log-list/audit-log-list.component
     ProductListComponent,
     ProductFormComponent,
     ProductCatalogComponent,
+    OrderListComponent,
     AuditLogListComponent,
   ],
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
@@ -24,6 +26,7 @@ import { AuditLogListComponent } from './audit-log-list/audit-log-list.component
     ProductListComponent,
     ProductFormComponent,
     ProductCatalogComponent,
+    OrderListComponent,
     AuditLogListComponent,
   ],
 })
