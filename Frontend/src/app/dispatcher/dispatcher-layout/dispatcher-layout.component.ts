@@ -13,6 +13,7 @@ export class DispatcherLayoutComponent {
 
   menuItems = [
     { icon: 'dashboard', label: 'Dashboard', route: '/dispatcher' },
+    { icon: 'receipt_long', label: 'Pedidos', route: '/dispatcher/orders' },
   ];
 
   constructor(
