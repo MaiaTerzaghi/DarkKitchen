@@ -25,6 +25,7 @@ public class ProductService(IRepository<Product> productRepository, IAuditSubjec
 
         return products.Select(p => new ProductResponseDTO
         {
+            Id = p.Id,
             Code = p.Code,
             Name = p.Name,
             Price = p.Price,
@@ -60,6 +61,7 @@ public class ProductService(IRepository<Product> productRepository, IAuditSubjec
 
         return new ProductResponseDTO
         {
+            Id = saved.Id,
             Code = saved.Code,
             Name = saved.Name,
             Price = saved.Price,
@@ -95,6 +97,7 @@ public class ProductService(IRepository<Product> productRepository, IAuditSubjec
 
         return new ProductResponseDTO
         {
+            Id = updated.Id,
             Code = updated.Code,
             Name = updated.Name,
             Price = updated.Price,
