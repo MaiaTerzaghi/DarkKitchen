@@ -12,7 +12,7 @@ public class ShippingTypeController(IShippingTypeService shippingTypeService) : 
 {
     private readonly IShippingTypeService _shippingTypeService = shippingTypeService;
 
-    [AuthorizeRoles(UserRole.Administrative)]
+    [AuthorizeRoles(UserRole.Administrative, UserRole.Client)]
     [HttpGet]
     public IActionResult GetAll()
     {
