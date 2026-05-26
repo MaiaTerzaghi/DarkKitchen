@@ -13,6 +13,7 @@ export class CustomerLayoutComponent {
 
   menuItems = [
     { icon: 'dashboard', label: 'Dashboard', route: '/customer' },
+    { icon: 'restaurant_menu', label: 'Catálogo', route: '/customer/catalog' },
   ];
 
   constructor(
