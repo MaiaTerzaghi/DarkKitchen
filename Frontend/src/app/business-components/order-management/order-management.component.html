@@ -1,0 +1,95 @@
+<div class="page-header">
+  <div class="header-text">
+    <h1>Gestión de Pedidos</h1>
+    <p>Administra el estado de los pedidos</p>
+  </div>
+</div>
+
+
+<div class="search-bar">
+  <span class="material-icons">search</span>
+  <input
+    type="text"
+    [(ngModel)]="searchTerm"
+    placeholder="Buscar por ID o cliente..."
+    class="search-input"
+  />
+</div>
+
+
+<div class="error-message" *ngIf="errorMessage">
+  {{ errorMessage }}
+</div>
+
+
+<div class="loading" *ngIf="loading">
+  <span class="material-icons spinning">sync</span>
+  Cargando pedidos...
+</div>
+
+
+<div class="orders-grid" *ngIf="!loading && filteredOrders.length > 0">
+  <div class="order-card" *ngFor="let order of filteredOrders">
+    <div class="order-header">
+      <div>
+        <h3>Pedido #{{ order.orderId }}</h3>
+        <p class="customer">{{ order.client.name }} {{ order.client.lastName }}</p>
+      </div>
+      <span class="badge" [ngClass]="getStatusClass(order.status)">
+        <span class="material-icons">{{ getStatusIcon(order.status) }}</span>
+        {{ getStatusLabel(order.status) }}
+      </span>
+    </div>
+
+    <div class="card-section">
+      <p class="section-label">Productos:</p>
+      <ul class="items-list">
+        <li *ngFor="let item of order.items">
+          • {{ item.productName }} x{{ item.quantity }}
+        </li>
+      </ul>
+    </div>
+
+    <div class="card-section">
+      <div class="detail-row">
+        <span class="detail-label">Hora:</span>
+        <span class="detail-value">{{ order.date | date:'HH:mm' }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Fecha:</span>
+        <span class="detail-value">{{ order.date | date:'dd/MM/yyyy' }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Tel:</span>
+        <span class="detail-value">{{ order.client.phone }}</span>
+      </div>
+    </div>
+
+    <div class="actions" *ngIf="availableActions(order.status).length > 0">
+      <button
+        *ngFor="let action of availableActions(order.status)"
+        class="btn-action"
+        [ngClass]="action.cssClass"
+        [disabled]="processingOrderId === order.orderId"
+        (click)="executeAction(action, order)"
+      >
+        <span class="material-icons">{{ action.icon }}</span>
+        {{ processingOrderId === order.orderId ? 'Procesando...' : action.label }}
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<div class="empty-state" *ngIf="!loading && filteredOrders.length === 0">
+  <span class="material-icons">receipt_long</span>
+  <p>{{ searchTerm ? 'No se encontraron pedidos para esa búsqueda' : 'No hay pedidos' }}</p>
+</div>
+
+
+<div class="toast" *ngIf="toast" [ngClass]="'toast-' + toast.type">
+  <span class="material-icons">
+    {{ toast.type === 'success' ? 'check_circle' : 'error' }}
+  </span>
+  {{ toast.message }}
+</div>
