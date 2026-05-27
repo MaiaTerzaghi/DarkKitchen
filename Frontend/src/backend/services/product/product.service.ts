@@ -45,12 +45,6 @@ export class ProductService {
     page: number = 1,
     pageSize: number = 20
   ): Observable<ProductResponse[]> {
-    const params: string[] = [];
-    if (name) params.push(`name=${encodeURIComponent(name)}`);
-    if (category) params.push(`category=${encodeURIComponent(category)}`);
-    if (line) params.push(`line=${encodeURIComponent(line)}`);
-    params.push(`page=${page}`);
-    params.push(`pageSize=${pageSize}`);
-    return this._repository.getAll(params.join('&'));
+    return this._repository.getAll({ name, category, line, page, pageSize });
   }
 }

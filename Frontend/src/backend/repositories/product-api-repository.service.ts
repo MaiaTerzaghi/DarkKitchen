@@ -17,8 +17,14 @@ export class ProductApiRepositoryService extends ApiRepository {
     super(environments.darkKitchenApi, 'products', http);
   }
 
-  public getAll(query: string = ''): Observable<ProductResponse[]> {
-    return this.get<ProductResponse[]>('', query);
+  public getAll(filters: { name?: string; category?: string; line?: string; page?: number; pageSize?: number } = {}): Observable<ProductResponse[]> {
+    const params: string[] = [];
+    if (filters.name) params.push(`name=${encodeURIComponent(filters.name)}`);
+    if (filters.category) params.push(`category=${encodeURIComponent(filters.category)}`);
+    if (filters.line) params.push(`line=${encodeURIComponent(filters.line)}`);
+    params.push(`page=${filters.page ?? 1}`);
+    params.push(`pageSize=${filters.pageSize ?? 20}`);
+    return this.get<ProductResponse[]>('', params.join('&'));
   }
 
   public getManage(
