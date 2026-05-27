@@ -98,4 +98,7 @@ public class OrderRepository(DarkKitchenContext context)
             .Select(g => (g.Year, g.Month, g.ClientId, g.ClientName, g.Total))
             .ToList();
     }
+
+    public List<Order> GetDispatcherOrders() =>
+        throw new NotImplementedException();
 }

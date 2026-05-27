@@ -1100,4 +1100,54 @@ public class OrderServiceTest
     {
         OrderStateFactory.Create((OrderStatus)999);
     }
+
+    [TestMethod]
+    public void GetDispatcherOrders_WhenCalled_ReturnsMappedOrders()
+    {
+        var ordersFromRepo = new List<Order>
+        {
+            new Order
+            {
+                Id = 1,
+                ClientId = 10,
+                Client = new User
+                {
+                    Id = 10,
+                    Name = "Juan",
+                    LastName = "Perez",
+                    Email = "juan@test.com",
+                    Phone = "+59899000000"
+                },
+                Date = new DateTime(2026, 1, 10),
+                Status = OrderStatus.Pending,
+                Street = "18 de Julio",
+                DoorNumber = "1234",
+                Items =
+                [
+                    new OrderItem
+                    {
+                        ProductId = 1,
+                        Quantity = 2,
+                        Product = new Product { Name = "Hamburguesa" }
+                    }
+                ]
+            }
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetDispatcherOrders())
+            .Returns(ordersFromRepo);
+
+        var result = _service.GetDispatcherOrders();
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual(1, result[0].OrderId);
+        Assert.AreEqual(10, result[0].Client.Id);
+        Assert.AreEqual("Juan", result[0].Client.Name);
+        Assert.AreEqual("Perez", result[0].Client.LastName);
+        Assert.AreEqual("Pending", result[0].Status);
+        Assert.AreEqual("Hamburguesa", result[0].Items[0].ProductName);
+        Assert.AreEqual(2, result[0].Items[0].Quantity);
+    }
 }
