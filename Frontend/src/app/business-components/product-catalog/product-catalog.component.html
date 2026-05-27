@@ -1,0 +1,92 @@
+<div class="page-header">
+  <div class="header-text">
+    <h1>Catálogo de Productos</h1>
+    <p>Explorá los productos disponibles</p>
+  </div>
+</div>
+
+<!-- Barra de búsqueda -->
+<div class="search-bar">
+  <div class="search-input-wrapper">
+    <span class="material-icons search-icon">search</span>
+    <input
+      type="text"
+      [(ngModel)]="searchText"
+      (ngModelChange)="applySearch()"
+      placeholder="Buscar productos..."
+      class="search-input"
+    />
+  </div>
+  <button class="btn-filter-toggle" (click)="toggleFilters()" [class.active]="showFilters">
+    <span class="material-icons">tune</span>
+    Filtrar
+  </button>
+</div>
+
+<!-- Filtros -->
+<div class="filters-panel" *ngIf="showFilters">
+  <div class="filters-grid">
+    <div class="filter-group">
+      <label>Categoría</label>
+      <input type="text" [(ngModel)]="filterCategory" placeholder="Ej: Fritos" class="filter-input" />
+    </div>
+    <div class="filter-group">
+      <label>Línea de producto</label>
+      <input type="text" [(ngModel)]="filterLine" placeholder="Ej: Minutas clásicas" class="filter-input" />
+    </div>
+  </div>
+  <div class="filters-actions">
+    <button class="btn-apply" (click)="loadProducts()">
+      <span class="material-icons">search</span>
+      Aplicar
+    </button>
+    <button class="btn-clear" (click)="clearFilters()">
+      <span class="material-icons">clear</span>
+      Limpiar
+    </button>
+  </div>
+</div>
+
+<!-- Error -->
+<div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+<!-- Loading -->
+<div class="loading" *ngIf="loading">
+  <span class="material-icons spinning">sync</span>
+  Cargando productos...
+</div>
+
+<!-- Grid del catálogo -->
+<div class="catalog-grid" *ngIf="!loading && filteredProducts.length > 0">
+  <div class="catalog-card" *ngFor="let product of filteredProducts">
+    <div class="catalog-img">
+      <img
+        *ngIf="imageList(product.images).length > 0"
+        [src]="'data:image/jpeg;base64,' + imageList(product.images)[0]"
+        [alt]="product.name"
+      />
+      <span *ngIf="imageList(product.images).length === 0" class="material-icons">restaurant</span>
+    </div>
+    <div class="catalog-body">
+      <h3>{{ product.name }}</h3>
+      <p class="catalog-code">{{ product.code }} · {{ product.commercialLine }}</p>
+      <span class="chip">{{ product.category }}</span>
+      <div class="catalog-bottom">
+        <span class="catalog-price">${{ product.price }}</span>
+      </div>
+      <div class="catalog-images" *ngIf="imageList(product.images).length > 1">
+        <img
+          *ngFor="let img of imageList(product.images)"
+          [src]="'data:image/jpeg;base64,' + img"
+          alt="foto"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Sin resultados -->
+<div class="empty-state" *ngIf="!loading && filteredProducts.length === 0 && !errorMessage">
+  <span class="material-icons">restaurant</span>
+  <p>No hay productos disponibles</p>
+</div>

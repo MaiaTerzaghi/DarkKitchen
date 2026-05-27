@@ -11,6 +11,7 @@ public sealed class DarkKitchenContext(DbContextOptions<DarkKitchenContext> opti
     public DbSet<Product> Products { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<ShippingType> ShippingTypes { get; set; }
+    public DbSet<AuditLog> AuditLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -39,6 +40,10 @@ public sealed class DarkKitchenContext(DbContextOptions<DarkKitchenContext> opti
             .WithMany()
             .HasForeignKey(o => o.ClientId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<AuditLog>()
+            .Property(a => a.EntityName)
+            .HasConversion<string>();
 
         modelBuilder.Entity<Order>().Ignore(o => o.State);
     }

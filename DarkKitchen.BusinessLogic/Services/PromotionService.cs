@@ -1,4 +1,6 @@
+using DarkKitchen.Domain.Auditing;
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
@@ -6,17 +8,38 @@ using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class PromotionService(IPromotionRepository promotionRepository, IRepository<Product> productRepository) : IPromotionService
+public class PromotionService(IPromotionRepository promotionRepository, IRepository<Product> productRepository, IAuditSubject audit) : IPromotionService
 {
     private readonly IPromotionRepository _promotionRepository = promotionRepository;
     private readonly IRepository<Product> _productRepository = productRepository;
+    private readonly IAuditSubject _audit = audit;
 
-    public List<Promotion> GetActivePromotions(DateTime? date, string? productLine, string? product)
+    public List<PromotionResponseDTO> GetActivePromotions(DateTime? date, string? productLine, string? product)
     {
-        return _promotionRepository.GetActivePromotions(date, productLine, product);
+        var promotions = _promotionRepository.GetActivePromotions(date, productLine, product);
+
+        return promotions.Select(MapToDTO).ToList();
     }
 
-    public PromotionResponseDTO CreatePromotion(CreatePromotionRequestDTO request)
+    private static PromotionResponseDTO MapToDTO(Promotion promotion)
+    {
+        return new PromotionResponseDTO
+        {
+            Id = promotion.Id,
+            Name = promotion.Name,
+            DiscountPercentage = promotion.DiscountPercentage,
+            ValidFrom = promotion.ValidFrom,
+            ValidTo = promotion.ValidTo,
+            ProductLine = promotion.ProductLine,
+            Products = promotion.Products.Select(prod => new PromotionProductDTO
+            {
+                Id = prod.Id,
+                Name = prod.Name
+            }).ToList()
+        };
+    }
+
+    public PromotionResponseDTO CreatePromotion(CreatePromotionRequestDTO request, string responsibleUser)
     {
         var promotion = new Promotion
         {
@@ -28,17 +51,18 @@ public class PromotionService(IPromotionRepository promotionRepository, IReposit
 
         var saved = _promotionRepository.Add(promotion);
 
-        return new PromotionResponseDTO
+        _audit.Notify(new AuditEvent
         {
-            Id = saved.Id,
-            Name = saved.Name,
-            DiscountPercentage = saved.DiscountPercentage,
-            ValidFrom = saved.ValidFrom,
-            ValidTo = saved.ValidTo
-        };
+            EntityName = AuditedEntity.Promotion,
+            EntityId = saved.Id,
+            Description = $"Alta de promoción '{saved.Name}' (id {saved.Id}).",
+            ResponsibleUser = responsibleUser
+        });
+
+        return MapToDTO(saved);
     }
 
-    public PromotionResponseDTO UpdatePromotion(int id, UpdatePromotionRequestDTO request)
+    public PromotionResponseDTO UpdatePromotion(int id, UpdatePromotionRequestDTO request, string responsibleUser)
     {
         var promotion = _promotionRepository.Get(p => p.Id == id)
             ?? throw new NotFoundException($"Promoción con id {id} no encontrada.");
@@ -50,14 +74,15 @@ public class PromotionService(IPromotionRepository promotionRepository, IReposit
 
         var updated = _promotionRepository.Update(promotion);
 
-        return new PromotionResponseDTO
+        _audit.Notify(new AuditEvent
         {
-            Id = updated.Id,
-            Name = updated.Name,
-            DiscountPercentage = updated.DiscountPercentage,
-            ValidFrom = updated.ValidFrom,
-            ValidTo = updated.ValidTo
-        };
+            EntityName = AuditedEntity.Promotion,
+            EntityId = updated.Id,
+            Description = $"Modificación de promoción '{updated.Name}' (id {updated.Id}).",
+            ResponsibleUser = responsibleUser
+        });
+
+        return MapToDTO(updated);
     }
 
     public void AddProductToPromotion(int promotionId, int productId)

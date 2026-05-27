@@ -1,0 +1,74 @@
+<div class="modal-overlay" *ngIf="visible && promotion" (click)="onClose()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Productos de "{{ promotion.name }}"</h2>
+      <button class="close-btn" (click)="onClose()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <!-- Productos asociados -->
+    <div class="section">
+      <h3 class="section-title">
+        <span class="material-icons">inventory_2</span>
+        Productos asociados
+      </h3>
+
+      <div class="associated-list" *ngIf="promotion.products && promotion.products.length > 0">
+        <div class="product-item" *ngFor="let product of promotion.products">
+          <span class="product-name">{{ product.name }}</span>
+          <button class="btn-remove" (click)="removeProduct(product.id)">
+            <span class="material-icons">remove_circle</span>
+          </button>
+        </div>
+      </div>
+
+      <p class="empty-text" *ngIf="!promotion.products || promotion.products.length === 0">
+        No hay productos asociados a esta promoción.
+      </p>
+    </div>
+
+    <!-- Buscar y agregar productos -->
+    <div class="section">
+      <h3 class="section-title">
+        <span class="material-icons">add_circle</span>
+        Agregar producto
+      </h3>
+
+      <div class="search-row">
+        <div class="search-input-wrapper">
+          <span class="material-icons search-icon">search</span>
+          <input
+            type="text"
+            [(ngModel)]="searchText"
+            placeholder="Buscar producto por nombre..."
+            class="search-input"
+            (keyup.enter)="searchProducts()"
+          />
+        </div>
+        <button class="btn-search" (click)="searchProducts()" [disabled]="loading">
+          {{ loading ? 'Buscando...' : 'Buscar' }}
+        </button>
+      </div>
+
+      <div class="available-list" *ngIf="availableProducts.length > 0">
+        <div class="product-item" *ngFor="let product of availableProducts">
+          <div class="product-detail">
+            <span class="product-name">{{ product.name }}</span>
+            <span class="product-line">{{ product.commercialLine }}</span>
+          </div>
+          <button class="btn-add" (click)="addProduct(product)">
+            <span class="material-icons">add_circle</span>
+          </button>
+        </div>
+      </div>
+
+      <p class="empty-text" *ngIf="searchText && !loading && availableProducts.length === 0">
+        No se encontraron productos disponibles.
+      </p>
+    </div>
+
+    <!-- Error -->
+    <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+  </div>
+</div>

@@ -1,7 +1,9 @@
+using DarkKitchen.Domain.Entities;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Controllers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -17,7 +19,11 @@ public sealed class PromotionControllerTest
     public void Setup()
     {
         _promotionServiceMock = new Mock<IPromotionService>();
-        _controller = new PromotionController(_promotionServiceMock.Object);
+        _controller = new PromotionController(_promotionServiceMock.Object)
+        {
+            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() }
+        };
+        _controller.HttpContext.Items["RequestingUser"] = new User { Id = 1, Email = "admin@email.com" };
     }
 
     [TestMethod]
@@ -64,7 +70,7 @@ public sealed class PromotionControllerTest
         };
 
         _promotionServiceMock
-            .Setup(s => s.CreatePromotion(request))
+            .Setup(s => s.CreatePromotion(request, It.IsAny<string>()))
             .Returns(expectedResponse);
 
         var result = _controller.CreatePromotion(request);
@@ -99,7 +105,7 @@ public sealed class PromotionControllerTest
         };
 
         _promotionServiceMock
-            .Setup(s => s.UpdatePromotion(promotionId, request))
+            .Setup(s => s.UpdatePromotion(promotionId, request, It.IsAny<string>()))
             .Returns(expectedResponse);
 
         var result = _controller.UpdatePromotion(promotionId, request);
@@ -137,5 +143,31 @@ public sealed class PromotionControllerTest
         var result = _controller.RemoveProductFromPromotion(promotionId, productId);
 
         Assert.IsInstanceOfType(result, typeof(NoContentResult));
+    }
+
+    [TestMethod]
+    public void CreatePromotion_PassesResponsibleUserFromContextToService()
+    {
+        _promotionServiceMock
+            .Setup(s => s.CreatePromotion(It.IsAny<CreatePromotionRequestDTO>(), It.IsAny<string>()))
+            .Returns(new PromotionResponseDTO());
+
+        var request = new CreatePromotionRequestDTO();
+        _controller.CreatePromotion(request);
+
+        _promotionServiceMock.Verify(s => s.CreatePromotion(request, "admin@email.com"), Times.Once);
+    }
+
+    [TestMethod]
+    public void UpdatePromotion_PassesResponsibleUserFromContextToService()
+    {
+        _promotionServiceMock
+            .Setup(s => s.UpdatePromotion(It.IsAny<int>(), It.IsAny<UpdatePromotionRequestDTO>(), It.IsAny<string>()))
+            .Returns(new PromotionResponseDTO());
+
+        var request = new UpdatePromotionRequestDTO();
+        _controller.UpdatePromotion(5, request);
+
+        _promotionServiceMock.Verify(s => s.UpdatePromotion(5, request, "admin@email.com"), Times.Once);
     }
 }

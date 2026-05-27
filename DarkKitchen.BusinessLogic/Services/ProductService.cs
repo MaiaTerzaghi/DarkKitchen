@@ -1,4 +1,6 @@
+using DarkKitchen.Domain.Auditing;
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
@@ -6,9 +8,10 @@ using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 namespace DarkKitchen.BusinessLogic.Services;
 
-public class ProductService(IRepository<Product> productRepository) : IProductService
+public class ProductService(IRepository<Product> productRepository, IAuditSubject audit) : IProductService
 {
     private readonly IRepository<Product> _productRepository = productRepository;
+    private readonly IAuditSubject _audit = audit;
 
     public List<ProductResponseDTO> GetAll(string? name, string? category, string? line, int page = 1, int pageSize = 20)
     {
@@ -32,7 +35,7 @@ public class ProductService(IRepository<Product> productRepository) : IProductSe
         }).ToList();
     }
 
-    public ProductResponseDTO CreateProduct(CreateProductRequestDTO request)
+    public ProductResponseDTO CreateProduct(CreateProductRequestDTO request, string responsibleUser)
     {
         var product = new Product
         {
@@ -48,6 +51,14 @@ public class ProductService(IRepository<Product> productRepository) : IProductSe
 
         var saved = _productRepository.Add(product);
 
+        _audit.Notify(new AuditEvent
+        {
+            EntityName = AuditedEntity.Product,
+            EntityId = saved.Id,
+            Description = $"Alta de producto '{saved.Name}' ({saved.Code}).",
+            ResponsibleUser = responsibleUser
+        });
+
         return new ProductResponseDTO
         {
             Id = saved.Id,
@@ -60,7 +71,7 @@ public class ProductService(IRepository<Product> productRepository) : IProductSe
         };
     }
 
-    public ProductResponseDTO UpdateProduct(int id, UpdateProductRequestDTO request)
+    public ProductResponseDTO UpdateProduct(int id, UpdateProductRequestDTO request, string responsibleUser)
     {
         var product = _productRepository.Get(p => p.Id == id)
             ?? throw new NotFoundException($"Producto con id {id} no encontrado.");
@@ -75,6 +86,14 @@ public class ProductService(IRepository<Product> productRepository) : IProductSe
         product.IsActive = request.IsActive;
 
         var updated = _productRepository.Update(product);
+
+        _audit.Notify(new AuditEvent
+        {
+            EntityName = AuditedEntity.Product,
+            EntityId = updated.Id,
+            Description = $"Modificación de producto '{updated.Name}' ({updated.Code}).",
+            ResponsibleUser = responsibleUser
+        });
 
         return new ProductResponseDTO
         {
@@ -107,10 +126,12 @@ public class ProductService(IRepository<Product> productRepository) : IProductSe
             Id = p.Id,
             Code = p.Code,
             Name = p.Name,
+            Description = p.Description,
             Price = p.Price,
             CommercialLine = p.CommercialLine,
             Category = p.Category,
-            Images = p.Images
+            Images = p.Images,
+            IsActive = p.IsActive
         }).ToList();
     }
 }

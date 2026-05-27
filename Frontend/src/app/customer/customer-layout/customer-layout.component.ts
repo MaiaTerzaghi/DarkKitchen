@@ -14,6 +14,8 @@ export class CustomerLayoutComponent {
   menuItems = [
     { icon: 'dashboard', label: 'Dashboard', route: '/customer' },
     { icon: 'restaurant_menu', label: 'Catálogo', route: '/customer/catalog' },
+    { icon: 'local_offer', label: 'Promociones', route: '/customer/promotions' },
+    { icon: 'receipt_long', label: 'Mis Pedidos', route: '/customer/orders' },
   ];
 
   constructor(

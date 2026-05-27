@@ -1,0 +1,101 @@
+<div class="page-header">
+  <div class="header-text">
+    <h1>Pedidos</h1>
+    <p>Consultá pedidos por rango de fechas y estado</p>
+  </div>
+</div>
+
+<!-- Filtros -->
+<div class="filters-panel">
+  <div class="filters-grid">
+    <div class="filter-group">
+      <label>Desde *</label>
+      <input type="date" [(ngModel)]="filterDateFrom" class="filter-input" />
+    </div>
+    <div class="filter-group">
+      <label>Hasta *</label>
+      <input type="date" [(ngModel)]="filterDateTo" class="filter-input" />
+    </div>
+    <div class="filter-group">
+      <label>Estado</label>
+      <select [(ngModel)]="filterStatus" class="filter-input">
+        <option value="">Todos</option>
+        <option *ngFor="let s of statusOptions" [value]="s.value">{{ s.label }}</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Dirección</label>
+      <input
+        type="text"
+        [(ngModel)]="filterStreet"
+        placeholder="Ej: 18 de Julio"
+        class="filter-input"
+      />
+    </div>
+  </div>
+  <div class="filters-actions">
+    <button class="btn-apply" (click)="search()">
+      <span class="material-icons">search</span>
+      Buscar
+    </button>
+    <button class="btn-clear" (click)="clearFilters()">
+      <span class="material-icons">clear</span>
+      Limpiar
+    </button>
+  </div>
+</div>
+
+<!-- Error -->
+<div class="error-message" *ngIf="errorMessage">
+  {{ errorMessage }}
+</div>
+
+<!-- Loading -->
+<div class="loading" *ngIf="loading">
+  <span class="material-icons spinning">sync</span>
+  Consultando pedidos...
+</div>
+
+<!-- Lista de pedidos -->
+<div class="orders-list" *ngIf="!loading && searched && orders.length > 0">
+  <div class="order-card" *ngFor="let order of orders">
+    <div class="order-main">
+      <div class="order-icon" [ngClass]="getStatusClass(order.status)">
+        <span class="material-icons">receipt_long</span>
+      </div>
+      <div class="order-info">
+        <div class="order-title-row">
+          <h3>Pedido #{{ order.orderId }}</h3>
+          <span class="badge" [ngClass]="getStatusClass(order.status)">
+            {{ getStatusLabel(order.status) }}
+          </span>
+        </div>
+        <p class="order-meta">
+          {{ order.date | date:'dd/MM/yyyy HH:mm' }} ·
+          {{ order.client.name }} {{ order.client.lastName }} ·
+          Tel: {{ order.client.phone }}
+        </p>
+      </div>
+    </div>
+
+    <div class="order-footer">
+      <div class="product-chips">
+        <span class="chip" *ngFor="let item of order.items">
+          {{ item.productName }} x{{ item.quantity }}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Sin resultados -->
+<div class="empty-state" *ngIf="!loading && searched && orders.length === 0 && !errorMessage">
+  <span class="material-icons">receipt_long</span>
+  <p>No hay pedidos para esos filtros</p>
+</div>
+
+<!-- Estado inicial -->
+<div class="empty-state" *ngIf="!loading && !searched">
+  <span class="material-icons">filter_alt</span>
+  <p>Seleccioná un rango de fechas y tocá "Buscar"</p>
+</div>

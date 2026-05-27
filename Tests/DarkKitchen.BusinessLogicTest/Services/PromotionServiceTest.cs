@@ -1,6 +1,8 @@
 using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
+using DarkKitchen.Domain.Auditing;
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IDataAccess;
@@ -13,7 +15,7 @@ public sealed class PromotionServiceTest
 {
     private Mock<IPromotionRepository> _promotionRepositoryMock = null!;
     private Mock<IRepository<Product>> _productRepositoryMock = null!;
-
+    private Mock<IAuditSubject> _auditSubjectMock = null!;
     private PromotionService _service = null!;
 
     [TestInitialize]
@@ -21,7 +23,8 @@ public sealed class PromotionServiceTest
     {
         _promotionRepositoryMock = new Mock<IPromotionRepository>();
         _productRepositoryMock = new Mock<IRepository<Product>>();
-        _service = new PromotionService(_promotionRepositoryMock.Object, _productRepositoryMock.Object);
+        _auditSubjectMock = new Mock<IAuditSubject>();
+        _service = new PromotionService(_promotionRepositoryMock.Object, _productRepositoryMock.Object, _auditSubjectMock.Object);
     }
 
     [TestMethod]
@@ -73,7 +76,7 @@ public sealed class PromotionServiceTest
             .Setup(r => r.Add(It.IsAny<Promotion>()))
             .Returns(savedPromotion);
 
-        var result = _service.CreatePromotion(request);
+        var result = _service.CreatePromotion(request, "admin@email.com");
 
         Assert.IsNotNull(result);
         Assert.AreEqual(1, result.Id);
@@ -93,7 +96,7 @@ public sealed class PromotionServiceTest
             ValidTo = new DateTime(2026, 1, 25)
         };
 
-        _service.CreatePromotion(request);
+        _service.CreatePromotion(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -108,7 +111,7 @@ public sealed class PromotionServiceTest
             ValidTo = new DateTime(2026, 1, 30)
         };
 
-        _service.CreatePromotion(request);
+        _service.CreatePromotion(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -123,7 +126,7 @@ public sealed class PromotionServiceTest
             ValidTo = new DateTime(2026, 1, 30)
         };
 
-        _service.CreatePromotion(request);
+        _service.CreatePromotion(request, "admin@email.com");
     }
 
     [TestMethod]
@@ -154,7 +157,7 @@ public sealed class PromotionServiceTest
             .Setup(r => r.Update(It.IsAny<Promotion>()))
             .Returns(promotion);
 
-        var result = _service.UpdatePromotion(1, request);
+        var result = _service.UpdatePromotion(1, request, "admin@email.com");
 
         Assert.IsNotNull(result);
         Assert.AreEqual(1, result.Id);
@@ -177,7 +180,7 @@ public sealed class PromotionServiceTest
             ValidTo = new DateTime(2026, 1, 30)
         };
 
-        _service.UpdatePromotion(99, request);
+        _service.UpdatePromotion(1, request, "admin@email.com");
     }
 
     [TestMethod]
@@ -205,7 +208,7 @@ public sealed class PromotionServiceTest
             ValidTo = new DateTime(2026, 1, 25)
         };
 
-        _service.UpdatePromotion(1, request);
+        _service.UpdatePromotion(1, request, "admin@email.com");
     }
 
     [TestMethod]
@@ -233,7 +236,7 @@ public sealed class PromotionServiceTest
             ValidTo = new DateTime(2026, 1, 30)
         };
 
-        _service.UpdatePromotion(1, request);
+        _service.UpdatePromotion(1, request, "admin@email.com");
     }
 
     [TestMethod]
@@ -261,7 +264,7 @@ public sealed class PromotionServiceTest
             ValidTo = new DateTime(2026, 1, 30)
         };
 
-        _service.UpdatePromotion(1, request);
+        _service.UpdatePromotion(1, request, "admin@email.com");
     }
 
     [TestMethod]
@@ -450,5 +453,76 @@ public sealed class PromotionServiceTest
             .Returns(false);
 
         _service.AddProductToPromotion(1, 1);
+    }
+
+    [TestMethod]
+    public void CreatePromotion_ValidRequest_NotifiesAuditSubject()
+    {
+        var auditSubjectMock = new Mock<IAuditSubject>();
+        var savedPromotion = new Promotion
+        {
+            Id = 7,
+            Name = "Black Friday",
+            DiscountPercentage = 10,
+            ValidFrom = DateTime.Today.AddDays(-1),
+            ValidTo = DateTime.Today.AddDays(30)
+        };
+
+        _promotionRepositoryMock
+            .Setup(r => r.Add(It.IsAny<Promotion>()))
+            .Returns(savedPromotion);
+
+        var service = new PromotionService(_promotionRepositoryMock.Object, _productRepositoryMock.Object, auditSubjectMock.Object);
+        var request = new CreatePromotionRequestDTO
+        {
+            Name = "Black Friday",
+            DiscountPercentage = 10,
+            ValidFrom = DateTime.Today.AddDays(-1),
+            ValidTo = DateTime.Today.AddDays(30)
+        };
+
+        service.CreatePromotion(request, "admin@email.com");
+
+        auditSubjectMock.Verify(a => a.Notify(It.Is<AuditEvent>(e =>
+            e.EntityName == AuditedEntity.Promotion &&
+            e.EntityId == 7 &&
+            e.ResponsibleUser == "admin@email.com" &&
+            e.Description.Contains("Black Friday"))), Times.Once);
+    }
+
+    [TestMethod]
+    public void UpdatePromotion_WhenPromotionExists_NotifiesAuditSubject()
+    {
+        var promotion = new Promotion
+        {
+            Id = 4,
+            Name = "Black Friday",
+            DiscountPercentage = 10,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 1, 30)
+        };
+
+        _promotionRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Returns(promotion);
+        _promotionRepositoryMock
+            .Setup(r => r.Update(It.IsAny<Promotion>()))
+            .Returns(promotion);
+
+        var request = new UpdatePromotionRequestDTO
+        {
+            Name = "Black Friday Updated",
+            DiscountPercentage = 20,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 1, 30)
+        };
+
+        _service.UpdatePromotion(4, request, "admin@email.com");
+
+        _auditSubjectMock.Verify(a => a.Notify(It.Is<AuditEvent>(e =>
+            e.EntityName == AuditedEntity.Promotion &&
+            e.EntityId == 4 &&
+            e.ResponsibleUser == "admin@email.com" &&
+            e.Description.Contains("Black Friday Updated"))), Times.Once);
     }
 }

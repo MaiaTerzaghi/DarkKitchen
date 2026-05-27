@@ -1,0 +1,84 @@
+<div class="modal-overlay" *ngIf="visible" (click)="onClose()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ isEditMode ? 'Editar Promoción' : 'Nueva Promoción' }}</h2>
+      <button class="close-btn" (click)="onClose()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <form [formGroup]="promotionForm" (ngSubmit)="onSubmit()">
+      <div class="field-group">
+        <label for="name">Nombre</label>
+        <div class="input-wrapper">
+          <span class="material-icons input-icon">local_offer</span>
+          <input
+            id="name"
+            type="text"
+            formControlName="name"
+            placeholder="Ej: Black Friday"
+          />
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label for="discountPercentage">Descuento (%)</label>
+        <div class="input-wrapper">
+          <span class="material-icons input-icon">percent</span>
+          <input
+            id="discountPercentage"
+            type="number"
+            formControlName="discountPercentage"
+            placeholder="Ej: 15"
+            min="1"
+            max="100"
+          />
+        </div>
+      </div>
+
+      <div class="row-fields">
+        <div class="field-group">
+          <label for="validFrom">Fecha desde</label>
+          <div class="input-wrapper">
+            <span class="material-icons input-icon">event</span>
+            <input
+              id="validFrom"
+              type="date"
+              formControlName="validFrom"
+            />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="validTo">Fecha hasta</label>
+          <div class="input-wrapper">
+            <span class="material-icons input-icon">event</span>
+            <input
+              id="validTo"
+              type="date"
+              formControlName="validTo"
+            />
+          </div>
+        </div>
+      </div>
+
+      <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="onClose()">
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          class="btn-submit"
+          [disabled]="promotionForm.invalid || loading"
+        >
+          {{ loading
+            ? (isEditMode ? 'Guardando...' : 'Creando...')
+            : (isEditMode ? 'Guardar Cambios' : 'Crear Promoción')
+          }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

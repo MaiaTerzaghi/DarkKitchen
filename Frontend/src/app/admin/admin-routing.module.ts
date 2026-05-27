@@ -2,6 +2,9 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
+import { PromotionListComponent } from '../business-components/promotion-list/promotion-list.component';
+import { ProductListComponent } from '../business-components/product-list/product-list.component';
+import { AuditLogListComponent } from '../business-components/audit-log-list/audit-log-list.component';
 
 const routes: Routes = [
   {
@@ -11,6 +14,18 @@ const routes: Routes = [
       {
         path: '',
         component: AdminDashboardComponent,
+      },
+      {
+        path: 'promotions',
+        component: PromotionListComponent,
+      },
+      {
+        path: 'products',
+        component: ProductListComponent,
+      },
+      {
+        path: 'audit',
+        component: AuditLogListComponent,
       },
     ],
   },
