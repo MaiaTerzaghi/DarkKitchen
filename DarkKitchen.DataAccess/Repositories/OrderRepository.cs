@@ -99,6 +99,12 @@ public class OrderRepository(DarkKitchenContext context)
             .ToList();
     }
 
-    public List<Order> GetDispatcherOrders() =>
-        throw new NotImplementedException();
+    public List<Order> GetDispatcherOrders()
+    {
+        return context.Orders
+            .Include(o => o.Items)
+            .ThenInclude(i => i.Product)
+            .Include(o => o.Client)
+            .ToList();
+    }
 }
