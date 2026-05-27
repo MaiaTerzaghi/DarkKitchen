@@ -135,8 +135,8 @@ export class CheckoutComponent implements OnInit {
         this._cartService.clear();
         this.loading = false;
       },
-      error: () => {
-        this.errorMessage = 'Error al crear el pedido. Intenta nuevamente.';
+      error: (err) => {
+        this.errorMessage = err || 'Error al crear el pedido. Intenta nuevamente.';
         this.loading = false;
       },
     });
