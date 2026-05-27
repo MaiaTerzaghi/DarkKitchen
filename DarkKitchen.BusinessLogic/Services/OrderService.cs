@@ -225,4 +225,7 @@ public class OrderService(
             GeneralTotal = months.Sum(m => m.MonthlyTotal)
         };
     }
+
+    public List<GetOrdersResponseDTO> GetDispatcherOrders() =>
+        throw new NotImplementedException();
 }
