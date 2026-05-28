@@ -225,4 +225,28 @@ public class OrderService(
             GeneralTotal = months.Sum(m => m.MonthlyTotal)
         };
     }
+
+    public List<GetOrdersResponseDTO> GetDispatcherOrders()
+    {
+        var orders = _orderRepository.GetDispatcherOrders();
+
+        return orders.Select(order => new GetOrdersResponseDTO
+        {
+            OrderId = order.Id,
+            Client = new ClientInfoDTO
+            {
+                Id = order.Client.Id,
+                Name = order.Client.Name,
+                LastName = order.Client.LastName,
+                Phone = order.Client.Phone
+            },
+            Date = order.Date,
+            Status = order.Status.ToString(),
+            Items = order.Items.Select(item => new OrderItemResponseDTO
+            {
+                ProductName = item.Product.Name,
+                Quantity = item.Quantity
+            }).ToList()
+        }).ToList();
+    }
 }

@@ -60,6 +60,14 @@ export default abstract class ApiRepository {
       .pipe(retry(3), catchError(this.handleError));
   }
 
+  protected patch<T>(id: number, extraResource = '', body: any = null): Observable<T> {
+    extraResource = extraResource ? `/${extraResource}` : '';
+
+    return this._http
+      .patch<T>(`${this.fullEndpoint}/${id}${extraResource}`, body, this.headers)
+      .pipe(retry(3), catchError(this.handleError));
+  }
+
   protected handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
       console.error('An error occurred:', error.error.message);
