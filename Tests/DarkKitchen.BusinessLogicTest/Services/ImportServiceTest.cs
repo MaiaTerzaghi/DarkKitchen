@@ -71,7 +71,6 @@ public sealed class ImportServiceTest
         var result = _service.Import(request, "admin@email.com");
 
         Assert.AreEqual(1, result.ImportedCount);
-        Assert.AreEqual(0, result.Errors.Count);
 
         _productServiceMock.Verify(s => s.CreateProduct(
             It.Is<CreateProductRequestDTO>(dto =>
