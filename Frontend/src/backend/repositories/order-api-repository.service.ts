@@ -9,6 +9,7 @@ import OrderResponse from '../services/order/models/OrderResponse';
 import OrderFilter from '../services/order/models/OrderFilter';
 import OrderByDateResponse from '../services/order/models/OrderByDateResponse';
 import OrderByDateFilter from '../services/order/models/OrderByDateFilter';
+import OrderStatusResponse from '../services/order/models/OrderStatusResponse';
 
 
 @Injectable({
@@ -58,5 +59,16 @@ export class OrderApiRepositoryService extends ApiRepository {
     const query = params.join('&');
     return this.get<OrderByDateResponse[]>('by-date', query);
   }
+
+  public getDispatcherOrders(): Observable<OrderByDateResponse[]> {
+    return this.get<OrderByDateResponse[]>('dispatcher');
+  }
+
+  public markAsPrepared(id: number): Observable<OrderStatusResponse> {
+    return this.patch<OrderStatusResponse>(id, 'prepared');
+  }
+
+  public deliverOrder(id: number): Observable<OrderStatusResponse> {
+    return this.patch<OrderStatusResponse>(id, 'deliver');
+  }
 }
-  

@@ -7,6 +7,7 @@ import OrderResponse from './models/OrderResponse';
 import OrderFilter from './models/OrderFilter';
 import OrderByDateResponse from './models/OrderByDateResponse';
 import OrderByDateFilter from './models/OrderByDateFilter';
+import OrderStatusResponse from './models/OrderStatusResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -26,5 +27,17 @@ export class OrderService {
     filters: OrderByDateFilter
   ): Observable<OrderByDateResponse[]> {
     return this._repository.getOrdersByDate(filters);
+  }
+
+  public getDispatcherOrders(): Observable<OrderByDateResponse[]> {
+    return this._repository.getDispatcherOrders();
+  }
+
+  public markAsPrepared(id: number): Observable<OrderStatusResponse> {
+    return this._repository.markAsPrepared(id);
+  }
+
+  public deliverOrder(id: number): Observable<OrderStatusResponse> {
+    return this._repository.deliverOrder(id);
   }
 }

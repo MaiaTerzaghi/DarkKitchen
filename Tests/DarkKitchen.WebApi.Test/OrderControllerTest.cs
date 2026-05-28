@@ -381,4 +381,41 @@ public class OrderControllerTest
         Assert.AreEqual(1, response.Count);
         Assert.AreEqual("Pizza Napolitana", response[0].Name);
     }
+
+    [TestMethod]
+    public void GetDispatcherOrders_WhenCalled_ReturnsOkWithOrders()
+    {
+        var expectedOrders = new List<GetOrdersResponseDTO>
+        {
+            new GetOrdersResponseDTO
+            {
+                OrderId = 1,
+                Client = new ClientInfoDTO
+                {
+                    Id = 1,
+                    Name = "Juan",
+                    LastName = "Perez",
+                    Phone = "+59899000000"
+                },
+                Date = new DateTime(2026, 1, 10),
+                Status = "Pending",
+                Items = [new OrderItemResponseDTO { ProductName = "Hamburguesa", Quantity = 2 }]
+            }
+        };
+
+        _orderServiceMock
+            .Setup(s => s.GetDispatcherOrders())
+            .Returns(expectedOrders);
+
+        var result = _controller.GetDispatcherOrders();
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = (OkObjectResult)result;
+        var response = (List<GetOrdersResponseDTO>)okResult.Value!;
+        Assert.AreEqual(expectedOrders.Count, response.Count);
+        Assert.AreEqual(expectedOrders[0].OrderId, response[0].OrderId);
+        Assert.AreEqual(expectedOrders[0].Client.Id, response[0].Client.Id);
+        Assert.AreEqual(expectedOrders[0].Client.Name, response[0].Client.Name);
+        Assert.AreEqual(expectedOrders[0].Status, response[0].Status);
+    }
 }

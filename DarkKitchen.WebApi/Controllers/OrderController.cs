@@ -110,4 +110,12 @@ public class OrderController(IOrderService orderService) : ControllerBase
         var response = _orderService.GetTopProducts(dateFrom, dateTo);
         return Ok(response);
     }
+
+    [AuthorizeRoles(UserRole.Dispatcher)]
+    [HttpGet("dispatcher")]
+    public IActionResult GetDispatcherOrders()
+    {
+        var response = _orderService.GetDispatcherOrders();
+        return Ok(response);
+    }
 }
