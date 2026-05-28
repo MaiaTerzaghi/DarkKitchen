@@ -8,6 +8,7 @@ import OrderFilter from './models/OrderFilter';
 import OrderByDateResponse from './models/OrderByDateResponse';
 import OrderByDateFilter from './models/OrderByDateFilter';
 import OrderStatusResponse from './models/OrderStatusResponse';
+import OrderPreviewResponse from './models/OrderPreviewResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -17,6 +18,10 @@ export class OrderService {
 
   public createOrder(data: CreateOrderRequest): Observable<CreateOrderResponse> {
     return this._repository.create(data);
+  }
+
+  public previewOrder(items: { productId: number; quantity: number }[], shippingType: string): Observable<OrderPreviewResponse> {
+    return this._repository.previewOrder({ items, shippingType });
   }
 
   public getClientOrders(filters: OrderFilter = {}): Observable<OrderResponse[]> {

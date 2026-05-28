@@ -167,6 +167,98 @@ public class PricingServiceTest
     }
 
     [TestMethod]
+    public void PreviewOrderPricing_NoPromotion_ReturnsItemsWithoutDiscount()
+    {
+        var product = new Product { Id = 1, Name = "Ensalada Caesar Premium", Price = 250.0, IsActive = true, CommercialLine = "Ensaladas" };
+
+        _productRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns(product);
+
+        var items = new List<OrderItemRequestDTO>
+        {
+            new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }
+        };
+
+        var shipping = new ShippingType { Id = 1, Name = "Express", Cost = 50.0 };
+        var result = _service.PreviewOrderPricing(items, shipping);
+
+        Assert.AreEqual(1, result.Items.Count);
+        Assert.AreEqual(250.0, result.Items[0].UnitPrice);
+        Assert.AreEqual(0, result.Items[0].DiscountPercentage);
+        Assert.AreEqual(250.0, result.Items[0].DiscountedUnitPrice);
+        Assert.AreEqual(500.0, result.Items[0].ItemTotal);
+        Assert.AreEqual(500.0, result.Subtotal);
+        Assert.AreEqual(0, result.Discount);
+        Assert.AreEqual(50.0, result.ShippingCost);
+    }
+
+    [TestMethod]
+    public void PreviewOrderPricing_WithPromotion_ReturnsItemsWithDiscount()
+    {
+        var pizza = new Product { Id = 1, Name = "Pizza Margherita", Price = 350.0, IsActive = true, CommercialLine = "Pizzas" };
+
+        var promo = new Promotion
+        {
+            Id = 1,
+            DiscountPercentage = 35,
+            Products = [pizza]
+        };
+
+        _productRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns(pizza);
+
+        _promotionRepositoryMock
+            .Setup(r => r.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>()))
+            .Returns([promo]);
+
+        var items = new List<OrderItemRequestDTO>
+        {
+            new OrderItemRequestDTO { ProductId = 1, Quantity = 1 }
+        };
+
+        var shipping = new ShippingType { Id = 1, Name = "Standard", Cost = 20.0 };
+        var result = _service.PreviewOrderPricing(items, shipping);
+
+        Assert.AreEqual(1, result.Items.Count);
+        Assert.AreEqual(350.0, result.Items[0].UnitPrice);
+        Assert.AreEqual(35, result.Items[0].DiscountPercentage);
+        Assert.AreEqual(227.5, result.Items[0].DiscountedUnitPrice);
+        Assert.AreEqual(227.5, result.Items[0].ItemTotal);
+        Assert.AreEqual(350.0, result.Subtotal);
+        Assert.AreEqual(122.5, result.Discount);
+    }
+
+    [TestMethod]
+    public void PreviewOrderPricing_MultiplePromotions_AppliesBestDiscount()
+    {
+        var pizza = new Product { Id = 1, Name = "Pizza Margherita", Price = 350.0, IsActive = true, CommercialLine = "Pizzas" };
+
+        var promo15 = new Promotion { Id = 1, DiscountPercentage = 15, Products = [pizza] };
+        var promo35 = new Promotion { Id = 2, DiscountPercentage = 35, Products = [pizza] };
+
+        _productRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
+            .Returns(pizza);
+
+        _promotionRepositoryMock
+            .Setup(r => r.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>()))
+            .Returns([promo15, promo35]);
+
+        var items = new List<OrderItemRequestDTO>
+        {
+            new OrderItemRequestDTO { ProductId = 1, Quantity = 1 }
+        };
+
+        var shipping = new ShippingType { Id = 1, Name = "Standard", Cost = 20.0 };
+        var result = _service.PreviewOrderPricing(items, shipping);
+
+        Assert.AreEqual(35, result.Items[0].DiscountPercentage);
+        Assert.AreEqual(227.5, result.Items[0].DiscountedUnitPrice);
+    }
+
+    [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
     public void CalculateOrderPricing_InactiveProduct_ThrowsException()
     {

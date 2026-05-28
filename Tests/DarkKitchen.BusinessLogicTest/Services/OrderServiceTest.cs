@@ -1151,4 +1151,64 @@ public class OrderServiceTest
         Assert.AreEqual("Hamburguesa", result[0].Items[0].ProductName);
         Assert.AreEqual(2, result[0].Items[0].Quantity);
     }
+
+    [TestMethod]
+    public void PreviewOrder_ValidRequest_DelegatesToPricingService()
+    {
+        var expectedPreview = new OrderPreviewResponseDTO
+        {
+            Items =
+            [
+                new OrderPreviewItemDTO
+                {
+                    ProductId = 1,
+                    ProductName = "Pizza Margherita",
+                    Quantity = 1,
+                    UnitPrice = 350.0,
+                    DiscountPercentage = 35,
+                    DiscountedUnitPrice = 227.5,
+                    ItemTotal = 227.5,
+                },
+            ],
+            Subtotal = 350.0,
+            Discount = 122.5,
+            Vat = 50.05,
+            ShippingCost = 50.0,
+            Total = 327.55
+        };
+
+        _pricingServiceMock
+            .Setup(s => s.PreviewOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<ShippingType>()))
+            .Returns(expectedPreview);
+
+        var items = new List<OrderItemRequestDTO>
+        {
+            new OrderItemRequestDTO { ProductId = 1, Quantity = 1 }
+        };
+
+        var result = _service.PreviewOrder(items, "Express");
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(350.0, result.Subtotal);
+        Assert.AreEqual(122.5, result.Discount);
+        Assert.AreEqual(50.0, result.ShippingCost);
+        Assert.AreEqual(1, result.Items.Count);
+        Assert.AreEqual(35, result.Items[0].DiscountPercentage);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void PreviewOrder_InvalidShippingType_ThrowsException()
+    {
+        _shippingTypeRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<ShippingType, bool>>>()))
+            .Returns((ShippingType)null!);
+
+        var items = new List<OrderItemRequestDTO>
+        {
+            new OrderItemRequestDTO { ProductId = 1, Quantity = 1 }
+        };
+
+        _service.PreviewOrder(items, "Inexistente");
+    }
 }

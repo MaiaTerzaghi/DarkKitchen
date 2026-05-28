@@ -7,4 +7,5 @@ namespace DarkKitchen.IBusinessLogic;
 public interface IPricingService
 {
     PricingResult CalculateOrderPricing(List<OrderItemRequestDTO> items, ShippingType shippingType);
+    OrderPreviewResponseDTO PreviewOrderPricing(List<OrderItemRequestDTO> items, ShippingType shippingType);
 }
