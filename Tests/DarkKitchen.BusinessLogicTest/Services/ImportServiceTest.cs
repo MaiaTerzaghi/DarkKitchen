@@ -82,4 +82,39 @@ public sealed class ImportServiceTest
                 dto.Category == "Pizzas"),
             "admin@email.com"), Times.Once);
     }
+
+    [TestMethod]
+    public void Import_WhenProductHasImagePaths_ConvertsThemToBase64JoinedByComma()
+    {
+        var imageBytes1 = new byte[] { 1, 2, 3 };
+        var imageBytes2 = new byte[] { 4, 5, 6 };
+        var expectedBase64 = $"{Convert.ToBase64String(imageBytes1)},{Convert.ToBase64String(imageBytes2)}";
+
+        var imported = new ImportedProduct
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Una rica pizza napolitana con tomate",
+            Price = 250.0,
+            CommercialLine = "Minutas",
+            Category = "Pizzas",
+            ImagePaths = ["pizza1.jpg", "pizza2.jpg"]
+        };
+
+        var importerMock = new Mock<IProductImporter>();
+        importerMock.Setup(i => i.Import(It.IsAny<ImportRequest>())).Returns([imported]);
+        _providerMock.Setup(p => p.GetByName("JSON")).Returns(importerMock.Object);
+
+        _imageReaderMock.Setup(r => r.Read(Path.Combine(ImagesRoot, "pizza1.jpg"))).Returns(imageBytes1);
+        _imageReaderMock.Setup(r => r.Read(Path.Combine(ImagesRoot, "pizza2.jpg"))).Returns(imageBytes2);
+
+        var request = new ImportProductsRequestDTO { ImporterName = "JSON", Content = "x", FileName = "x.json" };
+
+        var result = _service.Import(request, "admin@email.com");
+
+        Assert.AreEqual(1, result.ImportedCount);
+        _productServiceMock.Verify(s => s.CreateProduct(
+            It.Is<CreateProductRequestDTO>(dto => dto.Images == expectedBase64),
+            "admin@email.com"), Times.Once);
+    }
 }
