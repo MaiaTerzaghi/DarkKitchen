@@ -100,10 +100,10 @@ public class PricingService(
     {
         double discount = 0;
 
-        foreach (var (item, product) in itemsWithProducts)
+        foreach(var (item, product) in itemsWithProducts)
         {
             var discountPct = GetDiscountPercentage(item.ProductId, promotions);
-            if (discountPct > 0)
+            if(discountPct > 0)
             {
                 discount += (product.Price * item.Quantity) * (discountPct / 100);
             }
