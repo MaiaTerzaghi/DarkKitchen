@@ -1,6 +1,7 @@
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
+using DarkKitchen.Importers.Contracts;
 
 namespace DarkKitchen.BusinessLogic.Services;
 
@@ -24,6 +25,46 @@ public class ImportService(
 
     public ImportResultDTO Import(ImportProductsRequestDTO request, string responsibleUser)
     {
-        throw new NotImplementedException();
+        var importer = _importerProvider.GetByName(request.ImporterName);
+        var importerRequest = new ImportRequest
+        {
+            Content = request.Content,
+            FileName = request.FileName
+        };
+
+        var result = new ImportResultDTO();
+
+        foreach (var imported in importer.Import(importerRequest))
+        {
+            var dto = new CreateProductRequestDTO
+            {
+                Code = imported.Code,
+                Name = imported.Name,
+                Description = imported.Description,
+                Price = imported.Price,
+                CommercialLine = imported.CommercialLine,
+                Category = imported.Category,
+                Images = ConvertImagesToBase64(imported.ImagePaths)
+            };
+            _productService.CreateProduct(dto, responsibleUser);
+            result.ImportedCount++;
+        }
+
+        return result;
+    }
+
+    private string ConvertImagesToBase64(List<string> paths)
+    {
+        if (paths.Count == 0)
+        {
+            return string.Empty;
+        }
+
+        var base64s = paths
+            .Select(p => Path.Combine(_imagesRoot, p))
+            .Select(_imageReader.Read)
+            .Select(Convert.ToBase64String);
+
+        return string.Join(",", base64s);
     }
 }
