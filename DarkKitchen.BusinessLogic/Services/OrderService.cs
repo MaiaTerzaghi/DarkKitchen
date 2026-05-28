@@ -27,7 +27,7 @@ public class OrderService(
         var pricing = _pricingService.CalculateOrderPricing(request.Items, shippingType);
         var order = BuildOrder(request, clientId, shippingType, pricing);
         var saved = _orderRepository.Add(order);
-        return BuildOrderResponse(clientId, saved.Id, pricing.Subtotal, pricing.ShippingCost, pricing.Total);
+        return BuildOrderResponse(clientId, saved.Id, pricing.Subtotal, pricing.Vat, pricing.ShippingCost, pricing.Total);
     }
 
     private void ValidateClient(int clientId)
@@ -42,6 +42,12 @@ public class OrderService(
         {
             throw new ArgumentException("El pedido debe tener al menos un producto.");
         }
+    }
+
+    public OrderPreviewResponseDTO PreviewOrder(List<OrderItemRequestDTO> items, string shippingTypeName)
+    {
+        var shippingType = ResolveShippingType(shippingTypeName);
+        return _pricingService.PreviewOrderPricing(items, shippingType);
     }
 
     private ShippingType ResolveShippingType(string shippingTypeName)
@@ -69,13 +75,14 @@ public class OrderService(
         };
     }
 
-    private static CreateOrderResponseDTO BuildOrderResponse(int clientId, int orderId, double subtotal, double shippingCost, double total)
+    private static CreateOrderResponseDTO BuildOrderResponse(int clientId, int orderId, double subtotal, double vat, double shippingCost, double total)
     {
         return new CreateOrderResponseDTO
         {
             ClientId = clientId,
             OrderId = orderId,
             Subtotal = subtotal,
+            Vat = vat,
             ShippingCost = shippingCost,
             Total = total
         };
