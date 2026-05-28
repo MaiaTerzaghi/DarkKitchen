@@ -1,0 +1,77 @@
+import { Component, OnInit } from '@angular/core';
+import { ProductService } from '../../../backend/services/product/product.service';
+import { CartService } from '../services/cart.service';
+import ProductResponse from '../../../backend/services/product/models/ProductResponse';
+
+@Component({
+  selector: 'app-product-catalog',
+  templateUrl: './product-catalog.component.html',
+  standalone: false,
+  styleUrls: ['./product-catalog.component.css'],
+})
+export class ProductCatalogComponent implements OnInit {
+  products: ProductResponse[] = [];
+  filteredProducts: ProductResponse[] = [];
+  categories: string[] = [];
+  selectedCategory: string = 'Todos';
+  searchTerm: string = '';
+  loading: boolean = true;
+  errorMessage: string = '';
+
+  constructor(
+    private readonly _productService: ProductService,
+    private readonly _cartService: CartService
+  ) {}
+
+  ngOnInit(): void {
+    this.loadProducts();
+  }
+
+  private loadProducts(): void {
+    this.loading = true;
+    this._productService.getAll().subscribe({
+      next: (data) => {
+        this.products = data;
+        this.categories = [
+          'Todos',
+          ...new Set(data.map((p) => p.category)),
+        ];
+        this.applyFilters();
+        this.loading = false;
+      },
+      error: () => {
+        this.errorMessage = 'Error al cargar productos';
+        this.loading = false;
+      },
+    });
+  }
+
+  filterByCategory(category: string): void {
+    this.selectedCategory = category;
+    this.applyFilters();
+  }
+
+  onSearch(): void {
+    this.applyFilters();
+  }
+
+  private applyFilters(): void {
+    let result = this.products;
+    if (this.selectedCategory !== 'Todos') {
+      result = result.filter((p) => p.category === this.selectedCategory);
+    }
+    if (this.searchTerm.trim()) {
+      const term = this.searchTerm.toLowerCase();
+      result = result.filter((p) => p.name.toLowerCase().includes(term));
+    }
+    this.filteredProducts = result;
+  }
+
+  addToCart(product: ProductResponse): void {
+    this._cartService.addItem(product);
+  }
+
+  getCartCount(): number {
+    return this._cartService.getItemCount();
+  }
+}

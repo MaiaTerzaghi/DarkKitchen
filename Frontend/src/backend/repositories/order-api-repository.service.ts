@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import ApiRepository from './api-repository';
+import CreateOrderRequest from '../services/order/models/CreateOrderRequest';
+import CreateOrderResponse from '../services/order/models/CreateOrderResponse';
 import environments from '../../environments/environment';
 import OrderResponse from '../services/order/models/OrderResponse';
 import OrderFilter from '../services/order/models/OrderFilter';
@@ -9,12 +11,17 @@ import OrderByDateResponse from '../services/order/models/OrderByDateResponse';
 import OrderByDateFilter from '../services/order/models/OrderByDateFilter';
 import OrderStatusResponse from '../services/order/models/OrderStatusResponse';
 
+
 @Injectable({
   providedIn: 'root',
 })
 export class OrderApiRepositoryService extends ApiRepository {
   constructor(http: HttpClient) {
     super(environments.darkKitchenApi, 'orders', http);
+  }
+
+  public create(data: CreateOrderRequest): Observable<CreateOrderResponse> {
+    return this.post<CreateOrderResponse>(data);
   }
 
   public getClientOrders(filters: OrderFilter): Observable<OrderResponse[]> {
