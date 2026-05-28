@@ -17,6 +17,10 @@
         <span class="success-value">${{ orderResponse.subtotal | number:'1.2-2' }}</span>
       </div>
       <div class="success-row">
+        <span class="success-label">IVA (22%)</span>
+        <span class="success-value">${{ orderResponse.vat | number:'1.2-2' }}</span>
+      </div>
+      <div class="success-row">
         <span class="success-label">Envío</span>
         <span class="success-value">${{ orderResponse.shippingCost | number:'1.2-2' }}</span>
       </div>
@@ -61,7 +65,14 @@
         <div class="item-info">
           <h3 class="item-name">{{ item.product.name }}</h3>
           <span class="item-category">{{ item.product.category }}</span>
-          <span class="item-unit-price">${{ item.product.price | number:'1.2-2' }} c/u</span>
+          <span class="item-unit-price" *ngIf="!getPreviewItem(item.product.id)?.discountPercentage">
+            ${{ item.product.price | number:'1.2-2' }} c/u
+          </span>
+          <span class="item-unit-price" *ngIf="getPreviewItem(item.product.id)?.discountPercentage">
+            <span class="price-original">${{ item.product.price | number:'1.2-2' }}</span>
+            <span class="price-discounted">${{ getPreviewItem(item.product.id)!.discountedUnitPrice | number:'1.2-2' }} c/u</span>
+            <span class="discount-badge">-{{ getPreviewItem(item.product.id)!.discountPercentage }}%</span>
+          </span>
         </div>
 
         <div class="item-actions">
@@ -75,7 +86,7 @@
             </button>
           </div>
 
-          <span class="item-subtotal">${{ item.product.price * item.quantity | number:'1.2-2' }}</span>
+          <span class="item-subtotal">${{ (getPreviewItem(item.product.id)?.itemTotal ?? (item.product.price * item.quantity)) | number:'1.2-2' }}</span>
 
           <button class="remove-btn" (click)="removeItem(item)" type="button">
             <span class="material-icons">delete</span>
@@ -173,18 +184,31 @@
         Resumen
       </h3>
 
-      <div class="summary-rows">
+      <div class="summary-loading" *ngIf="loadingPreview">
+        <span class="material-icons spinning">sync</span>
+        <span>Calculando...</span>
+      </div>
+
+      <div class="summary-rows" *ngIf="preview && !loadingPreview">
         <div class="summary-row">
           <span class="summary-label">Subtotal</span>
-          <span class="summary-value">${{ subtotal | number:'1.2-2' }}</span>
+          <span class="summary-value">${{ preview.subtotal | number:'1.2-2' }}</span>
+        </div>
+        <div class="summary-row discount-row" *ngIf="preview.discount > 0">
+          <span class="summary-label">Descuento</span>
+          <span class="summary-value">-${{ preview.discount | number:'1.2-2' }}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">IVA (22%)</span>
+          <span class="summary-value">${{ preview.vat | number:'1.2-2' }}</span>
         </div>
         <div class="summary-row">
           <span class="summary-label">Envío</span>
-          <span class="summary-value">${{ shippingCost | number:'1.2-2' }}</span>
+          <span class="summary-value">${{ preview.shippingCost | number:'1.2-2' }}</span>
         </div>
         <div class="summary-row total-row">
           <span class="summary-label">Total</span>
-          <span class="summary-value">${{ total | number:'1.2-2' }}</span>
+          <span class="summary-value">${{ preview.total | number:'1.2-2' }}</span>
         </div>
       </div>
     </div>
