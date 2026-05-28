@@ -1,6 +1,8 @@
 using DarkKitchen.BusinessLogic.Services;
+using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
+using DarkKitchen.Importers.Contracts;
 using Moq;
 
 namespace DarkKitchen.BusinessLogicTest.Services;
@@ -38,5 +40,48 @@ public sealed class ImportServiceTest
         Assert.AreEqual(2, result.Count);
         Assert.IsTrue(result.Any(i => i.Name == "JSON"));
         Assert.IsTrue(result.Any(i => i.Name == "XML"));
+    }
+
+    [TestMethod]
+    public void Import_WhenImporterReturnsOneProduct_CallsCreateProductAndCountsIt()
+    {
+        var request = new ImportProductsRequestDTO
+        {
+            ImporterName = "JSON",
+            Content = "[{...}]",
+            FileName = "products.json"
+        };
+
+        var importedProduct = new ImportedProduct
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Una rica pizza napolitana con tomate",
+            Price = 250.0,
+            CommercialLine = "Minutas",
+            Category = "Pizzas"
+        };
+
+        var importerMock = new Mock<IProductImporter>();
+        importerMock.Setup(i => i.Import(It.IsAny<ImportRequest>()))
+                    .Returns([importedProduct]);
+
+        _providerMock.Setup(p => p.GetByName("JSON"))
+                    .Returns(importerMock.Object);
+
+        var result = _service.Import(request, "admin@email.com");
+
+        Assert.AreEqual(1, result.ImportedCount);
+        Assert.AreEqual(0, result.Errors.Count);
+
+        _productServiceMock.Verify(s => s.CreateProduct(
+            It.Is<CreateProductRequestDTO>(dto =>
+                dto.Code == "P0001" &&
+                dto.Name == "Pizza Napolitana" &&
+                dto.Description == "Una rica pizza napolitana con tomate" &&
+                dto.Price == 250.0 &&
+                dto.CommercialLine == "Minutas" &&
+                dto.Category == "Pizzas"),
+            "admin@email.com"), Times.Once);
     }
 }
