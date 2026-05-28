@@ -40,4 +40,8 @@ export class OrderService {
   public deliverOrder(id: number): Observable<OrderStatusResponse> {
     return this._repository.deliverOrder(id);
   }
+
+  public markAsNotDelivered(id: number): Observable<OrderStatusResponse> {
+    return this._repository.markAsNotDelivered(id);
+  }
 }
