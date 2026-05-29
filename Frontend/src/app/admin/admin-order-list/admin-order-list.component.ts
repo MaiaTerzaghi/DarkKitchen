@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { OrderService } from '../../../backend/services/order/order.service';
 import OrderByDateResponse from '../../../backend/services/order/models/OrderByDateResponse';
 import OrderByDateFilter from '../../../backend/services/order/models/OrderByDateFilter';
+import OrderStatusResponse from '../../../backend/services/order/models/OrderStatusResponse';
 
 @Component({
   selector: 'app-admin-order-list',
@@ -16,6 +17,7 @@ export class AdminOrderListComponent implements OnInit {
   searchTerm: string = '';
   filterStatus: string = '';
   selectedOrder: OrderByDateResponse | null = null;
+  processingOrderId: number | null = null;
 
   dateFrom: string = '';
   dateTo: string = '';
@@ -135,5 +137,27 @@ export class AdminOrderListComponent implements OnInit {
 
   public getTotalItems(order: OrderByDateResponse): number {
     return order.items.reduce((sum, item) => sum + item.quantity, 0);
+  }
+
+  public canCancel(status: string): boolean {
+    return status !== 'Delivered' && status !== 'Cancelled';
+  }
+
+  public cancelOrder(order: OrderByDateResponse): void {
+    this.processingOrderId = order.orderId;
+
+    this._orderService.cancelOrder(order.orderId).subscribe({
+      next: (response) => {
+        const idx = this.orders.findIndex((o) => o.orderId === order.orderId);
+        if (idx !== -1) {
+          this.orders[idx] = { ...this.orders[idx], status: response.status };
+        }
+        this.processingOrderId = null;
+      },
+      error: (err) => {
+        this.errorMessage = err || 'Error al cancelar el pedido';
+        this.processingOrderId = null;
+      },
+    });
   }
 }
