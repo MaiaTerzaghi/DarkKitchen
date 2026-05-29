@@ -91,9 +91,20 @@
           <span class="order-date">{{ order.date | date:'dd/MM/yyyy HH:mm' }}</span>
         </td>
         <td>
-          <button class="btn-detail" (click)="openDetail(order)" title="Ver detalle">
-            <span class="material-icons">visibility</span>
-          </button>
+          <div class="actions-row">
+            <button class="btn-detail" (click)="openDetail(order)" title="Ver detalle">
+              <span class="material-icons">visibility</span>
+            </button>
+            <button
+              class="btn-cancel"
+              *ngIf="canCancel(order.status)"
+              [disabled]="processingOrderId === order.orderId"
+              (click)="cancelOrder(order)"
+              title="Cancelar pedido"
+            >
+              <span class="material-icons">{{ processingOrderId === order.orderId ? 'sync' : 'cancel' }}</span>
+            </button>
+          </div>
         </td>
       </tr>
     </tbody>
