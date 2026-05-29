@@ -291,7 +291,13 @@
   color: #f97316;
 }
 
-/* Botón detalle */
+/* Acciones */
+.actions-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .btn-detail {
   display: flex;
   align-items: center;
@@ -310,6 +316,32 @@
 }
 
 .btn-detail .material-icons {
+  font-size: 18px;
+}
+
+.btn-cancel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 10px;
+  color: #ef4444;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-cancel:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.25);
+}
+
+.btn-cancel:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-cancel .material-icons {
   font-size: 18px;
 }
 

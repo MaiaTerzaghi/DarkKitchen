@@ -80,4 +80,8 @@ export class OrderApiRepositoryService extends ApiRepository {
   public markAsNotDelivered(id: number): Observable<OrderStatusResponse> {
     return this.patch<OrderStatusResponse>(id, 'not-delivered');
   }
+
+  public cancelOrder(id: number): Observable<OrderStatusResponse> {
+    return this.patch<OrderStatusResponse>(id, 'cancel');
+  }
 }

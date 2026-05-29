@@ -49,4 +49,8 @@ export class OrderService {
   public markAsNotDelivered(id: number): Observable<OrderStatusResponse> {
     return this._repository.markAsNotDelivered(id);
   }
+
+  public cancelOrder(id: number): Observable<OrderStatusResponse> {
+    return this._repository.cancelOrder(id);
+  }
 }
