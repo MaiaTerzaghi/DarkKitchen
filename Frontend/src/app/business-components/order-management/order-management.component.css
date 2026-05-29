@@ -279,6 +279,16 @@
   background: rgba(74, 222, 128, 0.25);
 }
 
+.btn-not-delivered {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+}
+
+.btn-not-delivered:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.25);
+}
+
 
 .empty-state {
   display: flex;

@@ -14,6 +14,14 @@ public class OrderController(IOrderService orderService) : ControllerBase
     private readonly IOrderService _orderService = orderService;
 
     [AuthorizeRoles(UserRole.Client)]
+    [HttpPost("preview")]
+    public IActionResult PreviewOrder([FromBody] PreviewOrderRequestDTO request)
+    {
+        var response = _orderService.PreviewOrder(request.Items, request.ShippingType);
+        return Ok(response);
+    }
+
+    [AuthorizeRoles(UserRole.Client)]
     [HttpPost]
     public IActionResult CreateOrder([FromBody] CreateOrderRequestDTO request)
     {

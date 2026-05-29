@@ -46,6 +46,13 @@ export class OrderManagementComponent implements OnInit {
       canApply: (status) => status === 'OnTheWay',
       apply: (id) => this._orderService.deliverOrder(id),
     },
+    {
+      label: 'Marcar como No entregado',
+      icon: 'block',
+      cssClass: 'btn-not-delivered',
+      canApply: (status) => status === 'OnTheWay',
+      apply: (id) => this._orderService.markAsNotDelivered(id),
+    },
   ];
 
   constructor(private readonly _orderService: OrderService) {}

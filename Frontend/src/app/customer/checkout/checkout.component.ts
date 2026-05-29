@@ -5,6 +5,7 @@ import { OrderService } from '../../../backend/services/order/order.service';
 import { ShippingTypeService } from '../../../backend/services/shipping-type/shipping-type.service';
 import ShippingTypeResponse from '../../../backend/services/shipping-type/models/ShippingTypeResponse';
 import CreateOrderResponse from '../../../backend/services/order/models/CreateOrderResponse';
+import OrderPreviewResponse, { OrderPreviewItemResponse } from '../../../backend/services/order/models/OrderPreviewResponse';
 
 @Component({
   selector: 'app-checkout',
@@ -16,6 +17,9 @@ export class CheckoutComponent implements OnInit {
   addressForm!: FormGroup;
   shippingTypes: ShippingTypeResponse[] = [];
   selectedShippingType: ShippingTypeResponse | null = null;
+
+  preview: OrderPreviewResponse | null = null;
+  loadingPreview: boolean = false;
 
   loading: boolean = false;
   loadingShipping: boolean = true;
@@ -47,12 +51,34 @@ export class CheckoutComponent implements OnInit {
         this.shippingTypes = types;
         if (types.length > 0) {
           this.selectedShippingType = types[0];
+          this.loadPreview();
         }
         this.loadingShipping = false;
       },
       error: () => {
         this.errorMessage = 'Error al cargar tipos de envío';
         this.loadingShipping = false;
+      },
+    });
+  }
+
+  loadPreview(): void {
+    if (this.isCartEmpty || !this.selectedShippingType) return;
+
+    this.loadingPreview = true;
+    const items = this.cartItems.map((item) => ({
+      productId: item.product.id,
+      quantity: item.quantity,
+    }));
+
+    this._orderService.previewOrder(items, this.selectedShippingType.name).subscribe({
+      next: (result) => {
+        this.preview = result;
+        this.loadingPreview = false;
+      },
+      error: () => {
+        this.errorMessage = 'Error al calcular el resumen del pedido';
+        this.loadingPreview = false;
       },
     });
   }
@@ -65,18 +91,6 @@ export class CheckoutComponent implements OnInit {
     return this._cartService.getItemCount();
   }
 
-  get subtotal(): number {
-    return this._cartService.getSubtotal();
-  }
-
-  get shippingCost(): number {
-    return this.selectedShippingType?.cost ?? 0;
-  }
-
-  get total(): number {
-    return this.subtotal + this.shippingCost;
-  }
-
   get isCartEmpty(): boolean {
     return this.cartItems.length === 0;
   }
@@ -86,24 +100,33 @@ export class CheckoutComponent implements OnInit {
       !this.isCartEmpty &&
       this.addressForm.valid &&
       this.selectedShippingType !== null &&
+      this.preview !== null &&
       !this.loading
     );
   }
 
+  getPreviewItem(productId: number): OrderPreviewItemResponse | undefined {
+    return this.preview?.items.find((i) => i.productId === productId);
+  }
+
   selectShippingType(type: ShippingTypeResponse): void {
     this.selectedShippingType = type;
+    this.loadPreview();
   }
 
   incrementQuantity(item: CartItem): void {
     this._cartService.updateQuantity(item.product.code, item.quantity + 1);
+    this.loadPreview();
   }
 
   decrementQuantity(item: CartItem): void {
     this._cartService.updateQuantity(item.product.code, item.quantity - 1);
+    this.loadPreview();
   }
 
   removeItem(item: CartItem): void {
     this._cartService.removeItem(item.product.code);
+    this.loadPreview();
   }
 
   onSubmit(): void {
@@ -114,7 +137,6 @@ export class CheckoutComponent implements OnInit {
 
     const formValues = this.addressForm.value;
 
-    // TODO: ProductResponse needs id field for order creation
     const request = {
       shippingType: this.selectedShippingType!.name,
       address: {

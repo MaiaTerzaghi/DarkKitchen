@@ -10,6 +10,7 @@ import OrderFilter from '../services/order/models/OrderFilter';
 import OrderByDateResponse from '../services/order/models/OrderByDateResponse';
 import OrderByDateFilter from '../services/order/models/OrderByDateFilter';
 import OrderStatusResponse from '../services/order/models/OrderStatusResponse';
+import OrderPreviewResponse from '../services/order/models/OrderPreviewResponse';
 
 
 @Injectable({
@@ -22,6 +23,10 @@ export class OrderApiRepositoryService extends ApiRepository {
 
   public create(data: CreateOrderRequest): Observable<CreateOrderResponse> {
     return this.post<CreateOrderResponse>(data);
+  }
+
+  public previewOrder(data: { items: { productId: number; quantity: number }[]; shippingType: string }): Observable<OrderPreviewResponse> {
+    return this.post<OrderPreviewResponse>(data, 'preview');
   }
 
   public getClientOrders(filters: OrderFilter): Observable<OrderResponse[]> {
@@ -70,5 +75,9 @@ export class OrderApiRepositoryService extends ApiRepository {
 
   public deliverOrder(id: number): Observable<OrderStatusResponse> {
     return this.patch<OrderStatusResponse>(id, 'deliver');
+  }
+
+  public markAsNotDelivered(id: number): Observable<OrderStatusResponse> {
+    return this.patch<OrderStatusResponse>(id, 'not-delivered');
   }
 }
