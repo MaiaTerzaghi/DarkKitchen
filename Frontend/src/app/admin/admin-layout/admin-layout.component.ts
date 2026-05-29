@@ -13,6 +13,7 @@ export class AdminLayoutComponent {
 
   menuItems = [
     { icon: 'dashboard', label: 'Dashboard', route: '/admin' },
+    { icon: 'receipt_long', label: 'Pedidos', route: '/admin/orders' },
     { icon: 'local_offer', label: 'Promociones', route: '/admin/promotions' },
     { icon: 'inventory_2', label: 'Productos', route: '/admin/products' },
     { icon: 'history', label: 'Auditoría', route: '/admin/audit' },
