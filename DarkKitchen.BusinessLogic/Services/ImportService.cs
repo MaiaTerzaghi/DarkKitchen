@@ -55,6 +55,11 @@ public class ImportService(
 
     private string ConvertImagesToBase64(List<string> paths)
     {
-        return string.Empty;
+        var base64s = paths
+            .Select(p => Path.Combine(_imagesRoot, p))
+            .Select(_imageReader.Read)
+            .Select(Convert.ToBase64String);
+
+        return string.Join(",", base64s);
     }
 }
