@@ -29,7 +29,7 @@ export class UserListComponent implements OnInit {
     email: '',
     phone: '',
     password: '',
-    role: 2,
+    role: 1,
   };
 
   constructor(private readonly _userService: UserService) {}
@@ -43,7 +43,7 @@ export class UserListComponent implements OnInit {
     this.errorMessage = '';
     this._userService.getUsers().subscribe({
       next: (data) => {
-        this.users = data;
+        this.users = data.filter((u) => u.role !== 0);
         this.applyFilters();
         this.loading = false;
       },
@@ -68,26 +68,26 @@ export class UserListComponent implements OnInit {
     }
 
     if (this.filterRole !== 'all') {
-      result = result.filter((u) => u.role === this.filterRole);
+      result = result.filter((u) => u.role === Number(this.filterRole));
     }
 
     this.filteredUsers = result;
   }
 
-  getRoleLabel(role: string): string {
-    const roles: Record<string, string> = {
-      Administrative: 'Administrador',
-      Dispatcher: 'Preparador',
-      Client: 'Cliente',
+  getRoleLabel(role: number): string {
+    const roles: Record<number, string> = {
+      0: 'Cliente',
+      1: 'Preparador',
+      2: 'Administrador',
     };
-    return roles[role] || role;
+    return roles[role] || 'Desconocido';
   }
 
-  getRoleClass(role: string): string {
-    const classes: Record<string, string> = {
-      Administrative: 'role-admin',
-      Dispatcher: 'role-dispatcher',
-      Client: 'role-client',
+  getRoleClass(role: number): string {
+    const classes: Record<number, string> = {
+      0: 'role-client',
+      1: 'role-dispatcher',
+      2: 'role-admin',
     };
     return classes[role] || '';
   }
@@ -106,7 +106,7 @@ export class UserListComponent implements OnInit {
       email: user.email,
       phone: user.phone,
       password: '',
-      role: this.roleStringToNumber(user.role),
+      role: user.role,
     };
     this.showModal = true;
   }
@@ -179,12 +179,4 @@ export class UserListComponent implements OnInit {
     });
   }
 
-  private roleStringToNumber(role: string): number {
-    const map: Record<string, number> = {
-      Client: 0,
-      Administrative: 1,
-      Dispatcher: 2,
-    };
-    return map[role] ?? 2;
-  }
 }

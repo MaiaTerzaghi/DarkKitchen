@@ -35,8 +35,8 @@
     </div>
     <select [(ngModel)]="filterRole" (ngModelChange)="applyFilters()">
       <option value="all">Todos los roles</option>
-      <option value="Administrative">Administradores</option>
-      <option value="Dispatcher">Preparadores</option>
+      <option value="2">Administradores</option>
+      <option value="1">Preparadores</option>
     </select>
   </div>
 
@@ -148,12 +148,20 @@
         </div>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" *ngIf="!editingUser">
         <label>Rol *</label>
         <select [(ngModel)]="formData.role">
-          <option [ngValue]="1">Administrador</option>
-          <option [ngValue]="2">Preparador de Alimentos</option>
+          <option [ngValue]="2">Administrador</option>
+          <option [ngValue]="1">Preparador de Alimentos</option>
         </select>
+      </div>
+      <div class="form-group" *ngIf="editingUser">
+        <label>Rol</label>
+        <div class="role-readonly">
+          <span class="role-badge" [ngClass]="getRoleClass(editingUser.role)">
+            {{ getRoleLabel(editingUser.role) }}
+          </span>
+        </div>
       </div>
     </div>
 
