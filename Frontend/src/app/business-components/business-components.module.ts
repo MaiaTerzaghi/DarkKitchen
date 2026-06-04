@@ -11,6 +11,7 @@ import { AuditLogListComponent } from './audit-log-list/audit-log-list.component
 import { PromotionProductsComponent } from './promotion-products/promotion-products.component';
 import { OrderByDateComponent } from './order-by-date/order-by-date.component';
 import { OrderManagementComponent } from './order-management/order-management.component';
+import { UserListComponent } from './user-list/user-list.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { OrderManagementComponent } from './order-management/order-management.co
     AuditLogListComponent,
     OrderByDateComponent,
     OrderManagementComponent,
+    UserListComponent,
   ],
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   exports: [
@@ -37,6 +39,7 @@ import { OrderManagementComponent } from './order-management/order-management.co
     AuditLogListComponent,
     OrderByDateComponent,
     OrderManagementComponent,
+    UserListComponent,
   ],
 })
 export class BusinessComponentsModule {}
