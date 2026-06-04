@@ -40,6 +40,13 @@ export class OrderManagementComponent implements OnInit {
       apply: (id) => this._orderService.markAsPrepared(id),
     },
     {
+      label: 'Marcar como En camino',
+      icon: 'local_shipping',
+      cssClass: 'btn-on-the-way',
+      canApply: (status) => status === 'Prepared',
+      apply: (id) => this._orderService.markAsOnTheWay(id),
+    },
+    {
       label: 'Marcar como Entregado',
       icon: 'task_alt',
       cssClass: 'btn-deliver',
