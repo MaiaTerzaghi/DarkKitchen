@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { OrderService } from '../../../backend/services/order/order.service';
 import TopProductResponse from '../../../backend/services/order/models/TopProductResponse';
+import OrderByDateResponse from '../../../backend/services/order/models/OrderByDateResponse';
+import OrderByDateFilter from '../../../backend/services/order/models/OrderByDateFilter';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -13,6 +15,9 @@ export class AdminDashboardComponent implements OnInit {
   loadingTop: boolean = false;
   errorTop: string = '';
 
+  orders: OrderByDateResponse[] = [];
+  loadingOrders: boolean = false;
+
   dateFrom: string = '';
   dateTo: string = '';
 
@@ -20,7 +25,7 @@ export class AdminDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.setDefaultDates();
-    this.loadTopProducts();
+    this.loadAll();
   }
 
   private setDefaultDates(): void {
@@ -37,6 +42,11 @@ export class AdminDashboardComponent implements OnInit {
     const mm = String(date.getMonth() + 1).padStart(2, '0');
     const dd = String(date.getDate()).padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`;
+  }
+
+  public loadAll(): void {
+    this.loadTopProducts();
+    this.loadOrders();
   }
 
   public loadTopProducts(): void {
@@ -58,6 +68,88 @@ export class AdminDashboardComponent implements OnInit {
         this.loadingTop = false;
       },
     });
+  }
+
+  private loadOrders(): void {
+    if (!this.dateFrom || !this.dateTo) return;
+
+    this.loadingOrders = true;
+
+    const filters: OrderByDateFilter = {
+      dateFrom: this.dateFrom,
+      dateTo: this.dateTo,
+    };
+
+    this._orderService.getOrdersByDate(filters).subscribe({
+      next: (data) => {
+        this.orders = data;
+        this.loadingOrders = false;
+      },
+      error: () => {
+        this.loadingOrders = false;
+      },
+    });
+  }
+
+  public get totalOrders(): number {
+    return this.orders.length;
+  }
+
+  public get pendingOrders(): number {
+    return this.orders.filter((o) => o.status === 'Pending').length;
+  }
+
+  public get onTheWayOrders(): number {
+    return this.orders.filter((o) => o.status === 'OnTheWay').length;
+  }
+
+  public get deliveredOrders(): number {
+    return this.orders.filter((o) => o.status === 'Delivered').length;
+  }
+
+  public get recentOrders(): OrderByDateResponse[] {
+    return [...this.orders]
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, 5);
+  }
+
+  public getStatusLabel(status: string): string {
+    const map: Record<string, string> = {
+      Pending: 'Pendiente',
+      Prepared: 'Preparado',
+      Cancelled: 'Cancelado',
+      OnTheWay: 'En camino',
+      Delivered: 'Entregado',
+      NotDelivered: 'No entregado',
+      Delayed: 'Demorado',
+    };
+    return map[status] || status;
+  }
+
+  public getStatusClass(status: string): string {
+    const map: Record<string, string> = {
+      Pending: 'status-pending',
+      Prepared: 'status-prepared',
+      Cancelled: 'status-cancelled',
+      OnTheWay: 'status-ontheway',
+      Delivered: 'status-delivered',
+      NotDelivered: 'status-notdelivered',
+      Delayed: 'status-delayed',
+    };
+    return map[status] || '';
+  }
+
+  public getStatusIcon(status: string): string {
+    const map: Record<string, string> = {
+      Pending: 'schedule',
+      Prepared: 'restaurant_menu',
+      Cancelled: 'cancel',
+      OnTheWay: 'local_shipping',
+      Delivered: 'check_circle',
+      NotDelivered: 'block',
+      Delayed: 'warning',
+    };
+    return map[status] || 'help';
   }
 
   public getImageList(images: string): string[] {
