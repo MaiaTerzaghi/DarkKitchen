@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.ServiceFactory"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.Importers.Contracts", "DarkKitchen.Importers.Contracts\DarkKitchen.Importers.Contracts.csproj", "{7ABE3D39-E0AD-4756-8B71-76B741DAB9F5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.Importers.Loader", "DarkKitchen.Importers.Loader\DarkKitchen.Importers.Loader.csproj", "{3C820009-AE32-44D2-BA83-5BFB348623C5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -86,6 +88,10 @@ Global
 		{7ABE3D39-E0AD-4756-8B71-76B741DAB9F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7ABE3D39-E0AD-4756-8B71-76B741DAB9F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7ABE3D39-E0AD-4756-8B71-76B741DAB9F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C820009-AE32-44D2-BA83-5BFB348623C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C820009-AE32-44D2-BA83-5BFB348623C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C820009-AE32-44D2-BA83-5BFB348623C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C820009-AE32-44D2-BA83-5BFB348623C5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{25964209-6F63-4F70-8CF3-926E610FA426} = {7FE77C09-CAC9-40F7-9622-8878F872BF84}
