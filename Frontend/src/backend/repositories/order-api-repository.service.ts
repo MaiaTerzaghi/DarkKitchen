@@ -81,6 +81,10 @@ export class OrderApiRepositoryService extends ApiRepository {
     return this.patch<OrderStatusResponse>(id, 'not-delivered');
   }
 
+  public markAsOnTheWay(id: number): Observable<OrderStatusResponse> {
+    return this.patch<OrderStatusResponse>(id, 'on-the-way');
+  }
+
   public cancelOrder(id: number): Observable<OrderStatusResponse> {
     return this.patch<OrderStatusResponse>(id, 'cancel');
   }
