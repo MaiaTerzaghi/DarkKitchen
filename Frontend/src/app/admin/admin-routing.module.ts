@@ -6,6 +6,7 @@ import { AdminOrderListComponent } from './admin-order-list/admin-order-list.com
 import { PromotionListComponent } from '../business-components/promotion-list/promotion-list.component';
 import { ProductListComponent } from '../business-components/product-list/product-list.component';
 import { AuditLogListComponent } from '../business-components/audit-log-list/audit-log-list.component';
+import { UserListComponent } from '../business-components/user-list/user-list.component';
 
 const routes: Routes = [
   {
@@ -31,6 +32,10 @@ const routes: Routes = [
       {
         path: 'audit',
         component: AuditLogListComponent,
+      },
+      {
+        path: 'users',
+        component: UserListComponent,
       },
     ],
   },
