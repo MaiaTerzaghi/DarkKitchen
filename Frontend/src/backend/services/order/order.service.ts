@@ -50,6 +50,10 @@ export class OrderService {
     return this._repository.markAsNotDelivered(id);
   }
 
+  public markAsOnTheWay(id: number): Observable<OrderStatusResponse> {
+    return this._repository.markAsOnTheWay(id);
+  }
+
   public cancelOrder(id: number): Observable<OrderStatusResponse> {
     return this._repository.cancelOrder(id);
   }
