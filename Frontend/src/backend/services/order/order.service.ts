@@ -9,6 +9,7 @@ import OrderByDateResponse from './models/OrderByDateResponse';
 import OrderByDateFilter from './models/OrderByDateFilter';
 import OrderStatusResponse from './models/OrderStatusResponse';
 import OrderPreviewResponse from './models/OrderPreviewResponse';
+import TopProductResponse from './models/TopProductResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -48,6 +49,10 @@ export class OrderService {
 
   public markAsNotDelivered(id: number): Observable<OrderStatusResponse> {
     return this._repository.markAsNotDelivered(id);
+  }
+
+  public getTopProducts(dateFrom: string, dateTo: string): Observable<TopProductResponse[]> {
+    return this._repository.getTopProducts(dateFrom, dateTo);
   }
 
   public markAsOnTheWay(id: number): Observable<OrderStatusResponse> {

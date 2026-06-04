@@ -3,44 +3,128 @@
   <p>Bienvenido al panel de administración</p>
 </div>
 
+<!-- Filtros globales -->
+<div class="global-filters">
+  <div class="date-field">
+    <label>Desde</label>
+    <input type="date" [(ngModel)]="dateFrom" class="date-input" />
+  </div>
+  <div class="date-field">
+    <label>Hasta</label>
+    <input type="date" [(ngModel)]="dateTo" class="date-input" />
+  </div>
+  <button class="btn-search" (click)="loadAll()">
+    <span class="material-icons">filter_list</span>
+    Filtrar
+  </button>
+</div>
+
+<!-- Stats -->
 <div class="stats-grid">
   <div class="stat-card">
     <div class="stat-icon purple">
       <span class="material-icons">shopping_cart</span>
     </div>
     <div class="stat-info">
-      <h3>Pedidos Hoy</h3>
-      <p class="stat-value">--</p>
+      <h3>Pedidos del mes</h3>
+      <p class="stat-value">{{ loadingOrders ? '--' : totalOrders }}</p>
     </div>
   </div>
 
   <div class="stat-card">
     <div class="stat-icon orange">
-      <span class="material-icons">attach_money</span>
+      <span class="material-icons">schedule</span>
     </div>
     <div class="stat-info">
-      <h3>Ingresos</h3>
-      <p class="stat-value">--</p>
-    </div>
-  </div>
-
-  <div class="stat-card">
-    <div class="stat-icon pink">
-      <span class="material-icons">people</span>
-    </div>
-    <div class="stat-info">
-      <h3>Clientes Activos</h3>
-      <p class="stat-value">--</p>
+      <h3>Pendientes</h3>
+      <p class="stat-value">{{ loadingOrders ? '--' : pendingOrders }}</p>
     </div>
   </div>
 
   <div class="stat-card">
     <div class="stat-icon blue">
-      <span class="material-icons">schedule</span>
+      <span class="material-icons">local_shipping</span>
     </div>
     <div class="stat-info">
-      <h3>Tiempo Promedio</h3>
-      <p class="stat-value">--</p>
+      <h3>En camino</h3>
+      <p class="stat-value">{{ loadingOrders ? '--' : onTheWayOrders }}</p>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon green">
+      <span class="material-icons">check_circle</span>
+    </div>
+    <div class="stat-info">
+      <h3>Entregados</h3>
+      <p class="stat-value">{{ loadingOrders ? '--' : deliveredOrders }}</p>
+    </div>
+  </div>
+</div>
+
+<!-- Top 5 Productos -->
+<div class="top-products-section">
+  <div class="section-header">
+    <h2>Productos más vendidos</h2>
+  </div>
+
+  <div class="error-message" *ngIf="errorTop">
+    <span class="material-icons">error</span>
+    {{ errorTop }}
+  </div>
+
+  <div class="loading" *ngIf="loadingTop">
+    <span class="material-icons spinning">sync</span>
+    Cargando productos...
+  </div>
+
+  <div class="top-grid" *ngIf="!loadingTop && topProducts.length > 0">
+    <div class="top-card" *ngFor="let product of topProducts; let i = index">
+      <div class="top-rank">#{{ i + 1 }}</div>
+      <div class="top-info">
+        <h3 class="top-name">{{ product.name }}</h3>
+        <p class="top-code">{{ product.code }}</p>
+      </div>
+      <div class="top-quantity">
+        <span class="quantity-value">{{ product.quantity }}</span>
+        <span class="quantity-label">vendidos</span>
+      </div>
+      <div class="top-images" *ngIf="getImageList(product.images).length > 0">
+        <img
+          *ngFor="let img of getImageList(product.images)"
+          [src]="img"
+          alt="{{ product.name }}"
+          class="product-thumb"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="!loadingTop && topProducts.length === 0 && !errorTop">
+    <span class="material-icons">emoji_events</span>
+    <p>No hay datos de ventas en el rango seleccionado</p>
+  </div>
+</div>
+
+<!-- Pedidos recientes -->
+<div class="recent-orders-section" *ngIf="!loadingOrders && recentOrders.length > 0">
+  <div class="section-header">
+    <h2>Pedidos recientes</h2>
+  </div>
+
+  <div class="recent-list">
+    <div class="recent-item" *ngFor="let order of recentOrders">
+      <div class="recent-left">
+        <span class="recent-id">#{{ order.orderId }}</span>
+        <span class="recent-customer">{{ order.client.name }} {{ order.client.lastName }}</span>
+      </div>
+      <div class="recent-right">
+        <span class="badge badge-sm" [ngClass]="getStatusClass(order.status)">
+          <span class="material-icons">{{ getStatusIcon(order.status) }}</span>
+          {{ getStatusLabel(order.status) }}
+        </span>
+        <span class="recent-date">{{ order.date | date:'dd/MM HH:mm' }}</span>
+      </div>
     </div>
   </div>
 </div>

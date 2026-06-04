@@ -11,6 +11,7 @@ import OrderByDateResponse from '../services/order/models/OrderByDateResponse';
 import OrderByDateFilter from '../services/order/models/OrderByDateFilter';
 import OrderStatusResponse from '../services/order/models/OrderStatusResponse';
 import OrderPreviewResponse from '../services/order/models/OrderPreviewResponse';
+import TopProductResponse from '../services/order/models/TopProductResponse';
 
 
 @Injectable({
@@ -79,6 +80,11 @@ export class OrderApiRepositoryService extends ApiRepository {
 
   public markAsNotDelivered(id: number): Observable<OrderStatusResponse> {
     return this.patch<OrderStatusResponse>(id, 'not-delivered');
+  }
+
+  public getTopProducts(dateFrom: string, dateTo: string): Observable<TopProductResponse[]> {
+    const query = `DateFrom=${dateFrom}&DateTo=${dateTo}`;
+    return this.get<TopProductResponse[]>('top-products', query);
   }
 
   public markAsOnTheWay(id: number): Observable<OrderStatusResponse> {
