@@ -1,4 +1,5 @@
 using System.Reflection;
+using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.Importers.Contracts;
 
@@ -15,7 +16,8 @@ public sealed class ReflectionImporterProvider(string pluginsPath) : IImporterPr
 
     public IProductImporter GetByName(string name)
     {
-        return LoadAllImporters().First(importer => importer.Name == name);
+        return LoadAllImporters().FirstOrDefault(importer => importer.Name == name)
+            ?? throw new NotFoundException($"Importador '{name}' no encontrado.");
     }
 
     private IEnumerable<IProductImporter> LoadAllImporters()
