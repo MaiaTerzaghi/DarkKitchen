@@ -1,0 +1,29 @@
+[
+  {
+    "code": "IMP-J001",
+    "name": "Pizza Hawaiana Importada",
+    "description": "Pizza con piña y jamon importada desde JSON",
+    "price": 380.0,
+    "commercialLine": "Pizzas",
+    "category": "Fritos",
+    "imagePaths": []
+  },
+  {
+    "code": "IMP-J002",
+    "name": "Ensalada Griega Importada",
+    "description": "Ensalada con queso feta y aceitunas importada desde JSON",
+    "price": 290.0,
+    "commercialLine": "Ensaladas",
+    "category": "Saludable",
+    "imagePaths": []
+  },
+  {
+    "code": "IMP-J003",
+    "name": "Burger Doble Queso Importada",
+    "description": "Hamburguesa doble con queso cheddar importada desde JSON",
+    "price": 450.0,
+    "commercialLine": "Burgers",
+    "category": "Fritos",
+    "imagePaths": []
+  }
+]
