@@ -26,4 +26,16 @@ public sealed class ReflectionImporterProviderTest
 
         Assert.IsTrue(result.Contains("TEST"));
     }
+
+    [TestMethod]
+    public void GetByName_WhenValidPluginExists_ReturnsImporterInstance()
+    {
+        var testBinDir = Path.GetDirectoryName(typeof(TestProductImporter).Assembly.Location)!;
+        var provider = new ReflectionImporterProvider(testBinDir);
+
+        var result = provider.GetByName("TEST");
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual("TEST", result.Name);
+    }
 }
