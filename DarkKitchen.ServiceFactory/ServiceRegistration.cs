@@ -1,4 +1,5 @@
 using DarkKitchen.BusinessLogic.Auditing;
+using DarkKitchen.BusinessLogic.IO;
 using DarkKitchen.BusinessLogic.Security;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.DataAccess.Context;
@@ -7,6 +8,7 @@ using DarkKitchen.Domain.Auditing;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
+using DarkKitchen.Importers.Loader;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -51,5 +53,21 @@ public static class ServiceRegistration
 
         services.AddScoped<IPricingService, PricingService>();
         services.AddScoped<IOrderService, OrderService>();
+
+        var pluginsPath = configuration["PluginsPath"]
+                          ?? Path.Combine(AppContext.BaseDirectory, "Plugins");
+        var importImagesPath = configuration["ImportImagesPath"]
+                          ?? Path.Combine(AppContext.BaseDirectory, "import-images");
+
+        Directory.CreateDirectory(pluginsPath);
+        Directory.CreateDirectory(importImagesPath);
+
+        services.AddSingleton<IImporterProvider>(_ => new ReflectionImporterProvider(pluginsPath));
+        services.AddScoped<IImageFileReader, ImageFileReader>();
+        services.AddScoped<IImportService>(sp => new ImportService(
+            sp.GetRequiredService<IImporterProvider>(),
+            sp.GetRequiredService<IProductService>(),
+            sp.GetRequiredService<IImageFileReader>(),
+            importImagesPath));
     }
 }
