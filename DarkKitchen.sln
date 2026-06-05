@@ -29,6 +29,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.ServiceFactory"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.Importers.Contracts", "DarkKitchen.Importers.Contracts\DarkKitchen.Importers.Contracts.csproj", "{7ABE3D39-E0AD-4756-8B71-76B741DAB9F5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.Importers.Json", "DarkKitchen.Importers.Json\DarkKitchen.Importers.Json.csproj", "{565069E9-4121-4B3B-8EF1-558CCE71FE16}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkKitchen.Importers.Json.Test", "Tests\DarkKitchen.Importers.Json.Test\DarkKitchen.Importers.Json.Test.csproj", "{F14CAFD6-A233-45D7-AF58-CD461C0A41ED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -86,10 +90,19 @@ Global
 		{7ABE3D39-E0AD-4756-8B71-76B741DAB9F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7ABE3D39-E0AD-4756-8B71-76B741DAB9F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7ABE3D39-E0AD-4756-8B71-76B741DAB9F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{565069E9-4121-4B3B-8EF1-558CCE71FE16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{565069E9-4121-4B3B-8EF1-558CCE71FE16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{565069E9-4121-4B3B-8EF1-558CCE71FE16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{565069E9-4121-4B3B-8EF1-558CCE71FE16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F14CAFD6-A233-45D7-AF58-CD461C0A41ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F14CAFD6-A233-45D7-AF58-CD461C0A41ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F14CAFD6-A233-45D7-AF58-CD461C0A41ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F14CAFD6-A233-45D7-AF58-CD461C0A41ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{25964209-6F63-4F70-8CF3-926E610FA426} = {7FE77C09-CAC9-40F7-9622-8878F872BF84}
 		{EF04A9DC-FD8D-439D-A05A-0A0E8BC26EAE} = {7FE77C09-CAC9-40F7-9622-8878F872BF84}
 		{4D8F9BC1-5762-45D6-A788-482E7050BADF} = {7FE77C09-CAC9-40F7-9622-8878F872BF84}
+		{F14CAFD6-A233-45D7-AF58-CD461C0A41ED} = {7FE77C09-CAC9-40F7-9622-8878F872BF84}
 	EndGlobalSection
 EndGlobal
