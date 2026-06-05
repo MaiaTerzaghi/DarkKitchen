@@ -14,5 +14,5 @@ public class ImportedProduct
 
     public string Category { get; set; } = string.Empty;
 
-    public List<string> ImagePaths { get; set; } = new();
+    public List<string> ImagePaths { get; set; } = [];
 }

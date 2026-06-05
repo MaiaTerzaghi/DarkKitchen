@@ -34,7 +34,7 @@ public class ImportService(
 
         var result = new ImportResultDTO();
 
-        foreach (var imported in importer.Import(importerRequest))
+        foreach(var imported in importer.Import(importerRequest))
         {
             var dto = new CreateProductRequestDTO
             {
