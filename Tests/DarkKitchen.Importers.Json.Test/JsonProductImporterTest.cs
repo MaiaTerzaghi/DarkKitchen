@@ -1,3 +1,4 @@
+using System.Text.Json;
 using DarkKitchen.Importers.Contracts;
 using DarkKitchen.Importers.Json;
 
@@ -47,5 +48,22 @@ public sealed class JsonProductImporterTest
         Assert.AreEqual("Fritos", result[0].Category);
         Assert.AreEqual(1, result[0].ImagePaths.Count);
         Assert.AreEqual("pizza1.jpg", result[0].ImagePaths[0]);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(JsonException))]
+    public void Import_MalformedJson_ThrowsJsonException()
+    {
+        var request = new ImportRequest { Content = "esto no es json {{{", FileName = "bad.json" };
+        _importer.Import(request).ToList();
+    }
+
+    [TestMethod]
+    public void Import_EmptyArray_ReturnsEmpty()
+    {
+        var request = new ImportRequest { Content = "[]", FileName = "empty.json" };
+        var result = _importer.Import(request).ToList();
+
+        Assert.AreEqual(0, result.Count);
     }
 }
