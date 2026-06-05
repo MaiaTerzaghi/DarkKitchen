@@ -1,3 +1,4 @@
+using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.Importers.Loader;
 
 namespace DarkKitchen.BusinessLogicTest.Loader;
@@ -37,5 +38,15 @@ public sealed class ReflectionImporterProviderTest
 
         Assert.IsNotNull(result);
         Assert.AreEqual("TEST", result.Name);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(NotFoundException))]
+    public void GetByName_WhenImporterDoesNotExist_ThrowsNotFoundException()
+    {
+        var testBinDir = Path.GetDirectoryName(typeof(TestProductImporter).Assembly.Location)!;
+        var provider = new ReflectionImporterProvider(testBinDir);
+
+        provider.GetByName("DOESNOTEXIST");
     }
 }
