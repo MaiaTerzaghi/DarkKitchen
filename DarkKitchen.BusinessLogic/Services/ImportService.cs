@@ -1,3 +1,4 @@
+using DarkKitchen.Domain.Validators;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
@@ -33,24 +34,44 @@ public class ImportService(
         };
 
         var result = new ImportResultDTO();
+        var index = 0;
 
-        foreach(var imported in importer.Import(importerRequest))
+        foreach (var imported in importer.Import(importerRequest))
         {
-            var dto = new CreateProductRequestDTO
+            var error = FindValidationError(imported);
+            if (error != null)
             {
-                Code = imported.Code,
-                Name = imported.Name,
-                Description = imported.Description,
-                Price = imported.Price,
-                CommercialLine = imported.CommercialLine,
-                Category = imported.Category,
-                Images = ConvertImagesToBase64(imported.ImagePaths)
-            };
-            _productService.CreateProduct(dto, responsibleUser);
-            result.ImportedCount++;
+                result.Errors.Add(new ImportErrorDTO
+                {
+                    Index = index,
+                    Code = imported.Code,
+                    Reason = error
+                });
+            }
+            else
+            {
+                _productService.CreateProduct(BuildDto(imported), responsibleUser);
+                result.ImportedCount++;
+            }
+
+            index++;
         }
 
         return result;
+    }
+
+    private CreateProductRequestDTO BuildDto(ImportedProduct imported)
+    {
+        return new CreateProductRequestDTO
+        {
+            Code = imported.Code,
+            Name = imported.Name,
+            Description = imported.Description,
+            Price = imported.Price,
+            CommercialLine = imported.CommercialLine,
+            Category = imported.Category,
+            Images = ConvertImagesToBase64(imported.ImagePaths)
+        };
     }
 
     private string ConvertImagesToBase64(List<string> paths)
@@ -61,5 +82,23 @@ public class ImportService(
             .Select(Convert.ToBase64String);
 
         return string.Join(",", base64s);
+    }
+
+    private static string? FindValidationError(ImportedProduct imported)
+    {
+        try
+        {
+            ProductValidator.ValidateCode(imported.Code);
+            ProductValidator.ValidateName(imported.Name);
+            ProductValidator.ValidateDescription(imported.Description);
+            ProductValidator.ValidatePrice(imported.Price);
+            ProductValidator.ValidateCommercialLine(imported.CommercialLine);
+            ProductValidator.ValidateCategory(imported.Category);
+            return null;
+        }
+        catch (ArgumentException ex)
+        {
+            return ex.Message;
+        }
     }
 }
