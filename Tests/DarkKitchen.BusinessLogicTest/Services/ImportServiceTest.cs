@@ -117,4 +117,40 @@ public sealed class ImportServiceTest
             It.Is<CreateProductRequestDTO>(dto => dto.Images == expectedBase64),
             "admin@email.com"), Times.Once);
     }
+
+    [TestMethod]
+    public void Import_WhenRowFailsValidation_AddsToErrorsAndDoesNotCallCreateProduct()
+    {
+        var invalid = new ImportedProduct
+        {
+            Code = " ",
+            Name = "Pizza Napolitana",
+            Description = "Una rica pizza napolitana con tomate",
+            Price = 250.0,
+            CommercialLine = "Minutas",
+            Category = "Pizzas"
+        };
+
+        var importerMock = new Mock<IProductImporter>();
+        importerMock.Setup(i => i.Import(It.IsAny<ImportRequest>())).Returns([invalid]);
+        _providerMock.Setup(p => p.GetByName("JSON")).Returns(importerMock.Object);
+
+        var request = new ImportProductsRequestDTO
+        {
+            ImporterName = "JSON",
+            Content = "x",
+            FileName = "x.json"
+        };
+
+        var result = _service.Import(request, "admin@email.com");
+
+        Assert.AreEqual(0, result.ImportedCount);
+        Assert.AreEqual(1, result.Errors.Count);
+        Assert.AreEqual(0, result.Errors[0].Index);
+        Assert.AreEqual(" ", result.Errors[0].Code);
+
+        _productServiceMock.Verify(
+            s => s.CreateProduct(It.IsAny<CreateProductRequestDTO>(), It.IsAny<string>()),
+            Times.Never);
+    }
 }
