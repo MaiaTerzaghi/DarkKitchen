@@ -1,3 +1,4 @@
+using System.Reflection;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.Importers.Contracts;
 
@@ -9,16 +10,38 @@ public sealed class ReflectionImporterProvider(string pluginsPath) : IImporterPr
 
     public IReadOnlyCollection<string> GetImporterNames()
     {
-        if (!Directory.Exists(_pluginsPath))
-        {
-            return [];
-        }
-
-        return [];
+        return LoadAllImporters().Select(importer => importer.Name).ToList();
     }
 
     public IProductImporter GetByName(string name)
     {
         throw new NotImplementedException();
+    }
+
+    private IEnumerable<IProductImporter> LoadAllImporters()
+    {
+        if (!Directory.Exists(_pluginsPath))
+        {
+            return [];
+        }
+
+        return Directory.GetFiles(_pluginsPath, "*.dll")
+            .SelectMany(LoadImportersFromAssembly);
+    }
+
+    private static IEnumerable<IProductImporter> LoadImportersFromAssembly(string dllPath)
+    {
+        var assembly = Assembly.LoadFrom(dllPath);
+        return assembly.GetTypes()
+            .Where(IsValidImporterType)
+            .Select(type => (IProductImporter)Activator.CreateInstance(type)!);
+    }
+
+    private static bool IsValidImporterType(Type type)
+    {
+        return typeof(IProductImporter).IsAssignableFrom(type)
+            && !type.IsInterface
+            && !type.IsAbstract
+            && type.GetConstructor(Type.EmptyTypes) != null;
     }
 }

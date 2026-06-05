@@ -18,12 +18,12 @@ public sealed class ReflectionImporterProviderTest
     [TestMethod]
     public void GetImporterNames_WhenFolderHasValidPlugin_ReturnsImporterName()
     {
-        var testBinDir = Path.GetDirectoryName(typeof(FakeProductImporter).Assembly.Location)!;
+        var testBinDir = Path.GetDirectoryName(typeof(TestProductImporter).Assembly.Location)!;
 
         var provider = new ReflectionImporterProvider(testBinDir);
 
         var result = provider.GetImporterNames();
 
-        Assert.IsTrue(result.Contains("FAKE"));
+        Assert.IsTrue(result.Contains("TEST"));
     }
 }
