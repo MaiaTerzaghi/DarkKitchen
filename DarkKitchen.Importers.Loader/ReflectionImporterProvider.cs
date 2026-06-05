@@ -15,7 +15,7 @@ public sealed class ReflectionImporterProvider(string pluginsPath) : IImporterPr
 
     public IProductImporter GetByName(string name)
     {
-        throw new NotImplementedException();
+        return LoadAllImporters().First(importer => importer.Name == name);
     }
 
     private IEnumerable<IProductImporter> LoadAllImporters()
