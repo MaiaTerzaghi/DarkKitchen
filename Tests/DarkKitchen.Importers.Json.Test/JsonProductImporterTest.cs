@@ -1,6 +1,5 @@
 using System.Text.Json;
 using DarkKitchen.Importers.Contracts;
-using DarkKitchen.Importers.Json;
 
 namespace DarkKitchen.Importers.Json.Test;
 
