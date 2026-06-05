@@ -22,7 +22,7 @@ public sealed class ReflectionImporterProvider(string pluginsPath) : IImporterPr
 
     private IEnumerable<IProductImporter> LoadAllImporters()
     {
-        if (!Directory.Exists(_pluginsPath))
+        if(!Directory.Exists(_pluginsPath))
         {
             return [];
         }
