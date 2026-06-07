@@ -16,4 +16,12 @@ export class ShippingTypeApiRepositoryService extends ApiRepository {
   public getAll(): Observable<ShippingTypeResponse[]> {
     return this.get<ShippingTypeResponse[]>();
   }
+
+  public create(data: { name: string; cost: number }): Observable<ShippingTypeResponse> {
+    return this.post<ShippingTypeResponse>(data);
+  }
+
+  public update(id: number, data: { name: string; cost: number }): Observable<ShippingTypeResponse> {
+    return this.putById<ShippingTypeResponse>(id.toString(), data);
+  }
 }
