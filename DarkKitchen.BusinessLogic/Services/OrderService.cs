@@ -195,7 +195,7 @@ public class OrderService(
     public List<TopProductResponseDTO> GetTopProducts(DateTime dateFrom, DateTime dateTo)
     {
         var topProducts = _orderRepository.GetTopProducts(
-            o => o.Date >= dateFrom && o.Date <= dateTo,
+            o => o.Date.Date >= dateFrom.Date && o.Date.Date <= dateTo.Date,
             AppConstants.TopProductsCount);
 
         return topProducts.Select(p => new TopProductResponseDTO
