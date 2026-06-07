@@ -4,12 +4,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CustomerRoutingModule } from './customer-routing.module';
 import { BusinessComponentsModule } from '../business-components/business-components.module';
 import { CustomerLayoutComponent } from './customer-layout/customer-layout.component';
-import { CustomerDashboardComponent } from './customer-dashboard/customer-dashboard.component';
 import { ProductCatalogComponent } from './product-catalog/product-catalog.component';
 import { CheckoutComponent } from './checkout/checkout.component';
 
 @NgModule({
-  declarations: [CustomerLayoutComponent, CustomerDashboardComponent, ProductCatalogComponent, CheckoutComponent],
+  declarations: [CustomerLayoutComponent, ProductCatalogComponent, CheckoutComponent],
   imports: [CommonModule, CustomerRoutingModule, FormsModule, ReactiveFormsModule, BusinessComponentsModule],
 })
 export class CustomerModule {}
