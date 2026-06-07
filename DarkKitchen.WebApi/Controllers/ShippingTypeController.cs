@@ -37,6 +37,13 @@ public class ShippingTypeController(IShippingTypeService shippingTypeService) : 
     }
 
     [AuthorizeRoles(UserRole.Administrative)]
+    [HttpDelete("{id}")]
+    public IActionResult Delete(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    [AuthorizeRoles(UserRole.Administrative)]
     [HttpPut("{id}")]
     public IActionResult Update(int id, [FromBody] UpdateShippingTypeRequestDTO request)
     {
