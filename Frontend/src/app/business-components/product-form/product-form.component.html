@@ -125,3 +125,10 @@
     </form>
   </div>
 </div>
+
+<!-- Modal de confirmación de salida -->
+<app-confirm-exit-modal
+  [visible]="showConfirmExit"
+  (confirm)="confirmExit()"
+  (cancel)="cancelExit()"
+></app-confirm-exit-modal>

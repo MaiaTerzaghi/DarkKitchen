@@ -12,7 +12,7 @@ public sealed class AuditLogObserver(IAuditRepository auditRepository) : IAuditO
     {
         var log = new AuditLog
         {
-            Timestamp = DateTime.UtcNow,
+            Timestamp = DateTime.Now,
             EntityName = auditEvent.EntityName,
             EntityId = auditEvent.EntityId,
             Description = auditEvent.Description,
