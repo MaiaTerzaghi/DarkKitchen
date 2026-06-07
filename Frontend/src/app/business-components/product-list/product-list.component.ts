@@ -1,8 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
 import { ProductService } from '../../../backend/services/product/product.service';
 import ProductResponse from '../../../backend/services/product/models/ProductResponse';
 import ProductManageFilter from '../../../backend/services/product/models/ProductManageFilter';
 import { AuthService } from '../../../backend/services/auth/auth.service';
+import { CanComponentDeactivate } from '../../../guards/can-deactivate.guard';
+import { ProductFormComponent } from '../product-form/product-form.component';
 
 @Component({
   selector: 'app-product-list',
@@ -10,7 +13,9 @@ import { AuthService } from '../../../backend/services/auth/auth.service';
   standalone: false,
   styleUrls: ['./product-list.component.css'],
 })
-export class ProductListComponent implements OnInit {
+export class ProductListComponent implements OnInit, CanComponentDeactivate {
+  @ViewChild(ProductFormComponent) productFormComponent!: ProductFormComponent;
+
   products: ProductResponse[] = [];
   filteredProducts: ProductResponse[] = [];
   errorMessage: string = '';
@@ -20,6 +25,8 @@ export class ProductListComponent implements OnInit {
   selectedProduct: ProductResponse | null = null;
   searchText: string = '';
   isAdmin: boolean = false;
+  showRouteConfirm: boolean = false;
+  private deactivateSubject: Subject<boolean> | null = null;
 
   filterCategory: string = '';
   filterCommercialLine: string = '';
@@ -147,5 +154,26 @@ export class ProductListComponent implements OnInit {
           this.errorMessage = err || 'Error al cambiar el estado del producto';
         },
       });
+  }
+
+  canDeactivate(): boolean | Observable<boolean> {
+    if (this.showForm && this.productFormComponent?.isDirty) {
+      this.showRouteConfirm = true;
+      this.deactivateSubject = new Subject<boolean>();
+      return this.deactivateSubject.asObservable();
+    }
+    return true;
+  }
+
+  confirmRouteExit(): void {
+    this.showRouteConfirm = false;
+    this.deactivateSubject?.next(true);
+    this.deactivateSubject?.complete();
+  }
+
+  cancelRouteExit(): void {
+    this.showRouteConfirm = false;
+    this.deactivateSubject?.next(false);
+    this.deactivateSubject?.complete();
   }
 }

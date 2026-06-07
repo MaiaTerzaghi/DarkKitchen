@@ -8,6 +8,8 @@ import { ProductListComponent } from '../business-components/product-list/produc
 import { AuditLogListComponent } from '../business-components/audit-log-list/audit-log-list.component';
 import { UserListComponent } from '../business-components/user-list/user-list.component';
 import { AdminSalesReportComponent } from './admin-sales-report/admin-sales-report.component';
+import { AdminShippingTypesComponent } from './admin-shipping-types/admin-shipping-types.component';
+import { CanDeactivateGuard } from '../../guards/can-deactivate.guard';
 
 const routes: Routes = [
   {
@@ -25,10 +27,12 @@ const routes: Routes = [
       {
         path: 'promotions',
         component: PromotionListComponent,
+        canDeactivate: [CanDeactivateGuard],
       },
       {
         path: 'products',
         component: ProductListComponent,
+        canDeactivate: [CanDeactivateGuard],
       },
       {
         path: 'audit',
@@ -41,6 +45,11 @@ const routes: Routes = [
       {
         path: 'report',
         component: AdminSalesReportComponent,
+      },
+      {
+        path: 'shipping-types',
+        component: AdminShippingTypesComponent,
+        canDeactivate: [CanDeactivateGuard],
       },
     ],
   },

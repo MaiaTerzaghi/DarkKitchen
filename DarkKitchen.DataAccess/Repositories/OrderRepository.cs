@@ -21,8 +21,8 @@ public class OrderRepository(DarkKitchenContext context)
             .ThenInclude(i => i.Product)
             .Where(o => o.ClientId == clientId)
             .Where(o => !status.HasValue || o.Status == status.Value)
-            .Where(o => !dateFrom.HasValue || o.Date >= dateFrom.Value)
-            .Where(o => !dateTo.HasValue || o.Date <= dateTo.Value)
+            .Where(o => !dateFrom.HasValue || o.Date.Date >= dateFrom.Value.Date)
+            .Where(o => !dateTo.HasValue || o.Date.Date <= dateTo.Value.Date)
             .ToList();
     }
 
@@ -36,7 +36,7 @@ public class OrderRepository(DarkKitchenContext context)
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
             .Include(o => o.Client)
-            .Where(o => o.Date >= dateFrom && o.Date <= dateTo);
+            .Where(o => o.Date.Date >= dateFrom.Date && o.Date.Date <= dateTo.Date);
 
         if(!string.IsNullOrEmpty(street))
         {

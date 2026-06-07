@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CustomerLayoutComponent } from './customer-layout/customer-layout.component';
-import { CustomerDashboardComponent } from './customer-dashboard/customer-dashboard.component';
 import { PromotionListComponent } from '../business-components/promotion-list/promotion-list.component';
 import { ProductCatalogComponent } from './product-catalog/product-catalog.component';
 import { OrderListComponent } from '../business-components/order-list/order-list.component';
@@ -14,15 +13,11 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        component: CustomerDashboardComponent,
+        component: ProductCatalogComponent,
       },
       {
         path: 'promotions',
         component: PromotionListComponent,
-      },
-      {
-        path: 'catalog',
-        component: ProductCatalogComponent,
       },
       {
         path: 'orders',

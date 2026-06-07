@@ -129,3 +129,10 @@
   <span class="material-icons">inventory_2</span>
   <p>No hay productos para mostrar</p>
 </div>
+
+<!-- Modal de confirmación al navegar con cambios sin guardar -->
+<app-confirm-exit-modal
+  [visible]="showRouteConfirm"
+  (confirm)="confirmRouteExit()"
+  (cancel)="cancelRouteExit()"
+></app-confirm-exit-modal>

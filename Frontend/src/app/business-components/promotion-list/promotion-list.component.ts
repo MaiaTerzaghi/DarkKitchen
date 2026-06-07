@@ -1,8 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
 import { PromotionService } from '../../../backend/services/promotion/promotion.service';
 import PromotionResponse from '../../../backend/services/promotion/models/PromotionResponse';
 import PromotionFilter from '../../../backend/services/promotion/models/PromotionFilter';
 import { AuthService } from '../../../backend/services/auth/auth.service';
+import { CanComponentDeactivate } from '../../../guards/can-deactivate.guard';
+import { PromotionFormComponent } from '../promotion-form/promotion-form.component';
 
 @Component({
   selector: 'app-promotion-list',
@@ -10,7 +13,9 @@ import { AuthService } from '../../../backend/services/auth/auth.service';
   standalone: false,
   styleUrls: ['./promotion-list.component.css'],
 })
-export class PromotionListComponent implements OnInit {
+export class PromotionListComponent implements OnInit, CanComponentDeactivate {
+  @ViewChild(PromotionFormComponent) promotionFormComponent!: PromotionFormComponent;
+
   promotions: PromotionResponse[] = [];
   filteredPromotions: PromotionResponse[] = [];
   errorMessage: string = '';
@@ -22,6 +27,8 @@ export class PromotionListComponent implements OnInit {
   productsPromotion: PromotionResponse | null = null;
   searchText: string = '';
   isAdmin: boolean = false;
+  showRouteConfirm: boolean = false;
+  private deactivateSubject: Subject<boolean> | null = null;
 
   // Filtros avanzados
   filterDate: string = '';
@@ -133,5 +140,26 @@ export class PromotionListComponent implements OnInit {
   public onProductsChanged(): void {
     // Recarga para reflejar los cambios en los chips
     this.loadPromotions();
+  }
+
+  canDeactivate(): boolean | Observable<boolean> {
+    if (this.showForm && this.promotionFormComponent?.isDirty) {
+      this.showRouteConfirm = true;
+      this.deactivateSubject = new Subject<boolean>();
+      return this.deactivateSubject.asObservable();
+    }
+    return true;
+  }
+
+  confirmRouteExit(): void {
+    this.showRouteConfirm = false;
+    this.deactivateSubject?.next(true);
+    this.deactivateSubject?.complete();
+  }
+
+  cancelRouteExit(): void {
+    this.showRouteConfirm = false;
+    this.deactivateSubject?.next(false);
+    this.deactivateSubject?.complete();
   }
 }

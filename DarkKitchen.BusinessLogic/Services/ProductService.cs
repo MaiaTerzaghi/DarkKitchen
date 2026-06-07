@@ -17,6 +17,7 @@ public class ProductService(IRepository<Product> productRepository, IAuditSubjec
     {
         var products = _productRepository.GetAll(
         predicate: p =>
+            p.IsActive &&
             (string.IsNullOrEmpty(name) || p.Name.Contains(name)) &&
             (string.IsNullOrEmpty(category) || p.Category == category) &&
             (string.IsNullOrEmpty(line) || p.CommercialLine == line),

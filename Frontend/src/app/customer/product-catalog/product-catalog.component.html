@@ -56,7 +56,37 @@
   <div class="products-grid" *ngIf="!loading && !errorMessage && filteredProducts.length > 0">
     <div class="product-card" *ngFor="let product of filteredProducts">
       <div class="product-image">
-        <span class="material-icons image-placeholder">lunch_dining</span>
+        <img
+          *ngIf="imageList(product.images).length > 0"
+          [src]="'data:image/jpeg;base64,' + imageList(product.images)[getImageIndex(product.id)]"
+          [alt]="product.name"
+        />
+        <span *ngIf="imageList(product.images).length === 0" class="material-icons image-placeholder">lunch_dining</span>
+
+        <!-- Flechas del carrusel -->
+        <button
+          *ngIf="imageList(product.images).length > 1"
+          class="carousel-arrow carousel-prev"
+          (click)="prevImage(product)"
+        >
+          <span class="material-icons">chevron_left</span>
+        </button>
+        <button
+          *ngIf="imageList(product.images).length > 1"
+          class="carousel-arrow carousel-next"
+          (click)="nextImage(product)"
+        >
+          <span class="material-icons">chevron_right</span>
+        </button>
+
+        <div class="carousel-dots" *ngIf="imageList(product.images).length > 1">
+          <span
+            *ngFor="let img of imageList(product.images); let i = index"
+            class="dot"
+            [class.active]="i === getImageIndex(product.id)"
+            (click)="setImageIndex(product.id, i)"
+          ></span>
+        </div>
       </div>
       <div class="product-info">
         <div class="info-top">
