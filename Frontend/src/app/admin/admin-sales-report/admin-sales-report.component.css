@@ -1,0 +1,174 @@
+.page-header {
+  margin-bottom: 28px;
+}
+
+.header-text h1 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 8px 0;
+}
+
+.header-text p {
+  font-size: 14px;
+  color: #9ca3af;
+  margin: 0;
+}
+
+/* ===== REPORT ===== */
+.report-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.month-section {
+  backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.month-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 24px;
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.month-header .material-icons {
+  font-size: 20px;
+  color: #9333ea;
+}
+
+.month-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+/* ===== TABLE ROWS ===== */
+.month-table {
+  padding: 8px 0;
+}
+
+.table-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+}
+
+.client-name {
+  font-size: 14px;
+  color: #ffffff;
+}
+
+.client-total {
+  font-size: 14px;
+  font-weight: 500;
+  color: #4ade80;
+}
+
+.subtotal-row {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 4px;
+  padding-top: 14px;
+}
+
+.subtotal-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #9ca3af;
+}
+
+.subtotal-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* ===== GENERAL TOTAL ===== */
+.general-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 28px;
+  backdrop-filter: blur(16px);
+  background: linear-gradient(135deg, rgba(147, 51, 234, 0.15), rgba(249, 115, 22, 0.15));
+  border: 1px solid rgba(147, 51, 234, 0.3);
+  border-radius: 16px;
+}
+
+.general-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.general-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #4ade80;
+}
+
+/* ===== STATES ===== */
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #f87171;
+  font-size: 14px;
+  padding: 16px;
+  background: rgba(248, 113, 113, 0.1);
+  border: 1px solid rgba(248, 113, 113, 0.2);
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.error-message .material-icons {
+  font-size: 20px;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #9ca3af;
+  font-size: 14px;
+  padding: 48px 0;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 0;
+  color: #6b7280;
+}
+
+.empty-state .material-icons {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state p {
+  font-size: 16px;
+  margin: 0;
+}

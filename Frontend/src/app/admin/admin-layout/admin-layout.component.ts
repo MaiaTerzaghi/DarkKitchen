@@ -16,6 +16,7 @@ export class AdminLayoutComponent {
     { icon: 'receipt_long', label: 'Pedidos', route: '/admin/orders' },
     { icon: 'local_offer', label: 'Promociones', route: '/admin/promotions' },
     { icon: 'inventory_2', label: 'Productos', route: '/admin/products' },
+    { icon: 'assessment', label: 'Reporte de ventas', route: '/admin/report' },
     { icon: 'history', label: 'Auditoría', route: '/admin/audit' },
     { icon: 'people', label: 'Usuarios', route: '/admin/users' },
   ];

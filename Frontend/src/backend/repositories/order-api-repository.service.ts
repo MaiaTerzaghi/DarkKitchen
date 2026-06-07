@@ -12,6 +12,7 @@ import OrderByDateFilter from '../services/order/models/OrderByDateFilter';
 import OrderStatusResponse from '../services/order/models/OrderStatusResponse';
 import OrderPreviewResponse from '../services/order/models/OrderPreviewResponse';
 import TopProductResponse from '../services/order/models/TopProductResponse';
+import SalesReportResponse from '../services/order/models/SalesReportResponse';
 
 
 @Injectable({
@@ -85,6 +86,11 @@ export class OrderApiRepositoryService extends ApiRepository {
   public getTopProducts(dateFrom: string, dateTo: string): Observable<TopProductResponse[]> {
     const query = `DateFrom=${dateFrom}&DateTo=${dateTo}`;
     return this.get<TopProductResponse[]>('top-products', query);
+  }
+
+  public getSalesReport(page: number, pageSize: number): Observable<SalesReportResponse> {
+    const query = `page=${page}&pageSize=${pageSize}`;
+    return this.get<SalesReportResponse>('report', query);
   }
 
   public markAsOnTheWay(id: number): Observable<OrderStatusResponse> {

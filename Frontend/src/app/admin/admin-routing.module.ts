@@ -7,6 +7,7 @@ import { PromotionListComponent } from '../business-components/promotion-list/pr
 import { ProductListComponent } from '../business-components/product-list/product-list.component';
 import { AuditLogListComponent } from '../business-components/audit-log-list/audit-log-list.component';
 import { UserListComponent } from '../business-components/user-list/user-list.component';
+import { AdminSalesReportComponent } from './admin-sales-report/admin-sales-report.component';
 
 const routes: Routes = [
   {
@@ -36,6 +37,10 @@ const routes: Routes = [
       {
         path: 'users',
         component: UserListComponent,
+      },
+      {
+        path: 'report',
+        component: AdminSalesReportComponent,
       },
     ],
   },
