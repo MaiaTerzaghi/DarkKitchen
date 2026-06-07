@@ -49,6 +49,7 @@ const routes: Routes = [
       {
         path: 'shipping-types',
         component: AdminShippingTypesComponent,
+        canDeactivate: [CanDeactivateGuard],
       },
     ],
   },

@@ -98,3 +98,17 @@
     </div>
   </div>
 </div>
+
+<!-- Modal de confirmación al cerrar con cambios -->
+<app-confirm-exit-modal
+  [visible]="showConfirmExit"
+  (confirm)="confirmExit()"
+  (cancel)="cancelExit()"
+></app-confirm-exit-modal>
+
+<!-- Modal de confirmación al navegar con cambios -->
+<app-confirm-exit-modal
+  [visible]="showRouteConfirm"
+  (confirm)="confirmRouteExit()"
+  (cancel)="cancelRouteExit()"
+></app-confirm-exit-modal>
