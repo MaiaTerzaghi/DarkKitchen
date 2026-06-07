@@ -10,6 +10,7 @@ import OrderByDateFilter from './models/OrderByDateFilter';
 import OrderStatusResponse from './models/OrderStatusResponse';
 import OrderPreviewResponse from './models/OrderPreviewResponse';
 import TopProductResponse from './models/TopProductResponse';
+import SalesReportResponse from './models/SalesReportResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -53,6 +54,10 @@ export class OrderService {
 
   public getTopProducts(dateFrom: string, dateTo: string): Observable<TopProductResponse[]> {
     return this._repository.getTopProducts(dateFrom, dateTo);
+  }
+
+  public getSalesReport(page: number, pageSize: number): Observable<SalesReportResponse> {
+    return this._repository.getSalesReport(page, pageSize);
   }
 
   public markAsOnTheWay(id: number): Observable<OrderStatusResponse> {
