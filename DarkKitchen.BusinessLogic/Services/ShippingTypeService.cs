@@ -64,11 +64,6 @@ public class ShippingTypeService(IRepository<ShippingType> shippingTypeRepositor
         };
     }
 
-    public void Delete(int id)
-    {
-        throw new NotImplementedException();
-    }
-
     public ShippingTypeResponseDTO Update(int id, UpdateShippingTypeRequestDTO request)
     {
         ShippingTypeValidator.ValidateName(request.Name);

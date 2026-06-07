@@ -82,17 +82,6 @@ public sealed class ShippingTypeControllerTest
     }
 
     [TestMethod]
-    public void Delete_WhenExists_ReturnsNoContent()
-    {
-        _serviceMock.Setup(s => s.Delete(1));
-
-        var result = _controller.Delete(1);
-
-        Assert.IsInstanceOfType(result, typeof(NoContentResult));
-        _serviceMock.Verify(s => s.Delete(1), Times.Once);
-    }
-
-    [TestMethod]
     public void Update_WhenValid_ReturnsOk()
     {
         var request = new UpdateShippingTypeRequestDTO

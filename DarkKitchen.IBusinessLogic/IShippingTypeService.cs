@@ -8,5 +8,4 @@ public interface IShippingTypeService
     ShippingTypeResponseDTO GetById(int id);
     ShippingTypeResponseDTO Create(CreateShippingTypeRequestDTO request);
     ShippingTypeResponseDTO Update(int id, UpdateShippingTypeRequestDTO request);
-    void Delete(int id);
 }

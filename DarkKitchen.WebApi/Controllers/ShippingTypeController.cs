@@ -37,14 +37,6 @@ public class ShippingTypeController(IShippingTypeService shippingTypeService) : 
     }
 
     [AuthorizeRoles(UserRole.Administrative)]
-    [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
-    {
-        _shippingTypeService.Delete(id);
-        return NoContent();
-    }
-
-    [AuthorizeRoles(UserRole.Administrative)]
     [HttpPut("{id}")]
     public IActionResult Update(int id, [FromBody] UpdateShippingTypeRequestDTO request)
     {
