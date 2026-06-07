@@ -1,0 +1,100 @@
+<div class="page-header">
+  <div class="header-text">
+    <h1>Tipos de Envío</h1>
+    <p>Gestiona los métodos y costos de envío</p>
+  </div>
+  <button class="btn-create" (click)="openCreate()">
+    <span class="material-icons">add</span>
+    Nuevo Tipo de Envío
+  </button>
+</div>
+
+<!-- Error -->
+<div class="error-message" *ngIf="errorMessage && !showModal">
+  <span class="material-icons">error</span>
+  {{ errorMessage }}
+</div>
+
+<!-- Loading -->
+<div class="loading" *ngIf="loading">
+  <span class="material-icons spinning">sync</span>
+  Cargando tipos de envío...
+</div>
+
+<!-- Grid -->
+<div class="shipping-grid" *ngIf="!loading && shippingTypes.length > 0">
+  <div class="shipping-card" *ngFor="let type of shippingTypes">
+    <div class="card-header">
+      <div class="card-icon">
+        <span class="material-icons">local_shipping</span>
+      </div>
+      <h3>{{ type.name }}</h3>
+    </div>
+
+    <div class="card-cost">
+      <span class="cost-label">Costo</span>
+      <span class="cost-value">{{ formatCurrency(type.cost) }}</span>
+    </div>
+
+    <div class="card-actions">
+      <button class="btn-edit" (click)="openEdit(type)">
+        <span class="material-icons">edit</span>
+        Editar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Empty -->
+<div class="empty-state" *ngIf="!loading && shippingTypes.length === 0 && !errorMessage">
+  <span class="material-icons">local_shipping</span>
+  <p>No hay tipos de envío registrados</p>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ editingType ? 'Editar Tipo de Envío' : 'Nuevo Tipo de Envío' }}</h2>
+      <button class="btn-close" (click)="closeModal()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="error-message" *ngIf="errorMessage">
+        <span class="material-icons">error</span>
+        {{ errorMessage }}
+      </div>
+
+      <div class="form-field">
+        <label>Nombre</label>
+        <input
+          type="text"
+          [(ngModel)]="formName"
+          placeholder="Ej: Envío Express"
+          class="form-input"
+        />
+      </div>
+
+      <div class="form-field">
+        <label>Costo ($)</label>
+        <input
+          type="number"
+          [(ngModel)]="formCost"
+          placeholder="0"
+          class="form-input"
+          min="0"
+        />
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel-modal" (click)="closeModal()">Cancelar</button>
+      <button class="btn-save" (click)="save()" [disabled]="saving">
+        <span class="material-icons spinning" *ngIf="saving">sync</span>
+        {{ saving ? 'Guardando...' : (editingType ? 'Guardar Cambios' : 'Crear') }}
+      </button>
+    </div>
+  </div>
+</div>
