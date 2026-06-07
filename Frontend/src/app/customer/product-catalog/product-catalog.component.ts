@@ -67,6 +67,12 @@ export class ProductCatalogComponent implements OnInit {
     this.filteredProducts = result;
   }
 
+  imageList(images: string): string[] {
+    return images
+      ? images.split(',').map((i) => i.trim()).filter((i) => i.length > 0)
+      : [];
+  }
+
   addToCart(product: ProductResponse): void {
     this._cartService.addItem(product);
   }

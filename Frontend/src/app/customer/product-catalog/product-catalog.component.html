@@ -56,7 +56,12 @@
   <div class="products-grid" *ngIf="!loading && !errorMessage && filteredProducts.length > 0">
     <div class="product-card" *ngFor="let product of filteredProducts">
       <div class="product-image">
-        <span class="material-icons image-placeholder">lunch_dining</span>
+        <img
+          *ngIf="imageList(product.images).length > 0"
+          [src]="'data:image/jpeg;base64,' + imageList(product.images)[0]"
+          [alt]="product.name"
+        />
+        <span *ngIf="imageList(product.images).length === 0" class="material-icons image-placeholder">lunch_dining</span>
       </div>
       <div class="product-info">
         <div class="info-top">
