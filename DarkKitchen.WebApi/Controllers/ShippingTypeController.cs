@@ -40,7 +40,8 @@ public class ShippingTypeController(IShippingTypeService shippingTypeService) : 
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        throw new NotImplementedException();
+        _shippingTypeService.Delete(id);
+        return NoContent();
     }
 
     [AuthorizeRoles(UserRole.Administrative)]
