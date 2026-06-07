@@ -18,6 +18,9 @@ export class ProductCatalogComponent implements OnInit {
   loading: boolean = true;
   errorMessage: string = '';
 
+  // Carrusel: índice de imagen actual por producto
+  private imageIndexMap: { [productId: number]: number } = {};
+
   constructor(
     private readonly _productService: ProductService,
     private readonly _cartService: CartService
@@ -71,6 +74,26 @@ export class ProductCatalogComponent implements OnInit {
     return images
       ? images.split(',').map((i) => i.trim()).filter((i) => i.length > 0)
       : [];
+  }
+
+  getImageIndex(productId: number): number {
+    return this.imageIndexMap[productId] || 0;
+  }
+
+  setImageIndex(productId: number, index: number): void {
+    this.imageIndexMap[productId] = index;
+  }
+
+  nextImage(product: ProductResponse): void {
+    const images = this.imageList(product.images);
+    const current = this.getImageIndex(product.id);
+    this.imageIndexMap[product.id] = (current + 1) % images.length;
+  }
+
+  prevImage(product: ProductResponse): void {
+    const images = this.imageList(product.images);
+    const current = this.getImageIndex(product.id);
+    this.imageIndexMap[product.id] = (current - 1 + images.length) % images.length;
   }
 
   addToCart(product: ProductResponse): void {
