@@ -1100,4 +1100,115 @@ public class OrderServiceTest
     {
         OrderStateFactory.Create((OrderStatus)999);
     }
+
+    [TestMethod]
+    public void GetDispatcherOrders_WhenCalled_ReturnsMappedOrders()
+    {
+        var ordersFromRepo = new List<Order>
+        {
+            new Order
+            {
+                Id = 1,
+                ClientId = 10,
+                Client = new User
+                {
+                    Id = 10,
+                    Name = "Juan",
+                    LastName = "Perez",
+                    Email = "juan@test.com",
+                    Phone = "+59899000000"
+                },
+                Date = new DateTime(2026, 1, 10),
+                Status = OrderStatus.Pending,
+                Street = "18 de Julio",
+                DoorNumber = "1234",
+                Items =
+                [
+                    new OrderItem
+                    {
+                        ProductId = 1,
+                        Quantity = 2,
+                        Product = new Product { Name = "Hamburguesa" }
+                    }
+
+                ]
+            }
+        };
+
+        _orderRepositoryMock
+            .Setup(r => r.GetDispatcherOrders())
+            .Returns(ordersFromRepo);
+
+        var result = _service.GetDispatcherOrders();
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual(1, result[0].OrderId);
+        Assert.AreEqual(10, result[0].Client.Id);
+        Assert.AreEqual("Juan", result[0].Client.Name);
+        Assert.AreEqual("Perez", result[0].Client.LastName);
+        Assert.AreEqual("Pending", result[0].Status);
+        Assert.AreEqual("Hamburguesa", result[0].Items[0].ProductName);
+        Assert.AreEqual(2, result[0].Items[0].Quantity);
+    }
+
+    [TestMethod]
+    public void PreviewOrder_ValidRequest_DelegatesToPricingService()
+    {
+        var expectedPreview = new OrderPreviewResponseDTO
+        {
+            Items =
+            [
+                new OrderPreviewItemDTO
+                {
+                    ProductId = 1,
+                    ProductName = "Pizza Margherita",
+                    Quantity = 1,
+                    UnitPrice = 350.0,
+                    DiscountPercentage = 35,
+                    DiscountedUnitPrice = 227.5,
+                    ItemTotal = 227.5,
+                },
+            ],
+            Subtotal = 350.0,
+            Discount = 122.5,
+            Vat = 50.05,
+            ShippingCost = 50.0,
+            Total = 327.55
+        };
+
+        _pricingServiceMock
+            .Setup(s => s.PreviewOrderPricing(It.IsAny<List<OrderItemRequestDTO>>(), It.IsAny<ShippingType>()))
+            .Returns(expectedPreview);
+
+        var items = new List<OrderItemRequestDTO>
+        {
+            new OrderItemRequestDTO { ProductId = 1, Quantity = 1 }
+        };
+
+        var result = _service.PreviewOrder(items, "Express");
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(350.0, result.Subtotal);
+        Assert.AreEqual(122.5, result.Discount);
+        Assert.AreEqual(50.0, result.ShippingCost);
+        Assert.AreEqual(1, result.Items.Count);
+        Assert.AreEqual(35, result.Items[0].DiscountPercentage);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void PreviewOrder_InvalidShippingType_ThrowsException()
+    {
+        _shippingTypeRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<ShippingType, bool>>>()))
+            .Returns((ShippingType)null!);
+
+        var items = new List<OrderItemRequestDTO>
+        {
+            new OrderItemRequestDTO { ProductId = 1, Quantity = 1 }
+        };
+
+        _service.PreviewOrder(items, "Inexistente");
+    }
 }

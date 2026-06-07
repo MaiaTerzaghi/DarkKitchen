@@ -27,7 +27,7 @@ public class OrderService(
         var pricing = _pricingService.CalculateOrderPricing(request.Items, shippingType);
         var order = BuildOrder(request, clientId, shippingType, pricing);
         var saved = _orderRepository.Add(order);
-        return BuildOrderResponse(clientId, saved.Id, pricing.Subtotal, pricing.ShippingCost, pricing.Total);
+        return BuildOrderResponse(clientId, saved.Id, pricing.Subtotal, pricing.Vat, pricing.ShippingCost, pricing.Total);
     }
 
     private void ValidateClient(int clientId)
@@ -42,6 +42,12 @@ public class OrderService(
         {
             throw new ArgumentException("El pedido debe tener al menos un producto.");
         }
+    }
+
+    public OrderPreviewResponseDTO PreviewOrder(List<OrderItemRequestDTO> items, string shippingTypeName)
+    {
+        var shippingType = ResolveShippingType(shippingTypeName);
+        return _pricingService.PreviewOrderPricing(items, shippingType);
     }
 
     private ShippingType ResolveShippingType(string shippingTypeName)
@@ -69,13 +75,14 @@ public class OrderService(
         };
     }
 
-    private static CreateOrderResponseDTO BuildOrderResponse(int clientId, int orderId, double subtotal, double shippingCost, double total)
+    private static CreateOrderResponseDTO BuildOrderResponse(int clientId, int orderId, double subtotal, double vat, double shippingCost, double total)
     {
         return new CreateOrderResponseDTO
         {
             ClientId = clientId,
             OrderId = orderId,
             Subtotal = subtotal,
+            Vat = vat,
             ShippingCost = shippingCost,
             Total = total
         };
@@ -224,5 +231,29 @@ public class OrderService(
             Months = months,
             GeneralTotal = months.Sum(m => m.MonthlyTotal)
         };
+    }
+
+    public List<GetOrdersResponseDTO> GetDispatcherOrders()
+    {
+        var orders = _orderRepository.GetDispatcherOrders();
+
+        return orders.Select(order => new GetOrdersResponseDTO
+        {
+            OrderId = order.Id,
+            Client = new ClientInfoDTO
+            {
+                Id = order.Client.Id,
+                Name = order.Client.Name,
+                LastName = order.Client.LastName,
+                Phone = order.Client.Phone
+            },
+            Date = order.Date,
+            Status = order.Status.ToString(),
+            Items = order.Items.Select(item => new OrderItemResponseDTO
+            {
+                ProductName = item.Product.Name,
+                Quantity = item.Quantity
+            }).ToList()
+        }).ToList();
     }
 }

@@ -479,4 +479,55 @@ public sealed class OrderRepositoryTest
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual(500.0, result[0].Total);
     }
+
+    [TestMethod]
+    public void GetDispatcherOrders_WhenCalled_ReturnsAllOrdersWithRelations()
+    {
+        var product = new Product
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana",
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Price = 100.0,
+            Images = "/9j/2Q=="
+        };
+
+        var order1 = new Order
+        {
+            ClientId = 1,
+            ShippingTypeId = 1,
+            Status = OrderStatus.Pending,
+            Street = "18 de Julio",
+            DoorNumber = "1234",
+            Date = new DateTime(2026, 1, 10),
+            Items = [new OrderItem { Product = product, Quantity = 2 }]
+        };
+
+        var order2 = new Order
+        {
+            ClientId = 2,
+            ShippingTypeId = 1,
+            Status = OrderStatus.Delivered,
+            Street = "Av. Italia",
+            DoorNumber = "5678",
+            Date = new DateTime(2026, 3, 10),
+            Items = [new OrderItem { Product = product, Quantity = 1 }]
+        };
+
+        _context!.Orders.AddRange(order1, order2);
+        _context.SaveChanges();
+
+        var repository = new OrderRepository(_context);
+        var result = repository.GetDispatcherOrders();
+
+        Assert.AreEqual(2, result.Count);
+        Assert.IsNotNull(result[0].Client);
+        Assert.IsNotNull(result[1].Client);
+        Assert.AreEqual("Juan", result[0].Client.Name);
+        Assert.AreEqual("Ana", result[1].Client.Name);
+        Assert.AreEqual(1, result[0].Items.Count);
+        Assert.AreEqual("Pizza Napolitana", result[0].Items[0].Product.Name);
+    }
 }

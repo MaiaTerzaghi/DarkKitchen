@@ -21,4 +21,5 @@ public interface IOrderRepository : IRepository<Order>
     Expression<Func<Order, bool>> predicate,
     int top);
     List<(int Year, int Month, int ClientId, string ClientName, double Total)> GetSalesReport(int page, int pageSize);
+    List<Order> GetDispatcherOrders();
 }

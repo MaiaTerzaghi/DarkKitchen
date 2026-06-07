@@ -14,6 +14,14 @@ public class OrderController(IOrderService orderService) : ControllerBase
     private readonly IOrderService _orderService = orderService;
 
     [AuthorizeRoles(UserRole.Client)]
+    [HttpPost("preview")]
+    public IActionResult PreviewOrder([FromBody] PreviewOrderRequestDTO request)
+    {
+        var response = _orderService.PreviewOrder(request.Items, request.ShippingType);
+        return Ok(response);
+    }
+
+    [AuthorizeRoles(UserRole.Client)]
     [HttpPost]
     public IActionResult CreateOrder([FromBody] CreateOrderRequestDTO request)
     {
@@ -31,7 +39,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
         return Ok(orders);
     }
 
-    [AuthorizeRoles(UserRole.Dispatcher)]
+    [AuthorizeRoles(UserRole.Dispatcher, UserRole.Administrative)]
     [HttpGet("by-date")]
     public IActionResult GetOrders([FromQuery] GetOrdersRequestDTO request)
     {
@@ -108,6 +116,14 @@ public class OrderController(IOrderService orderService) : ControllerBase
     public IActionResult GetTopProducts([FromQuery] DateTime dateFrom, [FromQuery] DateTime dateTo)
     {
         var response = _orderService.GetTopProducts(dateFrom, dateTo);
+        return Ok(response);
+    }
+
+    [AuthorizeRoles(UserRole.Dispatcher)]
+    [HttpGet("dispatcher")]
+    public IActionResult GetDispatcherOrders()
+    {
+        var response = _orderService.GetDispatcherOrders();
         return Ok(response);
     }
 }

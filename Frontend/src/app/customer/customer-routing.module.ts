@@ -3,8 +3,9 @@ import { RouterModule, Routes } from '@angular/router';
 import { CustomerLayoutComponent } from './customer-layout/customer-layout.component';
 import { CustomerDashboardComponent } from './customer-dashboard/customer-dashboard.component';
 import { PromotionListComponent } from '../business-components/promotion-list/promotion-list.component';
-import { ProductCatalogComponent } from '../business-components/product-catalog/product-catalog.component';
+import { ProductCatalogComponent } from './product-catalog/product-catalog.component';
 import { OrderListComponent } from '../business-components/order-list/order-list.component';
+import { CheckoutComponent } from './checkout/checkout.component';
 
 const routes: Routes = [
   {
@@ -26,6 +27,10 @@ const routes: Routes = [
       {
         path: 'orders',
         component: OrderListComponent,
+      },
+      {
+        path: 'checkout',
+        component: CheckoutComponent,
       },
     ],
   },

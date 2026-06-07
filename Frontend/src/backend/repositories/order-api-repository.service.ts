@@ -2,11 +2,18 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import ApiRepository from './api-repository';
+import CreateOrderRequest from '../services/order/models/CreateOrderRequest';
+import CreateOrderResponse from '../services/order/models/CreateOrderResponse';
 import environments from '../../environments/environment';
 import OrderResponse from '../services/order/models/OrderResponse';
 import OrderFilter from '../services/order/models/OrderFilter';
 import OrderByDateResponse from '../services/order/models/OrderByDateResponse';
 import OrderByDateFilter from '../services/order/models/OrderByDateFilter';
+import OrderStatusResponse from '../services/order/models/OrderStatusResponse';
+import OrderPreviewResponse from '../services/order/models/OrderPreviewResponse';
+import TopProductResponse from '../services/order/models/TopProductResponse';
+import SalesReportResponse from '../services/order/models/SalesReportResponse';
+
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +21,14 @@ import OrderByDateFilter from '../services/order/models/OrderByDateFilter';
 export class OrderApiRepositoryService extends ApiRepository {
   constructor(http: HttpClient) {
     super(environments.darkKitchenApi, 'orders', http);
+  }
+
+  public create(data: CreateOrderRequest): Observable<CreateOrderResponse> {
+    return this.post<CreateOrderResponse>(data);
+  }
+
+  public previewOrder(data: { items: { productId: number; quantity: number }[]; shippingType: string }): Observable<OrderPreviewResponse> {
+    return this.post<OrderPreviewResponse>(data, 'preview');
   }
 
   public getClientOrders(filters: OrderFilter): Observable<OrderResponse[]> {
@@ -50,5 +65,39 @@ export class OrderApiRepositoryService extends ApiRepository {
 
     const query = params.join('&');
     return this.get<OrderByDateResponse[]>('by-date', query);
+  }
+
+  public getDispatcherOrders(): Observable<OrderByDateResponse[]> {
+    return this.get<OrderByDateResponse[]>('dispatcher');
+  }
+
+  public markAsPrepared(id: number): Observable<OrderStatusResponse> {
+    return this.patch<OrderStatusResponse>(id, 'prepared');
+  }
+
+  public deliverOrder(id: number): Observable<OrderStatusResponse> {
+    return this.patch<OrderStatusResponse>(id, 'deliver');
+  }
+
+  public markAsNotDelivered(id: number): Observable<OrderStatusResponse> {
+    return this.patch<OrderStatusResponse>(id, 'not-delivered');
+  }
+
+  public getTopProducts(dateFrom: string, dateTo: string): Observable<TopProductResponse[]> {
+    const query = `DateFrom=${dateFrom}&DateTo=${dateTo}`;
+    return this.get<TopProductResponse[]>('top-products', query);
+  }
+
+  public getSalesReport(page: number, pageSize: number): Observable<SalesReportResponse> {
+    const query = `page=${page}&pageSize=${pageSize}`;
+    return this.get<SalesReportResponse>('report', query);
+  }
+
+  public markAsOnTheWay(id: number): Observable<OrderStatusResponse> {
+    return this.patch<OrderStatusResponse>(id, 'on-the-way');
+  }
+
+  public cancelOrder(id: number): Observable<OrderStatusResponse> {
+    return this.patch<OrderStatusResponse>(id, 'cancel');
   }
 }

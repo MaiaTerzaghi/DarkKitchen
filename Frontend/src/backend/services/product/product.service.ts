@@ -37,4 +37,14 @@ export class ProductService {
   ): Observable<ProductResponse> {
     return this._repository.update(id, data);
   }
+
+  public getAll(
+    name?: string,
+    category?: string,
+    line?: string,
+    page: number = 1,
+    pageSize: number = 20
+  ): Observable<ProductResponse[]> {
+    return this._repository.getAll({ name, category, line, page, pageSize });
+  }
 }

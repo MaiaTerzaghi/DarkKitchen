@@ -98,4 +98,13 @@ public class OrderRepository(DarkKitchenContext context)
             .Select(g => (g.Year, g.Month, g.ClientId, g.ClientName, g.Total))
             .ToList();
     }
+
+    public List<Order> GetDispatcherOrders()
+    {
+        return context.Orders
+            .Include(o => o.Items)
+            .ThenInclude(i => i.Product)
+            .Include(o => o.Client)
+            .ToList();
+    }
 }
