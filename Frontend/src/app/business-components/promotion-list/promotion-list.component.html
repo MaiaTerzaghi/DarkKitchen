@@ -140,3 +140,10 @@
   <span class="material-icons">local_offer</span>
   <p>No hay promociones vigentes</p>
 </div>
+
+<!-- Modal de confirmación al navegar con cambios sin guardar -->
+<app-confirm-exit-modal
+  [visible]="showRouteConfirm"
+  (confirm)="confirmRouteExit()"
+  (cancel)="cancelRouteExit()"
+></app-confirm-exit-modal>

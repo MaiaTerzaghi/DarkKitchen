@@ -35,9 +35,14 @@ export class PromotionFormComponent implements OnChanges {
 
   errorMessage: string = '';
   loading: boolean = false;
+  showConfirmExit: boolean = false;
 
   get isEditMode(): boolean {
     return this.promotionToEdit !== null;
+  }
+
+  get isDirty(): boolean {
+    return this.promotionForm.dirty;
   }
 
   constructor(private readonly _promotionService: PromotionService) {}
@@ -87,8 +92,23 @@ export class PromotionFormComponent implements OnChanges {
   }
 
   public onClose(): void {
+    if (this.promotionForm.dirty) {
+      this.showConfirmExit = true;
+      return;
+    }
     this.promotionForm.reset();
     this.errorMessage = '';
     this.close.emit();
+  }
+
+  public confirmExit(): void {
+    this.showConfirmExit = false;
+    this.promotionForm.reset();
+    this.errorMessage = '';
+    this.close.emit();
+  }
+
+  public cancelExit(): void {
+    this.showConfirmExit = false;
   }
 }

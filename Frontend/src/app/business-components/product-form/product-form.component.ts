@@ -54,9 +54,14 @@ export class ProductFormComponent implements OnChanges {
   imageError: string = '';
   errorMessage: string = '';
   loading: boolean = false;
+  showConfirmExit: boolean = false;
 
   get isEditMode(): boolean {
     return this.productToEdit !== null;
+  }
+
+  get isDirty(): boolean {
+    return this.productForm.dirty;
   }
 
   constructor(private readonly _productService: ProductService) {}
@@ -162,8 +167,22 @@ export class ProductFormComponent implements OnChanges {
   }
 
   public onClose(): void {
+    if (this.productForm.dirty) {
+      this.showConfirmExit = true;
+      return;
+    }
     this.resetForm();
     this.close.emit();
+  }
+
+  public confirmExit(): void {
+    this.showConfirmExit = false;
+    this.resetForm();
+    this.close.emit();
+  }
+
+  public cancelExit(): void {
+    this.showConfirmExit = false;
   }
 
   private resetForm(): void {
