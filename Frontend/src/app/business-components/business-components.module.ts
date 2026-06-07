@@ -12,6 +12,7 @@ import { PromotionProductsComponent } from './promotion-products/promotion-produ
 import { OrderByDateComponent } from './order-by-date/order-by-date.component';
 import { OrderManagementComponent } from './order-management/order-management.component';
 import { UserListComponent } from './user-list/user-list.component';
+import { ConfirmExitModalComponent } from './confirm-exit-modal/confirm-exit-modal.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { UserListComponent } from './user-list/user-list.component';
     OrderByDateComponent,
     OrderManagementComponent,
     UserListComponent,
+    ConfirmExitModalComponent,
   ],
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   exports: [
@@ -40,6 +42,7 @@ import { UserListComponent } from './user-list/user-list.component';
     OrderByDateComponent,
     OrderManagementComponent,
     UserListComponent,
+    ConfirmExitModalComponent,
   ],
 })
 export class BusinessComponentsModule {}
