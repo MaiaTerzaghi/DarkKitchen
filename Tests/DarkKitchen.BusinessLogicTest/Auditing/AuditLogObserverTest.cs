@@ -37,7 +37,7 @@ public sealed class AuditLogObserverTest
     {
         var auditRepositoryMock = new Mock<IAuditRepository>();
         var observer = new AuditLogObserver(auditRepositoryMock.Object);
-        var before = DateTime.UtcNow;
+        var before = DateTime.Now;
 
         observer.Update(new AuditEvent());
 

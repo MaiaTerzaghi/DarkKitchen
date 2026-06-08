@@ -399,13 +399,14 @@ public sealed class OrderRepositoryTest
         _context.SaveChanges();
 
         var repository = new OrderRepository(_context!);
-        var result = repository.GetSalesReport(1, 20);
+        var (items, totalCount) = repository.GetSalesReport(1, 20);
 
-        Assert.IsNotNull(result);
-        Assert.AreEqual(2, result.Count);
-        Assert.AreEqual(2026, result[0].Year);
-        Assert.AreEqual(1, result[0].Month);
-        Assert.AreEqual(1, result[0].ClientId);
+        Assert.IsNotNull(items);
+        Assert.AreEqual(2, items.Count);
+        Assert.AreEqual(2, totalCount);
+        Assert.AreEqual(2026, items[0].Year);
+        Assert.AreEqual(1, items[0].Month);
+        Assert.AreEqual(1, items[0].ClientId);
     }
 
     [TestMethod]
@@ -439,9 +440,10 @@ public sealed class OrderRepositoryTest
         _context!.SaveChanges();
 
         var repository = new OrderRepository(_context!);
-        var result = repository.GetSalesReport(2, 20);
+        var (items, totalCount) = repository.GetSalesReport(2, 20);
 
-        Assert.AreEqual(5, result.Count);
+        Assert.AreEqual(5, items.Count);
+        Assert.AreEqual(25, totalCount);
     }
 
     [TestMethod]
@@ -474,10 +476,11 @@ public sealed class OrderRepositoryTest
         _context.SaveChanges();
 
         var repository = new OrderRepository(_context!);
-        var result = repository.GetSalesReport(1, 20);
+        var (items, totalCount) = repository.GetSalesReport(1, 20);
 
-        Assert.AreEqual(1, result.Count);
-        Assert.AreEqual(500.0, result[0].Total);
+        Assert.AreEqual(1, items.Count);
+        Assert.AreEqual(1, totalCount);
+        Assert.AreEqual(500.0, items[0].Total);
     }
 
     [TestMethod]
