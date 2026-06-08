@@ -6,6 +6,7 @@ import ProductResponse from './models/ProductResponse';
 import ProductManageFilter from './models/ProductManageFilter';
 import CreateProductRequest from './models/CreateProductRequest';
 import UpdateProductRequest from './models/UpdateProductRequest';
+import PaginatedResponse from '../../models/PaginatedResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -17,10 +18,10 @@ export class ProductService {
 
   public getManage(
     filters: ProductManageFilter = {}
-  ): Observable<ProductResponse[]> {
+  ): Observable<PaginatedResponse<ProductResponse>> {
     return this._repository.getManage(filters);
   }
-  
+
   public getCatalog(
     filters: ProductCatalogFilter = {}
   ): Observable<ProductResponse[]> {
@@ -44,7 +45,7 @@ export class ProductService {
     line?: string,
     page: number = 1,
     pageSize: number = 20
-  ): Observable<ProductResponse[]> {
+  ): Observable<PaginatedResponse<ProductResponse>> {
     return this._repository.getAll({ name, category, line, page, pageSize });
   }
 }
