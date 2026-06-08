@@ -15,15 +15,21 @@ public sealed class ProductControllerTest
     [TestMethod]
     public void GetAll_WhenNoFilters_ReturnsOk()
     {
-        var products = new List<ProductResponseDTO>
+        var paginatedResponse = new PaginatedResponse<ProductResponseDTO>
         {
-            new ProductResponseDTO { Name = "Pizza Napolitana", Category = "Fritos", CommercialLine = "Minutas", Images = "im1.jpg" },
-            new ProductResponseDTO { Name = "Pasta bolognese", Category = "Pastas", CommercialLine = "Minutas",  Images = "im2.jpg" },
+            Items = new List<ProductResponseDTO>
+            {
+                new ProductResponseDTO { Name = "Pizza Napolitana", Category = "Fritos", CommercialLine = "Minutas", Images = "im1.jpg" },
+                new ProductResponseDTO { Name = "Pasta bolognese", Category = "Pastas", CommercialLine = "Minutas",  Images = "im2.jpg" },
+            },
+            TotalCount = 2,
+            Page = 1,
+            PageSize = 20
         };
 
         var productServiceMock = new Mock<IProductService>();
         productServiceMock.Setup(s => s.GetAll(null, null, null, 1, 20))
-                          .Returns(products);
+                          .Returns(paginatedResponse);
 
         var controller = new ProductController(productServiceMock.Object);
 
@@ -144,24 +150,30 @@ public sealed class ProductControllerTest
     [TestMethod]
     public void GetManage_WhenCalled_ReturnsOk()
     {
-        var products = new List<ProductResponseDTO>
+        var paginatedResponse = new PaginatedResponse<ProductResponseDTO>
         {
-            new ProductResponseDTO
+            Items = new List<ProductResponseDTO>
             {
-                Code = "P0001",
-                Name = "Pizza Napolitana",
-                Price = 100.0,
-                CommercialLine = "Minutas",
-                Category = "Fritos",
-                Images = "pizza.jpg"
-            }
+                new ProductResponseDTO
+                {
+                    Code = "P0001",
+                    Name = "Pizza Napolitana",
+                    Price = 100.0,
+                    CommercialLine = "Minutas",
+                    Category = "Fritos",
+                    Images = "pizza.jpg"
+                }
+            },
+            TotalCount = 1,
+            Page = 1,
+            PageSize = 20
         };
 
         var request = new GetProductsManageRequestDTO();
 
         var productServiceMock = new Mock<IProductService>();
         productServiceMock.Setup(s => s.GetManage(It.IsAny<GetProductsManageRequestDTO>()))
-                        .Returns(products);
+                        .Returns(paginatedResponse);
 
         var controller = new ProductController(productServiceMock.Object);
         var result = controller.GetManage(request);
