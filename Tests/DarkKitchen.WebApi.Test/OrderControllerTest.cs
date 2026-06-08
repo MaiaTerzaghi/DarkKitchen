@@ -313,7 +313,10 @@ public class OrderControllerTest
             }
 
             ],
-            GeneralTotal = 1026.0
+            GeneralTotal = 1026.0,
+            TotalCount = 1,
+            Page = 1,
+            PageSize = 20
         };
 
         _orderServiceMock
