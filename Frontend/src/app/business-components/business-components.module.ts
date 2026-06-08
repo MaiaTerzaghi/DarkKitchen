@@ -13,6 +13,7 @@ import { OrderByDateComponent } from './order-by-date/order-by-date.component';
 import { OrderManagementComponent } from './order-management/order-management.component';
 import { UserListComponent } from './user-list/user-list.component';
 import { ConfirmExitModalComponent } from './confirm-exit-modal/confirm-exit-modal.component';
+import { PaginatorComponent } from '../components/paginator/paginator.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,7 @@ import { ConfirmExitModalComponent } from './confirm-exit-modal/confirm-exit-mod
     UserListComponent,
     ConfirmExitModalComponent,
   ],
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, PaginatorComponent],
   exports: [
     PromotionListComponent,
     PromotionFormComponent,
