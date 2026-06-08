@@ -76,11 +76,11 @@ public class OrderRepository(DarkKitchenContext context)
             .ToList();
     }
 
-    public List<(int Year, int Month, int ClientId, string ClientName, double Total)> GetSalesReport(
+    public (List<(int Year, int Month, int ClientId, string ClientName, double Total)> Items, int TotalCount) GetSalesReport(
         int page,
         int pageSize)
     {
-        return context.Orders
+        var query = context.Orders
             .GroupBy(o => new { o.Date.Year, o.Date.Month, o.ClientId, ClientName = o.Client.Name + " " + o.Client.LastName })
             .Select(g => new
             {
@@ -91,12 +91,18 @@ public class OrderRepository(DarkKitchenContext context)
                 Total = g.Sum(o => o.Total)
             })
             .OrderByDescending(g => g.Year)
-            .ThenByDescending(g => g.Month)
+            .ThenByDescending(g => g.Month);
+
+        var totalCount = query.Count();
+
+        var items = query
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .AsEnumerable()
             .Select(g => (g.Year, g.Month, g.ClientId, g.ClientName, g.Total))
             .ToList();
+
+        return (items, totalCount);
     }
 
     public List<Order> GetDispatcherOrders()
