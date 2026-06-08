@@ -20,6 +20,6 @@ public interface IOrderRepository : IRepository<Order>
     List<(Product Product, int Quantity)> GetTopProducts(
     Expression<Func<Order, bool>> predicate,
     int top);
-    List<(int Year, int Month, int ClientId, string ClientName, double Total)> GetSalesReport(int page, int pageSize);
+    (List<(int Year, int Month, int ClientId, string ClientName, double Total)> Items, int TotalCount) GetSalesReport(int page, int pageSize);
     List<Order> GetDispatcherOrders();
 }
