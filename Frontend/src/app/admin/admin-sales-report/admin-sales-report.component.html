@@ -44,6 +44,15 @@
     <span class="general-value">{{ formatCurrency(report.generalTotal) }}</span>
   </div>
 
+  <!-- Paginador -->
+  <app-paginator
+    *ngIf="report.totalCount > 0"
+    [currentPage]="page"
+    [pageSize]="pageSize"
+    [totalCount]="report.totalCount"
+    (pageChange)="onPageChange($event)">
+  </app-paginator>
+
   <!-- Empty -->
   <div class="empty-state" *ngIf="report.months.length === 0">
     <span class="material-icons">assessment</span>
