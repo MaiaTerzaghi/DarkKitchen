@@ -1,0 +1,42 @@
+<div *ngIf="totalPages > 1" class="paginator">
+  <span class="paginator-info">
+    Mostrando {{ from }}-{{ to }} de {{ totalCount }}
+  </span>
+
+  <div class="paginator-controls">
+    <button
+      [disabled]="currentPage === 1"
+      (click)="goToPage(currentPage - 1)">
+      <span class="material-icons">chevron_left</span>
+    </button>
+
+    <button
+      *ngIf="pages[0] > 1"
+      (click)="goToPage(1)">
+      1
+    </button>
+
+    <span *ngIf="pages[0] > 2" class="paginator-ellipsis">...</span>
+
+    <button
+      *ngFor="let page of pages"
+      [class.active]="page === currentPage"
+      (click)="goToPage(page)">
+      {{ page }}
+    </button>
+
+    <span *ngIf="pages[pages.length - 1] < totalPages - 1" class="paginator-ellipsis">...</span>
+
+    <button
+      *ngIf="pages[pages.length - 1] < totalPages"
+      (click)="goToPage(totalPages)">
+      {{ totalPages }}
+    </button>
+
+    <button
+      [disabled]="currentPage === totalPages"
+      (click)="goToPage(currentPage + 1)">
+      <span class="material-icons">chevron_right</span>
+    </button>
+  </div>
+</div>
