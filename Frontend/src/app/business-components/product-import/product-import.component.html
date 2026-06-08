@@ -1,0 +1,93 @@
+<div class="page-header">
+  <div class="header-text">
+    <h1>Importar Productos</h1>
+    <p>Importa productos desde archivos JSON o XML</p>
+  </div>
+</div>
+
+<!-- Formulario de importación -->
+<div class="import-card">
+  <div class="form-row">
+    <div class="form-field">
+      <label>Formato de importación</label>
+      <select [(ngModel)]="selectedImporter" class="form-select" [disabled]="loadingImporters">
+        <option value="" disabled>Seleccionar formato...</option>
+        <option *ngFor="let importer of importers" [value]="importer.name">
+          {{ importer.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="form-field">
+      <label>Archivo</label>
+      <div class="file-input-wrapper">
+        <input
+          type="file"
+          (change)="onFileSelected($event)"
+          class="file-input"
+          id="fileInput"
+          accept=".json,.xml"
+        />
+        <label for="fileInput" class="file-label">
+          <span class="material-icons">attach_file</span>
+          {{ selectedFile ? selectedFile.name : 'Elegir archivo...' }}
+        </label>
+      </div>
+    </div>
+
+    <button class="btn-import" (click)="importProducts()" [disabled]="!canImport">
+      <span class="material-icons" [class.spinning]="importing">
+        {{ importing ? 'sync' : 'upload_file' }}
+      </span>
+      {{ importing ? 'Importando...' : 'Importar' }}
+    </button>
+  </div>
+</div>
+
+<!-- Error -->
+<div class="error-message" *ngIf="errorMessage">
+  <span class="material-icons">error</span>
+  {{ errorMessage }}
+</div>
+
+<!-- Resultados -->
+<div class="results-section" *ngIf="result">
+  <div class="result-summary">
+    <div class="result-icon success">
+      <span class="material-icons">check_circle</span>
+    </div>
+    <div class="result-info">
+      <h3>Importación completada</h3>
+      <p>{{ result.importedCount }} producto{{ result.importedCount !== 1 ? 's' : '' }} importado{{ result.importedCount !== 1 ? 's' : '' }} correctamente</p>
+    </div>
+  </div>
+
+  <!-- Tabla de errores -->
+  <div class="errors-section" *ngIf="result.errors && result.errors.length > 0">
+    <h3 class="errors-title">
+      <span class="material-icons">warning</span>
+      {{ result.errors.length }} error{{ result.errors.length !== 1 ? 'es' : '' }} durante la importación
+    </h3>
+
+    <div class="errors-table-container">
+      <table class="errors-table">
+        <thead>
+          <tr>
+            <th>Índice</th>
+            <th>Código</th>
+            <th>Motivo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let error of result.errors">
+            <td>{{ error.index }}</td>
+            <td>
+              <span class="error-code">{{ error.code || '-' }}</span>
+            </td>
+            <td>{{ error.reason }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
