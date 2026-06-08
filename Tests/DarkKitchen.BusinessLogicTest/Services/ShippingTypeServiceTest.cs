@@ -31,7 +31,7 @@ public sealed class ShippingTypeServiceTest
         };
 
         _repositoryMock.Setup(r => r.GetAll(null, null, false, 1, 20))
-                       .Returns(shippingTypes);
+                       .Returns((shippingTypes, shippingTypes.Count));
 
         var result = _service.GetAll();
 
