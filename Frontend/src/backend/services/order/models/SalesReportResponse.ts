@@ -14,4 +14,8 @@ export interface SalesReportMonth {
 export default interface SalesReportResponse {
   months: SalesReportMonth[];
   generalTotal: number;
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
 }
