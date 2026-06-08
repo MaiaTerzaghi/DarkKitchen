@@ -493,7 +493,7 @@ public class OrderServiceTest
 
         _orderRepositoryMock
             .Setup(r => r.GetSalesReport(1, 20))
-            .Returns(expectedReport);
+            .Returns((expectedReport, expectedReport.Count));
 
         var result = _service.GetSalesReport(1, 20);
 
@@ -942,12 +942,14 @@ public class OrderServiceTest
     [TestMethod]
     public void GetSalesReport_ReturnsMonthlyTotal()
     {
+        var reportData = new List<(int Year, int Month, int ClientId, string ClientName, double Total)>
+        {
+            (2026, 4, 1, "Juan Perez", 500.0),
+            (2026, 4, 2, "Maria Lopez", 300.0)
+        };
         _orderRepositoryMock
             .Setup(r => r.GetSalesReport(1, 20))
-            .Returns([
-                (2026, 4, 1, "Juan Perez", 500.0),
-                (2026, 4, 2, "Maria Lopez", 300.0)
-            ]);
+            .Returns((reportData, reportData.Count));
 
         var result = _service.GetSalesReport(1, 20);
 
