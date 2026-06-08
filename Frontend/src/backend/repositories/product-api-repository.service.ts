@@ -8,6 +8,7 @@ import ProductResponse from '../services/product/models/ProductResponse';
 import ProductManageFilter from '../services/product/models/ProductManageFilter';
 import CreateProductRequest from '../services/product/models/CreateProductRequest';
 import UpdateProductRequest from '../services/product/models/UpdateProductRequest';
+import PaginatedResponse from '../models/PaginatedResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -17,19 +18,19 @@ export class ProductApiRepositoryService extends ApiRepository {
     super(environments.darkKitchenApi, 'products', http);
   }
 
-  public getAll(filters: { name?: string; category?: string; line?: string; page?: number; pageSize?: number } = {}): Observable<ProductResponse[]> {
+  public getAll(filters: { name?: string; category?: string; line?: string; page?: number; pageSize?: number } = {}): Observable<PaginatedResponse<ProductResponse>> {
     const params: string[] = [];
     if (filters.name) params.push(`name=${encodeURIComponent(filters.name)}`);
     if (filters.category) params.push(`category=${encodeURIComponent(filters.category)}`);
     if (filters.line) params.push(`line=${encodeURIComponent(filters.line)}`);
     params.push(`page=${filters.page ?? 1}`);
     params.push(`pageSize=${filters.pageSize ?? 20}`);
-    return this.get<ProductResponse[]>('', params.join('&'));
+    return this.get<PaginatedResponse<ProductResponse>>('', params.join('&'));
   }
 
   public getManage(
     filters: ProductManageFilter
-  ): Observable<ProductResponse[]> {
+  ): Observable<PaginatedResponse<ProductResponse>> {
     const params: string[] = [];
 
     if (filters.name) {
@@ -51,8 +52,10 @@ export class ProductApiRepositoryService extends ApiRepository {
       params.push(`PriceMax=${filters.priceMax}`);
     }
 
+    params.push(`Page=${filters.page ?? 1}`);
+    params.push(`PageSize=${filters.pageSize ?? 20}`);
     const query = params.join('&');
-    return this.get<ProductResponse[]>('manage', query);
+    return this.get<PaginatedResponse<ProductResponse>>('manage', query);
   }
 
   public getCatalog(filters: ProductCatalogFilter): Observable<ProductResponse[]> {
