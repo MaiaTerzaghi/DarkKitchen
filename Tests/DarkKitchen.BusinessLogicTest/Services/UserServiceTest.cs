@@ -4,6 +4,7 @@ using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.DTOs.Args.In;
+using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 using Moq;
@@ -318,11 +319,11 @@ public sealed class UserServiceTest
         };
 
         _userRepositoryMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>(), null, false, 1, 20))
-                            .Returns(users);
+                            .Returns((users, users.Count));
 
         var result = _service.GetUsers(null, null);
 
-        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual(1, result.Items.Count);
     }
 
     [TestMethod]
