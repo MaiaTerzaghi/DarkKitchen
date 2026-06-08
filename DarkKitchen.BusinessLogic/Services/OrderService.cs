@@ -209,7 +209,7 @@ public class OrderService(
 
     public SalesReportWithTotalDTO GetSalesReport(int page, int pageSize)
     {
-        var report = _orderRepository.GetSalesReport(page, pageSize);
+        var (report, totalCount) = _orderRepository.GetSalesReport(page, pageSize);
 
         var months = report
             .GroupBy(r => new { r.Year, r.Month })
@@ -229,7 +229,10 @@ public class OrderService(
         return new SalesReportWithTotalDTO
         {
             Months = months,
-            GeneralTotal = months.Sum(m => m.MonthlyTotal)
+            GeneralTotal = months.Sum(m => m.MonthlyTotal),
+            TotalCount = totalCount,
+            Page = page,
+            PageSize = pageSize
         };
     }
 
