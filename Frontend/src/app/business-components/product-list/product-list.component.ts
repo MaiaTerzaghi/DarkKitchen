@@ -28,6 +28,11 @@ export class ProductListComponent implements OnInit, CanComponentDeactivate {
   showRouteConfirm: boolean = false;
   private deactivateSubject: Subject<boolean> | null = null;
 
+  // Paginación
+  currentPage: number = 1;
+  pageSize: number = 20;
+  totalCount: number = 0;
+
   filterCategory: string = '';
   filterCommercialLine: string = '';
   filterActive: string = '';
@@ -48,7 +53,10 @@ export class ProductListComponent implements OnInit, CanComponentDeactivate {
     this.loading = true;
     this.errorMessage = '';
 
-    const filters: ProductManageFilter = {};
+    const filters: ProductManageFilter = {
+      page: this.currentPage,
+      pageSize: this.pageSize,
+    };
     if (this.filterCategory) {
       filters.category = this.filterCategory;
     }
@@ -66,8 +74,9 @@ export class ProductListComponent implements OnInit, CanComponentDeactivate {
     }
 
     this._productService.getManage(filters).subscribe({
-      next: (data) => {
-        this.products = data;
+      next: (response) => {
+        this.products = response.items;
+        this.totalCount = response.totalCount;
         this.applySearch();
         this.loading = false;
       },
@@ -103,6 +112,11 @@ export class ProductListComponent implements OnInit, CanComponentDeactivate {
     this.showFilters = !this.showFilters;
   }
 
+  public onPageChange(page: number): void {
+    this.currentPage = page;
+    this.loadProducts();
+  }
+
   public clearFilters(): void {
     this.filterCategory = '';
     this.filterCommercialLine = '';
@@ -111,6 +125,7 @@ export class ProductListComponent implements OnInit, CanComponentDeactivate {
     this.filterPriceMax = null;
     this.searchText = '';
     this.showFilters = false;
+    this.currentPage = 1;
     this.loadProducts();
   }
 
