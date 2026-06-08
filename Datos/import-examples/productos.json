@@ -6,7 +6,7 @@
     "price": 380.0,
     "commercialLine": "Pizzas",
     "category": "Fritos",
-    "imagePaths": []
+    "imagePaths": ["producto.jpg"]
   },
   {
     "code": "IMP-J002",
@@ -15,7 +15,7 @@
     "price": 290.0,
     "commercialLine": "Ensaladas",
     "category": "Saludable",
-    "imagePaths": []
+    "imagePaths": ["producto.jpg"]
   },
   {
     "code": "IMP-J003",
@@ -24,6 +24,6 @@
     "price": 450.0,
     "commercialLine": "Burgers",
     "category": "Fritos",
-    "imagePaths": []
+    "imagePaths": ["producto.jpg"]
   }
 ]

@@ -12,4 +12,8 @@
     </ProjectReference>
   </ItemGroup>
 
+  <Target Name="CopyToPlugins" AfterTargets="Build">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(MSBuildThisFileDirectory)../DarkKitchen.WebApi/bin/$(Configuration)/$(TargetFramework)/Plugins" />
+  </Target>
+
 </Project>
