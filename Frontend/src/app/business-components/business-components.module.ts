@@ -13,6 +13,7 @@ import { OrderByDateComponent } from './order-by-date/order-by-date.component';
 import { OrderManagementComponent } from './order-management/order-management.component';
 import { UserListComponent } from './user-list/user-list.component';
 import { ConfirmExitModalComponent } from './confirm-exit-modal/confirm-exit-modal.component';
+import { ProductImportComponent } from './product-import/product-import.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { ConfirmExitModalComponent } from './confirm-exit-modal/confirm-exit-mod
     OrderManagementComponent,
     UserListComponent,
     ConfirmExitModalComponent,
+    ProductImportComponent,
   ],
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   exports: [
@@ -43,6 +45,7 @@ import { ConfirmExitModalComponent } from './confirm-exit-modal/confirm-exit-mod
     OrderManagementComponent,
     UserListComponent,
     ConfirmExitModalComponent,
+    ProductImportComponent,
   ],
 })
 export class BusinessComponentsModule {}
