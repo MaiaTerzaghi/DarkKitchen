@@ -47,12 +47,26 @@ public class ImportService(
                     Code = imported.Code,
                     Reason = error
                 });
+                index++;
+                continue;
             }
-            else
+
+            var dto = BuildDto(imported);
+
+            if (string.IsNullOrWhiteSpace(dto.Images))
             {
-                _productService.CreateProduct(BuildDto(imported), responsibleUser);
-                result.ImportedCount++;
+                result.Errors.Add(new ImportErrorDTO
+                {
+                    Index = index,
+                    Code = imported.Code,
+                    Reason = "Se requiere al menos una imagen válida."
+                });
+                index++;
+                continue;
             }
+
+            _productService.CreateProduct(dto, responsibleUser);
+            result.ImportedCount++;
 
             index++;
         }
@@ -76,10 +90,24 @@ public class ImportService(
 
     private string ConvertImagesToBase64(List<string> paths)
     {
-        var base64s = paths
-            .Select(p => Path.Combine(_imagesRoot, p))
-            .Select(_imageReader.Read)
-            .Select(Convert.ToBase64String);
+        var base64s = new List<string>();
+
+        foreach (var relativePath in paths)
+        {
+            if (string.IsNullOrWhiteSpace(relativePath))
+            {
+                continue;
+            }
+
+            var fullPath = Path.Combine(_imagesRoot, relativePath);
+            if (!_imageReader.Exists(fullPath))
+            {
+                continue;
+            }
+
+            var bytes = _imageReader.Read(fullPath);
+            base64s.Add(Convert.ToBase64String(bytes));
+        }
 
         return string.Join(",", base64s);
     }
