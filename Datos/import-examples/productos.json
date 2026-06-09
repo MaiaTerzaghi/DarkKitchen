@@ -6,16 +6,16 @@
     "price": 380.0,
     "commercialLine": "Pizzas",
     "category": "Fritos",
-    "imagePaths": ["producto.jpg"]
+    "imagePaths": [""]
   },
   {
     "code": "IMP-J002",
     "name": "Ensalada Griega Importada",
-    "description": "Ensalada con queso feta y aceitunas importada desde JSON",
+    "description": "SON",
     "price": 290.0,
     "commercialLine": "Ensaladas",
     "category": "Saludable",
-    "imagePaths": ["producto.jpg"]
+    "imagePaths": ["ensalada.jpeg"]
   },
   {
     "code": "IMP-J003",
@@ -24,6 +24,6 @@
     "price": 450.0,
     "commercialLine": "Burgers",
     "category": "Fritos",
-    "imagePaths": ["producto.jpg"]
+    "imagePaths": ["hamburguesa.jpg"]
   }
 ]

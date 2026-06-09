@@ -6,7 +6,9 @@
     <Price>320</Price>
     <CommercialLine>Pastas</CommercialLine>
     <Category>Fritos</Category>
-    <ImagePaths></ImagePaths>
+    <ImagePaths>
+      <Path>carbonara.jpg</Path>
+    </ImagePaths>
   </Product>
   <Product>
     <Code>IMP-X002</Code>
