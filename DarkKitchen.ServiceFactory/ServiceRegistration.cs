@@ -56,8 +56,9 @@ public static class ServiceRegistration
 
         var pluginsPath = configuration["PluginsPath"]
                           ?? Path.Combine(AppContext.BaseDirectory, "Plugins");
-        var importImagesPath = configuration["ImportImagesPath"]
+        var importImagesRaw = configuration["ImportImagesPath"]
                           ?? Path.Combine(AppContext.BaseDirectory, "import-images");
+        var importImagesPath = Path.GetFullPath(importImagesRaw);
 
         Directory.CreateDirectory(pluginsPath);
         Directory.CreateDirectory(importImagesPath);
