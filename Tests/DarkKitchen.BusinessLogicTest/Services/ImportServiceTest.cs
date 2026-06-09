@@ -51,6 +51,8 @@ public sealed class ImportServiceTest
             FileName = "products.json"
         };
 
+        var imageBytes = new byte[] { 1, 2, 3 };
+
         var importedProduct = new ImportedProduct
         {
             Code = "P0001",
@@ -58,7 +60,8 @@ public sealed class ImportServiceTest
             Description = "Una rica pizza napolitana con tomate",
             Price = 250.0,
             CommercialLine = "Minutas",
-            Category = "Pizzas"
+            Category = "Pizzas",
+            ImagePaths = ["pizza.jpg"]
         };
 
         var importerMock = new Mock<IProductImporter>();
@@ -67,6 +70,11 @@ public sealed class ImportServiceTest
 
         _providerMock.Setup(p => p.GetByName("JSON"))
                     .Returns(importerMock.Object);
+
+        _imageReaderMock.Setup(r => r.Exists(Path.Combine(ImagesRoot, "pizza.jpg")))
+                        .Returns(true);
+        _imageReaderMock.Setup(r => r.Read(Path.Combine(ImagesRoot, "pizza.jpg")))
+                        .Returns(imageBytes);
 
         var result = _service.Import(request, "admin@email.com");
 
@@ -105,6 +113,8 @@ public sealed class ImportServiceTest
         importerMock.Setup(i => i.Import(It.IsAny<ImportRequest>())).Returns([imported]);
         _providerMock.Setup(p => p.GetByName("JSON")).Returns(importerMock.Object);
 
+        _imageReaderMock.Setup(r => r.Exists(Path.Combine(ImagesRoot, "pizza1.jpg"))).Returns(true);
+        _imageReaderMock.Setup(r => r.Exists(Path.Combine(ImagesRoot, "pizza2.jpg"))).Returns(true);
         _imageReaderMock.Setup(r => r.Read(Path.Combine(ImagesRoot, "pizza1.jpg"))).Returns(imageBytes1);
         _imageReaderMock.Setup(r => r.Read(Path.Combine(ImagesRoot, "pizza2.jpg"))).Returns(imageBytes2);
 
@@ -116,6 +126,42 @@ public sealed class ImportServiceTest
         _productServiceMock.Verify(s => s.CreateProduct(
             It.Is<CreateProductRequestDTO>(dto => dto.Images == expectedBase64),
             "admin@email.com"), Times.Once);
+    }
+
+    [TestMethod]
+    public void Import_WhenProductHasNoValidImages_AddsToErrorsAndDoesNotCallCreateProduct()
+    {
+        var imported = new ImportedProduct
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Una rica pizza napolitana con tomate",
+            Price = 250.0,
+            CommercialLine = "Minutas",
+            Category = "Pizzas",
+            ImagePaths = []
+        };
+
+        var importerMock = new Mock<IProductImporter>();
+        importerMock.Setup(i => i.Import(It.IsAny<ImportRequest>())).Returns([imported]);
+        _providerMock.Setup(p => p.GetByName("JSON")).Returns(importerMock.Object);
+
+        var request = new ImportProductsRequestDTO
+        {
+            ImporterName = "JSON",
+            Content = "x",
+            FileName = "x.json"
+        };
+
+        var result = _service.Import(request, "admin@email.com");
+
+        Assert.AreEqual(0, result.ImportedCount);
+        Assert.AreEqual(1, result.Errors.Count);
+        Assert.AreEqual("Se requiere al menos una imagen válida.", result.Errors[0].Reason);
+
+        _productServiceMock.Verify(
+            s => s.CreateProduct(It.IsAny<CreateProductRequestDTO>(), It.IsAny<string>()),
+            Times.Never);
     }
 
     [TestMethod]
