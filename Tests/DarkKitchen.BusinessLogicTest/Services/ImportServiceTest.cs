@@ -165,6 +165,41 @@ public sealed class ImportServiceTest
     }
 
     [TestMethod]
+    public void Import_WhenImagePathIsUrl_DownloadsAndConvertsToBase64()
+    {
+        var imageBytes = new byte[] { 10, 20, 30 };
+        var expectedBase64 = Convert.ToBase64String(imageBytes);
+        var imageUrl = "https://ejemplo.com/pizza.jpg";
+
+        var imported = new ImportedProduct
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Una rica pizza napolitana con tomate",
+            Price = 250.0,
+            CommercialLine = "Minutas",
+            Category = "Pizzas",
+            ImagePaths = [imageUrl]
+        };
+
+        var importerMock = new Mock<IProductImporter>();
+        importerMock.Setup(i => i.Import(It.IsAny<ImportRequest>())).Returns([imported]);
+        _providerMock.Setup(p => p.GetByName("JSON")).Returns(importerMock.Object);
+
+        _imageReaderMock.Setup(r => r.DownloadFromUrl(imageUrl)).Returns(imageBytes);
+
+        var request = new ImportProductsRequestDTO { ImporterName = "JSON", Content = "x", FileName = "x.json" };
+
+        var result = _service.Import(request, "admin@email.com");
+
+        Assert.AreEqual(1, result.ImportedCount);
+        _imageReaderMock.Verify(r => r.DownloadFromUrl(imageUrl), Times.Once);
+        _productServiceMock.Verify(s => s.CreateProduct(
+            It.Is<CreateProductRequestDTO>(dto => dto.Images == expectedBase64),
+            "admin@email.com"), Times.Once);
+    }
+
+    [TestMethod]
     public void Import_WhenRowFailsValidation_AddsToErrorsAndDoesNotCallCreateProduct()
     {
         var invalid = new ImportedProduct

@@ -1,29 +1,29 @@
 [
   {
     "code": "IMP-J001",
-    "name": "Pizza Hawaiana Importada",
-    "description": "Pizza con piña y jamon importada desde JSON",
-    "price": 380.0,
-    "commercialLine": "Pizzas",
-    "category": "Fritos",
-    "imagePaths": [""]
+    "name": "Cafe Espresso Importado",
+    "description": "Cafe espresso italiano con crema importado desde JSON",
+    "price": 150.0,
+    "commercialLine": "Desayunos",
+    "category": "Bebidas",
+    "imagePaths": ["https://media.istockphoto.com/id/1859646927/es/foto/imagen-de-primer-plano-de-un-hombre-y-una-mujer-tintineando-tazas-de-caf%C3%A9-blanco-en-la.jpg?s=612x612&w=0&k=20&c=Juw94UAigv_0Xjz6FlLluho0-rpHL14dSAGusD97wos="]
   },
   {
     "code": "IMP-J002",
-    "name": "Ensalada Griega Importada",
-    "description": "SON",
-    "price": 290.0,
-    "commercialLine": "Ensaladas",
-    "category": "Saludable",
-    "imagePaths": ["ensalada.jpeg"]
+    "name": "Flan Casero con Dulce de Leche",
+    "description": "Flan casero con dulce de leche y crema importado desde JSON",
+    "price": 220.0,
+    "commercialLine": "Postres",
+    "category": "Dulces",
+    "imagePaths": ["https://eltiempo.com.do/wp-content/uploads/2024/05/FLAN.jpeg"]
   },
   {
     "code": "IMP-J003",
-    "name": "Burger Doble Queso Importada",
-    "description": "Hamburguesa doble con queso cheddar importada desde JSON",
-    "price": 450.0,
-    "commercialLine": "Burgers",
-    "category": "Fritos",
-    "imagePaths": ["hamburguesa.jpg"]
+    "name": "Asado Criollo Importado",
+    "description": "Asado criollo con achuras y chimichurri importado desde JSON",
+    "price": 650.0,
+    "commercialLine": "Minutas clasicas",
+    "category": "Parrilla",
+    "imagePaths": ["entino.jpg/800gentino.jpg"]
   }
 ]

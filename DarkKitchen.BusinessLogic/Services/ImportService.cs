@@ -92,20 +92,31 @@ public class ImportService(
     {
         var base64s = new List<string>();
 
-        foreach (var relativePath in paths)
+        foreach (var path in paths)
         {
-            if (string.IsNullOrWhiteSpace(relativePath))
+            if (string.IsNullOrWhiteSpace(path))
             {
                 continue;
             }
 
-            var fullPath = Path.Combine(_imagesRoot, relativePath);
-            if (!_imageReader.Exists(fullPath))
+            byte[] bytes;
+
+            if (path.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+                || path.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
             {
-                continue;
+                bytes = _imageReader.DownloadFromUrl(path);
+            }
+            else
+            {
+                var fullPath = Path.Combine(_imagesRoot, path);
+                if (!_imageReader.Exists(fullPath))
+                {
+                    continue;
+                }
+
+                bytes = _imageReader.Read(fullPath);
             }
 
-            var bytes = _imageReader.Read(fullPath);
             base64s.Add(Convert.ToBase64String(bytes));
         }
 

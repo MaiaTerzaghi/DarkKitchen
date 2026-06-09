@@ -1,22 +1,22 @@
 <Products>
   <Product>
     <Code>IMP-X001</Code>
-    <Name>Pasta Carbonara Importada</Name>
-    <Description>Pasta con salsa carbonara importada desde XML</Description>
-    <Price>320</Price>
-    <CommercialLine>Pastas</CommercialLine>
-    <Category>Fritos</Category>
+    <Name>Cafe con Leche Importado</Name>
+    <Description>Cafe con leche espumosa importado desde XML</Description>
+    <Price>180</Price>
+    <CommercialLine>Desayunos</CommercialLine>
+    <Category>Bebidas</Category>
     <ImagePaths>
-      <Path>carbonara.jpg</Path>
+      <Path>https://media.istockphoto.com/id/1859646927/es/foto/imagen-de-primer-plano-de-un-hombre-y-una-mujer-tintineando-tazas-de-caf%C3%A9-blanco-en-la.jpg?s=612x612&w=0&k=20&c=Juw94UAigv_0Xjz6FlLluho0-rpHL14dSAGusD97wos=</Path>
     </ImagePaths>
   </Product>
   <Product>
     <Code>IMP-X002</Code>
-    <Name>Wrap Vegetariano Importado</Name>
-    <Description>Wrap con verduras grilladas importado desde XML</Description>
-    <Price>260</Price>
-    <CommercialLine>Wraps</CommercialLine>
-    <Category>Saludable</Category>
-    <ImagePaths></ImagePaths>
+    <Name>Flan Mixto con Crema Importado</Name>
+    <Description>XML</Description>
+    <Price>240</Price>
+    <CommercialLine>Postres</CommercialLine>
+    <Category>Dulces</Category>
+    <ImagePaths>https://eltiempo.com.do/wp-content/uploads/2024/05/FLAN.jpeg</ImagePaths>
   </Product>
 </Products>
