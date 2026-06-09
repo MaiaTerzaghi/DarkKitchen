@@ -54,7 +54,7 @@ public sealed class JsonProductImporterTest
     public void Import_MalformedJson_ThrowsJsonException()
     {
         var request = new ImportRequest { Content = "esto no es json {{{", FileName = "bad.json" };
-        _importer.Import(request).ToList();
+        _ = _importer.Import(request).ToList();
     }
 
     [TestMethod]

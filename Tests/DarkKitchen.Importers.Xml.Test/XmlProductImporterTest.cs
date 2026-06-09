@@ -56,7 +56,7 @@ public sealed class XmlProductImporterTest
     public void Import_MalformedXml_ThrowsXmlException()
     {
         var request = new ImportRequest { Content = "esto no es xml <<<", FileName = "bad.xml" };
-        _importer.Import(request).ToList();
+        _ = _importer.Import(request).ToList();
     }
 
     [TestMethod]
