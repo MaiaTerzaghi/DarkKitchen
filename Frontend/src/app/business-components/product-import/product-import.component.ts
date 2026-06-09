@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ImportService } from '../../../backend/services/import/import.service';
 import ImporterInfo from '../../../backend/services/import/models/ImporterInfo';
 import ImportResult from '../../../backend/services/import/models/ImportResult';
@@ -10,6 +10,8 @@ import ImportResult from '../../../backend/services/import/models/ImportResult';
   styleUrls: ['./product-import.component.css'],
 })
 export class ProductImportComponent implements OnInit {
+  @ViewChild('fileInput') fileInputRef!: ElementRef<HTMLInputElement>;
+
   importers: ImporterInfo[] = [];
   loadingImporters: boolean = false;
 
@@ -19,6 +21,8 @@ export class ProductImportComponent implements OnInit {
   importing: boolean = false;
   errorMessage: string = '';
   result: ImportResult | null = null;
+
+  isDragging: boolean = false;
 
   constructor(private readonly _importService: ImportService) {}
 
@@ -32,9 +36,6 @@ export class ProductImportComponent implements OnInit {
     this._importService.getImporters().subscribe({
       next: (data) => {
         this.importers = data;
-        if (data.length > 0) {
-          this.selectedImporter = data[0].name;
-        }
         this.loadingImporters = false;
       },
       error: (err) => {
@@ -44,10 +45,68 @@ export class ProductImportComponent implements OnInit {
     });
   }
 
+  public selectImporter(name: string): void {
+    this.selectedImporter = name;
+    this.result = null;
+    this.errorMessage = '';
+  }
+
+  public getPluginIcon(name: string): string {
+    const lower = name.toLowerCase();
+    if (lower.includes('json')) return 'data_object';
+    if (lower.includes('xml')) return 'code';
+    if (lower.includes('csv')) return 'table_chart';
+    return 'extension';
+  }
+
+  public getPluginDescription(name: string): string {
+    const lower = name.toLowerCase();
+    if (lower.includes('json')) return 'Importa productos desde archivos JSON estructurados';
+    if (lower.includes('xml')) return 'Importa productos desde archivos XML';
+    if (lower.includes('csv')) return 'Importa productos desde archivos CSV delimitados';
+    return 'Importador de productos';
+  }
+
+  public getPluginFormat(name: string): string {
+    const lower = name.toLowerCase();
+    if (lower.includes('json')) return 'json';
+    if (lower.includes('xml')) return 'xml';
+    if (lower.includes('csv')) return 'csv';
+    return lower;
+  }
+
+  public triggerFileInput(): void {
+    this.fileInputRef?.nativeElement?.click();
+  }
+
   public onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       this.selectedFile = input.files[0];
+      this.result = null;
+      this.errorMessage = '';
+    }
+  }
+
+  public onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = true;
+  }
+
+  public onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+  }
+
+  public onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+
+    if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
+      this.selectedFile = event.dataTransfer.files[0];
       this.result = null;
       this.errorMessage = '';
     }
@@ -89,5 +148,12 @@ export class ProductImportComponent implements OnInit {
     };
 
     reader.readAsText(this.selectedFile);
+  }
+
+  public clearResults(): void {
+    this.result = null;
+    this.selectedFile = null;
+    this.selectedImporter = '';
+    this.errorMessage = '';
   }
 }
