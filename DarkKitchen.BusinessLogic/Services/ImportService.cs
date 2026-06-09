@@ -36,10 +36,10 @@ public class ImportService(
         var result = new ImportResultDTO();
         var index = 0;
 
-        foreach (var imported in importer.Import(importerRequest))
+        foreach(var imported in importer.Import(importerRequest))
         {
             var error = FindValidationError(imported);
-            if (error != null)
+            if(error != null)
             {
                 result.Errors.Add(new ImportErrorDTO
                 {
@@ -53,7 +53,7 @@ public class ImportService(
 
             var dto = BuildDto(imported);
 
-            if (string.IsNullOrWhiteSpace(dto.Images))
+            if(string.IsNullOrWhiteSpace(dto.Images))
             {
                 result.Errors.Add(new ImportErrorDTO
                 {
@@ -92,16 +92,16 @@ public class ImportService(
     {
         var base64s = new List<string>();
 
-        foreach (var path in paths)
+        foreach(var path in paths)
         {
-            if (string.IsNullOrWhiteSpace(path))
+            if(string.IsNullOrWhiteSpace(path))
             {
                 continue;
             }
 
             byte[] bytes;
 
-            if (path.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+            if(path.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
                 || path.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
             {
                 bytes = _imageReader.DownloadFromUrl(path);
@@ -109,7 +109,7 @@ public class ImportService(
             else
             {
                 var fullPath = Path.Combine(_imagesRoot, path);
-                if (!_imageReader.Exists(fullPath))
+                if(!_imageReader.Exists(fullPath))
                 {
                     continue;
                 }
@@ -135,7 +135,7 @@ public class ImportService(
             ProductValidator.ValidateCategory(imported.Category);
             return null;
         }
-        catch (ArgumentException ex)
+        catch(ArgumentException ex)
         {
             return ex.Message;
         }
