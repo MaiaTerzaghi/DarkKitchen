@@ -88,50 +88,67 @@ public class OrderService(
         };
     }
 
-    public List<GetClientOrdersResponseDTO> GetClientOrders(GetClientOrdersRequestDTO request, int clientId)
+    public PaginatedResponse<GetClientOrdersResponseDTO> GetClientOrders(GetClientOrdersRequestDTO request, int clientId)
     {
-        var orders = _orderRepository.GetClientOrders(
+        var (orders, totalCount) = _orderRepository.GetClientOrders(
             clientId,
             request.Status,
             request.DateFrom,
-            request.DateTo);
-        return orders.Select(o => new GetClientOrdersResponseDTO
+            request.DateTo,
+            request.Page,
+            request.PageSize);
+
+        return new PaginatedResponse<GetClientOrdersResponseDTO>
         {
-            OrderId = o.Id,
-            ClientId = o.ClientId,
-            Date = o.Date,
-            Status = o.Status.ToString(),
-            Total = o.Total,
-            ItemCount = o.Items.Sum(i => i.Quantity)
-        }).ToList();
+            Items = orders.Select(o => new GetClientOrdersResponseDTO
+            {
+                OrderId = o.Id,
+                ClientId = o.ClientId,
+                Date = o.Date,
+                Status = o.Status.ToString(),
+                Total = o.Total,
+                ItemCount = o.Items.Sum(i => i.Quantity)
+            }).ToList(),
+            TotalCount = totalCount,
+            Page = request.Page,
+            PageSize = request.PageSize
+        };
     }
 
-    public List<GetOrdersResponseDTO> GetOrders(GetOrdersRequestDTO request)
+    public PaginatedResponse<GetOrdersResponseDTO> GetOrders(GetOrdersRequestDTO request)
     {
-        var orders = _orderRepository.GetOrders(
-        request.DateFrom,
-        request.DateTo,
-        request.Street,
-        request.Status);
+        var (orders, totalCount) = _orderRepository.GetOrders(
+            request.DateFrom,
+            request.DateTo,
+            request.Street,
+            request.Status,
+            request.Page,
+            request.PageSize);
 
-        return orders.Select(order => new GetOrdersResponseDTO
+        return new PaginatedResponse<GetOrdersResponseDTO>
         {
-            OrderId = order.Id,
-            Client = new ClientInfoDTO
+            Items = orders.Select(order => new GetOrdersResponseDTO
             {
-                Id = order.Client.Id,
-                Name = order.Client.Name,
-                LastName = order.Client.LastName,
-                Phone = order.Client.Phone
-            },
-            Date = order.Date,
-            Status = order.Status.ToString(),
-            Items = order.Items.Select(item => new OrderItemResponseDTO
-            {
-                ProductName = item.Product.Name,
-                Quantity = item.Quantity
-            }).ToList()
-        }).ToList();
+                OrderId = order.Id,
+                Client = new ClientInfoDTO
+                {
+                    Id = order.Client.Id,
+                    Name = order.Client.Name,
+                    LastName = order.Client.LastName,
+                    Phone = order.Client.Phone
+                },
+                Date = order.Date,
+                Status = order.Status.ToString(),
+                Items = order.Items.Select(item => new OrderItemResponseDTO
+                {
+                    ProductName = item.Product.Name,
+                    Quantity = item.Quantity
+                }).ToList()
+            }).ToList(),
+            TotalCount = totalCount,
+            Page = request.Page,
+            PageSize = request.PageSize
+        };
     }
 
     public OrderDetailResponseDTO GetOrderDetail(int orderId)
