@@ -66,7 +66,7 @@ public sealed class OrderRepositoryTest
     }
 
     [TestMethod]
-    public void GetClientOrders_WhenClientHasOrders_ReturnsOrders()
+    public void GetOrders_WhenClientHasOrders_ReturnsOrders()
     {
         var order = new Order
         {
@@ -82,7 +82,7 @@ public sealed class OrderRepositoryTest
         _context.SaveChanges();
 
         var repository = new OrderRepository(_context);
-        var result = repository.GetClientOrders(1, null, null, null);
+        var result = repository.GetOrders(1, null, null, null, null);
 
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual(1, result[0].ClientId);
@@ -117,7 +117,7 @@ public sealed class OrderRepositoryTest
         _context.SaveChanges();
 
         var repository = new OrderRepository(_context);
-        var result = repository.GetOrders(new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), null, null);
+        var result = repository.GetOrders(null, new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), null, null);
 
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual(order1.Id, result[0].Id);
@@ -152,7 +152,7 @@ public sealed class OrderRepositoryTest
         _context.SaveChanges();
 
         var repository = new OrderRepository(_context);
-        var result = repository.GetOrders(new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), "18 de Julio", null);
+        var result = repository.GetOrders(null, new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), "18 de Julio", null);
 
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("18 de Julio", result[0].Street);
@@ -187,7 +187,7 @@ public sealed class OrderRepositoryTest
         _context.SaveChanges();
 
         var repository = new OrderRepository(_context);
-        var result = repository.GetOrders(new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), null, OrderStatus.Pending);
+        var result = repository.GetOrders(null, new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), null, OrderStatus.Pending);
 
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual(OrderStatus.Pending, result[0].Status);

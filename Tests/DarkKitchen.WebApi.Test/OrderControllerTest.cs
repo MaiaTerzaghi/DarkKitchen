@@ -1,4 +1,5 @@
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
@@ -100,21 +101,21 @@ public class OrderControllerTest
     }
 
     [TestMethod]
-    public void GetClientOrders_WhenCalled_ReturnsOk()
+    public void GetOrders_WhenClientRole_ReturnsOk()
     {
-        var orders = new List<GetClientOrdersResponseDTO>();
+        var orders = new List<GetOrdersResponseDTO>();
 
         _orderServiceMock
-            .Setup(s => s.GetClientOrders(It.IsAny<GetClientOrdersRequestDTO>(), It.IsAny<int>()))
+            .Setup(s => s.GetOrders(It.IsAny<GetOrdersRequestDTO>(), It.IsAny<UserRole>(), It.IsAny<int?>()))
             .Returns(orders);
 
         _controller.ControllerContext = new ControllerContext
         {
             HttpContext = new DefaultHttpContext()
         };
-        _controller.HttpContext.Items["RequestingUser"] = new User { Id = 1 };
+        _controller.HttpContext.Items["RequestingUser"] = new User { Id = 1, Role = UserRole.Client };
 
-        var result = _controller.GetClientOrders(new GetClientOrdersRequestDTO());
+        var result = _controller.GetOrders(new GetOrdersRequestDTO());
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
     }
@@ -147,8 +148,14 @@ public class OrderControllerTest
         };
 
         _orderServiceMock
-            .Setup(s => s.GetOrders(request))
+            .Setup(s => s.GetOrders(request, It.IsAny<UserRole>(), It.IsAny<int?>()))
             .Returns(expectedOrders);
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
+        _controller.HttpContext.Items["RequestingUser"] = new User { Id = 1, Role = UserRole.Administrative };
 
         var result = _controller.GetOrders(request);
 
