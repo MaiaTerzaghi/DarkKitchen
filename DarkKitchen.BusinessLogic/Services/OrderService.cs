@@ -256,4 +256,9 @@ public class OrderService(
             }).ToList()
         }).ToList();
     }
+
+    public void ChangeStatus(int orderId, OrderStatus newStatus, string responsibleUser)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -1,3 +1,4 @@
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 
@@ -18,4 +19,5 @@ public interface IOrderService
     List<TopProductResponseDTO> GetTopProducts(DateTime dateFrom, DateTime dateTo);
     SalesReportWithTotalDTO GetSalesReport(int page, int pageSize);
     OrderPreviewResponseDTO PreviewOrder(List<OrderItemRequestDTO> items, string shippingTypeName);
+    void ChangeStatus(int orderId, OrderStatus newStatus, string responsibleUser);
 }
