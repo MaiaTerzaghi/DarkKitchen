@@ -4,12 +4,12 @@ namespace DarkKitchen.Domain.Entities;
 
 public class Promotion
 {
+    public int Id { get; set; }
     private string _name = string.Empty;
     private decimal _discountPercentage;
     private DateTime _validFrom;
     private DateTime _validTo;
 
-    public int Id { get; set; }
     public string ProductLine { get; set; } = string.Empty;
     public List<Product> Products { get; set; } = [];
     public string Name

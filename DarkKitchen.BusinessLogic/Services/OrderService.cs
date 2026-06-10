@@ -2,6 +2,7 @@ using DarkKitchen.Domain;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
+using DarkKitchen.Domain.States;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
@@ -157,22 +158,46 @@ public class OrderService(
     }
 
     public UpdateOrderStatusResponseDTO MarkAsPrepared(int orderId) =>
-        ApplyTransition(orderId, order => order.Prepare());
+        ApplyTransition(orderId, order =>
+        {
+            var state = OrderStateFactory.Create(order.Status);
+            state.Prepare(order);
+        });
 
     public UpdateOrderStatusResponseDTO DeliverOrder(int orderId) =>
-        ApplyTransition(orderId, order => order.Deliver());
+        ApplyTransition(orderId, order =>
+        {
+            var state = OrderStateFactory.Create(order.Status);
+            state.Deliver(order);
+        });
 
     public UpdateOrderStatusResponseDTO CancelOrder(int orderId) =>
-        ApplyTransition(orderId, order => order.Cancel());
+        ApplyTransition(orderId, order =>
+        {
+            var state = OrderStateFactory.Create(order.Status);
+            state.Cancel(order);
+        });
 
     public UpdateOrderStatusResponseDTO MarkAsOnTheWay(int orderId) =>
-        ApplyTransition(orderId, order => order.MarkOnTheWay());
+        ApplyTransition(orderId, order =>
+        {
+            var state = OrderStateFactory.Create(order.Status);
+            state.MarkOnTheWay(order);
+        });
 
     public UpdateOrderStatusResponseDTO MarkAsNotDelivered(int orderId) =>
-        ApplyTransition(orderId, order => order.MarkNotDelivered());
+        ApplyTransition(orderId, order =>
+        {
+            var state = OrderStateFactory.Create(order.Status);
+            state.MarkNotDelivered(order);
+        });
 
     public UpdateOrderStatusResponseDTO MarkAsDelayed(int orderId) =>
-        ApplyTransition(orderId, order => order.MarkDelayed());
+        ApplyTransition(orderId, order =>
+        {
+            var state = OrderStateFactory.Create(order.Status);
+            state.MarkDelayed(order);
+        });
 
     private UpdateOrderStatusResponseDTO ApplyTransition(int orderId, Action<Order> transition)
     {

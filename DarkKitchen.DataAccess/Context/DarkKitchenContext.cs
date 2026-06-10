@@ -44,7 +44,5 @@ public sealed class DarkKitchenContext(DbContextOptions<DarkKitchenContext> opti
         modelBuilder.Entity<AuditLog>()
             .Property(a => a.EntityName)
             .HasConversion<string>();
-
-        modelBuilder.Entity<Order>().Ignore(o => o.State);
     }
 }
