@@ -259,6 +259,21 @@ public class OrderService(
 
     public void ChangeStatus(int orderId, OrderStatus newStatus, string responsibleUser)
     {
-        throw new NotImplementedException();
+        if (!StatusDispatch.TryGetValue(newStatus, out var transition))
+        {
+            throw new ArgumentException($"Estado {newStatus} no soporta transición.");
+        }
+
+        ApplyTransition(orderId, transition);
     }
+
+    private static readonly Dictionary<OrderStatus, Action<Order>> StatusDispatch = new()
+    {
+        { OrderStatus.Prepared, order => order.Prepare() },
+        { OrderStatus.Cancelled, order => order.Cancel() },
+        { OrderStatus.OnTheWay, order => order.MarkOnTheWay() },
+        { OrderStatus.Delivered, order => order.Deliver() },
+        { OrderStatus.NotDelivered, order => order.MarkNotDelivered() },
+        { OrderStatus.Delayed, order => order.MarkDelayed() },
+    };
 }
