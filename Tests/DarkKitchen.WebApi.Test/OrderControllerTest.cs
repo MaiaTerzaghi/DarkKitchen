@@ -166,16 +166,16 @@ public class OrderControllerTest
 
         var result = _controller.GetOrders(request);
 
-    Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
 
-    var okResult = (OkObjectResult)result;
-    var response = (PaginatedResponse<GetOrdersResponseDTO>)okResult.Value!;
+        var okResult = (OkObjectResult)result;
+        var response = (PaginatedResponse<GetOrdersResponseDTO>)okResult.Value!;
 
-    Assert.AreEqual(paginatedResponse.TotalCount, response.TotalCount);
-    Assert.AreEqual(paginatedResponse.Items[0].OrderId, response.Items[0].OrderId);
-    Assert.AreEqual(paginatedResponse.Items[0].Client.Id, response.Items[0].Client.Id);
-    Assert.AreEqual(paginatedResponse.Items[0].Client.Name, response.Items[0].Client.Name);
-    Assert.AreEqual(paginatedResponse.Items[0].Client.LastName, response.Items[0].Client.LastName);
+        Assert.AreEqual(paginatedResponse.TotalCount, response.TotalCount);
+        Assert.AreEqual(paginatedResponse.Items[0].OrderId, response.Items[0].OrderId);
+        Assert.AreEqual(paginatedResponse.Items[0].Client.Id, response.Items[0].Client.Id);
+        Assert.AreEqual(paginatedResponse.Items[0].Client.Name, response.Items[0].Client.Name);
+        Assert.AreEqual(paginatedResponse.Items[0].Client.LastName, response.Items[0].Client.LastName);
     }
 
     [TestMethod]
