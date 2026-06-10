@@ -13,7 +13,7 @@ import OrderStatusResponse from '../services/order/models/OrderStatusResponse';
 import OrderPreviewResponse from '../services/order/models/OrderPreviewResponse';
 import TopProductResponse from '../services/order/models/TopProductResponse';
 import SalesReportResponse from '../services/order/models/SalesReportResponse';
-
+import PaginatedResponse from '../models/PaginatedResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +31,7 @@ export class OrderApiRepositoryService extends ApiRepository {
     return this.post<OrderPreviewResponse>(data, 'preview');
   }
 
-  public getClientOrders(filters: OrderFilter): Observable<OrderResponse[]> {
+  public getClientOrders(filters: OrderFilter): Observable<PaginatedResponse<OrderResponse>> {
     const params: string[] = [];
 
     if (filters.dateFrom) {
@@ -43,14 +43,16 @@ export class OrderApiRepositoryService extends ApiRepository {
     if (filters.status) {
       params.push(`Status=${filters.status}`);
     }
+    params.push(`Page=${filters.page ?? 1}`);
+    params.push(`PageSize=${filters.pageSize ?? 20}`);
 
     const query = params.join('&');
-    return this.get<OrderResponse[]>('', query);
+    return this.get<PaginatedResponse<OrderResponse>>('', query);
   }
 
   public getOrdersByDate(
     filters: OrderByDateFilter
-  ): Observable<OrderByDateResponse[]> {
+  ): Observable<PaginatedResponse<OrderByDateResponse>> {
     const params: string[] = [
       `DateFrom=${filters.dateFrom}`,
       `DateTo=${filters.dateTo}`,
@@ -62,9 +64,11 @@ export class OrderApiRepositoryService extends ApiRepository {
     if (filters.status !== undefined && filters.status !== null) {
       params.push(`Status=${filters.status}`);
     }
+    params.push(`Page=${filters.page ?? 1}`);
+    params.push(`PageSize=${filters.pageSize ?? 20}`);
 
     const query = params.join('&');
-    return this.get<OrderByDateResponse[]>('by-date', query);
+    return this.get<PaginatedResponse<OrderByDateResponse>>('by-date', query);
   }
 
   public getDispatcherOrders(): Observable<OrderByDateResponse[]> {
