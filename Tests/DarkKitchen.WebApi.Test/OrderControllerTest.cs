@@ -1,4 +1,5 @@
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
@@ -417,5 +418,30 @@ public class OrderControllerTest
         Assert.AreEqual(expectedOrders[0].Client.Id, response[0].Client.Id);
         Assert.AreEqual(expectedOrders[0].Client.Name, response[0].Client.Name);
         Assert.AreEqual(expectedOrders[0].Status, response[0].Status);
+    }
+
+    [TestMethod]
+    public void ChangeStatus_WhenAdminChangesToCancelled_ReturnsNoContent()
+    {
+        var orderServiceMock = new Mock<IOrderService>();
+
+        var controller = new OrderController(orderServiceMock.Object);
+        controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
+        controller.HttpContext.Items["RequestingUser"] = new User
+        {
+            Id = 1,
+            Email = "admin@email.com",
+            Role = UserRole.Administrative
+        };
+
+        var request = new ChangeStatusRequestDTO { Status = OrderStatus.Cancelled };
+
+        var result = controller.ChangeStatus(1, request);
+
+        Assert.IsInstanceOfType(result, typeof(NoContentResult));
+
+        orderServiceMock.Verify(
+            s => s.ChangeStatus(1, OrderStatus.Cancelled, "admin@email.com"),
+            Times.Once);
     }
 }
