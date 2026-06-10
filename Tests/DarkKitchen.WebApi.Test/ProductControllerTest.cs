@@ -17,11 +17,11 @@ public sealed class ProductControllerTest
     {
         var paginatedResponse = new PaginatedResponse<ProductResponseDTO>
         {
-            Items = new List<ProductResponseDTO>
-            {
+            Items =
+            [
                 new ProductResponseDTO { Name = "Pizza Napolitana", Category = "Fritos", CommercialLine = "Minutas", Images = "im1.jpg" },
-                new ProductResponseDTO { Name = "Pasta bolognese", Category = "Pastas", CommercialLine = "Minutas",  Images = "im2.jpg" },
-            },
+                new ProductResponseDTO { Name = "Pasta bolognese", Category = "Pastas", CommercialLine = "Minutas", Images = "im2.jpg" },
+            ],
             TotalCount = 2,
             Page = 1,
             PageSize = 20
@@ -152,8 +152,8 @@ public sealed class ProductControllerTest
     {
         var paginatedResponse = new PaginatedResponse<ProductResponseDTO>
         {
-            Items = new List<ProductResponseDTO>
-            {
+            Items =
+            [
                 new ProductResponseDTO
                 {
                     Code = "P0001",
@@ -163,7 +163,8 @@ public sealed class ProductControllerTest
                     Category = "Fritos",
                     Images = "pizza.jpg"
                 }
-            },
+
+            ],
             TotalCount = 1,
             Page = 1,
             PageSize = 20

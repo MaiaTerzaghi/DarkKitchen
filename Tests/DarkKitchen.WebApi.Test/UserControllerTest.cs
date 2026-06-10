@@ -84,8 +84,8 @@ public sealed class UserControllerTest
     {
         var paginatedResponse = new PaginatedResponse<UserResponseDTO>
         {
-            Items = new List<UserResponseDTO>
-            {
+            Items =
+            [
                 new UserResponseDTO
                 {
                     Id = 1,
@@ -95,7 +95,8 @@ public sealed class UserControllerTest
                     Phone = "+59899123456",
                     Role = UserRole.Administrative
                 }
-            },
+
+            ],
             TotalCount = 1,
             Page = 1,
             PageSize = 20
