@@ -13,6 +13,10 @@ public class PricingServiceTest
 {
     private Mock<IRepository<Product>> _productRepositoryMock = null!;
     private Mock<IPromotionRepository> _promotionRepositoryMock = null!;
+
+    private const string Pizzas = "Pizzas";
+    private const string Standard = "Standard";
+    private const string Express = "Express";
     private PricingService _service = null!;
 
     [TestInitialize]
@@ -33,7 +37,7 @@ public class PricingServiceTest
     [TestMethod]
     public void CalculateOrderPricing_ValidRequest_ReturnsCorrectTotals()
     {
-        var product = new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas" };
+        var product = new Product { Id = 1, Price = 100.0, CommercialLine = Pizzas };
 
         _productRepositoryMock
             .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
@@ -44,7 +48,7 @@ public class PricingServiceTest
             new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }
         };
 
-        var expressShipping = new ShippingType { Id = 1, Name = "Express", Cost = 50.0 };
+        var expressShipping = new ShippingType { Id = 1, Name = Express, Cost = 50.0 };
         var result = _service.CalculateOrderPricing(items, expressShipping);
 
         Assert.AreEqual(200.0, result.Subtotal);
@@ -55,7 +59,7 @@ public class PricingServiceTest
     [TestMethod]
     public void CalculateOrderPricing_StandardDelivery_ReturnsCorrectShipping()
     {
-        var product = new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas" };
+        var product = new Product { Id = 1, Price = 100.0, CommercialLine = Pizzas };
 
         _productRepositoryMock
             .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
@@ -66,7 +70,7 @@ public class PricingServiceTest
             new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }
         };
 
-        var standardShipping = new ShippingType { Id = 2, Name = "Standard", Cost = 20.0 };
+        var standardShipping = new ShippingType { Id = 2, Name = Standard, Cost = 20.0 };
         var result = _service.CalculateOrderPricing(items, standardShipping);
 
         Assert.AreEqual(200.0, result.Subtotal);
@@ -77,7 +81,7 @@ public class PricingServiceTest
     [TestMethod]
     public void CalculateOrderPricing_WithPromotion_AppliesDiscountCorrectly()
     {
-        var product = new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas" };
+        var product = new Product { Id = 1, Price = 100.0, CommercialLine = Pizzas };
 
         var promotion = new Promotion
         {
@@ -99,7 +103,7 @@ public class PricingServiceTest
             new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }
         };
 
-        var standardShipping = new ShippingType { Id = 2, Name = "Standard", Cost = 20.0 };
+        var standardShipping = new ShippingType { Id = 2, Name = Standard, Cost = 20.0 };
         var result = _service.CalculateOrderPricing(items, standardShipping);
 
         var expectedSubtotal = 200.0;
@@ -112,7 +116,7 @@ public class PricingServiceTest
     [TestMethod]
     public void CalculateOrderPricing_WithPromotion_AppliesDiscountOnlyToPromotedProduct()
     {
-        var pizza = new Product { Id = 1, Price = 100.0, CommercialLine = "Pizzas" };
+        var pizza = new Product { Id = 1, Price = 100.0, CommercialLine = Pizzas };
         var burger = new Product { Id = 2, Price = 200.0, CommercialLine = "Burgers" };
 
         var promotion = new Promotion
@@ -137,7 +141,7 @@ public class PricingServiceTest
             new OrderItemRequestDTO { ProductId = 2, Quantity = 1 }
         };
 
-        var standardShipping = new ShippingType { Id = 2, Name = "Standard", Cost = 20.0 };
+        var standardShipping = new ShippingType { Id = 2, Name = Standard, Cost = 20.0 };
         var result = _service.CalculateOrderPricing(items, standardShipping);
 
         var pizzaSubtotal = 100.0;
@@ -162,7 +166,7 @@ public class PricingServiceTest
             new OrderItemRequestDTO { ProductId = 99, Quantity = 2 }
         };
 
-        var expressShipping = new ShippingType { Id = 1, Name = "Express", Cost = 50.0 };
+        var expressShipping = new ShippingType { Id = 1, Name = Express, Cost = 50.0 };
         _service.CalculateOrderPricing(items, expressShipping);
     }
 
@@ -180,7 +184,7 @@ public class PricingServiceTest
             new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }
         };
 
-        var shipping = new ShippingType { Id = 1, Name = "Express", Cost = 50.0 };
+        var shipping = new ShippingType { Id = 1, Name = Express, Cost = 50.0 };
         var result = _service.PreviewOrderPricing(items, shipping);
 
         Assert.AreEqual(1, result.Items.Count);
@@ -196,7 +200,7 @@ public class PricingServiceTest
     [TestMethod]
     public void PreviewOrderPricing_WithPromotion_ReturnsItemsWithDiscount()
     {
-        var pizza = new Product { Id = 1, Name = "Pizza Margherita", Price = 350.0, IsActive = true, CommercialLine = "Pizzas" };
+        var pizza = new Product { Id = 1, Name = "Pizza Margherita", Price = 350.0, IsActive = true, CommercialLine = Pizzas };
 
         var promo = new Promotion
         {
@@ -218,7 +222,7 @@ public class PricingServiceTest
             new OrderItemRequestDTO { ProductId = 1, Quantity = 1 }
         };
 
-        var shipping = new ShippingType { Id = 1, Name = "Standard", Cost = 20.0 };
+        var shipping = new ShippingType { Id = 1, Name = Standard, Cost = 20.0 };
         var result = _service.PreviewOrderPricing(items, shipping);
 
         Assert.AreEqual(1, result.Items.Count);
@@ -233,7 +237,7 @@ public class PricingServiceTest
     [TestMethod]
     public void PreviewOrderPricing_MultiplePromotions_AppliesBestDiscount()
     {
-        var pizza = new Product { Id = 1, Name = "Pizza Margherita", Price = 350.0, IsActive = true, CommercialLine = "Pizzas" };
+        var pizza = new Product { Id = 1, Name = "Pizza Margherita", Price = 350.0, IsActive = true, CommercialLine = Pizzas };
 
         var promo15 = new Promotion { Id = 1, DiscountPercentage = 15, Products = [pizza] };
         var promo35 = new Promotion { Id = 2, DiscountPercentage = 35, Products = [pizza] };
@@ -251,7 +255,7 @@ public class PricingServiceTest
             new OrderItemRequestDTO { ProductId = 1, Quantity = 1 }
         };
 
-        var shipping = new ShippingType { Id = 1, Name = "Standard", Cost = 20.0 };
+        var shipping = new ShippingType { Id = 1, Name = Standard, Cost = 20.0 };
         var result = _service.PreviewOrderPricing(items, shipping);
 
         Assert.AreEqual(35, result.Items[0].DiscountPercentage);
@@ -262,7 +266,7 @@ public class PricingServiceTest
     [ExpectedException(typeof(ArgumentException))]
     public void CalculateOrderPricing_InactiveProduct_ThrowsException()
     {
-        var product = new Product { Id = 1, Price = 100.0, IsActive = false, CommercialLine = "Pizzas", Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate y albahaca", Images = "/9j/2Q==", Category = "Fritos", Code = "P0001" };
+        var product = new Product { Id = 1, Price = 100.0, IsActive = false, CommercialLine = Pizzas, Name = "Pizza Napolitana", Description = "Rica pizza napolitana con tomate y albahaca", Images = "/9j/2Q==", Category = "Fritos", Code = "P0001" };
 
         _productRepositoryMock
             .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
@@ -273,7 +277,7 @@ public class PricingServiceTest
             new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }
         };
 
-        var expressShipping = new ShippingType { Id = 1, Name = "Express", Cost = 50.0 };
+        var expressShipping = new ShippingType { Id = 1, Name = Express, Cost = 50.0 };
         _service.CalculateOrderPricing(items, expressShipping);
     }
 }

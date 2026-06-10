@@ -10,18 +10,20 @@ namespace DarkKitchen.BusinessLogicTest.Services;
 [TestClass]
 public sealed class SessionServiceTest
 {
+    private const string ValidToken = "valid-token";
+
     [TestMethod]
     public void GetUserFromToken_WhenValidToken_ReturnsUser()
     {
         var user = new User { Id = 1, Email = "juan@email.com", Role = UserRole.Client };
-        var session = new Session { Token = "valid-token", User = user };
+        var session = new Session { Token = ValidToken, User = user };
 
         var sessionRepositoryMock = new Mock<ISessionRepository>();
-        sessionRepositoryMock.Setup(r => r.GetSessionByToken("valid-token"))
+        sessionRepositoryMock.Setup(r => r.GetSessionByToken(ValidToken))
                           .Returns(session);
 
         var sessionService = new SessionService(sessionRepositoryMock.Object);
-        var result = sessionService.GetUserFromToken("valid-token");
+        var result = sessionService.GetUserFromToken(ValidToken);
 
         Assert.IsNotNull(result);
         Assert.AreEqual(1, result.Id);

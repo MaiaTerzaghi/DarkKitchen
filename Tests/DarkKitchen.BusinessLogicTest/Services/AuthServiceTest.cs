@@ -12,6 +12,9 @@ namespace DarkKitchen.BusinessLogicTest.Services;
 [TestClass]
 public sealed class AuthServiceTest
 {
+    private const string Contrasena1 = "Contrasena1!@#$%";
+    private const string TokenValido = "token-valido";
+
     [TestMethod]
     public void Login_WhenValidCredentials_ReturnsToken()
     {
@@ -33,12 +36,12 @@ public sealed class AuthServiceTest
         sessionRepositoryMock.Setup(r => r.Add(It.IsAny<Session>()))
                     .Returns(new Session { User = user });
 
-        passwordManagerMock.Setup(p => p.ComputeHash("Contrasena1!@#$%"))
+        passwordManagerMock.Setup(p => p.ComputeHash(Contrasena1))
                     .Returns(hashedPassword);
 
         var authService = new AuthService(userRepositoryMock.Object, sessionRepositoryMock.Object, passwordManagerMock.Object);
 
-        var result = authService.Login("juan@email.com", "Contrasena1!@#$%");
+        var result = authService.Login("juan@email.com", Contrasena1);
 
         Assert.IsNotNull(result);
         Assert.IsInstanceOfType(result, typeof(LoginResponseDTO));
@@ -59,24 +62,24 @@ public sealed class AuthServiceTest
 
         var authService = new AuthService(userRepositoryMock.Object, sessionRepositoryMock.Object, passwordManagerMock.Object);
 
-        authService.Login("mal@test.com", "Contrasena1!@#$%");
+        authService.Login("mal@test.com", Contrasena1);
     }
 
     [TestMethod]
     public void Logout_WhenValidToken_DeletesSession()
     {
-        var session = new Session { Token = "token-valido", UserId = 1 };
+        var session = new Session { Token = TokenValido, UserId = 1 };
 
         var userRepositoryMock = new Mock<IRepository<User>>();
         var sessionRepositoryMock = new Mock<ISessionRepository>();
         var passwordManagerMock = new Mock<IPasswordManager>();
 
-        sessionRepositoryMock.Setup(r => r.GetSessionByToken("token-valido"))
+        sessionRepositoryMock.Setup(r => r.GetSessionByToken(TokenValido))
                              .Returns(session);
 
         var authService = new AuthService(userRepositoryMock.Object, sessionRepositoryMock.Object, passwordManagerMock.Object);
 
-        authService.Logout("token-valido");
+        authService.Logout(TokenValido);
 
         sessionRepositoryMock.Verify(r => r.Delete(session), Times.Once);
     }
