@@ -64,8 +64,8 @@ export class AdminOrderListComponent implements OnInit {
     }
 
     this._orderService.getOrdersByDate(filters).subscribe({
-      next: (data) => {
-        this.orders = data;
+      next: (response) => {
+        this.orders = response.items;
         this.loading = false;
       },
       error: (err) => {
