@@ -82,10 +82,11 @@ public sealed class OrderRepositoryTest
         _context.SaveChanges();
 
         var repository = new OrderRepository(_context);
-        var result = repository.GetClientOrders(1, null, null, null);
+        var (items, totalCount) = repository.GetClientOrders(1, null, null, null);
 
-        Assert.AreEqual(1, result.Count);
-        Assert.AreEqual(1, result[0].ClientId);
+        Assert.AreEqual(1, items.Count);
+        Assert.AreEqual(1, totalCount);
+        Assert.AreEqual(1, items[0].ClientId);
     }
 
     [TestMethod]
@@ -117,10 +118,11 @@ public sealed class OrderRepositoryTest
         _context.SaveChanges();
 
         var repository = new OrderRepository(_context);
-        var result = repository.GetOrders(new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), null, null);
+        var (items, totalCount) = repository.GetOrders(new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), null, null);
 
-        Assert.AreEqual(1, result.Count);
-        Assert.AreEqual(order1.Id, result[0].Id);
+        Assert.AreEqual(1, items.Count);
+        Assert.AreEqual(1, totalCount);
+        Assert.AreEqual(order1.Id, items[0].Id);
     }
 
     [TestMethod]
@@ -152,10 +154,11 @@ public sealed class OrderRepositoryTest
         _context.SaveChanges();
 
         var repository = new OrderRepository(_context);
-        var result = repository.GetOrders(new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), "18 de Julio", null);
+        var (items, totalCount) = repository.GetOrders(new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), "18 de Julio", null);
 
-        Assert.AreEqual(1, result.Count);
-        Assert.AreEqual("18 de Julio", result[0].Street);
+        Assert.AreEqual(1, items.Count);
+        Assert.AreEqual(1, totalCount);
+        Assert.AreEqual("18 de Julio", items[0].Street);
     }
 
     [TestMethod]
@@ -187,10 +190,11 @@ public sealed class OrderRepositoryTest
         _context.SaveChanges();
 
         var repository = new OrderRepository(_context);
-        var result = repository.GetOrders(new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), null, OrderStatus.Pending);
+        var (items, totalCount) = repository.GetOrders(new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), null, OrderStatus.Pending);
 
-        Assert.AreEqual(1, result.Count);
-        Assert.AreEqual(OrderStatus.Pending, result[0].Status);
+        Assert.AreEqual(1, items.Count);
+        Assert.AreEqual(1, totalCount);
+        Assert.AreEqual(OrderStatus.Pending, items[0].Status);
     }
 
     [TestMethod]
