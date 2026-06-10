@@ -46,7 +46,7 @@ public sealed class ProductControllerTest
     {
         var productServiceMock = new Mock<IProductService>();
         productServiceMock.Setup(s => s.GetProducts(It.IsAny<GetProductsManageRequestDTO>(), It.IsAny<UserRole>()))
-                          .Returns([]);
+                          .Returns(new PaginatedResponse<ProductResponseDTO>());
 
         var controller = new ProductController(productServiceMock.Object);
         controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };

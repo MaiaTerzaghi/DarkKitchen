@@ -82,7 +82,7 @@ export class AdminDashboardComponent implements OnInit {
 
     this._orderService.getOrders(filters).subscribe({
       next: (data) => {
-        this.orders = data;
+        this.orders = data.items;
         this.loadingOrders = false;
       },
       error: () => {

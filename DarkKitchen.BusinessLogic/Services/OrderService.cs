@@ -254,7 +254,8 @@ public class OrderService(
                 Name = order.Client.Name,
                 LastName = order.Client.LastName,
                 Phone = order.Client.Phone
-            } : new ClientInfoDTO(),
+            }
+            : new ClientInfoDTO(),
             Date = order.Date,
             Status = order.Status.ToString(),
             Total = order.Total,

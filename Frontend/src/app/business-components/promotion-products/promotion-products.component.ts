@@ -51,8 +51,8 @@ export class PromotionProductsComponent implements OnChanges {
       next: (products) => {
         // Filtrar los que ya están asociados
         const associatedIds = this.promotion?.products?.map((p) => p.id) || [];
-        this.availableProducts = products.filter(
-          (p) => !associatedIds.includes(p.id)
+        this.availableProducts = products.items.filter(
+          p => !associatedIds.includes(p.id)
         );
         this.loading = false;
       },

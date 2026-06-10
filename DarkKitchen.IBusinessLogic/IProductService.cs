@@ -8,5 +8,4 @@ public interface IProductService
     PaginatedResponse<ProductResponseDTO> GetProducts(GetProductsManageRequestDTO request, UserRole role);
     ProductResponseDTO CreateProduct(CreateProductRequestDTO request, string responsibleUser);
     ProductResponseDTO UpdateProduct(int id, UpdateProductRequestDTO request, string responsibleUser);
-    List<ProductResponseDTO> GetManage(GetProductsManageRequestDTO request);
 }

@@ -40,7 +40,7 @@ export class ProductCatalogComponent implements OnInit {
 
     this._productService.getProducts(filters).subscribe({
       next: (data) => {
-        this.products = data;
+        this.products = data.items;
         this.applySearch();
         this.loading = false;
       },
