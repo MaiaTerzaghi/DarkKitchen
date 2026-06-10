@@ -31,7 +31,7 @@ public class UserService(IRepository<User> userRepository, IPasswordManager pass
             return UserRole.Client;
         }
 
-        if(role is not UserRole.Administrative or UserRole.Dispatcher)
+        if(role is not UserRole.Administrative and not UserRole.Dispatcher)
         {
             throw new ArgumentException("El rol debe ser Administrativo o Preparador");
         }
