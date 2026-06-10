@@ -1,5 +1,6 @@
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
+using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
@@ -443,5 +444,25 @@ public class OrderControllerTest
         orderServiceMock.Verify(
             s => s.ChangeStatus(1, OrderStatus.Cancelled, "admin@email.com"),
             Times.Once);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(UnauthorizedException))]
+    public void ChangeStatus_WhenDispatcherTriesToCancel_ThrowsUnauthorizedException()
+    {
+        var orderServiceMock = new Mock<IOrderService>();
+
+        var controller = new OrderController(orderServiceMock.Object);
+        controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
+        controller.HttpContext.Items["RequestingUser"] = new User
+        {
+            Id = 2,
+            Email = "dispatcher@email.com",
+            Role = UserRole.Dispatcher
+        };
+
+        var request = new ChangeStatusRequestDTO { Status = OrderStatus.Cancelled };
+
+        controller.ChangeStatus(1, request);
     }
 }
