@@ -40,18 +40,6 @@ export class OrderService {
     return this._repository.getDispatcherOrders();
   }
 
-  public markAsPrepared(id: number): Observable<OrderStatusResponse> {
-    return this._repository.markAsPrepared(id);
-  }
-
-  public deliverOrder(id: number): Observable<OrderStatusResponse> {
-    return this._repository.deliverOrder(id);
-  }
-
-  public markAsNotDelivered(id: number): Observable<OrderStatusResponse> {
-    return this._repository.markAsNotDelivered(id);
-  }
-
   public getTopProducts(dateFrom: string, dateTo: string): Observable<TopProductResponse[]> {
     return this._repository.getTopProducts(dateFrom, dateTo);
   }
@@ -60,11 +48,23 @@ export class OrderService {
     return this._repository.getSalesReport(page, pageSize);
   }
 
+  public markAsPrepared(id: number): Observable<OrderStatusResponse> {
+  return this._repository.changeStatus(id, 'Prepared');
+  }
+
+  public deliverOrder(id: number): Observable<OrderStatusResponse> {
+    return this._repository.changeStatus(id, 'Delivered');
+  }
+
+  public markAsNotDelivered(id: number): Observable<OrderStatusResponse> {
+    return this._repository.changeStatus(id, 'NotDelivered');
+  }
+
   public markAsOnTheWay(id: number): Observable<OrderStatusResponse> {
-    return this._repository.markAsOnTheWay(id);
+    return this._repository.changeStatus(id, 'OnTheWay');
   }
 
   public cancelOrder(id: number): Observable<OrderStatusResponse> {
-    return this._repository.cancelOrder(id);
+    return this._repository.changeStatus(id, 'Cancelled');
   }
 }

@@ -71,18 +71,6 @@ export class OrderApiRepositoryService extends ApiRepository {
     return this.get<OrderByDateResponse[]>('dispatcher');
   }
 
-  public markAsPrepared(id: number): Observable<OrderStatusResponse> {
-    return this.patch<OrderStatusResponse>(id, 'prepared');
-  }
-
-  public deliverOrder(id: number): Observable<OrderStatusResponse> {
-    return this.patch<OrderStatusResponse>(id, 'deliver');
-  }
-
-  public markAsNotDelivered(id: number): Observable<OrderStatusResponse> {
-    return this.patch<OrderStatusResponse>(id, 'not-delivered');
-  }
-
   public getTopProducts(dateFrom: string, dateTo: string): Observable<TopProductResponse[]> {
     const query = `DateFrom=${dateFrom}&DateTo=${dateTo}`;
     return this.get<TopProductResponse[]>('top-products', query);
@@ -93,11 +81,7 @@ export class OrderApiRepositoryService extends ApiRepository {
     return this.get<SalesReportResponse>('report', query);
   }
 
-  public markAsOnTheWay(id: number): Observable<OrderStatusResponse> {
-    return this.patch<OrderStatusResponse>(id, 'on-the-way');
-  }
-
-  public cancelOrder(id: number): Observable<OrderStatusResponse> {
-    return this.patch<OrderStatusResponse>(id, 'cancel');
+  public changeStatus(id: number, status: string): Observable<OrderStatusResponse> {
+    return this.patch<OrderStatusResponse>(id, 'status', { status });
   }
 }

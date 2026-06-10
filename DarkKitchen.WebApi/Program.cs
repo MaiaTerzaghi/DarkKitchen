@@ -16,6 +16,12 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddControllers(options =>
+    options.Filters.Add<ExceptionFilter>())
+    .AddJsonOptions(opts =>
+    {
+        opts.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+    });
 DarkKitchen.ServiceFactory.ServiceRegistration.RegisterServices(builder.Services, builder.Configuration);
 
 var app = builder.Build();
