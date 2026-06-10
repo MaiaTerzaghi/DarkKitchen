@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../../../backend/services/product/product.service';
 import ProductResponse from '../../../backend/services/product/models/ProductResponse';
-import ProductCatalogFilter from '../../../backend/services/product/models/ProductCatalogFilter';
+import ProductManageFilter from '../../../backend/services/product/models/ProductManageFilter';
 
 @Component({
   selector: 'app-product-catalog',
@@ -30,15 +30,15 @@ export class ProductCatalogComponent implements OnInit {
     this.loading = true;
     this.errorMessage = '';
 
-    const filters: ProductCatalogFilter = {};
+    const filters: ProductManageFilter = {};
     if (this.filterCategory) {
       filters.category = this.filterCategory;
     }
     if (this.filterLine) {
-      filters.line = this.filterLine;
+      filters.commercialLine = this.filterLine;
     }
 
-    this._productService.getCatalog(filters).subscribe({
+    this._productService.getProducts(filters).subscribe({
       next: (data) => {
         this.products = data;
         this.applySearch();

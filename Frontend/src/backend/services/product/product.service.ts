@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ProductApiRepositoryService } from '../../repositories/product-api-repository.service';
-import ProductCatalogFilter from './models/ProductCatalogFilter';
 import ProductResponse from './models/ProductResponse';
 import ProductManageFilter from './models/ProductManageFilter';
 import CreateProductRequest from './models/CreateProductRequest';
@@ -15,16 +14,10 @@ export class ProductService {
     private readonly _repository: ProductApiRepositoryService
   ) {}
 
-  public getManage(
+  public getProducts(
     filters: ProductManageFilter = {}
   ): Observable<ProductResponse[]> {
-    return this._repository.getManage(filters);
-  }
-  
-  public getCatalog(
-    filters: ProductCatalogFilter = {}
-  ): Observable<ProductResponse[]> {
-    return this._repository.getCatalog(filters);
+    return this._repository.getProducts(filters);
   }
 
   public create(data: CreateProductRequest): Observable<ProductResponse> {
@@ -36,15 +29,5 @@ export class ProductService {
     data: UpdateProductRequest
   ): Observable<ProductResponse> {
     return this._repository.update(id, data);
-  }
-
-  public getAll(
-    name?: string,
-    category?: string,
-    line?: string,
-    page: number = 1,
-    pageSize: number = 20
-  ): Observable<ProductResponse[]> {
-    return this._repository.getAll({ name, category, line, page, pageSize });
   }
 }

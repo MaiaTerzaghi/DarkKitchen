@@ -26,12 +26,12 @@ public class UserService(IRepository<User> userRepository, IPasswordManager pass
 
     private static UserRole ResolveRole(UserRole? role)
     {
-        if (role is null)
+        if(role is null)
         {
             return UserRole.Client;
         }
 
-        if (role is not(UserRole.Administrative or UserRole.Dispatcher))
+        if(role is not(UserRole.Administrative or UserRole.Dispatcher))
         {
             throw new ArgumentException("El rol debe ser Administrativo o Preparador");
         }
@@ -42,7 +42,7 @@ public class UserService(IRepository<User> userRepository, IPasswordManager pass
     private void ValidateEmailNotTaken(string email)
     {
         var existingUser = _userRepository.Get(u => u.Email == email);
-        if (existingUser != null)
+        if(existingUser != null)
         {
             throw new ConflictException("El mail ya está registrado");
         }

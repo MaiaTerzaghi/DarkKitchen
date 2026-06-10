@@ -65,7 +65,7 @@ export class ProductListComponent implements OnInit, CanComponentDeactivate {
       filters.priceMax = this.filterPriceMax;
     }
 
-    this._productService.getManage(filters).subscribe({
+    this._productService.getProducts(filters).subscribe({
       next: (data) => {
         this.products = data;
         this.applySearch();
@@ -95,7 +95,8 @@ export class ProductListComponent implements OnInit, CanComponentDeactivate {
       (p) =>
         p.name.toLowerCase().includes(search) ||
         p.code.toLowerCase().includes(search) ||
-        p.category.toLowerCase().includes(search)
+        p.category.toLowerCase().includes(search) ||
+        p.commercialLine.toLowerCase().includes(search)
     );
   }
 

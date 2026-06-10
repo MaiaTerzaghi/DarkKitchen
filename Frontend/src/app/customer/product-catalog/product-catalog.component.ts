@@ -32,7 +32,7 @@ export class ProductCatalogComponent implements OnInit {
 
   private loadProducts(): void {
     this.loading = true;
-    this._productService.getAll().subscribe({
+    this._productService.getProducts().subscribe({
       next: (data) => {
         this.products = data;
         this.categories = [
@@ -65,7 +65,11 @@ export class ProductCatalogComponent implements OnInit {
     }
     if (this.searchTerm.trim()) {
       const term = this.searchTerm.toLowerCase();
-      result = result.filter((p) => p.name.toLowerCase().includes(term));
+      result = result.filter((p) =>
+        p.name.toLowerCase().includes(term) ||
+        p.category.toLowerCase().includes(term) ||
+        p.commercialLine.toLowerCase().includes(term)
+      );
     }
     this.filteredProducts = result;
   }
