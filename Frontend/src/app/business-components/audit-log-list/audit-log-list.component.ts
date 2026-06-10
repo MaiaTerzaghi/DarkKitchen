@@ -20,6 +20,10 @@ export class AuditLogListComponent {
   filterDateFrom: string = '';
   filterDateTo: string = '';
 
+  currentPage: number = 1;
+  pageSize: number = 20;
+  totalCount: number = 0;
+
   entities = [
     { value: 'Product', label: 'Producto' },
     { value: 'Promotion', label: 'Promoción' },
@@ -60,10 +64,13 @@ export class AuditLogListComponent {
         entityId: this.filterEntityId,
         dateFrom: this.filterDateFrom,
         dateTo: this.filterDateTo,
+        page: this.currentPage,
+        pageSize: this.pageSize,
       })
       .subscribe({
-        next: (data) => {
-          this.logs = data;
+        next: (response) => {
+          this.logs = response.items;
+          this.totalCount = response.totalCount;
           this.searched = true;
           this.loading = false;
         },
@@ -72,6 +79,11 @@ export class AuditLogListComponent {
           this.loading = false;
         },
       });
+  }
+
+  public onPageChange(page: number): void {
+    this.currentPage = page;
+    this.search();
   }
 
   public entityLabel(entityName: string): string {
