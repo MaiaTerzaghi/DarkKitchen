@@ -54,7 +54,7 @@ public sealed class AuditLogRepositoryTest
             new DateTime(2026, 4, 23, 8, 0, 0),
             new DateTime(2026, 4, 23, 10, 0, 0));
 
-        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual(1, result.Items.Count);
     }
 
     [TestMethod]
@@ -77,7 +77,7 @@ public sealed class AuditLogRepositoryTest
             new DateTime(2026, 4, 23, 8, 0, 0),
             new DateTime(2026, 4, 23, 10, 0, 0));
 
-        Assert.AreEqual(0, result.Count);
+        Assert.AreEqual(0, result.Items.Count);
     }
 
     [TestMethod]
@@ -100,7 +100,7 @@ public sealed class AuditLogRepositoryTest
             new DateTime(2026, 4, 23, 8, 0, 0),
             new DateTime(2026, 4, 23, 10, 0, 0));
 
-        Assert.AreEqual(0, result.Count);
+        Assert.AreEqual(0, result.Items.Count);
     }
 
     [TestMethod]
@@ -123,6 +123,6 @@ public sealed class AuditLogRepositoryTest
             new DateTime(2026, 4, 23, 8, 0, 0),
             new DateTime(2026, 4, 23, 10, 0, 0));
 
-        Assert.AreEqual(0, result.Count);
+        Assert.AreEqual(0, result.Items.Count);
     }
 }
