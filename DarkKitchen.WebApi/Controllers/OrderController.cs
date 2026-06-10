@@ -1,3 +1,4 @@
+using DarkKitchen.Domain.Authorization;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
@@ -132,6 +133,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
     public IActionResult ChangeStatus(int id, [FromBody] ChangeStatusRequestDTO request)
     {
         var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
+        OrderTransitionPolicy.AssertCanTransition(requestingUser.Role, request.Status);
         _orderService.ChangeStatus(id, request.Status, requestingUser.Email);
         return NoContent();
     }
