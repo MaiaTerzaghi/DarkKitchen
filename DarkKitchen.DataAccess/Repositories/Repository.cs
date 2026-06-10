@@ -34,7 +34,7 @@ public class Repository<TEntity>(DbContext context) : IRepository<TEntity>
         _context.SaveChanges();
     }
 
-    public List<TEntity> GetAll(
+    public (List<TEntity> Items, int TotalCount) GetAll(
     Expression<Func<TEntity, bool>>? predicate = null,
     Expression<Func<TEntity, object>>? orderBy = null,
     bool descending = false,
@@ -55,9 +55,13 @@ public class Repository<TEntity>(DbContext context) : IRepository<TEntity>
                 : query.OrderBy(orderBy);
         }
 
-        return query
+        var totalCount = query.Count();
+
+        var items = query
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToList();
+
+        return (items, totalCount);
     }
 }

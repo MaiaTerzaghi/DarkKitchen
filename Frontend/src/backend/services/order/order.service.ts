@@ -11,6 +11,7 @@ import OrderStatusResponse from './models/OrderStatusResponse';
 import OrderPreviewResponse from './models/OrderPreviewResponse';
 import TopProductResponse from './models/TopProductResponse';
 import SalesReportResponse from './models/SalesReportResponse';
+import PaginatedResponse from '../../models/PaginatedResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -26,13 +27,13 @@ export class OrderService {
     return this._repository.previewOrder({ items, shippingType });
   }
 
-  public getClientOrders(filters: OrderFilter = {}): Observable<OrderResponse[]> {
+  public getClientOrders(filters: OrderFilter = {}): Observable<PaginatedResponse<OrderResponse>> {
     return this._repository.getClientOrders(filters);
   }
 
   public getOrdersByDate(
     filters: OrderByDateFilter
-  ): Observable<OrderByDateResponse[]> {
+  ): Observable<PaginatedResponse<OrderByDateResponse>> {
     return this._repository.getOrdersByDate(filters);
   }
 

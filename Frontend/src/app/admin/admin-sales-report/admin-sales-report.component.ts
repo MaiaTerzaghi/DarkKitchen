@@ -48,6 +48,11 @@ export class AdminSalesReportComponent implements OnInit {
     return names[month - 1] || '';
   }
 
+  public onPageChange(page: number): void {
+    this.page = page;
+    this.loadReport();
+  }
+
   public formatCurrency(value: number): string {
     return '$' + value.toLocaleString('es-UY', {
       minimumFractionDigits: 2,

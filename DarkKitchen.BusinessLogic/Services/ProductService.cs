@@ -13,9 +13,9 @@ public class ProductService(IRepository<Product> productRepository, IAuditSubjec
     private readonly IRepository<Product> _productRepository = productRepository;
     private readonly IAuditSubject _audit = audit;
 
-    public List<ProductResponseDTO> GetAll(string? name, string? category, string? line, int page = 1, int pageSize = 20)
+    public PaginatedResponse<ProductResponseDTO> GetAll(string? name, string? category, string? line, int page = 1, int pageSize = 20)
     {
-        var products = _productRepository.GetAll(
+        var (products, totalCount) = _productRepository.GetAll(
         predicate: p =>
             p.IsActive &&
             (string.IsNullOrEmpty(name) || p.Name.Contains(name)) &&
@@ -24,16 +24,22 @@ public class ProductService(IRepository<Product> productRepository, IAuditSubjec
         page: page,
         pageSize: pageSize);
 
-        return products.Select(p => new ProductResponseDTO
+        return new PaginatedResponse<ProductResponseDTO>
         {
-            Id = p.Id,
-            Code = p.Code,
-            Name = p.Name,
-            Price = p.Price,
-            CommercialLine = p.CommercialLine,
-            Category = p.Category,
-            Images = p.Images
-        }).ToList();
+            Items = products.Select(p => new ProductResponseDTO
+            {
+                Id = p.Id,
+                Code = p.Code,
+                Name = p.Name,
+                Price = p.Price,
+                CommercialLine = p.CommercialLine,
+                Category = p.Category,
+                Images = p.Images
+            }).ToList(),
+            TotalCount = totalCount,
+            Page = page,
+            PageSize = pageSize
+        };
     }
 
     public ProductResponseDTO CreateProduct(CreateProductRequestDTO request, string responsibleUser)
@@ -108,9 +114,9 @@ public class ProductService(IRepository<Product> productRepository, IAuditSubjec
         };
     }
 
-    public List<ProductResponseDTO> GetManage(GetProductsManageRequestDTO request)
+    public PaginatedResponse<ProductResponseDTO> GetManage(GetProductsManageRequestDTO request)
     {
-        var products = _productRepository.GetAll(
+        var (products, totalCount) = _productRepository.GetAll(
             predicate: p =>
                 (string.IsNullOrEmpty(request.Name) || p.Name.Contains(request.Name)) &&
                 (string.IsNullOrEmpty(request.Description) || p.Description.Contains(request.Description)) &&
@@ -122,17 +128,23 @@ public class ProductService(IRepository<Product> productRepository, IAuditSubjec
             page: request.Page,
             pageSize: request.PageSize);
 
-        return products.Select(p => new ProductResponseDTO
+        return new PaginatedResponse<ProductResponseDTO>
         {
-            Id = p.Id,
-            Code = p.Code,
-            Name = p.Name,
-            Description = p.Description,
-            Price = p.Price,
-            CommercialLine = p.CommercialLine,
-            Category = p.Category,
-            Images = p.Images,
-            IsActive = p.IsActive
-        }).ToList();
+            Items = products.Select(p => new ProductResponseDTO
+            {
+                Id = p.Id,
+                Code = p.Code,
+                Name = p.Name,
+                Description = p.Description,
+                Price = p.Price,
+                CommercialLine = p.CommercialLine,
+                Category = p.Category,
+                Images = p.Images,
+                IsActive = p.IsActive
+            }).ToList(),
+            TotalCount = totalCount,
+            Page = request.Page,
+            PageSize = request.PageSize
+        };
     }
 }

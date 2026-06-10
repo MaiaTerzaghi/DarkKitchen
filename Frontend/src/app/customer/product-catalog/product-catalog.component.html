@@ -108,4 +108,13 @@
       </div>
     </div>
   </div>
+
+  <!-- Paginador -->
+  <app-paginator
+    *ngIf="!loading && totalCount > 0"
+    [currentPage]="currentPage"
+    [pageSize]="pageSize"
+    [totalCount]="totalCount"
+    (pageChange)="onPageChange($event)">
+  </app-paginator>
 </div>

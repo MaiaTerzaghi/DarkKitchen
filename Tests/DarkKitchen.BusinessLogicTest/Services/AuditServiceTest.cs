@@ -89,8 +89,8 @@ public sealed class AuditServiceTest
             new AuditLog { Id = 1 }
         };
         _auditRepositoryMock
-            .Setup(r => r.GetByEntity(AuditedEntity.Product, 12345, It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-            .Returns(logs);
+            .Setup(r => r.GetByEntity(AuditedEntity.Product, 12345, It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<int>()))
+            .Returns((logs, logs.Count));
         var request = new GetAuditLogsRequestDTO
         {
             EntityName = AuditedEntity.Product,
@@ -101,7 +101,7 @@ public sealed class AuditServiceTest
 
         var result = _service.GetLogs(request);
 
-        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual(1, result.Items.Count);
     }
 
     [TestMethod]
@@ -117,8 +117,8 @@ public sealed class AuditServiceTest
             ResponsibleUser = "admin@email.com"
         };
         _auditRepositoryMock
-            .Setup(r => r.GetByEntity(It.IsAny<AuditedEntity>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-            .Returns([log]);
+            .Setup(r => r.GetByEntity(It.IsAny<AuditedEntity>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<int>()))
+            .Returns((new List<AuditLog> { log }, 1));
         var request = new GetAuditLogsRequestDTO
         {
             EntityName = AuditedEntity.Product,
@@ -129,7 +129,7 @@ public sealed class AuditServiceTest
 
         var result = _service.GetLogs(request);
 
-        var dto = result[0];
+        var dto = result.Items[0];
         Assert.AreEqual(7, dto.Id);
         Assert.AreEqual(new DateTime(2026, 4, 23, 9, 0, 0), dto.Timestamp);
         Assert.AreEqual("Product", dto.EntityName);

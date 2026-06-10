@@ -74,9 +74,10 @@ public sealed class RepositoryTest
         _context.Add(new EntityTest("Entity Two"));
         _context.SaveChanges();
 
-        var result = _repository.GetAll();
+        var (items, totalCount) = _repository.GetAll();
 
-        Assert.AreEqual(2, result.Count);
+        Assert.AreEqual(2, items.Count);
+        Assert.AreEqual(2, totalCount);
     }
 
     [TestMethod]
@@ -86,10 +87,11 @@ public sealed class RepositoryTest
         _context.Add(new EntityTest("Entity Two"));
         _context.SaveChanges();
 
-        var result = _repository.GetAll(predicate: e => e.Name == "Entity One");
+        var (items, totalCount) = _repository.GetAll(predicate: e => e.Name == "Entity One");
 
-        Assert.AreEqual(1, result.Count);
-        Assert.AreEqual("Entity One", result[0].Name);
+        Assert.AreEqual(1, items.Count);
+        Assert.AreEqual(1, totalCount);
+        Assert.AreEqual("Entity One", items[0].Name);
     }
 
     [TestMethod]
@@ -99,11 +101,11 @@ public sealed class RepositoryTest
         _context.Add(new EntityTest("Alpha"));
         _context.SaveChanges();
 
-        var result = _repository.GetAll(orderBy: e => e.Name);
+        var (items, totalCount) = _repository.GetAll(orderBy: e => e.Name);
 
-        Assert.AreEqual(2, result.Count);
-        Assert.AreEqual("Alpha", result[0].Name);
-        Assert.AreEqual("Beta", result[1].Name);
+        Assert.AreEqual(2, items.Count);
+        Assert.AreEqual("Alpha", items[0].Name);
+        Assert.AreEqual("Beta", items[1].Name);
     }
 
     [TestMethod]
@@ -113,11 +115,11 @@ public sealed class RepositoryTest
         _context.Add(new EntityTest("Beta"));
         _context.SaveChanges();
 
-        var result = _repository.GetAll(orderBy: e => e.Name, descending: true);
+        var (items, totalCount) = _repository.GetAll(orderBy: e => e.Name, descending: true);
 
-        Assert.AreEqual(2, result.Count);
-        Assert.AreEqual("Beta", result[0].Name);
-        Assert.AreEqual("Alpha", result[1].Name);
+        Assert.AreEqual(2, items.Count);
+        Assert.AreEqual("Beta", items[0].Name);
+        Assert.AreEqual("Alpha", items[1].Name);
     }
 
     [TestMethod]
@@ -130,11 +132,12 @@ public sealed class RepositoryTest
 
         _context.SaveChanges();
 
-        var result = _repository.GetAll(page: 2, pageSize: 2);
+        var (items, totalCount) = _repository.GetAll(page: 2, pageSize: 2);
 
-        Assert.AreEqual(2, result.Count);
-        Assert.AreEqual("Entity 3", result[0].Name);
-        Assert.AreEqual("Entity 4", result[1].Name);
+        Assert.AreEqual(2, items.Count);
+        Assert.AreEqual(5, totalCount);
+        Assert.AreEqual("Entity 3", items[0].Name);
+        Assert.AreEqual("Entity 4", items[1].Name);
     }
 
     [TestMethod]

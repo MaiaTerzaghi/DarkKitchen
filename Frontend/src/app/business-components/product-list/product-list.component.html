@@ -64,7 +64,7 @@
     </div>
   </div>
   <div class="filters-actions">
-    <button class="btn-apply" (click)="loadProducts()">
+    <button class="btn-apply" (click)="onPageChange(1)">
       <span class="material-icons">search</span>
       Aplicar
     </button>
@@ -123,6 +123,15 @@
     </div>
   </div>
 </div>
+
+<!-- Paginador -->
+<app-paginator
+  *ngIf="!loading && totalCount > 0"
+  [currentPage]="currentPage"
+  [pageSize]="pageSize"
+  [totalCount]="totalCount"
+  (pageChange)="onPageChange($event)">
+</app-paginator>
 
 <!-- Sin resultados -->
 <div class="empty-state" *ngIf="!loading && filteredProducts.length === 0 && !errorMessage">
