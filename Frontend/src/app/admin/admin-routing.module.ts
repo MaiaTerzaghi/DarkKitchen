@@ -9,6 +9,7 @@ import { AuditLogListComponent } from '../business-components/audit-log-list/aud
 import { UserListComponent } from '../business-components/user-list/user-list.component';
 import { AdminSalesReportComponent } from './admin-sales-report/admin-sales-report.component';
 import { AdminShippingTypesComponent } from './admin-shipping-types/admin-shipping-types.component';
+import { ProductImportComponent } from '../business-components/product-import/product-import.component';
 import { CanDeactivateGuard } from '../../guards/can-deactivate.guard';
 
 const routes: Routes = [
@@ -45,6 +46,10 @@ const routes: Routes = [
       {
         path: 'report',
         component: AdminSalesReportComponent,
+      },
+      {
+        path: 'import',
+        component: ProductImportComponent,
       },
       {
         path: 'shipping-types',

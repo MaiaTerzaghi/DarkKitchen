@@ -13,6 +13,7 @@ import { OrderByDateComponent } from './order-by-date/order-by-date.component';
 import { OrderManagementComponent } from './order-management/order-management.component';
 import { UserListComponent } from './user-list/user-list.component';
 import { ConfirmExitModalComponent } from './confirm-exit-modal/confirm-exit-modal.component';
+import { ProductImportComponent } from './product-import/product-import.component';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
 
 @NgModule({
@@ -29,6 +30,7 @@ import { PaginatorComponent } from '../components/paginator/paginator.component'
     OrderManagementComponent,
     UserListComponent,
     ConfirmExitModalComponent,
+    ProductImportComponent,
   ],
   imports: [CommonModule, FormsModule, ReactiveFormsModule, PaginatorComponent],
   exports: [
@@ -44,6 +46,7 @@ import { PaginatorComponent } from '../components/paginator/paginator.component'
     OrderManagementComponent,
     UserListComponent,
     ConfirmExitModalComponent,
+    ProductImportComponent,
   ],
 })
 export class BusinessComponentsModule {}
