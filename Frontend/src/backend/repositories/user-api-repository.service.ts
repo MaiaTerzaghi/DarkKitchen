@@ -3,9 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import ApiRepository from './api-repository';
 import environments from '../../environments/environment';
-import RegisterRequest from '../services/user/models/RegisterRequest';
+import CreateUserRequest from '../services/user/models/CreateUserRequest';
 import UserResponse from '../services/user/models/UserResponse';
-import CreateStaffUserRequest from '../services/user/models/CreateStaffUserRequest';
 import UpdateUserRequest from '../services/user/models/UpdateUserRequest';
 
 @Injectable({
@@ -16,8 +15,8 @@ export class UserApiRepositoryService extends ApiRepository {
     super(environments.darkKitchenApi, 'users', http);
   }
 
-  public register(data: RegisterRequest): Observable<number> {
-    return this.post<number>(data);
+  public createUser(data: CreateUserRequest): Observable<{ id: number }> {
+    return this.post<{ id: number }>(data);
   }
 
   public getUsers(name?: string, lastName?: string): Observable<UserResponse[]> {
@@ -26,10 +25,6 @@ export class UserApiRepositoryService extends ApiRepository {
     if (lastName) params.push(`lastName=${lastName}`);
     const query = params.join('&');
     return this.get<UserResponse[]>('', query);
-  }
-
-  public createStaffUser(data: CreateStaffUserRequest): Observable<{ id: number }> {
-    return this.post<{ id: number }>(data, 'staff');
   }
 
   public updateUser(id: number, data: UpdateUserRequest): Observable<UserResponse> {

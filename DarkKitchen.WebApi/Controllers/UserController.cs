@@ -14,18 +14,9 @@ public class UserController(IUserService userService) : ControllerBase
     private readonly IUserService _userService = userService;
 
     [HttpPost]
-    public IActionResult Register(RegisterClientDTO request)
+    public IActionResult CreateUser(CreateUserRequestDTO request)
     {
-        var id = _userService.Register(request);
-
-        return Created(string.Empty, new { id });
-    }
-
-    [AuthorizeRoles(UserRole.Administrative)]
-    [HttpPost("staff")]
-    public IActionResult CreateStaffUser(CreateStaffUserRequestDTO request)
-    {
-        var id = _userService.CreateStaffUser(request);
+        var id = _userService.CreateUser(request);
         return Created(string.Empty, new { id });
     }
 

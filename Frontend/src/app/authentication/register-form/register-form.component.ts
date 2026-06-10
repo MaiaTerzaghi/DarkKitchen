@@ -61,7 +61,7 @@ export class RegisterFormComponent {
       password: password,
     };
 
-    this._userService.register(data).subscribe({
+    this._userService.createUser(data).subscribe({
       next: () => {
         this.successMessage = 'Cuenta creada exitosamente. Redirigiendo al login...';
         setTimeout(() => {

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../../backend/services/user/user.service';
 import UserResponse from '../../../backend/services/user/models/UserResponse';
-import CreateStaffUserRequest from '../../../backend/services/user/models/CreateStaffUserRequest';
+import CreateUserRequest from '../../../backend/services/user/models/CreateUserRequest';
 import UpdateUserRequest from '../../../backend/services/user/models/UpdateUserRequest';
 
 @Component({
@@ -143,7 +143,7 @@ export class UserListComponent implements OnInit {
         },
       });
     } else {
-      const request: CreateStaffUserRequest = {
+      const request: CreateUserRequest = {
         name: this.formData.name,
         lastName: this.formData.lastName,
         email: this.formData.email,
@@ -152,7 +152,7 @@ export class UserListComponent implements OnInit {
         role: this.formData.role,
       };
 
-      this._userService.createStaffUser(request).subscribe({
+      this._userService.createUser(request).subscribe({
         next: () => {
           this.successMessage = 'Usuario creado correctamente';
           this.closeModal();
