@@ -10,27 +10,40 @@ namespace DarkKitchen.DataAccess.Repositories;
 public class OrderRepository(DarkKitchenContext context)
     : Repository<Order>(context), IOrderRepository
 {
-    public List<Order> GetClientOrders(
+    public (List<Order> Items, int TotalCount) GetClientOrders(
         int clientId,
         OrderStatus? status,
         DateTime? dateFrom,
-        DateTime? dateTo)
+        DateTime? dateTo,
+        int page = 1,
+        int pageSize = 20)
     {
-        return context.Orders
+        var query = context.Orders
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
             .Where(o => o.ClientId == clientId)
             .Where(o => !status.HasValue || o.Status == status.Value)
             .Where(o => !dateFrom.HasValue || o.Date.Date >= dateFrom.Value.Date)
             .Where(o => !dateTo.HasValue || o.Date.Date <= dateTo.Value.Date)
+            .OrderByDescending(o => o.Date);
+
+        var totalCount = query.Count();
+
+        var items = query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToList();
+
+        return (items, totalCount);
     }
 
-    public List<Order> GetOrders(
+    public (List<Order> Items, int TotalCount) GetOrders(
         DateTime dateFrom,
         DateTime dateTo,
         string? street,
-        OrderStatus? status)
+        OrderStatus? status,
+        int page = 1,
+        int pageSize = 20)
     {
         var query = context.Orders
             .Include(o => o.Items)
@@ -48,7 +61,15 @@ public class OrderRepository(DarkKitchenContext context)
             query = query.Where(o => o.Status == status.Value);
         }
 
-        return query.ToList();
+        var orderedQuery = query.OrderByDescending(o => o.Date);
+        var totalCount = orderedQuery.Count();
+
+        var items = orderedQuery
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        return (items, totalCount);
     }
 
     public Order? GetOrderById(int orderId)
