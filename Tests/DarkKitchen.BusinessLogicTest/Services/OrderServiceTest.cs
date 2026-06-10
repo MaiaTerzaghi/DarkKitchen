@@ -1226,7 +1226,19 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    public void ChangeStatus_WhenPendingOrderIsCancelled_UpdatesOrderStatus()
+    public void ChangeStatus_WhenTargetIsPrepared_UpdatesOrderStatus()
+    {
+        var order = new Order { Id = 1, Status = OrderStatus.Pending };
+        _orderRepositoryMock.Setup(r => r.GetOrderById(1)).Returns(order);
+
+        _service.ChangeStatus(1, OrderStatus.Prepared, "admin@email.com");
+
+        Assert.AreEqual(OrderStatus.Prepared, order.Status);
+        _orderRepositoryMock.Verify(r => r.Update(order), Times.Once);
+    }
+
+    [TestMethod]
+    public void ChangeStatus_WhenTargetIsCancelled_UpdatesOrderStatus()
     {
         var order = new Order { Id = 1, Status = OrderStatus.Pending };
         _orderRepositoryMock.Setup(r => r.GetOrderById(1)).Returns(order);
@@ -1235,5 +1247,73 @@ public class OrderServiceTest
 
         Assert.AreEqual(OrderStatus.Cancelled, order.Status);
         _orderRepositoryMock.Verify(r => r.Update(order), Times.Once);
+    }
+
+    [TestMethod]
+    public void ChangeStatus_WhenTargetIsDelayed_UpdatesOrderStatus()
+    {
+        var order = new Order { Id = 1, Status = OrderStatus.Pending };
+        _orderRepositoryMock.Setup(r => r.GetOrderById(1)).Returns(order);
+
+        _service.ChangeStatus(1, OrderStatus.Delayed, "admin@email.com");
+
+        Assert.AreEqual(OrderStatus.Delayed, order.Status);
+        _orderRepositoryMock.Verify(r => r.Update(order), Times.Once);
+    }
+
+    [TestMethod]
+    public void ChangeStatus_WhenTargetIsOnTheWay_UpdatesOrderStatus()
+    {
+        var order = new Order { Id = 1, Status = OrderStatus.Prepared };
+        _orderRepositoryMock.Setup(r => r.GetOrderById(1)).Returns(order);
+
+        _service.ChangeStatus(1, OrderStatus.OnTheWay, "admin@email.com");
+
+        Assert.AreEqual(OrderStatus.OnTheWay, order.Status);
+        _orderRepositoryMock.Verify(r => r.Update(order), Times.Once);
+    }
+
+    [TestMethod]
+    public void ChangeStatus_WhenTargetIsDelivered_UpdatesOrderStatus()
+    {
+        var order = new Order { Id = 1, Status = OrderStatus.OnTheWay };
+        _orderRepositoryMock.Setup(r => r.GetOrderById(1)).Returns(order);
+
+        _service.ChangeStatus(1, OrderStatus.Delivered, "admin@email.com");
+
+        Assert.AreEqual(OrderStatus.Delivered, order.Status);
+        _orderRepositoryMock.Verify(r => r.Update(order), Times.Once);
+    }
+
+    [TestMethod]
+    public void ChangeStatus_WhenTargetIsNotDelivered_UpdatesOrderStatus()
+    {
+        var order = new Order { Id = 1, Status = OrderStatus.OnTheWay };
+        _orderRepositoryMock.Setup(r => r.GetOrderById(1)).Returns(order);
+
+        _service.ChangeStatus(1, OrderStatus.NotDelivered, "admin@email.com");
+
+        Assert.AreEqual(OrderStatus.NotDelivered, order.Status);
+        _orderRepositoryMock.Verify(r => r.Update(order), Times.Once);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void ChangeStatus_WhenTargetIsNotInDispatch_ThrowsArgumentException()
+    {
+        var order = new Order { Id = 1, Status = OrderStatus.Prepared };
+        _orderRepositoryMock.Setup(r => r.GetOrderById(1)).Returns(order);
+
+        // Pending no es un destino válido — no está en StatusDispatch
+        _service.ChangeStatus(1, OrderStatus.Pending, "admin@email.com");
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(NotFoundException))]
+    public void ChangeStatus_WhenOrderNotFound_ThrowsNotFoundException()
+    {
+        _orderRepositoryMock.Setup(r => r.GetOrderById(999)).Returns((Order)null!);
+
+        _service.ChangeStatus(999, OrderStatus.Cancelled, "admin@email.com");
     }
 }
