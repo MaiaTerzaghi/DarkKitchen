@@ -89,50 +89,43 @@ public class OrderService(
         };
     }
 
-    public List<GetClientOrdersResponseDTO> GetClientOrders(GetClientOrdersRequestDTO request, int clientId)
+    public List<GetOrdersResponseDTO> GetOrders(GetOrdersRequestDTO request, UserRole role, int? clientId)
     {
-        var orders = _orderRepository.GetClientOrders(
-            clientId,
-            request.Status,
+        var filterClientId = role == UserRole.Client ? clientId : null;
+
+        var orders = _orderRepository.GetOrders(
+            filterClientId,
             request.DateFrom,
-            request.DateTo);
-        return orders.Select(o => new GetClientOrdersResponseDTO
-        {
-            OrderId = o.Id,
-            ClientId = o.ClientId,
-            Date = o.Date,
-            Status = o.Status.ToString(),
-            Total = o.Total,
-            ItemCount = o.Items.Sum(i => i.Quantity)
-        }).ToList();
+            request.DateTo,
+            request.Street,
+            request.Status);
+
+        return orders.Select(MapToOrderResponse).ToList();
     }
 
-    public List<GetOrdersResponseDTO> GetOrders(GetOrdersRequestDTO request)
+    private static GetOrdersResponseDTO MapToOrderResponse(Order order)
     {
-        var orders = _orderRepository.GetOrders(
-        request.DateFrom,
-        request.DateTo,
-        request.Street,
-        request.Status);
-
-        return orders.Select(order => new GetOrdersResponseDTO
+        return new GetOrdersResponseDTO
         {
             OrderId = order.Id,
-            Client = new ClientInfoDTO
+            Client = order.Client != null ? new ClientInfoDTO
             {
                 Id = order.Client.Id,
                 Name = order.Client.Name,
                 LastName = order.Client.LastName,
                 Phone = order.Client.Phone
-            },
+            }
+            : new ClientInfoDTO(),
             Date = order.Date,
             Status = order.Status.ToString(),
+            Total = order.Total,
+            ItemCount = order.Items.Sum(i => i.Quantity),
             Items = order.Items.Select(item => new OrderItemResponseDTO
             {
                 ProductName = item.Product.Name,
                 Quantity = item.Quantity
             }).ToList()
-        }).ToList();
+        };
     }
 
     public OrderDetailResponseDTO GetOrderDetail(int orderId)
@@ -261,24 +254,6 @@ public class OrderService(
     public List<GetOrdersResponseDTO> GetDispatcherOrders()
     {
         var orders = _orderRepository.GetDispatcherOrders();
-
-        return orders.Select(order => new GetOrdersResponseDTO
-        {
-            OrderId = order.Id,
-            Client = new ClientInfoDTO
-            {
-                Id = order.Client.Id,
-                Name = order.Client.Name,
-                LastName = order.Client.LastName,
-                Phone = order.Client.Phone
-            },
-            Date = order.Date,
-            Status = order.Status.ToString(),
-            Items = order.Items.Select(item => new OrderItemResponseDTO
-            {
-                ProductName = item.Product.Name,
-                Quantity = item.Quantity
-            }).ToList()
-        }).ToList();
+        return orders.Select(MapToOrderResponse).ToList();
     }
 }

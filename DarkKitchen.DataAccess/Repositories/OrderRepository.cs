@@ -10,25 +10,10 @@ namespace DarkKitchen.DataAccess.Repositories;
 public class OrderRepository(DarkKitchenContext context)
     : Repository<Order>(context), IOrderRepository
 {
-    public List<Order> GetClientOrders(
-        int clientId,
-        OrderStatus? status,
-        DateTime? dateFrom,
-        DateTime? dateTo)
-    {
-        return context.Orders
-            .Include(o => o.Items)
-            .ThenInclude(i => i.Product)
-            .Where(o => o.ClientId == clientId)
-            .Where(o => !status.HasValue || o.Status == status.Value)
-            .Where(o => !dateFrom.HasValue || o.Date.Date >= dateFrom.Value.Date)
-            .Where(o => !dateTo.HasValue || o.Date.Date <= dateTo.Value.Date)
-            .ToList();
-    }
-
     public List<Order> GetOrders(
-        DateTime dateFrom,
-        DateTime dateTo,
+        int? clientId,
+        DateTime? dateFrom,
+        DateTime? dateTo,
         string? street,
         OrderStatus? status)
     {
@@ -36,7 +21,22 @@ public class OrderRepository(DarkKitchenContext context)
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
             .Include(o => o.Client)
-            .Where(o => o.Date.Date >= dateFrom.Date && o.Date.Date <= dateTo.Date);
+            .AsQueryable();
+
+        if(clientId.HasValue)
+        {
+            query = query.Where(o => o.ClientId == clientId.Value);
+        }
+
+        if(dateFrom.HasValue)
+        {
+            query = query.Where(o => o.Date.Date >= dateFrom.Value.Date);
+        }
+
+        if(dateTo.HasValue)
+        {
+            query = query.Where(o => o.Date.Date <= dateTo.Value.Date);
+        }
 
         if(!string.IsNullOrEmpty(street))
         {

@@ -30,21 +30,13 @@ public class OrderController(IOrderService orderService) : ControllerBase
         return CreatedAtAction(nameof(GetOrderDetail), new { id = response.OrderId }, response);
     }
 
-    [AuthorizeRoles(UserRole.Client)]
+    [AuthorizeRoles(UserRole.Client, UserRole.Administrative, UserRole.Dispatcher)]
     [HttpGet]
-    public IActionResult GetClientOrders([FromQuery] GetClientOrdersRequestDTO request)
-    {
-        var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
-        var orders = _orderService.GetClientOrders(request, requestingUser.Id);
-        return Ok(orders);
-    }
-
-    [AuthorizeRoles(UserRole.Dispatcher, UserRole.Administrative)]
-    [HttpGet("by-date")]
     public IActionResult GetOrders([FromQuery] GetOrdersRequestDTO request)
     {
-        var response = _orderService.GetOrders(request);
-        return Ok(response);
+        var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
+        var orders = _orderService.GetOrders(request, requestingUser.Role, requestingUser.Id);
+        return Ok(orders);
     }
 
     [AuthorizeRoles(UserRole.Dispatcher, UserRole.Administrative)]

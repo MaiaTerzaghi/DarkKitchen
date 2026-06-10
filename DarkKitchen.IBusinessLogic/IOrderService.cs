@@ -1,3 +1,4 @@
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 
@@ -5,8 +6,7 @@ namespace DarkKitchen.IBusinessLogic;
 public interface IOrderService
 {
     CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request, int clientId);
-    List<GetClientOrdersResponseDTO> GetClientOrders(GetClientOrdersRequestDTO request, int clientId);
-    List<GetOrdersResponseDTO> GetOrders(GetOrdersRequestDTO request);
+    List<GetOrdersResponseDTO> GetOrders(GetOrdersRequestDTO request, UserRole role, int? clientId);
     List<GetOrdersResponseDTO> GetDispatcherOrders();
     UpdateOrderStatusResponseDTO MarkAsPrepared(int orderId);
     OrderDetailResponseDTO GetOrderDetail(int orderId);
