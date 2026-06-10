@@ -49,59 +49,11 @@ public class OrderController(IOrderService orderService) : ControllerBase
     }
 
     [AuthorizeRoles(UserRole.Dispatcher, UserRole.Administrative)]
-    [HttpPatch("{id}/prepared")]
-    public IActionResult MarkAsPrepared(int id)
-    {
-        var response = _orderService.MarkAsPrepared(id);
-        return Ok(response);
-    }
-
-    [AuthorizeRoles(UserRole.Dispatcher, UserRole.Administrative)]
     [HttpGet("{id}")]
     public IActionResult GetOrderDetail(int id)
     {
         var order = _orderService.GetOrderDetail(id);
         return Ok(order);
-    }
-
-    [AuthorizeRoles(UserRole.Dispatcher)]
-    [HttpPatch("{id}/deliver")]
-    public IActionResult DeliverOrder(int id)
-    {
-        var result = _orderService.DeliverOrder(id);
-        return Ok(result);
-    }
-
-    [AuthorizeRoles(UserRole.Administrative)]
-    [HttpPatch("{id}/cancel")]
-    public IActionResult CancelOrder(int id)
-    {
-        var response = _orderService.CancelOrder(id);
-        return Ok(response);
-    }
-
-    [AuthorizeRoles(UserRole.Dispatcher)]
-    [HttpPatch("{id}/on-the-way")]
-    public IActionResult MarkAsOnTheWay(int id)
-    {
-        var result = _orderService.MarkAsOnTheWay(id);
-        return Ok(result);
-    }
-
-    [AuthorizeRoles(UserRole.Dispatcher)]
-    [HttpPatch("{id}/not-delivered")]
-    public IActionResult MarkAsNotDelivered(int id)
-    {
-        var response = _orderService.MarkAsNotDelivered(id);
-        return Ok(response);
-    }
-
-    [AuthorizeRoles(UserRole.Dispatcher)]
-    [HttpPatch("{id}/delayed")]
-    public IActionResult MarkAsDelayed(int id)
-    {
-        var response = _orderService.MarkAsDelayed(id);
-        return Ok(response);
     }
 
     [AuthorizeRoles(UserRole.Administrative)]
@@ -134,7 +86,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
     {
         var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
         OrderTransitionPolicy.AssertCanTransition(requestingUser.Role, request.Status);
-        _orderService.ChangeStatus(id, request.Status, requestingUser.Email);
-        return NoContent();
+        var response = _orderService.ChangeStatus(id, request.Status, requestingUser.Email);
+        return Ok(response);   // ← antes: NoContent()
     }
 }

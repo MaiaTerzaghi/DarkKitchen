@@ -156,42 +156,6 @@ public class OrderService(
         };
     }
 
-    public UpdateOrderStatusResponseDTO MarkAsPrepared(int orderId) =>
-        ApplyTransition(orderId, order => order.Prepare());
-
-    public UpdateOrderStatusResponseDTO DeliverOrder(int orderId) =>
-        ApplyTransition(orderId, order => order.Deliver());
-
-    public UpdateOrderStatusResponseDTO CancelOrder(int orderId) =>
-        ApplyTransition(orderId, order => order.Cancel());
-
-    public UpdateOrderStatusResponseDTO MarkAsOnTheWay(int orderId) =>
-        ApplyTransition(orderId, order => order.MarkOnTheWay());
-
-    public UpdateOrderStatusResponseDTO MarkAsNotDelivered(int orderId) =>
-        ApplyTransition(orderId, order => order.MarkNotDelivered());
-
-    public UpdateOrderStatusResponseDTO MarkAsDelayed(int orderId) =>
-        ApplyTransition(orderId, order => order.MarkDelayed());
-
-    private UpdateOrderStatusResponseDTO ApplyTransition(int orderId, Action<Order> transition)
-    {
-        var order = _orderRepository.GetOrderById(orderId)
-            ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
-
-        transition(order);
-
-        order.UpdatedAt = DateTime.Now;
-        _orderRepository.Update(order);
-
-        return new UpdateOrderStatusResponseDTO
-        {
-            OrderId = order.Id,
-            Status = order.Status.ToString(),
-            UpdatedAt = order.UpdatedAt
-        };
-    }
-
     public List<TopProductResponseDTO> GetTopProducts(DateTime dateFrom, DateTime dateTo)
     {
         var topProducts = _orderRepository.GetTopProducts(
@@ -257,14 +221,27 @@ public class OrderService(
         }).ToList();
     }
 
-    public void ChangeStatus(int orderId, OrderStatus newStatus, string responsibleUser)
+    public UpdateOrderStatusResponseDTO ChangeStatus(int orderId, OrderStatus newStatus, string responsibleUser)
     {
         if (!StatusDispatch.TryGetValue(newStatus, out var transition))
         {
             throw new ArgumentException($"Estado {newStatus} no soporta transición.");
         }
 
-        ApplyTransition(orderId, transition);
+        var order = _orderRepository.GetOrderById(orderId)
+            ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
+
+        transition(order);
+
+        order.UpdatedAt = DateTime.Now;
+        _orderRepository.Update(order);
+
+        return new UpdateOrderStatusResponseDTO
+        {
+            OrderId = order.Id,
+            Status = order.Status.ToString(),
+            UpdatedAt = order.UpdatedAt
+        };
     }
 
     private static readonly Dictionary<OrderStatus, Action<Order>> StatusDispatch = new()

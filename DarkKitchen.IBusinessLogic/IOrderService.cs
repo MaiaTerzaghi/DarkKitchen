@@ -9,15 +9,9 @@ public interface IOrderService
     List<GetClientOrdersResponseDTO> GetClientOrders(GetClientOrdersRequestDTO request, int clientId);
     List<GetOrdersResponseDTO> GetOrders(GetOrdersRequestDTO request);
     List<GetOrdersResponseDTO> GetDispatcherOrders();
-    UpdateOrderStatusResponseDTO MarkAsPrepared(int orderId);
     OrderDetailResponseDTO GetOrderDetail(int orderId);
-    UpdateOrderStatusResponseDTO DeliverOrder(int orderId);
-    UpdateOrderStatusResponseDTO CancelOrder(int orderId);
-    UpdateOrderStatusResponseDTO MarkAsOnTheWay(int orderId);
-    UpdateOrderStatusResponseDTO MarkAsNotDelivered(int orderId);
-    UpdateOrderStatusResponseDTO MarkAsDelayed(int orderId);
     List<TopProductResponseDTO> GetTopProducts(DateTime dateFrom, DateTime dateTo);
     SalesReportWithTotalDTO GetSalesReport(int page, int pageSize);
     OrderPreviewResponseDTO PreviewOrder(List<OrderItemRequestDTO> items, string shippingTypeName);
-    void ChangeStatus(int orderId, OrderStatus newStatus, string responsibleUser);
+    UpdateOrderStatusResponseDTO ChangeStatus(int orderId, OrderStatus newStatus, string responsibleUser);
 }
