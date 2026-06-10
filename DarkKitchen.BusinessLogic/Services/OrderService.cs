@@ -89,42 +89,25 @@ public class OrderService(
         };
     }
 
-    public List<GetOrdersResponseDTO> GetOrders(GetOrdersRequestDTO request, UserRole role, int? clientId)
+    public PaginatedResponse<GetOrdersResponseDTO> GetOrders(GetOrdersRequestDTO request, UserRole role, int? clientId)
     {
         var filterClientId = role == UserRole.Client ? clientId : null;
 
-        var orders = _orderRepository.GetOrders(
+        var (orders, totalCount) = _orderRepository.GetOrders(
             filterClientId,
             request.DateFrom,
             request.DateTo,
             request.Street,
-            request.Status);
+            request.Status,
+            request.Page,
+            request.PageSize);
 
-        return orders.Select(MapToOrderResponse).ToList();
-    }
-
-    private static GetOrdersResponseDTO MapToOrderResponse(Order order)
-    {
-        return new GetOrdersResponseDTO
+        return new PaginatedResponse<GetOrdersResponseDTO>
         {
-            OrderId = order.Id,
-            Client = order.Client != null ? new ClientInfoDTO
-            {
-                Id = order.Client.Id,
-                Name = order.Client.Name,
-                LastName = order.Client.LastName,
-                Phone = order.Client.Phone
-            }
-            : new ClientInfoDTO(),
-            Date = order.Date,
-            Status = order.Status.ToString(),
-            Total = order.Total,
-            ItemCount = order.Items.Sum(i => i.Quantity),
-            Items = order.Items.Select(item => new OrderItemResponseDTO
-            {
-                ProductName = item.Product.Name,
-                Quantity = item.Quantity
-            }).ToList()
+            Items = orders.Select(MapToOrderResponse).ToList(),
+            TotalCount = totalCount,
+            Page = request.Page,
+            PageSize = request.PageSize
         };
     }
 
@@ -227,7 +210,7 @@ public class OrderService(
 
     public SalesReportWithTotalDTO GetSalesReport(int page, int pageSize)
     {
-        var report = _orderRepository.GetSalesReport(page, pageSize);
+        var (report, totalCount) = _orderRepository.GetSalesReport(page, pageSize);
 
         var months = report
             .GroupBy(r => new { r.Year, r.Month })
@@ -247,7 +230,10 @@ public class OrderService(
         return new SalesReportWithTotalDTO
         {
             Months = months,
-            GeneralTotal = months.Sum(m => m.MonthlyTotal)
+            GeneralTotal = months.Sum(m => m.MonthlyTotal),
+            TotalCount = totalCount,
+            Page = page,
+            PageSize = pageSize
         };
     }
 
@@ -255,5 +241,29 @@ public class OrderService(
     {
         var orders = _orderRepository.GetDispatcherOrders();
         return orders.Select(MapToOrderResponse).ToList();
+    }
+
+    private static GetOrdersResponseDTO MapToOrderResponse(Order order)
+    {
+        return new GetOrdersResponseDTO
+        {
+            OrderId = order.Id,
+            Client = order.Client != null ? new ClientInfoDTO
+            {
+                Id = order.Client.Id,
+                Name = order.Client.Name,
+                LastName = order.Client.LastName,
+                Phone = order.Client.Phone
+            } : new ClientInfoDTO(),
+            Date = order.Date,
+            Status = order.Status.ToString(),
+            Total = order.Total,
+            ItemCount = order.Items.Sum(i => i.Quantity),
+            Items = order.Items.Select(item => new OrderItemResponseDTO
+            {
+                ProductName = item.Product.Name,
+                Quantity = item.Quantity
+            }).ToList()
+        };
     }
 }

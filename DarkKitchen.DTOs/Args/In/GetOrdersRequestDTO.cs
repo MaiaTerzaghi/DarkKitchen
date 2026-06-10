@@ -1,7 +1,7 @@
 using DarkKitchen.Domain.Enums;
 namespace DarkKitchen.DTOs.Args.In;
 
-public class GetOrdersRequestDTO
+public class GetOrdersRequestDTO : PaginationParamsDTO
 {
     public DateTime? DateFrom { get; set; }
     public DateTime? DateTo { get; set; }

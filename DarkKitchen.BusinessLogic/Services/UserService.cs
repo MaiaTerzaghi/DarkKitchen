@@ -61,24 +61,30 @@ public class UserService(IRepository<User> userRepository, IPasswordManager pass
         };
     }
 
-    public List<UserResponseDTO> GetUsers(string? name, string? lastName, int page = 1, int pageSize = 20)
+    public PaginatedResponse<UserResponseDTO> GetUsers(string? name, string? lastName, int page = 1, int pageSize = 20)
     {
-        var users = _userRepository.GetAll(
+        var (users, totalCount) = _userRepository.GetAll(
             predicate: u =>
             (name == null || u.Name.Contains(name)) &&
             (lastName == null || u.LastName.Contains(lastName)),
             page: page,
             pageSize: pageSize);
 
-        return users.Select(u => new UserResponseDTO
+        return new PaginatedResponse<UserResponseDTO>
         {
-            Id = u.Id,
-            Name = u.Name,
-            LastName = u.LastName,
-            Email = u.Email,
-            Phone = u.Phone,
-            Role = u.Role
-        }).ToList();
+            Items = users.Select(u => new UserResponseDTO
+            {
+                Id = u.Id,
+                Name = u.Name,
+                LastName = u.LastName,
+                Email = u.Email,
+                Phone = u.Phone,
+                Role = u.Role
+            }).ToList(),
+            TotalCount = totalCount,
+            Page = page,
+            PageSize = pageSize
+        };
     }
 
     public UserResponseDTO UpdateUser(int id, UpdateUserRequestDTO request, int requestingUserId)

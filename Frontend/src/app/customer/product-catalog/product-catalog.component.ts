@@ -18,6 +18,11 @@ export class ProductCatalogComponent implements OnInit {
   loading: boolean = true;
   errorMessage: string = '';
 
+  // Paginación
+  currentPage: number = 1;
+  pageSize: number = 20;
+  totalCount: number = 0;
+
   // Carrusel: índice de imagen actual por producto
   private imageIndexMap: { [productId: number]: number } = {};
 
@@ -34,10 +39,11 @@ export class ProductCatalogComponent implements OnInit {
     this.loading = true;
     this._productService.getProducts().subscribe({
       next: (data) => {
-        this.products = data;
+        this.products = data.items;
+        this.totalCount = data.totalCount;
         this.categories = [
           'Todos',
-          ...new Set(data.map((p) => p.category)),
+          ...new Set(data.items.map((p) => p.category)),
         ];
         this.applyFilters();
         this.loading = false;
@@ -47,6 +53,11 @@ export class ProductCatalogComponent implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.loadProducts();
   }
 
   filterByCategory(category: string): void {

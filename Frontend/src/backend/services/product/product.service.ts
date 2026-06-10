@@ -5,6 +5,7 @@ import ProductResponse from './models/ProductResponse';
 import ProductManageFilter from './models/ProductManageFilter';
 import CreateProductRequest from './models/CreateProductRequest';
 import UpdateProductRequest from './models/UpdateProductRequest';
+import PaginatedResponse from '../../models/PaginatedResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,7 @@ export class ProductService {
 
   public getProducts(
     filters: ProductManageFilter = {}
-  ): Observable<ProductResponse[]> {
+  ): Observable<PaginatedResponse<ProductResponse>> {
     return this._repository.getProducts(filters);
   }
 

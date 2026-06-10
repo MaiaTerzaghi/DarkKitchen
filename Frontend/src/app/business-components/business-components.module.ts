@@ -14,6 +14,7 @@ import { OrderManagementComponent } from './order-management/order-management.co
 import { UserListComponent } from './user-list/user-list.component';
 import { ConfirmExitModalComponent } from './confirm-exit-modal/confirm-exit-modal.component';
 import { ProductImportComponent } from './product-import/product-import.component';
+import { PaginatorComponent } from '../components/paginator/paginator.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,7 @@ import { ProductImportComponent } from './product-import/product-import.componen
     ConfirmExitModalComponent,
     ProductImportComponent,
   ],
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, PaginatorComponent],
   exports: [
     PromotionListComponent,
     PromotionFormComponent,

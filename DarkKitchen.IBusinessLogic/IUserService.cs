@@ -5,7 +5,7 @@ namespace DarkKitchen.IBusinessLogic;
 public interface IUserService
 {
     int CreateUser(CreateUserRequestDTO request);
-    List<UserResponseDTO> GetUsers(string? name, string? lastName, int page = 1, int pageSize = 20);
+    PaginatedResponse<UserResponseDTO> GetUsers(string? name, string? lastName, int page = 1, int pageSize = 20);
     UserResponseDTO UpdateUser(int id, UpdateUserRequestDTO request, int requestingUserId);
     void DeleteUser(int id, int requestingUserId);
 }

@@ -20,6 +20,10 @@ export class OrderByDateComponent {
   filterStreet: string = '';
   filterStatus: string = '';
 
+  currentPage: number = 1;
+  pageSize: number = 20;
+  totalCount: number = 0;
+
   // Opciones de estado
   statusOptions = [
     { value: 0, label: 'Pendiente' },
@@ -45,6 +49,8 @@ export class OrderByDateComponent {
     const filters: any = {
       dateFrom: this.filterDateFrom,
       dateTo: this.filterDateTo,
+      page: this.currentPage,
+      pageSize: this.pageSize,
     };
 
     if (this.filterStreet) {
@@ -56,7 +62,8 @@ export class OrderByDateComponent {
 
     this._orderService.getOrders(filters).subscribe({
       next: (data) => {
-        this.orders = data;
+        this.orders = data.items;
+        this.totalCount = data.totalCount;
         this.searched = true;
         this.loading = false;
       },
@@ -67,11 +74,17 @@ export class OrderByDateComponent {
     });
   }
 
+  public onPageChange(page: number): void {
+    this.currentPage = page;
+    this.search();
+  }
+
   public clearFilters(): void {
     this.filterDateFrom = '';
     this.filterDateTo = '';
     this.filterStreet = '';
     this.filterStatus = '';
+    this.currentPage = 1;
     this.orders = [];
     this.searched = false;
     this.errorMessage = '';

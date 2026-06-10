@@ -5,6 +5,7 @@ import ApiRepository from './api-repository';
 import environments from '../../environments/environment';
 import AuditLogResponse from '../services/audit/models/AuditLogResponse';
 import AuditLogFilter from '../services/audit/models/AuditLogFilter';
+import PaginatedResponse from '../models/PaginatedResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +15,7 @@ export class AuditApiRepositoryService extends ApiRepository {
     super(environments.darkKitchenApi, 'audit-logs', http);
   }
 
-  public getLogs(filters: AuditLogFilter): Observable<AuditLogResponse[]> {
+  public getLogs(filters: AuditLogFilter): Observable<PaginatedResponse<AuditLogResponse>> {
     const params: string[] = [];
 
     if (filters.entityName) {
@@ -29,8 +30,10 @@ export class AuditApiRepositoryService extends ApiRepository {
     if (filters.dateTo) {
       params.push(`DateTo=${filters.dateTo}`);
     }
+    params.push(`Page=${filters.page ?? 1}`);
+    params.push(`PageSize=${filters.pageSize ?? 20}`);
 
     const query = params.join('&');
-    return this.get<AuditLogResponse[]>('', query);
+    return this.get<PaginatedResponse<AuditLogResponse>>('', query);
   }
 }

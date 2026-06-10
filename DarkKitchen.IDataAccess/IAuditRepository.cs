@@ -5,5 +5,5 @@ namespace DarkKitchen.IDataAccess;
 
 public interface IAuditRepository : IRepository<AuditLog>
 {
-    List<AuditLog> GetByEntity(AuditedEntity entityName, int entityId, DateTime from, DateTime to);
+    (List<AuditLog> Items, int TotalCount) GetByEntity(AuditedEntity entityName, int entityId, DateTime from, DateTime to, int page = 1, int pageSize = 20);
 }

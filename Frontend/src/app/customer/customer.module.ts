@@ -6,9 +6,10 @@ import { BusinessComponentsModule } from '../business-components/business-compon
 import { CustomerLayoutComponent } from './customer-layout/customer-layout.component';
 import { ProductCatalogComponent } from './product-catalog/product-catalog.component';
 import { CheckoutComponent } from './checkout/checkout.component';
+import { PaginatorComponent } from '../components/paginator/paginator.component';
 
 @NgModule({
   declarations: [CustomerLayoutComponent, ProductCatalogComponent, CheckoutComponent],
-  imports: [CommonModule, CustomerRoutingModule, FormsModule, ReactiveFormsModule, BusinessComponentsModule],
+  imports: [CommonModule, CustomerRoutingModule, FormsModule, ReactiveFormsModule, BusinessComponentsModule, PaginatorComponent],
 })
 export class CustomerModule {}

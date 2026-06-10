@@ -99,22 +99,29 @@ public sealed class UserControllerTest
     [TestMethod]
     public void GetUsers_WhenCalled_ReturnsOk()
     {
-        var users = new List<UserResponseDTO>
+        var paginatedResponse = new PaginatedResponse<UserResponseDTO>
         {
-            new UserResponseDTO
-            {
-                Id = 1,
-                Name = "Juan",
-                LastName = "Perez",
-                Email = "juan@test.com",
-                Phone = "+59899123456",
-                Role = UserRole.Administrative
-            }
+            Items =
+            [
+                new UserResponseDTO
+                {
+                    Id = 1,
+                    Name = "Juan",
+                    LastName = "Perez",
+                    Email = "juan@test.com",
+                    Phone = "+59899123456",
+                    Role = UserRole.Administrative
+                }
+
+            ],
+            TotalCount = 1,
+            Page = 1,
+            PageSize = 20
         };
 
         var userServiceMock = new Mock<IUserService>();
         userServiceMock.Setup(s => s.GetUsers(It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<int>(), It.IsAny<int>()))
-                    .Returns(users);
+                    .Returns(paginatedResponse);
 
         var controller = new UserController(userServiceMock.Object);
 

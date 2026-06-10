@@ -20,6 +20,11 @@ export class UserListComponent implements OnInit {
   searchText: string = '';
   filterRole: string = 'all';
 
+  // Paginación
+  currentPage: number = 1;
+  pageSize: number = 20;
+  totalCount: number = 0;
+
   showModal: boolean = false;
   editingUser: UserResponse | null = null;
 
@@ -41,9 +46,10 @@ export class UserListComponent implements OnInit {
   loadUsers(): void {
     this.loading = true;
     this.errorMessage = '';
-    this._userService.getUsers().subscribe({
-      next: (data) => {
-        this.users = data.filter((u) => u.role !== 0);
+    this._userService.getUsers(undefined, undefined, this.currentPage, this.pageSize).subscribe({
+      next: (response) => {
+        this.users = response.items.filter((u) => u.role !== 0);
+        this.totalCount = response.totalCount;
         this.applyFilters();
         this.loading = false;
       },
@@ -163,6 +169,11 @@ export class UserListComponent implements OnInit {
         },
       });
     }
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.loadUsers();
   }
 
   deleteUser(user: UserResponse): void {

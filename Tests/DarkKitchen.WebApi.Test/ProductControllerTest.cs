@@ -16,15 +16,21 @@ public sealed class ProductControllerTest
     [TestMethod]
     public void GetProducts_WhenNoFilters_ReturnsOk()
     {
-        var products = new List<ProductResponseDTO>
+        var paginatedResponse = new PaginatedResponse<ProductResponseDTO>
         {
-            new ProductResponseDTO { Name = "Pizza Napolitana", Category = "Fritos", CommercialLine = "Minutas", Images = "im1.jpg" },
-            new ProductResponseDTO { Name = "Pasta bolognese", Category = "Pastas", CommercialLine = "Minutas",  Images = "im2.jpg" },
+            Items =
+            [
+                new ProductResponseDTO { Name = "Pizza Napolitana", Category = "Fritos", CommercialLine = "Minutas", Images = "im1.jpg" },
+                new ProductResponseDTO { Name = "Pasta bolognese", Category = "Pastas", CommercialLine = "Minutas", Images = "im2.jpg" },
+            ],
+            TotalCount = 2,
+            Page = 1,
+            PageSize = 20
         };
 
         var productServiceMock = new Mock<IProductService>();
         productServiceMock.Setup(s => s.GetProducts(It.IsAny<GetProductsManageRequestDTO>(), It.IsAny<UserRole>()))
-                          .Returns(products);
+                          .Returns(paginatedResponse);
 
         var controller = new ProductController(productServiceMock.Object);
         controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };

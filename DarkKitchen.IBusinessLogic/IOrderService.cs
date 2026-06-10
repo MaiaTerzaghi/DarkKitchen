@@ -6,7 +6,7 @@ namespace DarkKitchen.IBusinessLogic;
 public interface IOrderService
 {
     CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request, int clientId);
-    List<GetOrdersResponseDTO> GetOrders(GetOrdersRequestDTO request, UserRole role, int? clientId);
+    PaginatedResponse<GetOrdersResponseDTO> GetOrders(GetOrdersRequestDTO request, UserRole role, int? clientId);
     List<GetOrdersResponseDTO> GetDispatcherOrders();
     UpdateOrderStatusResponseDTO MarkAsPrepared(int orderId);
     OrderDetailResponseDTO GetOrderDetail(int orderId);

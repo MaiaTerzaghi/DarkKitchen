@@ -13,14 +13,14 @@ public class ProductService(IRepository<Product> productRepository, IAuditSubjec
     private readonly IRepository<Product> _productRepository = productRepository;
     private readonly IAuditSubject _audit = audit;
 
-    public List<ProductResponseDTO> GetProducts(GetProductsManageRequestDTO request, UserRole role)
+    public PaginatedResponse<ProductResponseDTO> GetProducts(GetProductsManageRequestDTO request, UserRole role)
     {
         if(role == UserRole.Client)
         {
             request.IsActive = true;
         }
 
-        var products = _productRepository.GetAll(
+        var (products, totalCount) = _productRepository.GetAll(
             predicate: p =>
                 (string.IsNullOrEmpty(request.Name) || p.Name.Contains(request.Name)) &&
                 (string.IsNullOrEmpty(request.Description) || p.Description.Contains(request.Description)) &&
@@ -32,7 +32,13 @@ public class ProductService(IRepository<Product> productRepository, IAuditSubjec
             page: request.Page,
             pageSize: request.PageSize);
 
-        return products.Select(MapToDTO).ToList();
+        return new PaginatedResponse<ProductResponseDTO>
+        {
+            Items = products.Select(MapToDTO).ToList(),
+            TotalCount = totalCount,
+            Page = request.Page,
+            PageSize = request.PageSize
+        };
     }
 
     public ProductResponseDTO CreateProduct(CreateProductRequestDTO request, string responsibleUser)

@@ -14,7 +14,7 @@ public class ShippingTypeService(IRepository<ShippingType> shippingTypeRepositor
 
     public List<ShippingTypeResponseDTO> GetAll()
     {
-        var shippingTypes = _shippingTypeRepository.GetAll();
+        var (shippingTypes, _) = _shippingTypeRepository.GetAll();
 
         return shippingTypes.Select(st => new ShippingTypeResponseDTO
         {

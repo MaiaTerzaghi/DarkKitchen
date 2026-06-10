@@ -3,4 +3,6 @@ export default interface OrderFilter {
   dateTo?: string;
   street?: string;
   status?: string | number;
+  page?: number;
+  pageSize?: number;
 }

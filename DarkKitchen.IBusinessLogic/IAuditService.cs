@@ -5,5 +5,5 @@ namespace DarkKitchen.IBusinessLogic;
 
 public interface IAuditService
 {
-    List<AuditLogResponseDTO> GetLogs(GetAuditLogsRequestDTO request);
+    PaginatedResponse<AuditLogResponseDTO> GetLogs(GetAuditLogsRequestDTO request);
 }

@@ -10,12 +10,14 @@ namespace DarkKitchen.DataAccess.Repositories;
 public class OrderRepository(DarkKitchenContext context)
     : Repository<Order>(context), IOrderRepository
 {
-    public List<Order> GetOrders(
+    public (List<Order> Items, int TotalCount) GetOrders(
         int? clientId,
         DateTime? dateFrom,
         DateTime? dateTo,
         string? street,
-        OrderStatus? status)
+        OrderStatus? status,
+        int page = 1,
+        int pageSize = 20)
     {
         var query = context.Orders
             .Include(o => o.Items)
@@ -48,7 +50,15 @@ public class OrderRepository(DarkKitchenContext context)
             query = query.Where(o => o.Status == status.Value);
         }
 
-        return query.ToList();
+        var orderedQuery = query.OrderByDescending(o => o.Date);
+        var totalCount = orderedQuery.Count();
+
+        var items = orderedQuery
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        return (items, totalCount);
     }
 
     public Order? GetOrderById(int orderId)
@@ -76,11 +86,11 @@ public class OrderRepository(DarkKitchenContext context)
             .ToList();
     }
 
-    public List<(int Year, int Month, int ClientId, string ClientName, double Total)> GetSalesReport(
+    public (List<(int Year, int Month, int ClientId, string ClientName, double Total)> Items, int TotalCount) GetSalesReport(
         int page,
         int pageSize)
     {
-        return context.Orders
+        var query = context.Orders
             .GroupBy(o => new { o.Date.Year, o.Date.Month, o.ClientId, ClientName = o.Client.Name + " " + o.Client.LastName })
             .Select(g => new
             {
@@ -91,12 +101,18 @@ public class OrderRepository(DarkKitchenContext context)
                 Total = g.Sum(o => o.Total)
             })
             .OrderByDescending(g => g.Year)
-            .ThenByDescending(g => g.Month)
+            .ThenByDescending(g => g.Month);
+
+        var totalCount = query.Count();
+
+        var items = query
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .AsEnumerable()
             .Select(g => (g.Year, g.Month, g.ClientId, g.ClientName, g.Total))
             .ToList();
+
+        return (items, totalCount);
     }
 
     public List<Order> GetDispatcherOrders()

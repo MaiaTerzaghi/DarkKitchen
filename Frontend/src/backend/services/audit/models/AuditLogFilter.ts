@@ -3,4 +3,6 @@ export default interface AuditLogFilter {
   entityId?: number;
   dateFrom?: string;
   dateTo?: string;
+  page?: number;
+  pageSize?: number;
 }

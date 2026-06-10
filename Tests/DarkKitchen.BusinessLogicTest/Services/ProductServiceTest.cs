@@ -37,13 +37,13 @@ public sealed class ProductServiceTest
 
         var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>(), null, false, 1, 20))
-                             .Returns(products);
+                             .Returns((products, products.Count));
 
         var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
 
         var result = productService.GetProducts(new GetProductsManageRequestDTO(), UserRole.Administrative);
 
-        Assert.AreEqual(2, result.Count);
+        Assert.AreEqual(2, result.Items.Count);
     }
 
     [TestMethod]
@@ -56,14 +56,14 @@ public sealed class ProductServiceTest
 
         var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>(), null, false, 1, 20))
-                             .Returns(products);
+                             .Returns((products, products.Count));
 
         var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
 
         var result = productService.GetProducts(new GetProductsManageRequestDTO { Name = "Pizza Napolitana" }, UserRole.Administrative);
 
-        Assert.AreEqual(1, result.Count);
-        Assert.AreEqual("Pizza Napolitana", result[0].Name);
+        Assert.AreEqual(1, result.Items.Count);
+        Assert.AreEqual("Pizza Napolitana", result.Items[0].Name);
     }
 
     [TestMethod]
@@ -465,13 +465,13 @@ public sealed class ProductServiceTest
 
         var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>(), null, false, 1, 20))
-                            .Returns(products);
+                            .Returns((products, products.Count));
 
         var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
         var result = productService.GetProducts(new GetProductsManageRequestDTO { IsActive = true }, UserRole.Administrative);
 
         Assert.IsNotNull(result);
-        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual(1, result.Items.Count);
     }
 
     [TestMethod]
@@ -495,14 +495,14 @@ public sealed class ProductServiceTest
 
         var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<Product, bool>>>(), null, false, 1, 20))
-                            .Returns(products);
+                            .Returns((products, products.Count));
 
         var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
         var result = productService.GetProducts(new GetProductsManageRequestDTO(), UserRole.Administrative);
 
-        Assert.AreEqual(42, result[0].Id);
-        Assert.AreEqual("Rica pizza napolitana con tomate y albahaca", result[0].Description);
-        Assert.IsFalse(result[0].IsActive);
+        Assert.AreEqual(42, result.Items[0].Id);
+        Assert.AreEqual("Rica pizza napolitana con tomate y albahaca", result.Items[0].Description);
+        Assert.IsFalse(result.Items[0].IsActive);
     }
 
     [TestMethod]

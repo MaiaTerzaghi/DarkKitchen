@@ -75,15 +75,15 @@ public class OrderServiceTest
         };
 
         _orderRepositoryMock
-            .Setup(r => r.GetOrders(1, It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<OrderStatus?>()))
-            .Returns([order]);
+            .Setup(r => r.GetOrders(1, It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<OrderStatus?>(), It.IsAny<int>(), It.IsAny<int>()))
+            .Returns(([order], 1));
 
         var request = new GetOrdersRequestDTO();
 
         var result = _service.GetOrders(request, UserRole.Client, 1);
 
         Assert.IsNotNull(result);
-        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual(1, result.Items.Count);
     }
 
     [TestMethod]
@@ -127,17 +127,17 @@ public class OrderServiceTest
         };
 
         _orderRepositoryMock
-            .Setup(r => r.GetOrders(null, It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<OrderStatus?>()))
-            .Returns(ordersFromRepo);
+            .Setup(r => r.GetOrders(null, It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<OrderStatus?>(), It.IsAny<int>(), It.IsAny<int>()))
+            .Returns((ordersFromRepo, ordersFromRepo.Count));
 
         var result = _service.GetOrders(request, UserRole.Administrative, null);
 
         Assert.IsNotNull(result);
-        Assert.AreEqual(1, result.Count);
-        Assert.AreEqual(1, result[0].OrderId);
-        Assert.AreEqual("Pending", result[0].Status);
-        Assert.AreEqual("Hamburguesa", result[0].Items[0].ProductName);
-        Assert.AreEqual(2, result[0].Items[0].Quantity);
+        Assert.AreEqual(1, result.Items.Count);
+        Assert.AreEqual(1, result.Items[0].OrderId);
+        Assert.AreEqual("Pending", result.Items[0].Status);
+        Assert.AreEqual("Hamburguesa", result.Items[0].Items[0].ProductName);
+        Assert.AreEqual(2, result.Items[0].Items[0].Quantity);
     }
 
     [TestMethod]
@@ -494,7 +494,7 @@ public class OrderServiceTest
 
         _orderRepositoryMock
             .Setup(r => r.GetSalesReport(1, 20))
-            .Returns(expectedReport);
+            .Returns((expectedReport, expectedReport.Count));
 
         var result = _service.GetSalesReport(1, 20);
 
@@ -592,9 +592,10 @@ public class OrderServiceTest
 
         _ = _orderRepositoryMock
             .Setup(r => r.GetOrders(
-                It.IsAny<int?>(), It.IsAny<DateTime?>(), It.IsAny<DateTime?>(),
-                It.IsAny<string?>(), It.IsAny<OrderStatus?>()))
-            .Returns([order]);
+                It.IsAny<int?>(),
+                It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<string?>(),
+                It.IsAny<OrderStatus?>(), It.IsAny<int>(), It.IsAny<int>()))
+            .Returns(([order], 1));
 
         var result = _service.GetOrders(new GetOrdersRequestDTO
         {
@@ -602,11 +603,11 @@ public class OrderServiceTest
             DateTo = new DateTime(2026, 4, 30)
         }, UserRole.Administrative, null);
 
-        Assert.AreEqual(1, result.Count);
-        Assert.AreEqual(42, result[0].Client.Id);
-        Assert.AreEqual("Juan", result[0].Client.Name);
-        Assert.AreEqual("Perez", result[0].Client.LastName);
-        Assert.AreEqual("+59899000000", result[0].Client.Phone);
+        Assert.AreEqual(1, result.Items.Count);
+        Assert.AreEqual(42, result.Items[0].Client.Id);
+        Assert.AreEqual("Juan", result.Items[0].Client.Name);
+        Assert.AreEqual("Perez", result.Items[0].Client.LastName);
+        Assert.AreEqual("+59899000000", result.Items[0].Client.Phone);
     }
 
     [TestMethod]
@@ -882,14 +883,14 @@ public class OrderServiceTest
         };
 
         _orderRepositoryMock
-            .Setup(r => r.GetOrders(1, It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<OrderStatus?>()))
-            .Returns([order]);
+            .Setup(r => r.GetOrders(1, It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<OrderStatus?>(), It.IsAny<int>(), It.IsAny<int>()))
+            .Returns(([order], 1));
 
         var request = new GetOrdersRequestDTO();
 
         var result = _service.GetOrders(request, UserRole.Client, 1);
 
-        Assert.AreEqual(500.0, result[0].Total);
+        Assert.AreEqual(500.0, result.Items[0].Total);
     }
 
     [TestMethod]
@@ -944,12 +945,14 @@ public class OrderServiceTest
     [TestMethod]
     public void GetSalesReport_ReturnsMonthlyTotal()
     {
+        var reportData = new List<(int Year, int Month, int ClientId, string ClientName, double Total)>
+        {
+            (2026, 4, 1, "Juan Perez", 500.0),
+            (2026, 4, 2, "Maria Lopez", 300.0)
+        };
         _orderRepositoryMock
             .Setup(r => r.GetSalesReport(1, 20))
-            .Returns([
-                (2026, 4, 1, "Juan Perez", 500.0),
-                (2026, 4, 2, "Maria Lopez", 300.0)
-            ]);
+            .Returns((reportData, reportData.Count));
 
         var result = _service.GetSalesReport(1, 20);
 

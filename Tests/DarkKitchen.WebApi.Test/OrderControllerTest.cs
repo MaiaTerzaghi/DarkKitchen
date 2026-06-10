@@ -103,11 +103,11 @@ public class OrderControllerTest
     [TestMethod]
     public void GetOrders_WhenClientRole_ReturnsOk()
     {
-        var orders = new List<GetOrdersResponseDTO>();
+        var paginatedResponse = new PaginatedResponse<GetOrdersResponseDTO>();
 
         _orderServiceMock
             .Setup(s => s.GetOrders(It.IsAny<GetOrdersRequestDTO>(), It.IsAny<UserRole>(), It.IsAny<int?>()))
-            .Returns(orders);
+            .Returns(paginatedResponse);
 
         _controller.ControllerContext = new ControllerContext
         {
@@ -129,27 +129,34 @@ public class OrderControllerTest
             DateTo = new DateTime(2026, 1, 31)
         };
 
-        var expectedOrders = new List<GetOrdersResponseDTO>
+        var paginatedResponse = new PaginatedResponse<GetOrdersResponseDTO>
         {
-            new GetOrdersResponseDTO
-            {
-                OrderId = 1,
-                Client = new ClientInfoDTO
+            Items =
+            [
+                new GetOrdersResponseDTO
                 {
-                    Id = 1,
-                    Name = "Juan",
-                    LastName = "Perez",
-                    Phone = "+59899000000"
-                },
-                Date = new DateTime(2026, 1, 10),
-                Status = "Pending",
-                Items = [new OrderItemResponseDTO { ProductName = "Hamburguesa", Quantity = 2 }]
-            }
+                    OrderId = 1,
+                    Client = new ClientInfoDTO
+                    {
+                        Id = 1,
+                        Name = "Juan",
+                        LastName = "Perez",
+                        Phone = "+59899000000"
+                    },
+                    Date = new DateTime(2026, 1, 10),
+                    Status = "Pending",
+                    Items = [new OrderItemResponseDTO { ProductName = "Hamburguesa", Quantity = 2 }]
+                }
+
+            ],
+            TotalCount = 1,
+            Page = 1,
+            PageSize = 20
         };
 
         _orderServiceMock
             .Setup(s => s.GetOrders(request, It.IsAny<UserRole>(), It.IsAny<int?>()))
-            .Returns(expectedOrders);
+            .Returns(paginatedResponse);
 
         _controller.ControllerContext = new ControllerContext
         {
@@ -159,14 +166,16 @@ public class OrderControllerTest
 
         var result = _controller.GetOrders(request);
 
-        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-        var okResult = (OkObjectResult)result;
-        var response = (List<GetOrdersResponseDTO>)okResult.Value!;
-        Assert.AreEqual(expectedOrders.Count, response.Count);
-        Assert.AreEqual(expectedOrders[0].OrderId, response[0].OrderId);
-        Assert.AreEqual(expectedOrders[0].Client.Id, response[0].Client.Id);
-        Assert.AreEqual(expectedOrders[0].Client.Name, response[0].Client.Name);
-        Assert.AreEqual(expectedOrders[0].Client.LastName, response[0].Client.LastName);
+    Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+
+    var okResult = (OkObjectResult)result;
+    var response = (PaginatedResponse<GetOrdersResponseDTO>)okResult.Value!;
+
+    Assert.AreEqual(paginatedResponse.TotalCount, response.TotalCount);
+    Assert.AreEqual(paginatedResponse.Items[0].OrderId, response.Items[0].OrderId);
+    Assert.AreEqual(paginatedResponse.Items[0].Client.Id, response.Items[0].Client.Id);
+    Assert.AreEqual(paginatedResponse.Items[0].Client.Name, response.Items[0].Client.Name);
+    Assert.AreEqual(paginatedResponse.Items[0].Client.LastName, response.Items[0].Client.LastName);
     }
 
     [TestMethod]
@@ -320,7 +329,10 @@ public class OrderControllerTest
             }
 
             ],
-            GeneralTotal = 1026.0
+            GeneralTotal = 1026.0,
+            TotalCount = 1,
+            Page = 1,
+            PageSize = 20
         };
 
         _orderServiceMock

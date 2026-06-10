@@ -4,6 +4,7 @@ import { UserApiRepositoryService } from '../../repositories/user-api-repository
 import CreateUserRequest from './models/CreateUserRequest';
 import UserResponse from './models/UserResponse';
 import UpdateUserRequest from './models/UpdateUserRequest';
+import PaginatedResponse from '../../models/PaginatedResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -15,8 +16,8 @@ export class UserService {
     return this._repository.createUser(data);
   }
 
-  public getUsers(name?: string, lastName?: string): Observable<UserResponse[]> {
-    return this._repository.getUsers(name, lastName);
+  public getUsers(name?: string, lastName?: string, page: number = 1, pageSize: number = 20): Observable<PaginatedResponse<UserResponse>> {
+    return this._repository.getUsers(name, lastName, page, pageSize);
   }
 
   public updateUser(id: number, data: UpdateUserRequest): Observable<UserResponse> {
