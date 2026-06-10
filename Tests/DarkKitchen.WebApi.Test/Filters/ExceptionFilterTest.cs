@@ -26,7 +26,7 @@ public class ExceptionFilterTest
     [TestMethod]
     public void OnException_WhenArgumentException_Returns400()
     {
-        var filter = new ExceptionFilter();
+        var filter = new GlobalExceptionFilterAttribute();
         var context = CreateContext(new ArgumentException("Error"));
 
         filter.OnException(context);
@@ -40,7 +40,7 @@ public class ExceptionFilterTest
     [TestMethod]
     public void OnException_WhenUnknownException_Returns500()
     {
-        var filter = new ExceptionFilter();
+        var filter = new GlobalExceptionFilterAttribute();
         var context = CreateContext(new Exception("Error inesperado"));
 
         filter.OnException(context);
@@ -54,7 +54,7 @@ public class ExceptionFilterTest
     [TestMethod]
     public void OnException_WhenNotFoundException_Returns404()
     {
-        var filter = new ExceptionFilter();
+        var filter = new GlobalExceptionFilterAttribute();
         var context = CreateContext(new NotFoundException("Recurso no encontrado"));
 
         filter.OnException(context);
@@ -68,7 +68,7 @@ public class ExceptionFilterTest
     [TestMethod]
     public void OnException_WhenConflictException_Returns409()
     {
-        var filter = new ExceptionFilter();
+        var filter = new GlobalExceptionFilterAttribute();
         var context = CreateContext(new ConflictException("Conflicto"));
 
         filter.OnException(context);
@@ -82,7 +82,7 @@ public class ExceptionFilterTest
     [TestMethod]
     public void OnException_WhenUnauthorizedException_Returns401()
     {
-        var filter = new ExceptionFilter();
+        var filter = new GlobalExceptionFilterAttribute();
         var context = CreateContext(new UnauthorizedException("Credenciales inválidas"));
 
         filter.OnException(context);

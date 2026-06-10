@@ -1,31 +1,39 @@
 using DarkKitchen.ServiceFactory;
 using DarkKitchen.WebApi.Filters;
 
-var builder = WebApplication.CreateBuilder(args);
+namespace DarkKitchen.WebApi;
 
-builder.Services.AddControllers(options =>
-    options.Filters.Add<ExceptionFilter>());
-
-builder.Services.AddCors(options =>
+public class Program
 {
-    options.AddPolicy("AllowAngular", policy =>
+    public static void Main(string[] args)
     {
-        policy.WithOrigins("http://localhost:4200")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
-});
+        var builder = WebApplication.CreateBuilder(args);
 
-DarkKitchen.ServiceFactory.ServiceRegistration.RegisterServices(builder.Services, builder.Configuration);
+        builder.Services.AddControllers(options =>
+            options.Filters.Add<GlobalExceptionFilterAttribute>());
 
-var app = builder.Build();
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAngular", policy =>
+            {
+                policy.WithOrigins("http://localhost:4200")
+                      .AllowAnyHeader()
+                      .AllowAnyMethod();
+            });
+        });
 
-SeedData.SeedAdminUser(app.Services);
+        ServiceRegistration.RegisterServices(builder.Services, builder.Configuration);
 
-app.UseCors("AllowAngular");
+        var app = builder.Build();
 
-app.UseHttpsRedirection();
+        SeedData.SeedAdminUser(app.Services);
 
-app.MapControllers();
+        app.UseCors("AllowAngular");
 
-app.Run();
+        app.UseHttpsRedirection();
+
+        app.MapControllers();
+
+        app.Run();
+    }
+}
