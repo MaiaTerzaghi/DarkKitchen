@@ -49,7 +49,7 @@ export class OrderListComponent implements OnInit {
       filters.status = this.filterStatus;
     }
 
-    this._orderService.getClientOrders(filters).subscribe({
+    this._orderService.getOrders(filters).subscribe({
       next: (data) => {
         this.orders = data;
         this.loading = false;

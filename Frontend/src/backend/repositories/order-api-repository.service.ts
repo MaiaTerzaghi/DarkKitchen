@@ -7,8 +7,6 @@ import CreateOrderResponse from '../services/order/models/CreateOrderResponse';
 import environments from '../../environments/environment';
 import OrderResponse from '../services/order/models/OrderResponse';
 import OrderFilter from '../services/order/models/OrderFilter';
-import OrderByDateResponse from '../services/order/models/OrderByDateResponse';
-import OrderByDateFilter from '../services/order/models/OrderByDateFilter';
 import OrderStatusResponse from '../services/order/models/OrderStatusResponse';
 import OrderPreviewResponse from '../services/order/models/OrderPreviewResponse';
 import TopProductResponse from '../services/order/models/TopProductResponse';
@@ -31,44 +29,19 @@ export class OrderApiRepositoryService extends ApiRepository {
     return this.post<OrderPreviewResponse>(data, 'preview');
   }
 
-  public getClientOrders(filters: OrderFilter): Observable<OrderResponse[]> {
+  public getOrders(filters: OrderFilter = {}): Observable<OrderResponse[]> {
     const params: string[] = [];
 
-    if (filters.dateFrom) {
-      params.push(`DateFrom=${filters.dateFrom}`);
-    }
-    if (filters.dateTo) {
-      params.push(`DateTo=${filters.dateTo}`);
-    }
-    if (filters.status) {
-      params.push(`Status=${filters.status}`);
-    }
+    if (filters.dateFrom) params.push(`DateFrom=${filters.dateFrom}`);
+    if (filters.dateTo) params.push(`DateTo=${filters.dateTo}`);
+    if (filters.street) params.push(`Street=${filters.street}`);
+    if (filters.status !== undefined && filters.status !== null) params.push(`Status=${filters.status}`);
 
-    const query = params.join('&');
-    return this.get<OrderResponse[]>('', query);
+    return this.get<OrderResponse[]>('', params.join('&'));
   }
 
-  public getOrdersByDate(
-    filters: OrderByDateFilter
-  ): Observable<OrderByDateResponse[]> {
-    const params: string[] = [
-      `DateFrom=${filters.dateFrom}`,
-      `DateTo=${filters.dateTo}`,
-    ];
-
-    if (filters.street) {
-      params.push(`Street=${filters.street}`);
-    }
-    if (filters.status !== undefined && filters.status !== null) {
-      params.push(`Status=${filters.status}`);
-    }
-
-    const query = params.join('&');
-    return this.get<OrderByDateResponse[]>('by-date', query);
-  }
-
-  public getDispatcherOrders(): Observable<OrderByDateResponse[]> {
-    return this.get<OrderByDateResponse[]>('dispatcher');
+  public getDispatcherOrders(): Observable<OrderResponse[]> {
+    return this.get<OrderResponse[]>('dispatcher');
   }
 
   public markAsPrepared(id: number): Observable<OrderStatusResponse> {
