@@ -18,6 +18,10 @@ export class OrderListComponent implements OnInit {
   filterDateTo: string = '';
   filterStatus: string = '';
 
+  currentPage: number = 1;
+  pageSize: number = 20;
+  totalCount: number = 0;
+
   statuses = [
     { value: 'Pending', label: 'Pendiente' },
     { value: 'Prepared', label: 'Preparado' },
@@ -38,7 +42,10 @@ export class OrderListComponent implements OnInit {
     this.loading = true;
     this.errorMessage = '';
 
-    const filters: OrderFilter = {};
+    const filters: OrderFilter = {
+      page: this.currentPage,
+      pageSize: this.pageSize,
+    };
     if (this.filterDateFrom) {
       filters.dateFrom = this.filterDateFrom;
     }
@@ -50,8 +57,9 @@ export class OrderListComponent implements OnInit {
     }
 
     this._orderService.getClientOrders(filters).subscribe({
-      next: (data) => {
-        this.orders = data;
+      next: (response) => {
+        this.orders = response.items;
+        this.totalCount = response.totalCount;
         this.loading = false;
       },
       error: (err) => {
@@ -61,10 +69,16 @@ export class OrderListComponent implements OnInit {
     });
   }
 
+  public onPageChange(page: number): void {
+    this.currentPage = page;
+    this.loadOrders();
+  }
+
   public clearFilters(): void {
     this.filterDateFrom = '';
     this.filterDateTo = '';
     this.filterStatus = '';
+    this.currentPage = 1;
     this.loadOrders();
   }
 
