@@ -13,57 +13,52 @@ public class UserService(IRepository<User> userRepository, IPasswordManager pass
     private readonly IRepository<User> _userRepository = userRepository;
     private readonly IPasswordManager _passwordManager = passwordManager;
 
-    public int Register(RegisterClientDTO request)
+    public int CreateUser(CreateUserRequestDTO request)
     {
-        var existingUser = _userRepository.Get(u => u.Email == request.Email);
-        if(existingUser != null)
-        {
-            throw new ConflictException("El mail ya esta registrado");
-        }
-
+        ValidateEmailNotTaken(request.Email);
         PasswordValidator.Validate(request.Password);
 
-        var user = new User
-        {
-            Name = request.Name,
-            LastName = request.LastName,
-            Email = request.Email,
-            Phone = request.Phone,
-            Password = _passwordManager.ComputeHash(request.Password),
-            Role = UserRole.Client
-        };
-
+        var role = ResolveRole(request.Role);
+        var user = BuildUser(request, role);
         var savedUser = _userRepository.Add(user);
         return savedUser.Id;
     }
 
-    public int CreateStaffUser(CreateStaffUserRequestDTO request)
+    private static UserRole ResolveRole(UserRole? role)
     {
-        var existingUser = _userRepository.Get(u => u.Email == request.Email);
-        if(existingUser != null)
+        if(role is null)
         {
-            throw new ConflictException("El mail ya está registrado");
+            return UserRole.Client;
         }
 
-        if(request.Role != UserRole.Administrative && request.Role != UserRole.Dispatcher)
+        if(role is not UserRole.Administrative and not UserRole.Dispatcher)
         {
             throw new ArgumentException("El rol debe ser Administrativo o Preparador");
         }
 
-        PasswordValidator.Validate(request.Password);
+        return role.Value;
+    }
 
-        var user = new User
+    private void ValidateEmailNotTaken(string email)
+    {
+        var existingUser = _userRepository.Get(u => u.Email == email);
+        if(existingUser != null)
+        {
+            throw new ConflictException("El mail ya está registrado");
+        }
+    }
+
+    private User BuildUser(CreateUserRequestDTO request, UserRole role)
+    {
+        return new User
         {
             Name = request.Name,
             LastName = request.LastName,
             Email = request.Email,
             Phone = request.Phone,
             Password = _passwordManager.ComputeHash(request.Password),
-            Role = request.Role
+            Role = role
         };
-
-        var savedUser = _userRepository.Add(user);
-        return savedUser.Id;
     }
 
     public PaginatedResponse<UserResponseDTO> GetUsers(string? name, string? lastName, int page = 1, int pageSize = 20)

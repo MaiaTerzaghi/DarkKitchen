@@ -63,23 +63,24 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    public void GetClientOrders_WhenCalled_ReturnsOrders()
+    public void GetOrders_WhenClientRole_ReturnsOrders()
     {
         var order = new Order
         {
             Id = 1,
             ClientId = 1,
             Status = OrderStatus.Pending,
+            Client = new User { Id = 1, Name = "Juan", LastName = "Perez", Phone = "+59899000000" },
             Items = [new OrderItem { ProductId = 1, Quantity = 2, Product = new Product { Id = 1, Price = 100.0 } }]
         };
 
         _orderRepositoryMock
-            .Setup(r => r.GetClientOrders(It.IsAny<int>(), It.IsAny<OrderStatus?>(), It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<int>(), It.IsAny<int>()))
-            .Returns((new List<Order> { order }, 1));
+            .Setup(r => r.GetOrders(1, It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<OrderStatus?>(), It.IsAny<int>(), It.IsAny<int>()))
+            .Returns(([order], 1));
 
-        var request = new GetClientOrdersRequestDTO();
+        var request = new GetOrdersRequestDTO();
 
-        var result = _service.GetClientOrders(request, 1);
+        var result = _service.GetOrders(request, UserRole.Client, 1);
 
         Assert.IsNotNull(result);
         Assert.AreEqual(1, result.Items.Count);
@@ -126,10 +127,10 @@ public class OrderServiceTest
         };
 
         _orderRepositoryMock
-            .Setup(r => r.GetOrders(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<string?>(), It.IsAny<OrderStatus?>(), It.IsAny<int>(), It.IsAny<int>()))
+            .Setup(r => r.GetOrders(null, It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<OrderStatus?>(), It.IsAny<int>(), It.IsAny<int>()))
             .Returns((ordersFromRepo, ordersFromRepo.Count));
 
-        var result = _service.GetOrders(request);
+        var result = _service.GetOrders(request, UserRole.Administrative, null);
 
         Assert.IsNotNull(result);
         Assert.AreEqual(1, result.Items.Count);
@@ -591,16 +592,16 @@ public class OrderServiceTest
 
         _ = _orderRepositoryMock
             .Setup(r => r.GetOrders(
-                It.IsAny<DateTime>(), It.IsAny<DateTime>(),
-                It.IsAny<string?>(), It.IsAny<OrderStatus?>(),
-                It.IsAny<int>(), It.IsAny<int>()))
-            .Returns((new List<Order> { order }, 1));
+                It.IsAny<int?>(),
+                It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<string?>(),
+                It.IsAny<OrderStatus?>(), It.IsAny<int>(), It.IsAny<int>()))
+            .Returns(([order], 1));
 
         var result = _service.GetOrders(new GetOrdersRequestDTO
         {
             DateFrom = new DateTime(2026, 4, 1),
             DateTo = new DateTime(2026, 4, 30)
-        });
+        }, UserRole.Administrative, null);
 
         Assert.AreEqual(1, result.Items.Count);
         Assert.AreEqual(42, result.Items[0].Client.Id);
@@ -869,7 +870,7 @@ public class OrderServiceTest
     }
 
     [TestMethod]
-    public void GetClientOrders_WhenCalled_ReturnsPersistedTotal()
+    public void GetOrders_WhenClientRole_ReturnsPersistedTotal()
     {
         var order = new Order
         {
@@ -877,16 +878,17 @@ public class OrderServiceTest
             ClientId = 1,
             Status = OrderStatus.Pending,
             Total = 500.0,
+            Client = new User { Id = 1, Name = "Juan", LastName = "Perez", Phone = "+59899000000" },
             Items = [new OrderItem { ProductId = 1, Quantity = 2, Product = new Product { Id = 1, Price = 100.0 } }]
         };
 
         _orderRepositoryMock
-            .Setup(r => r.GetClientOrders(It.IsAny<int>(), It.IsAny<OrderStatus?>(), It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<int>(), It.IsAny<int>()))
-            .Returns((new List<Order> { order }, 1));
+            .Setup(r => r.GetOrders(1, It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<OrderStatus?>(), It.IsAny<int>(), It.IsAny<int>()))
+            .Returns(([order], 1));
 
-        var request = new GetClientOrdersRequestDTO();
+        var request = new GetOrdersRequestDTO();
 
-        var result = _service.GetClientOrders(request, 1);
+        var result = _service.GetOrders(request, UserRole.Client, 1);
 
         Assert.AreEqual(500.0, result.Items[0].Total);
     }

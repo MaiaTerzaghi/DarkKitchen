@@ -15,9 +15,10 @@ public class ProductController(IProductService productService) : ControllerBase
 
     [AuthorizeRoles(UserRole.Client, UserRole.Administrative)]
     [HttpGet]
-    public IActionResult GetAll([FromQuery] string? name, [FromQuery] string? category, [FromQuery] string? line, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
+    public IActionResult GetProducts([FromQuery] GetProductsManageRequestDTO request)
     {
-        var products = _productService.GetAll(name, category, line, page, pageSize);
+        var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
+        var products = _productService.GetProducts(request, requestingUser.Role);
         return Ok(products);
     }
 
@@ -37,13 +38,5 @@ public class ProductController(IProductService productService) : ControllerBase
         var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
         var product = _productService.UpdateProduct(id, request, requestingUser.Email);
         return Ok(product);
-    }
-
-    [AuthorizeRoles(UserRole.Administrative)]
-    [HttpGet("manage")]
-    public IActionResult GetManage([FromQuery] GetProductsManageRequestDTO request)
-    {
-        var products = _productService.GetManage(request);
-        return Ok(products);
     }
 }

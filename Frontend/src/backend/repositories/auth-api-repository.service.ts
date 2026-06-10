@@ -11,13 +11,17 @@ import LoginResponse from '../services/auth/models/LoginResponse';
 })
 export class AuthApiRepositoryService extends ApiRepository {
   constructor(http: HttpClient) {
-    super(environments.darkKitchenApi, 'auth', http);
+    super(environments.darkKitchenApi, 'sessions', http);
   }
 
   public login(credentials: LoginRequest): Observable<LoginResponse> {
     return this._http.post<LoginResponse>(
-      `${this.fullEndpoint}/login`,
+      this.fullEndpoint,
       credentials
     );
+  }
+
+  public logout(): Observable<void> {
+    return this.delete<void>();
   }
 }

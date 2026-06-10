@@ -2,6 +2,7 @@ using DarkKitchen.Domain;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
+using DarkKitchen.Domain.States;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
@@ -88,36 +89,12 @@ public class OrderService(
         };
     }
 
-    public PaginatedResponse<GetClientOrdersResponseDTO> GetClientOrders(GetClientOrdersRequestDTO request, int clientId)
+    public PaginatedResponse<GetOrdersResponseDTO> GetOrders(GetOrdersRequestDTO request, UserRole role, int? clientId)
     {
-        var (orders, totalCount) = _orderRepository.GetClientOrders(
-            clientId,
-            request.Status,
-            request.DateFrom,
-            request.DateTo,
-            request.Page,
-            request.PageSize);
+        var filterClientId = role == UserRole.Client ? clientId : null;
 
-        return new PaginatedResponse<GetClientOrdersResponseDTO>
-        {
-            Items = orders.Select(o => new GetClientOrdersResponseDTO
-            {
-                OrderId = o.Id,
-                ClientId = o.ClientId,
-                Date = o.Date,
-                Status = o.Status.ToString(),
-                Total = o.Total,
-                ItemCount = o.Items.Sum(i => i.Quantity)
-            }).ToList(),
-            TotalCount = totalCount,
-            Page = request.Page,
-            PageSize = request.PageSize
-        };
-    }
-
-    public PaginatedResponse<GetOrdersResponseDTO> GetOrders(GetOrdersRequestDTO request)
-    {
         var (orders, totalCount) = _orderRepository.GetOrders(
+            filterClientId,
             request.DateFrom,
             request.DateTo,
             request.Street,
@@ -127,24 +104,7 @@ public class OrderService(
 
         return new PaginatedResponse<GetOrdersResponseDTO>
         {
-            Items = orders.Select(order => new GetOrdersResponseDTO
-            {
-                OrderId = order.Id,
-                Client = new ClientInfoDTO
-                {
-                    Id = order.Client.Id,
-                    Name = order.Client.Name,
-                    LastName = order.Client.LastName,
-                    Phone = order.Client.Phone
-                },
-                Date = order.Date,
-                Status = order.Status.ToString(),
-                Items = order.Items.Select(item => new OrderItemResponseDTO
-                {
-                    ProductName = item.Product.Name,
-                    Quantity = item.Quantity
-                }).ToList()
-            }).ToList(),
+            Items = orders.Select(MapToOrderResponse).ToList(),
             TotalCount = totalCount,
             Page = request.Page,
             PageSize = request.PageSize
@@ -174,22 +134,46 @@ public class OrderService(
     }
 
     public UpdateOrderStatusResponseDTO MarkAsPrepared(int orderId) =>
-        ApplyTransition(orderId, order => order.Prepare());
+        ApplyTransition(orderId, order =>
+        {
+            var state = OrderStateFactory.Create(order.Status);
+            state.Prepare(order);
+        });
 
     public UpdateOrderStatusResponseDTO DeliverOrder(int orderId) =>
-        ApplyTransition(orderId, order => order.Deliver());
+        ApplyTransition(orderId, order =>
+        {
+            var state = OrderStateFactory.Create(order.Status);
+            state.Deliver(order);
+        });
 
     public UpdateOrderStatusResponseDTO CancelOrder(int orderId) =>
-        ApplyTransition(orderId, order => order.Cancel());
+        ApplyTransition(orderId, order =>
+        {
+            var state = OrderStateFactory.Create(order.Status);
+            state.Cancel(order);
+        });
 
     public UpdateOrderStatusResponseDTO MarkAsOnTheWay(int orderId) =>
-        ApplyTransition(orderId, order => order.MarkOnTheWay());
+        ApplyTransition(orderId, order =>
+        {
+            var state = OrderStateFactory.Create(order.Status);
+            state.MarkOnTheWay(order);
+        });
 
     public UpdateOrderStatusResponseDTO MarkAsNotDelivered(int orderId) =>
-        ApplyTransition(orderId, order => order.MarkNotDelivered());
+        ApplyTransition(orderId, order =>
+        {
+            var state = OrderStateFactory.Create(order.Status);
+            state.MarkNotDelivered(order);
+        });
 
     public UpdateOrderStatusResponseDTO MarkAsDelayed(int orderId) =>
-        ApplyTransition(orderId, order => order.MarkDelayed());
+        ApplyTransition(orderId, order =>
+        {
+            var state = OrderStateFactory.Create(order.Status);
+            state.MarkDelayed(order);
+        });
 
     private UpdateOrderStatusResponseDTO ApplyTransition(int orderId, Action<Order> transition)
     {
@@ -256,24 +240,31 @@ public class OrderService(
     public List<GetOrdersResponseDTO> GetDispatcherOrders()
     {
         var orders = _orderRepository.GetDispatcherOrders();
+        return orders.Select(MapToOrderResponse).ToList();
+    }
 
-        return orders.Select(order => new GetOrdersResponseDTO
+    private static GetOrdersResponseDTO MapToOrderResponse(Order order)
+    {
+        return new GetOrdersResponseDTO
         {
             OrderId = order.Id,
-            Client = new ClientInfoDTO
+            Client = order.Client != null ? new ClientInfoDTO
             {
                 Id = order.Client.Id,
                 Name = order.Client.Name,
                 LastName = order.Client.LastName,
                 Phone = order.Client.Phone
-            },
+            }
+            : new ClientInfoDTO(),
             Date = order.Date,
             Status = order.Status.ToString(),
+            Total = order.Total,
+            ItemCount = order.Items.Sum(i => i.Quantity),
             Items = order.Items.Select(item => new OrderItemResponseDTO
             {
                 ProductName = item.Product.Name,
                 Quantity = item.Quantity
             }).ToList()
-        }).ToList();
+        };
     }
 }

@@ -10,36 +10,10 @@ namespace DarkKitchen.DataAccess.Repositories;
 public class OrderRepository(DarkKitchenContext context)
     : Repository<Order>(context), IOrderRepository
 {
-    public (List<Order> Items, int TotalCount) GetClientOrders(
-        int clientId,
-        OrderStatus? status,
+    public (List<Order> Items, int TotalCount) GetOrders(
+        int? clientId,
         DateTime? dateFrom,
         DateTime? dateTo,
-        int page = 1,
-        int pageSize = 20)
-    {
-        var query = context.Orders
-            .Include(o => o.Items)
-            .ThenInclude(i => i.Product)
-            .Where(o => o.ClientId == clientId)
-            .Where(o => !status.HasValue || o.Status == status.Value)
-            .Where(o => !dateFrom.HasValue || o.Date.Date >= dateFrom.Value.Date)
-            .Where(o => !dateTo.HasValue || o.Date.Date <= dateTo.Value.Date)
-            .OrderByDescending(o => o.Date);
-
-        var totalCount = query.Count();
-
-        var items = query
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .ToList();
-
-        return (items, totalCount);
-    }
-
-    public (List<Order> Items, int TotalCount) GetOrders(
-        DateTime dateFrom,
-        DateTime dateTo,
         string? street,
         OrderStatus? status,
         int page = 1,
@@ -49,7 +23,22 @@ public class OrderRepository(DarkKitchenContext context)
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
             .Include(o => o.Client)
-            .Where(o => o.Date.Date >= dateFrom.Date && o.Date.Date <= dateTo.Date);
+            .AsQueryable();
+
+        if(clientId.HasValue)
+        {
+            query = query.Where(o => o.ClientId == clientId.Value);
+        }
+
+        if(dateFrom.HasValue)
+        {
+            query = query.Where(o => o.Date.Date >= dateFrom.Value.Date);
+        }
+
+        if(dateTo.HasValue)
+        {
+            query = query.Where(o => o.Date.Date <= dateTo.Value.Date);
+        }
 
         if(!string.IsNullOrEmpty(street))
         {

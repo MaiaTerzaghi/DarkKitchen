@@ -5,8 +5,6 @@ import CreateOrderRequest from './models/CreateOrderRequest';
 import CreateOrderResponse from './models/CreateOrderResponse';
 import OrderResponse from './models/OrderResponse';
 import OrderFilter from './models/OrderFilter';
-import OrderByDateResponse from './models/OrderByDateResponse';
-import OrderByDateFilter from './models/OrderByDateFilter';
 import OrderStatusResponse from './models/OrderStatusResponse';
 import OrderPreviewResponse from './models/OrderPreviewResponse';
 import TopProductResponse from './models/TopProductResponse';
@@ -27,17 +25,11 @@ export class OrderService {
     return this._repository.previewOrder({ items, shippingType });
   }
 
-  public getClientOrders(filters: OrderFilter = {}): Observable<PaginatedResponse<OrderResponse>> {
-    return this._repository.getClientOrders(filters);
+  public getOrders(filters: OrderFilter = {}): Observable<PaginatedResponse<OrderResponse>> {
+    return this._repository.getOrders(filters);
   }
 
-  public getOrdersByDate(
-    filters: OrderByDateFilter
-  ): Observable<PaginatedResponse<OrderByDateResponse>> {
-    return this._repository.getOrdersByDate(filters);
-  }
-
-  public getDispatcherOrders(): Observable<OrderByDateResponse[]> {
+  public getDispatcherOrders(): Observable<OrderResponse[]> {
     return this._repository.getDispatcherOrders();
   }
 

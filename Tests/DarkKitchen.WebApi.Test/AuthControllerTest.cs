@@ -16,7 +16,7 @@ public sealed class AuthControllerTest
         authServiceMock.Setup(s => s.Login("juan@email.com", "Contrasena1!@#$%"))
                        .Returns(new LoginResponseDTO { Token = "token-generado", Role = "Administrative" });
 
-        var controller = new AuthController(authServiceMock.Object);
+        var controller = new SessionsController(authServiceMock.Object);
         var request = new LoginRequestDTO
         {
             Email = "juan@email.com",
@@ -36,7 +36,7 @@ public sealed class AuthControllerTest
         authServiceMock.Setup(s => s.Login(It.IsAny<string>(), It.IsAny<string>()))
                     .Throws(new ArgumentException("Credenciales inválidas"));
 
-        var controller = new AuthController(authServiceMock.Object);
+        var controller = new SessionsController(authServiceMock.Object);
         var request = new LoginRequestDTO
         {
             Email = "juan@email.com",
@@ -52,7 +52,7 @@ public sealed class AuthControllerTest
         var authServiceMock = new Mock<IAuthService>();
         authServiceMock.Setup(s => s.Logout("token-valido"));
 
-        var controller = new AuthController(authServiceMock.Object);
+        var controller = new SessionsController(authServiceMock.Object);
 
         var result = controller.Logout("token-valido");
 

@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { UserApiRepositoryService } from '../../repositories/user-api-repository.service';
-import RegisterRequest from './models/RegisterRequest';
+import CreateUserRequest from './models/CreateUserRequest';
 import UserResponse from './models/UserResponse';
-import CreateStaffUserRequest from './models/CreateStaffUserRequest';
 import UpdateUserRequest from './models/UpdateUserRequest';
 import PaginatedResponse from '../../models/PaginatedResponse';
 
@@ -13,16 +12,12 @@ import PaginatedResponse from '../../models/PaginatedResponse';
 export class UserService {
   constructor(private readonly _repository: UserApiRepositoryService) {}
 
-  public register(data: RegisterRequest): Observable<number> {
-    return this._repository.register(data);
+  public createUser(data: CreateUserRequest): Observable<{ id: number }> {
+    return this._repository.createUser(data);
   }
 
   public getUsers(name?: string, lastName?: string, page: number = 1, pageSize: number = 20): Observable<PaginatedResponse<UserResponse>> {
     return this._repository.getUsers(name, lastName, page, pageSize);
-  }
-
-  public createStaffUser(data: CreateStaffUserRequest): Observable<{ id: number }> {
-    return this._repository.createStaffUser(data);
   }
 
   public updateUser(id: number, data: UpdateUserRequest): Observable<UserResponse> {

@@ -30,7 +30,7 @@
       </div>
     </div>
 
-    <a [routerLink]="['/customer/catalog']" class="back-btn">
+    <a [routerLink]="['/customer']" class="back-btn">
       <span class="material-icons">storefront</span>
       Volver al catálogo
     </a>
@@ -53,7 +53,7 @@
     <div class="empty-cart" *ngIf="isCartEmpty">
       <span class="material-icons empty-icon">remove_shopping_cart</span>
       <p class="empty-text">Tu carrito está vacío</p>
-      <a [routerLink]="['/customer/catalog']" class="back-link">
+      <a [routerLink]="['/customer']" class="back-link">
         <span class="material-icons">arrow_back</span>
         Volver al catálogo
       </a>

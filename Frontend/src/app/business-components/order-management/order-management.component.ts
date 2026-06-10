@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { OrderService } from '../../../backend/services/order/order.service';
-import OrderByDateResponse from '../../../backend/services/order/models/OrderByDateResponse';
+import OrderResponse from '../../../backend/services/order/models/OrderResponse';
 import OrderStatusResponse from '../../../backend/services/order/models/OrderStatusResponse';
 
 interface OrderAction {
@@ -24,7 +24,7 @@ interface ToastMessage {
   styleUrls: ['./order-management.component.css'],
 })
 export class OrderManagementComponent implements OnInit {
-  orders: OrderByDateResponse[] = [];
+  orders: OrderResponse[] = [];
   loading: boolean = false;
   errorMessage: string = '';
   searchTerm: string = '';
@@ -84,7 +84,7 @@ export class OrderManagementComponent implements OnInit {
     });
   }
 
-  public get filteredOrders(): OrderByDateResponse[] {
+  public get filteredOrders(): OrderResponse[] {
     if (!this.searchTerm.trim()) {
       return this.orders;
     }
@@ -100,7 +100,7 @@ export class OrderManagementComponent implements OnInit {
     return this.orderActions.filter((action) => action.canApply(status));
   }
 
-  public executeAction(action: OrderAction, order: OrderByDateResponse): void {
+  public executeAction(action: OrderAction, order: OrderResponse): void {
     this.processingOrderId = order.orderId;
 
     action.apply(order.orderId).subscribe({

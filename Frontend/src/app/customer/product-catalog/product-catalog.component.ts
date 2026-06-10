@@ -37,13 +37,13 @@ export class ProductCatalogComponent implements OnInit {
 
   private loadProducts(): void {
     this.loading = true;
-    this._productService.getAll(undefined, undefined, undefined, this.currentPage, this.pageSize).subscribe({
-      next: (response) => {
-        this.products = response.items;
-        this.totalCount = response.totalCount;
+    this._productService.getProducts().subscribe({
+      next: (data) => {
+        this.products = data.items;
+        this.totalCount = data.totalCount;
         this.categories = [
           'Todos',
-          ...new Set(response.items.map((p) => p.category)),
+          ...new Set(data.items.map((p) => p.category)),
         ];
         this.applyFilters();
         this.loading = false;
@@ -76,7 +76,11 @@ export class ProductCatalogComponent implements OnInit {
     }
     if (this.searchTerm.trim()) {
       const term = this.searchTerm.toLowerCase();
-      result = result.filter((p) => p.name.toLowerCase().includes(term));
+      result = result.filter((p) =>
+        p.name.toLowerCase().includes(term) ||
+        p.category.toLowerCase().includes(term) ||
+        p.commercialLine.toLowerCase().includes(term)
+      );
     }
     this.filteredProducts = result;
   }

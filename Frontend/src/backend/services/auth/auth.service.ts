@@ -20,6 +20,7 @@ export class AuthService {
   }
 
   public logout(): void {
+    this._repository.logout().subscribe();
     localStorage.removeItem('token');
     localStorage.removeItem('role');
   }

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { OrderService } from '../../../backend/services/order/order.service';
 import TopProductResponse from '../../../backend/services/order/models/TopProductResponse';
-import OrderByDateResponse from '../../../backend/services/order/models/OrderByDateResponse';
-import OrderByDateFilter from '../../../backend/services/order/models/OrderByDateFilter';
+import OrderResponse from '../../../backend/services/order/models/OrderResponse';
+import OrderFilter from '../../../backend/services/order/models/OrderFilter';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -15,7 +15,7 @@ export class AdminDashboardComponent implements OnInit {
   loadingTop: boolean = false;
   errorTop: string = '';
 
-  orders: OrderByDateResponse[] = [];
+  orders: OrderResponse[] = [];
   loadingOrders: boolean = false;
 
   dateFrom: string = '';
@@ -75,14 +75,14 @@ export class AdminDashboardComponent implements OnInit {
 
     this.loadingOrders = true;
 
-    const filters: OrderByDateFilter = {
+    const filters: OrderFilter = {
       dateFrom: this.dateFrom,
       dateTo: this.dateTo,
     };
 
-    this._orderService.getOrdersByDate(filters).subscribe({
-      next: (response) => {
-        this.orders = response.items;
+    this._orderService.getOrders(filters).subscribe({
+      next: (data) => {
+        this.orders = data.items;
         this.loadingOrders = false;
       },
       error: () => {
@@ -107,7 +107,7 @@ export class AdminDashboardComponent implements OnInit {
     return this.orders.filter((o) => o.status === 'Delivered').length;
   }
 
-  public get recentOrders(): OrderByDateResponse[] {
+  public get recentOrders(): OrderResponse[] {
     return [...this.orders]
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
       .slice(0, 5);

@@ -27,7 +27,7 @@ public sealed class ProductServiceTest
     }
 
     [TestMethod]
-    public void GetAll_WhenNoFilters_ReturnsAllProducts()
+    public void GetProducts_WhenNoFilters_ReturnsAllProducts()
     {
         var products = new List<Product>
         {
@@ -41,13 +41,13 @@ public sealed class ProductServiceTest
 
         var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
 
-        var result = productService.GetAll(null, null, null);
+        var result = productService.GetProducts(new GetProductsManageRequestDTO(), UserRole.Administrative);
 
         Assert.AreEqual(2, result.Items.Count);
     }
 
     [TestMethod]
-    public void GetAll_WhenFilterByName_ReturnsFilteredProducts()
+    public void GetProducts_WhenFilterByName_ReturnsFilteredProducts()
     {
         var products = new List<Product>
         {
@@ -60,7 +60,7 @@ public sealed class ProductServiceTest
 
         var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
 
-        var result = productService.GetAll("Pizza Napolitana", null, null);
+        var result = productService.GetProducts(new GetProductsManageRequestDTO { Name = "Pizza Napolitana" }, UserRole.Administrative);
 
         Assert.AreEqual(1, result.Items.Count);
         Assert.AreEqual("Pizza Napolitana", result.Items[0].Name);
@@ -445,7 +445,7 @@ public sealed class ProductServiceTest
     }
 
     [TestMethod]
-    public void GetManage_WhenNoFilters_ReturnsAllProducts()
+    public void GetProducts_WhenWithFilters_ReturnsProducts()
     {
         var products = new List<Product>
         {
@@ -468,14 +468,14 @@ public sealed class ProductServiceTest
                             .Returns((products, products.Count));
 
         var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
-        var result = productService.GetManage(new GetProductsManageRequestDTO());
+        var result = productService.GetProducts(new GetProductsManageRequestDTO { IsActive = true }, UserRole.Administrative);
 
         Assert.IsNotNull(result);
         Assert.AreEqual(1, result.Items.Count);
     }
 
     [TestMethod]
-    public void GetManage_MapsIdDescriptionAndActiveStatus()
+    public void GetProducts_MapsIdDescriptionAndActiveStatus()
     {
         var products = new List<Product>
         {
@@ -498,7 +498,7 @@ public sealed class ProductServiceTest
                             .Returns((products, products.Count));
 
         var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
-        var result = productService.GetManage(new GetProductsManageRequestDTO());
+        var result = productService.GetProducts(new GetProductsManageRequestDTO(), UserRole.Administrative);
 
         Assert.AreEqual(42, result.Items[0].Id);
         Assert.AreEqual("Rica pizza napolitana con tomate y albahaca", result.Items[0].Description);

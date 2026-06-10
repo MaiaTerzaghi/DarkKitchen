@@ -56,10 +56,10 @@ export class OrderListComponent implements OnInit {
       filters.status = this.filterStatus;
     }
 
-    this._orderService.getClientOrders(filters).subscribe({
-      next: (response) => {
-        this.orders = response.items;
-        this.totalCount = response.totalCount;
+    this._orderService.getOrders(filters).subscribe({
+      next: (data) => {
+        this.orders = data.items;
+        this.totalCount = data.totalCount;
         this.loading = false;
       },
       error: (err) => {

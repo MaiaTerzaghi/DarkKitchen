@@ -1,4 +1,5 @@
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
@@ -13,7 +14,7 @@ namespace DarkKitchen.WebApi.Test;
 public sealed class ProductControllerTest
 {
     [TestMethod]
-    public void GetAll_WhenNoFilters_ReturnsOk()
+    public void GetProducts_WhenNoFilters_ReturnsOk()
     {
         var paginatedResponse = new PaginatedResponse<ProductResponseDTO>
         {
@@ -28,16 +29,33 @@ public sealed class ProductControllerTest
         };
 
         var productServiceMock = new Mock<IProductService>();
-        productServiceMock.Setup(s => s.GetAll(null, null, null, 1, 20))
+        productServiceMock.Setup(s => s.GetProducts(It.IsAny<GetProductsManageRequestDTO>(), It.IsAny<UserRole>()))
                           .Returns(paginatedResponse);
 
         var controller = new ProductController(productServiceMock.Object);
+        controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
+        controller.HttpContext.Items["RequestingUser"] = new User { Id = 1, Role = UserRole.Administrative };
 
-        var result = controller.GetAll(null, null, null, 1, 20);
+        var result = controller.GetProducts(new GetProductsManageRequestDTO());
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-        var okResult = (OkObjectResult)result;
-        Assert.IsNotNull(okResult.Value);
+    }
+
+    [TestMethod]
+    public void GetProducts_WhenClientRole_PassesClientRole()
+    {
+        var productServiceMock = new Mock<IProductService>();
+        productServiceMock.Setup(s => s.GetProducts(It.IsAny<GetProductsManageRequestDTO>(), It.IsAny<UserRole>()))
+                          .Returns(new PaginatedResponse<ProductResponseDTO>());
+
+        var controller = new ProductController(productServiceMock.Object);
+        controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
+        controller.HttpContext.Items["RequestingUser"] = new User { Id = 1, Role = UserRole.Client };
+
+        var request = new GetProductsManageRequestDTO();
+        controller.GetProducts(request);
+
+        productServiceMock.Verify(s => s.GetProducts(request, UserRole.Client), Times.Once);
     }
 
     [TestMethod]
@@ -60,15 +78,17 @@ public sealed class ProductControllerTest
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void GetAll_WhenServiceThrowsException_ReturnsBadRequest()
+    public void GetProducts_WhenServiceThrowsException_Throws()
     {
         var productServiceMock = new Mock<IProductService>();
-        productServiceMock.Setup(s => s.GetAll(It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<int>(), It.IsAny<int>()))
+        productServiceMock.Setup(s => s.GetProducts(It.IsAny<GetProductsManageRequestDTO>(), It.IsAny<UserRole>()))
                         .Throws(new ArgumentException("Error"));
 
         var controller = new ProductController(productServiceMock.Object);
+        controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
+        controller.HttpContext.Items["RequestingUser"] = new User { Id = 1, Role = UserRole.Administrative };
 
-        controller.GetAll(null, null, null, 1, 20);
+        controller.GetProducts(new GetProductsManageRequestDTO());
     }
 
     [TestMethod]
@@ -143,41 +163,6 @@ public sealed class ProductControllerTest
         };
         controller.HttpContext.Items["RequestingUser"] = new User { Id = 1, Email = "admin@email.com" };
         var result = controller.UpdateProduct(1, request);
-
-        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-    }
-
-    [TestMethod]
-    public void GetManage_WhenCalled_ReturnsOk()
-    {
-        var paginatedResponse = new PaginatedResponse<ProductResponseDTO>
-        {
-            Items =
-            [
-                new ProductResponseDTO
-                {
-                    Code = "P0001",
-                    Name = "Pizza Napolitana",
-                    Price = 100.0,
-                    CommercialLine = "Minutas",
-                    Category = "Fritos",
-                    Images = "pizza.jpg"
-                }
-
-            ],
-            TotalCount = 1,
-            Page = 1,
-            PageSize = 20
-        };
-
-        var request = new GetProductsManageRequestDTO();
-
-        var productServiceMock = new Mock<IProductService>();
-        productServiceMock.Setup(s => s.GetManage(It.IsAny<GetProductsManageRequestDTO>()))
-                        .Returns(paginatedResponse);
-
-        var controller = new ProductController(productServiceMock.Object);
-        var result = controller.GetManage(request);
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
     }

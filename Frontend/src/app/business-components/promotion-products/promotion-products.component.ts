@@ -47,12 +47,12 @@ export class PromotionProductsComponent implements OnChanges {
     }
 
     this.loading = true;
-    this._productService.getCatalog({ name: this.searchText }).subscribe({
+    this._productService.getProducts({ name: this.searchText }).subscribe({
       next: (products) => {
         // Filtrar los que ya están asociados
         const associatedIds = this.promotion?.products?.map((p) => p.id) || [];
-        this.availableProducts = products.filter(
-          (p) => !associatedIds.includes(p.id)
+        this.availableProducts = products.items.filter(
+          p => !associatedIds.includes(p.id)
         );
         this.loading = false;
       },

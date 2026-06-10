@@ -26,9 +26,9 @@ public sealed class UserServiceTest
     }
 
     [TestMethod]
-    public void Register_WhenValidData_ReturnsId()
+    public void CreateUser_WhenValidData_ReturnsId()
     {
-        var request = new RegisterClientDTO
+        var request = new CreateUserRequestDTO
         {
             Name = "Juan",
             LastName = "Perez",
@@ -44,16 +44,16 @@ public sealed class UserServiceTest
         _userRepositoryMock.Setup(r => r.Add(It.IsAny<User>()))
                         .Returns(user);
 
-        var result = _service.Register(request);
+        var result = _service.CreateUser(request);
 
         Assert.AreEqual(1, result);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ConflictException))]
-    public void Register_WhenEmailAlreadyExists_ThrowsException()
+    public void CreateUser_WhenEmailAlreadyExists_ThrowsException()
     {
-        var request = new RegisterClientDTO
+        var request = new CreateUserRequestDTO
         {
             Name = "Juan",
             LastName = "Perez",
@@ -65,14 +65,14 @@ public sealed class UserServiceTest
         _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
                         .Returns(new User { Email = "juanexistente@email.com" });
 
-        _service.Register(request);
+        _service.CreateUser(request);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void Register_WhenNameIsEmpty_ThrowsException()
+    public void CreateUser_WhenNameIsEmpty_ThrowsException()
     {
-        var request = new RegisterClientDTO
+        var request = new CreateUserRequestDTO
         {
             Name = string.Empty,
             LastName = "Perez",
@@ -81,14 +81,14 @@ public sealed class UserServiceTest
             Password = "Contrasena1!@#$%",
         };
 
-        _service.Register(request);
+        _service.CreateUser(request);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void Register_WhenLastNameIsTooShort_ThrowsException()
+    public void CreateUser_WhenLastNameIsTooShort_ThrowsException()
     {
-        var request = new RegisterClientDTO
+        var request = new CreateUserRequestDTO
         {
             Name = "Juan",
             LastName = "Pe",
@@ -97,14 +97,14 @@ public sealed class UserServiceTest
             Password = "Contrasena1!@#$%",
         };
 
-        _service.Register(request);
+        _service.CreateUser(request);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void Register_WhenEmailIsInvalid_ThrowsException()
+    public void CreateUser_WhenEmailIsInvalid_ThrowsException()
     {
-        var request = new RegisterClientDTO
+        var request = new CreateUserRequestDTO
         {
             Name = "Juan",
             LastName = "Perez",
@@ -113,14 +113,14 @@ public sealed class UserServiceTest
             Password = "Contrasena1!@#$%",
         };
 
-        _service.Register(request);
+        _service.CreateUser(request);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void Register_WhenPhoneIsInvalid_ThrowsException()
+    public void CreateUser_WhenPhoneIsInvalid_ThrowsException()
     {
-        var request = new RegisterClientDTO
+        var request = new CreateUserRequestDTO
         {
             Name = "Juan",
             LastName = "Perez",
@@ -129,14 +129,14 @@ public sealed class UserServiceTest
             Password = "Contrasena1!@#$%",
         };
 
-        _service.Register(request);
+        _service.CreateUser(request);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void Register_WhenPasswordIsInvalid_ThrowsException()
+    public void CreateUser_WhenPasswordIsInvalid_ThrowsException()
     {
-        var request = new RegisterClientDTO
+        var request = new CreateUserRequestDTO
         {
             Name = "Juan",
             LastName = "Perez",
@@ -145,14 +145,14 @@ public sealed class UserServiceTest
             Password = "password",
         };
 
-        _service.Register(request);
+        _service.CreateUser(request);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void Register_WhenPasswordIsTooShort_ThrowsException()
+    public void CreateUser_WhenPasswordIsTooShort_ThrowsException()
     {
-        var user = new RegisterClientDTO
+        var user = new CreateUserRequestDTO
         {
             Name = "Juan",
             LastName = "Perez",
@@ -161,14 +161,14 @@ public sealed class UserServiceTest
             Password = "Corta1!@#$%",
         };
 
-        _service.Register(user);
+        _service.CreateUser(user);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void Register_WhenPasswordHasNoUppercase_ThrowsException()
+    public void CreateUser_WhenPasswordHasNoUppercase_ThrowsException()
     {
-        var user = new RegisterClientDTO
+        var user = new CreateUserRequestDTO
         {
             Name = "Juan",
             LastName = "Perez",
@@ -177,14 +177,14 @@ public sealed class UserServiceTest
             Password = "contrasena1!@#$%",
         };
 
-        _service.Register(user);
+        _service.CreateUser(user);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void Register_WhenPasswordHasNoLowercase_ThrowsException()
+    public void CreateUser_WhenPasswordHasNoLowercase_ThrowsException()
     {
-        var user = new RegisterClientDTO
+        var user = new CreateUserRequestDTO
         {
             Name = "Juan",
             LastName = "Perez",
@@ -193,14 +193,14 @@ public sealed class UserServiceTest
             Password = "CONTRASENA1!@#$%",
         };
 
-        _service.Register(user);
+        _service.CreateUser(user);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void Register_WhenPasswordHasNoNumber_ThrowsException()
+    public void CreateUser_WhenPasswordHasNoNumber_ThrowsException()
     {
-        var user = new RegisterClientDTO
+        var user = new CreateUserRequestDTO
         {
             Name = "Juan",
             LastName = "Perez",
@@ -209,14 +209,14 @@ public sealed class UserServiceTest
             Password = "Contrasena!@#$%&*",
         };
 
-        _service.Register(user);
+        _service.CreateUser(user);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void Register_WhenPasswordHasNoSymbol_ThrowsException()
+    public void CreateUser_WhenPasswordHasNoSymbol_ThrowsException()
     {
-        var user = new RegisterClientDTO
+        var user = new CreateUserRequestDTO
         {
             Name = "Juan",
             LastName = "Perez",
@@ -225,14 +225,14 @@ public sealed class UserServiceTest
             Password = "Contrasena11111",
         };
 
-        _service.Register(user);
+        _service.CreateUser(user);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void Register_WhenPasswordHasSequence_ThrowsException()
+    public void CreateUser_WhenPasswordHasSequence_ThrowsException()
     {
-        var user = new RegisterClientDTO
+        var user = new CreateUserRequestDTO
         {
             Name = "Juan",
             LastName = "Perez",
@@ -241,13 +241,13 @@ public sealed class UserServiceTest
             Password = "Contrasena123!@#",
         };
 
-        _service.Register(user);
+        _service.CreateUser(user);
     }
 
     [TestMethod]
-    public void CreateStaffUser_WhenValidData_ReturnsId()
+    public void CreateUser_WhenStaffWithValidData_ReturnsId()
     {
-        var request = new CreateStaffUserRequestDTO
+        var request = new CreateUserRequestDTO
         {
             Name = "Juan",
             LastName = "Perez",
@@ -264,16 +264,16 @@ public sealed class UserServiceTest
         _userRepositoryMock.Setup(r => r.Add(It.IsAny<User>()))
                             .Returns(user);
 
-        var result = _service.CreateStaffUser(request);
+        var result = _service.CreateUser(request);
 
         Assert.AreEqual(1, result);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ConflictException))]
-    public void CreateStaffUser_WhenEmailAlreadyExists_ThrowsArgumentException()
+    public void CreateUser_WhenStaffEmailAlreadyExists_ThrowsException()
     {
-        var request = new CreateStaffUserRequestDTO
+        var request = new CreateUserRequestDTO
         {
             Name = "Juan",
             LastName = "Perez",
@@ -286,14 +286,14 @@ public sealed class UserServiceTest
         _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
                         .Returns(new User { Email = "juan@test.com" });
 
-        _service.CreateStaffUser(request);
+        _service.CreateUser(request);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void CreateStaffUser_WhenRoleIsClient_ThrowsArgumentException()
+    public void CreateUser_WhenRoleIsClient_ThrowsArgumentException()
     {
-        var request = new CreateStaffUserRequestDTO
+        var request = new CreateUserRequestDTO
         {
             Name = "Juan",
             LastName = "Perez",
@@ -306,7 +306,7 @@ public sealed class UserServiceTest
         _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
                         .Returns((User?)null);
 
-        _service.CreateStaffUser(request);
+        _service.CreateUser(request);
     }
 
     [TestMethod]
@@ -462,12 +462,12 @@ public sealed class UserServiceTest
     }
 
     [TestMethod]
-    public void Register_WhenValidData_SavesUserWithHashedPassword()
+    public void CreateUser_WhenValidData_SavesUserWithHashedPassword()
     {
         var plainPassword = "Contrasena1!@#$%";
         var hashedPassword = "hashed-contrasena";
 
-        var request = new RegisterClientDTO
+        var request = new CreateUserRequestDTO
         {
             Name = "Juan",
             LastName = "Perez",
@@ -483,18 +483,18 @@ public sealed class UserServiceTest
         _passwordManagerMock.Setup(p => p.ComputeHash(plainPassword))
                         .Returns(hashedPassword);
 
-        _service.Register(request);
+        _service.CreateUser(request);
 
         _userRepositoryMock.Verify(r => r.Add(It.Is<User>(u => u.Password == hashedPassword)), Times.Once);
     }
 
     [TestMethod]
-    public void CreateStaffUser_WhenValidData_SavesUserWithHashedPassword()
+    public void CreateUser_WhenStaffWithValidData_SavesUserWithHashedPassword()
     {
         var plainPassword = "Contrasena1!@#$%";
         var hashedPassword = "hashed-contrasena";
 
-        var request = new CreateStaffUserRequestDTO
+        var request = new CreateUserRequestDTO
         {
             Name = "Juan",
             LastName = "Perez",
@@ -511,7 +511,7 @@ public sealed class UserServiceTest
         _passwordManagerMock.Setup(p => p.ComputeHash(plainPassword))
                         .Returns(hashedPassword);
 
-        _service.CreateStaffUser(request);
+        _service.CreateUser(request);
 
         _userRepositoryMock.Verify(r => r.Add(It.Is<User>(u => u.Password == hashedPassword)), Times.Once);
     }

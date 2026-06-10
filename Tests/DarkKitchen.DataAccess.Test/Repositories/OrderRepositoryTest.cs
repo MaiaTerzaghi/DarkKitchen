@@ -66,7 +66,7 @@ public sealed class OrderRepositoryTest
     }
 
     [TestMethod]
-    public void GetClientOrders_WhenClientHasOrders_ReturnsOrders()
+    public void GetOrders_WhenClientHasOrders_ReturnsOrders()
     {
         var order = new Order
         {
@@ -82,7 +82,7 @@ public sealed class OrderRepositoryTest
         _context.SaveChanges();
 
         var repository = new OrderRepository(_context);
-        var (items, totalCount) = repository.GetClientOrders(1, null, null, null);
+        var (items, totalCount) = repository.GetOrders(1, null, null, null, null);
 
         Assert.AreEqual(1, items.Count);
         Assert.AreEqual(1, totalCount);
@@ -118,7 +118,7 @@ public sealed class OrderRepositoryTest
         _context.SaveChanges();
 
         var repository = new OrderRepository(_context);
-        var (items, totalCount) = repository.GetOrders(new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), null, null);
+        var (items, totalCount) = repository.GetOrders(null, new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), null, null);
 
         Assert.AreEqual(1, items.Count);
         Assert.AreEqual(1, totalCount);
@@ -154,7 +154,7 @@ public sealed class OrderRepositoryTest
         _context.SaveChanges();
 
         var repository = new OrderRepository(_context);
-        var (items, totalCount) = repository.GetOrders(new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), "18 de Julio", null);
+        var (items, totalCount) = repository.GetOrders(null, new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), "18 de Julio", null);
 
         Assert.AreEqual(1, items.Count);
         Assert.AreEqual(1, totalCount);
@@ -190,7 +190,7 @@ public sealed class OrderRepositoryTest
         _context.SaveChanges();
 
         var repository = new OrderRepository(_context);
-        var (items, totalCount) = repository.GetOrders(new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), null, OrderStatus.Pending);
+        var (items, totalCount) = repository.GetOrders(null, new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), null, OrderStatus.Pending);
 
         Assert.AreEqual(1, items.Count);
         Assert.AreEqual(1, totalCount);

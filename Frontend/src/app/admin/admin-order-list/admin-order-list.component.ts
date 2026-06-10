@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { OrderService } from '../../../backend/services/order/order.service';
-import OrderByDateResponse from '../../../backend/services/order/models/OrderByDateResponse';
-import OrderByDateFilter from '../../../backend/services/order/models/OrderByDateFilter';
+import OrderResponse from '../../../backend/services/order/models/OrderResponse';
+import OrderFilter from '../../../backend/services/order/models/OrderFilter';
 import OrderStatusResponse from '../../../backend/services/order/models/OrderStatusResponse';
 
 @Component({
@@ -11,12 +11,12 @@ import OrderStatusResponse from '../../../backend/services/order/models/OrderSta
   styleUrls: ['./admin-order-list.component.css'],
 })
 export class AdminOrderListComponent implements OnInit {
-  orders: OrderByDateResponse[] = [];
+  orders: OrderResponse[] = [];
   loading: boolean = false;
   errorMessage: string = '';
   searchTerm: string = '';
   filterStatus: string = '';
-  selectedOrder: OrderByDateResponse | null = null;
+  selectedOrder: OrderResponse | null = null;
   processingOrderId: number | null = null;
 
   dateFrom: string = '';
@@ -54,7 +54,7 @@ export class AdminOrderListComponent implements OnInit {
     this.loading = true;
     this.errorMessage = '';
 
-    const filters: OrderByDateFilter = {
+    const filters: OrderFilter = {
       dateFrom: this.dateFrom,
       dateTo: this.dateTo,
     };
@@ -63,9 +63,9 @@ export class AdminOrderListComponent implements OnInit {
       filters.status = Number(this.filterStatus);
     }
 
-    this._orderService.getOrdersByDate(filters).subscribe({
-      next: (response) => {
-        this.orders = response.items;
+    this._orderService.getOrders(filters).subscribe({
+      next: (data) => {
+        this.orders = data.items;
         this.loading = false;
       },
       error: (err) => {
@@ -75,7 +75,7 @@ export class AdminOrderListComponent implements OnInit {
     });
   }
 
-  public get filteredOrders(): OrderByDateResponse[] {
+  public get filteredOrders(): OrderResponse[] {
     if (!this.searchTerm.trim()) {
       return this.orders;
     }
@@ -88,7 +88,7 @@ export class AdminOrderListComponent implements OnInit {
     });
   }
 
-  public openDetail(order: OrderByDateResponse): void {
+  public openDetail(order: OrderResponse): void {
     this.selectedOrder = order;
   }
 
@@ -135,7 +135,7 @@ export class AdminOrderListComponent implements OnInit {
     return map[status] || 'help';
   }
 
-  public getTotalItems(order: OrderByDateResponse): number {
+  public getTotalItems(order: OrderResponse): number {
     return order.items.reduce((sum, item) => sum + item.quantity, 0);
   }
 
@@ -143,7 +143,7 @@ export class AdminOrderListComponent implements OnInit {
     return status !== 'Delivered' && status !== 'Cancelled';
   }
 
-  public cancelOrder(order: OrderByDateResponse): void {
+  public cancelOrder(order: OrderResponse): void {
     this.processingOrderId = order.orderId;
 
     this._orderService.cancelOrder(order.orderId).subscribe({

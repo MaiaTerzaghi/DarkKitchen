@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { OrderService } from '../../../backend/services/order/order.service';
-import OrderByDateResponse from '../../../backend/services/order/models/OrderByDateResponse';
+import OrderResponse from '../../../backend/services/order/models/OrderResponse';
 
 @Component({
   selector: 'app-order-by-date',
@@ -9,7 +9,7 @@ import OrderByDateResponse from '../../../backend/services/order/models/OrderByD
   styleUrls: ['./order-by-date.component.css'],
 })
 export class OrderByDateComponent {
-  orders: OrderByDateResponse[] = [];
+  orders: OrderResponse[] = [];
   loading: boolean = false;
   errorMessage: string = '';
   searched: boolean = false;
@@ -60,10 +60,10 @@ export class OrderByDateComponent {
       filters.status = Number(this.filterStatus);
     }
 
-    this._orderService.getOrdersByDate(filters).subscribe({
-      next: (response) => {
-        this.orders = response.items;
-        this.totalCount = response.totalCount;
+    this._orderService.getOrders(filters).subscribe({
+      next: (data) => {
+        this.orders = data.items;
+        this.totalCount = data.totalCount;
         this.searched = true;
         this.loading = false;
       },

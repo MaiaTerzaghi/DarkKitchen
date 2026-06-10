@@ -13,32 +13,31 @@ public class ProductService(IRepository<Product> productRepository, IAuditSubjec
     private readonly IRepository<Product> _productRepository = productRepository;
     private readonly IAuditSubject _audit = audit;
 
-    public PaginatedResponse<ProductResponseDTO> GetAll(string? name, string? category, string? line, int page = 1, int pageSize = 20)
+    public PaginatedResponse<ProductResponseDTO> GetProducts(GetProductsManageRequestDTO request, UserRole role)
     {
+        if(role == UserRole.Client)
+        {
+            request.IsActive = true;
+        }
+
         var (products, totalCount) = _productRepository.GetAll(
-        predicate: p =>
-            p.IsActive &&
-            (string.IsNullOrEmpty(name) || p.Name.Contains(name)) &&
-            (string.IsNullOrEmpty(category) || p.Category == category) &&
-            (string.IsNullOrEmpty(line) || p.CommercialLine == line),
-        page: page,
-        pageSize: pageSize);
+            predicate: p =>
+                (string.IsNullOrEmpty(request.Name) || p.Name.Contains(request.Name)) &&
+                (string.IsNullOrEmpty(request.Description) || p.Description.Contains(request.Description)) &&
+                (string.IsNullOrEmpty(request.Category) || p.Category.Contains(request.Category)) &&
+                (string.IsNullOrEmpty(request.CommercialLine) || p.CommercialLine.Contains(request.CommercialLine)) &&
+                (!request.IsActive.HasValue || p.IsActive == request.IsActive.Value) &&
+                (!request.PriceMin.HasValue || p.Price >= request.PriceMin.Value) &&
+                (!request.PriceMax.HasValue || p.Price <= request.PriceMax.Value),
+            page: request.Page,
+            pageSize: request.PageSize);
 
         return new PaginatedResponse<ProductResponseDTO>
         {
-            Items = products.Select(p => new ProductResponseDTO
-            {
-                Id = p.Id,
-                Code = p.Code,
-                Name = p.Name,
-                Price = p.Price,
-                CommercialLine = p.CommercialLine,
-                Category = p.Category,
-                Images = p.Images
-            }).ToList(),
+            Items = products.Select(MapToDTO).ToList(),
             TotalCount = totalCount,
-            Page = page,
-            PageSize = pageSize
+            Page = request.Page,
+            PageSize = request.PageSize
         };
     }
 
@@ -66,16 +65,7 @@ public class ProductService(IRepository<Product> productRepository, IAuditSubjec
             ResponsibleUser = responsibleUser
         });
 
-        return new ProductResponseDTO
-        {
-            Id = saved.Id,
-            Code = saved.Code,
-            Name = saved.Name,
-            Price = saved.Price,
-            CommercialLine = saved.CommercialLine,
-            Category = saved.Category,
-            Images = saved.Images
-        };
+        return MapToDTO(saved);
     }
 
     public ProductResponseDTO UpdateProduct(int id, UpdateProductRequestDTO request, string responsibleUser)
@@ -102,49 +92,22 @@ public class ProductService(IRepository<Product> productRepository, IAuditSubjec
             ResponsibleUser = responsibleUser
         });
 
-        return new ProductResponseDTO
-        {
-            Id = updated.Id,
-            Code = updated.Code,
-            Name = updated.Name,
-            Price = updated.Price,
-            CommercialLine = updated.CommercialLine,
-            Category = updated.Category,
-            Images = updated.Images
-        };
+        return MapToDTO(updated);
     }
 
-    public PaginatedResponse<ProductResponseDTO> GetManage(GetProductsManageRequestDTO request)
+    private static ProductResponseDTO MapToDTO(Product p)
     {
-        var (products, totalCount) = _productRepository.GetAll(
-            predicate: p =>
-                (string.IsNullOrEmpty(request.Name) || p.Name.Contains(request.Name)) &&
-                (string.IsNullOrEmpty(request.Description) || p.Description.Contains(request.Description)) &&
-                (string.IsNullOrEmpty(request.Category) || p.Category.Contains(request.Category)) &&
-                (string.IsNullOrEmpty(request.CommercialLine) || p.CommercialLine.Contains(request.CommercialLine)) &&
-                (!request.IsActive.HasValue || p.IsActive == request.IsActive.Value) &&
-                (!request.PriceMin.HasValue || p.Price >= request.PriceMin.Value) &&
-                (!request.PriceMax.HasValue || p.Price <= request.PriceMax.Value),
-            page: request.Page,
-            pageSize: request.PageSize);
-
-        return new PaginatedResponse<ProductResponseDTO>
+        return new ProductResponseDTO
         {
-            Items = products.Select(p => new ProductResponseDTO
-            {
-                Id = p.Id,
-                Code = p.Code,
-                Name = p.Name,
-                Description = p.Description,
-                Price = p.Price,
-                CommercialLine = p.CommercialLine,
-                Category = p.Category,
-                Images = p.Images,
-                IsActive = p.IsActive
-            }).ToList(),
-            TotalCount = totalCount,
-            Page = request.Page,
-            PageSize = request.PageSize
+            Id = p.Id,
+            Code = p.Code,
+            Name = p.Name,
+            Description = p.Description,
+            Price = p.Price,
+            CommercialLine = p.CommercialLine,
+            Category = p.Category,
+            Images = p.Images,
+            IsActive = p.IsActive
         };
     }
 }

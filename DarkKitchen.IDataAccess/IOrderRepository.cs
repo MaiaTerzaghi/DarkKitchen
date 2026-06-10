@@ -5,17 +5,10 @@ namespace DarkKitchen.IDataAccess;
 
 public interface IOrderRepository : IRepository<Order>
 {
-    (List<Order> Items, int TotalCount) GetClientOrders(
-        int clientId,
-        OrderStatus? status,
+    (List<Order> Items, int TotalCount) GetOrders(
+        int? clientId,
         DateTime? dateFrom,
         DateTime? dateTo,
-        int page = 1,
-        int pageSize = 20);
-
-    (List<Order> Items, int TotalCount) GetOrders(
-        DateTime dateFrom,
-        DateTime dateTo,
         string? street,
         OrderStatus? status,
         int page = 1,

@@ -1,4 +1,5 @@
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
@@ -100,27 +101,21 @@ public class OrderControllerTest
     }
 
     [TestMethod]
-    public void GetClientOrders_WhenCalled_ReturnsOk()
+    public void GetOrders_WhenClientRole_ReturnsOk()
     {
-        var paginatedResponse = new PaginatedResponse<GetClientOrdersResponseDTO>
-        {
-            Items = [],
-            TotalCount = 0,
-            Page = 1,
-            PageSize = 20
-        };
+        var paginatedResponse = new PaginatedResponse<GetOrdersResponseDTO>();
 
         _orderServiceMock
-            .Setup(s => s.GetClientOrders(It.IsAny<GetClientOrdersRequestDTO>(), It.IsAny<int>()))
+            .Setup(s => s.GetOrders(It.IsAny<GetOrdersRequestDTO>(), It.IsAny<UserRole>(), It.IsAny<int?>()))
             .Returns(paginatedResponse);
 
         _controller.ControllerContext = new ControllerContext
         {
             HttpContext = new DefaultHttpContext()
         };
-        _controller.HttpContext.Items["RequestingUser"] = new User { Id = 1 };
+        _controller.HttpContext.Items["RequestingUser"] = new User { Id = 1, Role = UserRole.Client };
 
-        var result = _controller.GetClientOrders(new GetClientOrdersRequestDTO());
+        var result = _controller.GetOrders(new GetOrdersRequestDTO());
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
     }
@@ -160,12 +155,27 @@ public class OrderControllerTest
         };
 
         _orderServiceMock
-            .Setup(s => s.GetOrders(request))
+            .Setup(s => s.GetOrders(request, It.IsAny<UserRole>(), It.IsAny<int?>()))
             .Returns(paginatedResponse);
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
+        _controller.HttpContext.Items["RequestingUser"] = new User { Id = 1, Role = UserRole.Administrative };
 
         var result = _controller.GetOrders(request);
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+
+        var okResult = (OkObjectResult)result;
+        var response = (PaginatedResponse<GetOrdersResponseDTO>)okResult.Value!;
+
+        Assert.AreEqual(paginatedResponse.TotalCount, response.TotalCount);
+        Assert.AreEqual(paginatedResponse.Items[0].OrderId, response.Items[0].OrderId);
+        Assert.AreEqual(paginatedResponse.Items[0].Client.Id, response.Items[0].Client.Id);
+        Assert.AreEqual(paginatedResponse.Items[0].Client.Name, response.Items[0].Client.Name);
+        Assert.AreEqual(paginatedResponse.Items[0].Client.LastName, response.Items[0].Client.LastName);
     }
 
     [TestMethod]
