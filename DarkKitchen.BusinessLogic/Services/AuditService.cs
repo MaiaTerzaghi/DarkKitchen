@@ -9,25 +9,33 @@ public class AuditService(IAuditRepository auditRepository) : IAuditService
 {
     private readonly IAuditRepository _auditRepository = auditRepository;
 
-    public List<AuditLogResponseDTO> GetLogs(GetAuditLogsRequestDTO request)
+    public PaginatedResponse<AuditLogResponseDTO> GetLogs(GetAuditLogsRequestDTO request)
     {
         ValidateFilters(request);
 
-        var logs = _auditRepository.GetByEntity(
+        var (logs, totalCount) = _auditRepository.GetByEntity(
             request.EntityName!.Value,
             request.EntityId!.Value,
             request.DateFrom!.Value,
-            request.DateTo!.Value);
+            request.DateTo!.Value,
+            request.Page,
+            request.PageSize);
 
-        return logs.Select(log => new AuditLogResponseDTO
+        return new PaginatedResponse<AuditLogResponseDTO>
         {
-            Id = log.Id,
-            Timestamp = log.Timestamp,
-            EntityName = log.EntityName.ToString(),
-            EntityId = log.EntityId,
-            Description = log.Description,
-            ResponsibleUser = log.ResponsibleUser
-        }).ToList();
+            Items = logs.Select(log => new AuditLogResponseDTO
+            {
+                Id = log.Id,
+                Timestamp = log.Timestamp,
+                EntityName = log.EntityName.ToString(),
+                EntityId = log.EntityId,
+                Description = log.Description,
+                ResponsibleUser = log.ResponsibleUser
+            }).ToList(),
+            TotalCount = totalCount,
+            Page = request.Page,
+            PageSize = request.PageSize
+        };
     }
 
     private static void ValidateFilters(GetAuditLogsRequestDTO request)
