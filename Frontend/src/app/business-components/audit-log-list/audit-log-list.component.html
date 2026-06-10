@@ -58,6 +58,15 @@
   </div>
 </div>
 
+<!-- Paginador -->
+<app-paginator
+  *ngIf="!loading && totalCount > 0"
+  [currentPage]="currentPage"
+  [pageSize]="pageSize"
+  [totalCount]="totalCount"
+  (pageChange)="onPageChange($event)">
+</app-paginator>
+
 <div class="empty-state" *ngIf="!loading && searched && logs.length === 0 && !errorMessage">
   <span class="material-icons">history</span>
   <p>No hay registros para esos filtros</p>
