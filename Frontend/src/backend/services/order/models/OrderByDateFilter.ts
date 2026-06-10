@@ -3,4 +3,6 @@ export default interface OrderByDateFilter {
   dateTo: string;
   street?: string;
   status?: number;
+  page?: number;
+  pageSize?: number;
 }
