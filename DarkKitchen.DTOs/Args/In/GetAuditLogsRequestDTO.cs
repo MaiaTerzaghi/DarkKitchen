@@ -2,7 +2,7 @@ using DarkKitchen.Domain.Enums;
 
 namespace DarkKitchen.DTOs.Args.In;
 
-public class GetAuditLogsRequestDTO
+public class GetAuditLogsRequestDTO : PaginationParamsDTO
 {
     public AuditedEntity? EntityName { get; set; }
     public int? EntityId { get; set; }
