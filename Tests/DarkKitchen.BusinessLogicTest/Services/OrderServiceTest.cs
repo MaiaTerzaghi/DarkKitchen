@@ -1224,4 +1224,16 @@ public class OrderServiceTest
 
         _service.PreviewOrder(items, "Inexistente");
     }
+
+    [TestMethod]
+    public void ChangeStatus_WhenPendingOrderIsCancelled_UpdatesOrderStatus()
+    {
+        var order = new Order { Id = 1, Status = OrderStatus.Pending };
+        _orderRepositoryMock.Setup(r => r.GetOrderById(1)).Returns(order);
+
+        _service.ChangeStatus(1, OrderStatus.Cancelled, "admin@email.com");
+
+        Assert.AreEqual(OrderStatus.Cancelled, order.Status);
+        _orderRepositoryMock.Verify(r => r.Update(order), Times.Once);
+    }
 }
