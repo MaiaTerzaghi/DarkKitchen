@@ -3,6 +3,7 @@ import { OrderService } from '../../../backend/services/order/order.service';
 import OrderResponse from '../../../backend/services/order/models/OrderResponse';
 import OrderFilter from '../../../backend/services/order/models/OrderFilter';
 import OrderStatusResponse from '../../../backend/services/order/models/OrderStatusResponse';
+import { OrderStatus } from '../../../backend/services/order/models/OrderStatus';
 
 @Component({
   selector: 'app-admin-order-list',
@@ -146,7 +147,7 @@ export class AdminOrderListComponent implements OnInit {
   public cancelOrder(order: OrderResponse): void {
     this.processingOrderId = order.orderId;
 
-    this._orderService.cancelOrder(order.orderId).subscribe({
+    this._orderService.changeStatus(order.orderId, OrderStatus.Cancelled).subscribe({
       next: (response) => {
         const idx = this.orders.findIndex((o) => o.orderId === order.orderId);
         if (idx !== -1) {

@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { OrderService } from '../../../backend/services/order/order.service';
 import OrderResponse from '../../../backend/services/order/models/OrderResponse';
 import OrderStatusResponse from '../../../backend/services/order/models/OrderStatusResponse';
+import { OrderStatus } from '../../../backend/services/order/models/OrderStatus';
 
 interface OrderAction {
   label: string;
@@ -37,28 +38,28 @@ export class OrderManagementComponent implements OnInit {
       icon: 'check_circle',
       cssClass: 'btn-prepare',
       canApply: (status) => status === 'Pending',
-      apply: (id) => this._orderService.markAsPrepared(id),
+      apply: (id) => this._orderService.changeStatus(id, OrderStatus.Prepared),
     },
     {
       label: 'Marcar como En camino',
       icon: 'local_shipping',
       cssClass: 'btn-on-the-way',
       canApply: (status) => status === 'Prepared',
-      apply: (id) => this._orderService.markAsOnTheWay(id),
+      apply: (id) => this._orderService.changeStatus(id, OrderStatus.OnTheWay),
     },
     {
       label: 'Marcar como Entregado',
       icon: 'task_alt',
       cssClass: 'btn-deliver',
       canApply: (status) => status === 'OnTheWay',
-      apply: (id) => this._orderService.deliverOrder(id),
+      apply: (id) => this._orderService.changeStatus(id, OrderStatus.Delivered),
     },
     {
       label: 'Marcar como No entregado',
       icon: 'block',
       cssClass: 'btn-not-delivered',
       canApply: (status) => status === 'OnTheWay',
-      apply: (id) => this._orderService.markAsNotDelivered(id),
+      apply: (id) => this._orderService.changeStatus(id, OrderStatus.NotDelivered),
     },
   ];
 

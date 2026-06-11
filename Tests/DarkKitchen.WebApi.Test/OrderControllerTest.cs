@@ -179,31 +179,6 @@ public class OrderControllerTest
     }
 
     [TestMethod]
-    public void MarkAsPrepared_ValidOrderId_ReturnsOkWithUpdatedStatus()
-    {
-        var orderId = 1;
-
-        var expectedResponse = new UpdateOrderStatusResponseDTO
-        {
-            OrderId = orderId,
-            Status = "Prepared",
-            UpdatedAt = DateTime.Now
-        };
-
-        _orderServiceMock
-            .Setup(s => s.MarkAsPrepared(orderId))
-            .Returns(expectedResponse);
-
-        var result = _controller.MarkAsPrepared(orderId);
-
-        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-        var okResult = (OkObjectResult)result;
-        var response = (UpdateOrderStatusResponseDTO)okResult.Value!;
-        Assert.AreEqual("Prepared", response.Status);
-        Assert.AreEqual(orderId, response.OrderId);
-    }
-
-    [TestMethod]
     public void GetOrderDetail_WhenCalled_ReturnsOk()
     {
         var response = new OrderDetailResponseDTO
@@ -221,98 +196,6 @@ public class OrderControllerTest
         var result = _controller.GetOrderDetail(1);
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-    }
-
-    [TestMethod]
-    public void DeliverOrder_WhenCalled_ReturnsOk()
-    {
-        var response = new UpdateOrderStatusResponseDTO
-        {
-            OrderId = 1,
-            Status = "Delivered",
-            UpdatedAt = DateTime.Now
-        };
-
-        _orderServiceMock
-            .Setup(s => s.DeliverOrder(It.IsAny<int>()))
-            .Returns(response);
-
-        var result = _controller.DeliverOrder(1);
-
-        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-    }
-
-    [TestMethod]
-    public void CancelOrder_ValidOrderId_ReturnsOkWithUpdatedStatus()
-    {
-        var orderId = 1;
-
-        var expectedResponse = new UpdateOrderStatusResponseDTO
-        {
-            OrderId = orderId,
-            Status = "Cancelled",
-            UpdatedAt = DateTime.Now
-        };
-
-        _orderServiceMock
-            .Setup(s => s.CancelOrder(orderId))
-            .Returns(expectedResponse);
-
-        var result = _controller.CancelOrder(orderId);
-
-        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-        var okResult = (OkObjectResult)result;
-        var response = (UpdateOrderStatusResponseDTO)okResult.Value!;
-        Assert.AreEqual("Cancelled", response.Status);
-        Assert.AreEqual(orderId, response.OrderId);
-    }
-
-    [TestMethod]
-    public void MarkAsOnTheWay_ValidOrderId_ReturnsOk()
-    {
-        var expectedResponse = new UpdateOrderStatusResponseDTO
-        {
-            OrderId = 1,
-            Status = "OnTheWay",
-            UpdatedAt = DateTime.Now
-        };
-
-        _orderServiceMock
-            .Setup(s => s.MarkAsOnTheWay(1))
-            .Returns(expectedResponse);
-
-        var result = _controller.MarkAsOnTheWay(1);
-        var okResult = (OkObjectResult)result;
-        var response = (UpdateOrderStatusResponseDTO)okResult.Value!;
-
-        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-        Assert.AreEqual("OnTheWay", response.Status);
-        Assert.AreEqual(1, response.OrderId);
-    }
-
-    [TestMethod]
-    public void MarkAsNotDelivered_ValidOrderId_ReturnsOkWithUpdatedStatus()
-    {
-        var orderId = 1;
-
-        var expectedResponse = new UpdateOrderStatusResponseDTO
-        {
-            OrderId = orderId,
-            Status = "NotDelivered",
-            UpdatedAt = DateTime.Now
-        };
-
-        _orderServiceMock
-            .Setup(s => s.MarkAsNotDelivered(orderId))
-            .Returns(expectedResponse);
-
-        var result = _controller.MarkAsNotDelivered(orderId);
-
-        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-        var okResult = (OkObjectResult)result;
-        var response = (UpdateOrderStatusResponseDTO)okResult.Value!;
-        Assert.AreEqual("NotDelivered", response.Status);
-        Assert.AreEqual(orderId, response.OrderId);
     }
 
     [TestMethod]
@@ -347,31 +230,6 @@ public class OrderControllerTest
         Assert.AreEqual(1, response.Months.Count);
         Assert.AreEqual(2026, response.Months[0].Year);
         Assert.AreEqual(1, response.Months[0].Month);
-    }
-
-    [TestMethod]
-    public void MarkAsDelayed_ValidOrderId_ReturnsOkWithUpdatedStatus()
-    {
-        var orderId = 1;
-
-        var expectedResponse = new UpdateOrderStatusResponseDTO
-        {
-            OrderId = orderId,
-            Status = "Delayed",
-            UpdatedAt = DateTime.Now
-        };
-
-        _orderServiceMock
-            .Setup(s => s.MarkAsDelayed(orderId))
-            .Returns(expectedResponse);
-
-        var result = _controller.MarkAsDelayed(orderId);
-
-        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-        var okResult = (OkObjectResult)result;
-        var response = (UpdateOrderStatusResponseDTO)okResult.Value!;
-        Assert.AreEqual("Delayed", response.Status);
-        Assert.AreEqual(orderId, response.OrderId);
     }
 
     [TestMethod]
@@ -436,5 +294,34 @@ public class OrderControllerTest
         Assert.AreEqual(expectedOrders[0].Client.Id, response[0].Client.Id);
         Assert.AreEqual(expectedOrders[0].Client.Name, response[0].Client.Name);
         Assert.AreEqual(expectedOrders[0].Status, response[0].Status);
+    }
+
+    [TestMethod]
+    public void ChangeStatus_ValidRequest_ReturnsOkWithUpdatedStatus()
+    {
+        var orderId = 1;
+        var request = new ChangeOrderStatusRequestDTO { Status = OrderStatus.Prepared };
+
+        var expectedResponse = new UpdateOrderStatusResponseDTO
+        {
+            OrderId = orderId,
+            Status = "Prepared",
+            UpdatedAt = DateTime.Now
+        };
+
+        _orderServiceMock
+            .Setup(s => s.ChangeStatus(orderId, OrderStatus.Prepared, It.IsAny<UserRole>()))
+            .Returns(expectedResponse);
+
+        _controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
+        _controller.HttpContext.Items["RequestingUser"] = new User { Id = 1, Role = UserRole.Dispatcher };
+
+        var result = _controller.ChangeStatus(orderId, request);
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = (OkObjectResult)result;
+        var response = (UpdateOrderStatusResponseDTO)okResult.Value!;
+        Assert.AreEqual("Prepared", response.Status);
+        Assert.AreEqual(orderId, response.OrderId);
     }
 }
