@@ -437,4 +437,33 @@ public class OrderControllerTest
         Assert.AreEqual(expectedOrders[0].Client.Name, response[0].Client.Name);
         Assert.AreEqual(expectedOrders[0].Status, response[0].Status);
     }
+
+    [TestMethod]
+    public void ChangeStatus_ValidRequest_ReturnsOkWithUpdatedStatus()
+    {
+        var orderId = 1;
+        var request = new ChangeOrderStatusRequestDTO { Status = OrderStatus.Prepared };
+
+        var expectedResponse = new UpdateOrderStatusResponseDTO
+        {
+            OrderId = orderId,
+            Status = "Prepared",
+            UpdatedAt = DateTime.Now
+        };
+
+        _orderServiceMock
+            .Setup(s => s.ChangeStatus(orderId, OrderStatus.Prepared, It.IsAny<UserRole>()))
+            .Returns(expectedResponse);
+
+        _controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
+        _controller.HttpContext.Items["RequestingUser"] = new User { Id = 1, Role = UserRole.Dispatcher };
+
+        var result = _controller.ChangeStatus(orderId, request);
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = (OkObjectResult)result;
+        var response = (UpdateOrderStatusResponseDTO)okResult.Value!;
+        Assert.AreEqual("Prepared", response.Status);
+        Assert.AreEqual(orderId, response.OrderId);
+    }
 }
