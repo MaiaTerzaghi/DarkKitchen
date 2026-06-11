@@ -1,4 +1,3 @@
-using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IBusinessLogic;
@@ -9,7 +8,7 @@ namespace DarkKitchen.WebApi.Controllers;
 
 [ApiController]
 [Route("api/users")]
-public class UserController(IUserService userService) : ControllerBase
+public class UserController(IUserService userService) : DarkKitchenControllerBase
 {
     private readonly IUserService _userService = userService;
 
@@ -32,7 +31,7 @@ public class UserController(IUserService userService) : ControllerBase
     [HttpPut("{id}")]
     public IActionResult UpdateUser(int id, UpdateUserRequestDTO request)
     {
-        var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
+        var requestingUser = GetRequestingUser();
         var result = _userService.UpdateUser(id, request, requestingUser.Id);
         return Ok(result);
     }
@@ -41,7 +40,7 @@ public class UserController(IUserService userService) : ControllerBase
     [HttpDelete("{id}")]
     public IActionResult DeleteUser(int id)
     {
-        var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
+        var requestingUser = GetRequestingUser();
         _userService.DeleteUser(id, requestingUser.Id);
         return NoContent();
     }

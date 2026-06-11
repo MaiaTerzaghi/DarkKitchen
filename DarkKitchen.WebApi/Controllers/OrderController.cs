@@ -1,4 +1,3 @@
-using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IBusinessLogic;
@@ -9,7 +8,7 @@ namespace DarkKitchen.WebApi.Controllers;
 
 [ApiController]
 [Route("api/orders")]
-public class OrderController(IOrderService orderService) : ControllerBase
+public class OrderController(IOrderService orderService) : DarkKitchenControllerBase
 {
     private readonly IOrderService _orderService = orderService;
 
@@ -25,7 +24,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
     [HttpPost]
     public IActionResult CreateOrder([FromBody] CreateOrderRequestDTO request)
     {
-        var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
+        var requestingUser = GetRequestingUser();
         var response = _orderService.CreateOrder(request, requestingUser.Id);
         return CreatedAtAction(nameof(GetOrderDetail), new { id = response.OrderId }, response);
     }
@@ -34,7 +33,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
     [HttpGet]
     public IActionResult GetOrders([FromQuery] GetOrdersRequestDTO request)
     {
-        var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
+        var requestingUser = GetRequestingUser();
         var orders = _orderService.GetOrders(request, requestingUser.Role, requestingUser.Id);
         return Ok(orders);
     }

@@ -1,4 +1,3 @@
-using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IBusinessLogic;
@@ -9,7 +8,7 @@ namespace DarkKitchen.WebApi.Controllers;
 
 [ApiController]
 [Route("api/promotions")]
-public class PromotionController(IPromotionService promotionService) : ControllerBase
+public class PromotionController(IPromotionService promotionService) : DarkKitchenControllerBase
 {
     private readonly IPromotionService _promotionService = promotionService;
 
@@ -25,7 +24,7 @@ public class PromotionController(IPromotionService promotionService) : Controlle
     [HttpPost]
     public IActionResult CreatePromotion([FromBody] CreatePromotionRequestDTO request)
     {
-        var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
+        var requestingUser = GetRequestingUser();
         var response = _promotionService.CreatePromotion(request, requestingUser.Email);
         return Created(string.Empty, response);
     }
@@ -34,7 +33,7 @@ public class PromotionController(IPromotionService promotionService) : Controlle
     [HttpPut("{id}")]
     public IActionResult UpdatePromotion(int id, [FromBody] UpdatePromotionRequestDTO request)
     {
-        var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
+        var requestingUser = GetRequestingUser();
         var response = _promotionService.UpdatePromotion(id, request, requestingUser.Email);
         return Ok(response);
     }
