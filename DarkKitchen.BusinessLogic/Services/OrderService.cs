@@ -221,7 +221,7 @@ public class OrderService(
 
     public UpdateOrderStatusResponseDTO ChangeStatus(int orderId, OrderStatus target, UserRole role)
     {
-        if (!StatusDispatch.ContainsKey(target))
+        if(!StatusDispatch.ContainsKey(target))
         {
             throw new ArgumentException($"No se puede cambiar un pedido al estado {target}.");
         }

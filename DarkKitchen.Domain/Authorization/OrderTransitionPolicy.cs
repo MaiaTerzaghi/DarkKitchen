@@ -17,7 +17,7 @@ public static class OrderTransitionPolicy
 
     public static void AssertCanTransition(UserRole role, OrderStatus target)
     {
-        if (!AllowedRolesByTarget.ContainsKey(target) || !AllowedRolesByTarget[target].Contains(role))
+        if(!AllowedRolesByTarget.ContainsKey(target) || !AllowedRolesByTarget[target].Contains(role))
         {
             throw new UnauthorizedException($"El rol {role} no puede cambiar un pedido al estado {target}.");
         }
