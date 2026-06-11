@@ -117,22 +117,7 @@ public class OrderService(
     {
         var order = _orderRepository.GetOrderById(orderId) ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
 
-        return new OrderDetailResponseDTO
-        {
-            OrderId = order.Id,
-            ClientId = order.ClientId,
-            Date = order.Date,
-            Status = order.Status.ToString(),
-            ShippingType = order.ShippingType?.Name ?? string.Empty,
-            Total = order.Total,
-            Items = order.Items.Select(i => new OrderItemDetailDTO
-            {
-                ProductName = i.Product.Name,
-                Quantity = i.Quantity,
-                UnitPrice = i.UnitPrice,
-                Subtotal = i.UnitPrice * i.Quantity
-            }).ToList()
-        };
+        return MapToDetailDTO(order);
     }
 
     public UpdateOrderStatusResponseDTO MarkAsPrepared(int orderId) =>
@@ -243,6 +228,26 @@ public class OrderService(
     {
         var orders = _orderRepository.GetDispatcherOrders();
         return orders.Select(MapToOrderResponse).ToList();
+    }
+
+    private static OrderDetailResponseDTO MapToDetailDTO(Order order)
+    {
+        return new OrderDetailResponseDTO
+        {
+            OrderId = order.Id,
+            ClientId = order.ClientId,
+            Date = order.Date,
+            Status = order.Status.ToString(),
+            ShippingType = order.ShippingType?.Name ?? string.Empty,
+            Total = order.Total,
+            Items = order.Items.Select(i => new OrderItemDetailDTO
+            {
+                ProductName = i.Product.Name,
+                Quantity = i.Quantity,
+                UnitPrice = i.UnitPrice,
+                Subtotal = i.UnitPrice * i.Quantity
+            }).ToList()
+        };
     }
 
     private static GetOrdersResponseDTO MapToOrderResponse(Order order)
