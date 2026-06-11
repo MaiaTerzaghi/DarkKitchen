@@ -8,6 +8,7 @@ import environments from '../../environments/environment';
 import OrderResponse from '../services/order/models/OrderResponse';
 import OrderFilter from '../services/order/models/OrderFilter';
 import OrderStatusResponse from '../services/order/models/OrderStatusResponse';
+import { OrderStatus } from '../services/order/models/OrderStatus';
 import OrderPreviewResponse from '../services/order/models/OrderPreviewResponse';
 import TopProductResponse from '../services/order/models/TopProductResponse';
 import SalesReportResponse from '../services/order/models/SalesReportResponse';
@@ -48,16 +49,8 @@ export class OrderApiRepositoryService extends ApiRepository {
     return this.get<OrderResponse[]>('dispatcher');
   }
 
-  public markAsPrepared(id: number): Observable<OrderStatusResponse> {
-    return this.patch<OrderStatusResponse>(id, 'prepared');
-  }
-
-  public deliverOrder(id: number): Observable<OrderStatusResponse> {
-    return this.patch<OrderStatusResponse>(id, 'deliver');
-  }
-
-  public markAsNotDelivered(id: number): Observable<OrderStatusResponse> {
-    return this.patch<OrderStatusResponse>(id, 'not-delivered');
+  public changeStatus(id: number, status: OrderStatus): Observable<OrderStatusResponse> {
+    return this.patch<OrderStatusResponse>(id, 'status', { status });
   }
 
   public getTopProducts(dateFrom: string, dateTo: string): Observable<TopProductResponse[]> {
@@ -68,13 +61,5 @@ export class OrderApiRepositoryService extends ApiRepository {
   public getSalesReport(page: number, pageSize: number): Observable<SalesReportResponse> {
     const query = `page=${page}&pageSize=${pageSize}`;
     return this.get<SalesReportResponse>('report', query);
-  }
-
-  public markAsOnTheWay(id: number): Observable<OrderStatusResponse> {
-    return this.patch<OrderStatusResponse>(id, 'on-the-way');
-  }
-
-  public cancelOrder(id: number): Observable<OrderStatusResponse> {
-    return this.patch<OrderStatusResponse>(id, 'cancel');
   }
 }
