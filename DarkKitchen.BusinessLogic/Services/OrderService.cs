@@ -134,66 +134,6 @@ public class OrderService(
         };
     }
 
-    public UpdateOrderStatusResponseDTO MarkAsPrepared(int orderId) =>
-        ApplyTransition(orderId, order =>
-        {
-            var state = OrderStateFactory.Create(order.Status);
-            state.Prepare(order);
-        });
-
-    public UpdateOrderStatusResponseDTO DeliverOrder(int orderId) =>
-        ApplyTransition(orderId, order =>
-        {
-            var state = OrderStateFactory.Create(order.Status);
-            state.Deliver(order);
-        });
-
-    public UpdateOrderStatusResponseDTO CancelOrder(int orderId) =>
-        ApplyTransition(orderId, order =>
-        {
-            var state = OrderStateFactory.Create(order.Status);
-            state.Cancel(order);
-        });
-
-    public UpdateOrderStatusResponseDTO MarkAsOnTheWay(int orderId) =>
-        ApplyTransition(orderId, order =>
-        {
-            var state = OrderStateFactory.Create(order.Status);
-            state.MarkOnTheWay(order);
-        });
-
-    public UpdateOrderStatusResponseDTO MarkAsNotDelivered(int orderId) =>
-        ApplyTransition(orderId, order =>
-        {
-            var state = OrderStateFactory.Create(order.Status);
-            state.MarkNotDelivered(order);
-        });
-
-    public UpdateOrderStatusResponseDTO MarkAsDelayed(int orderId) =>
-        ApplyTransition(orderId, order =>
-        {
-            var state = OrderStateFactory.Create(order.Status);
-            state.MarkDelayed(order);
-        });
-
-    private UpdateOrderStatusResponseDTO ApplyTransition(int orderId, Action<Order> transition)
-    {
-        var order = _orderRepository.GetOrderById(orderId)
-            ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
-
-        transition(order);
-
-        order.UpdatedAt = DateTime.Now;
-        _orderRepository.Update(order);
-
-        return new UpdateOrderStatusResponseDTO
-        {
-            OrderId = order.Id,
-            Status = order.Status.ToString(),
-            UpdatedAt = order.UpdatedAt
-        };
-    }
-
     public List<TopProductResponseDTO> GetTopProducts(DateTime dateFrom, DateTime dateTo)
     {
         var topProducts = _orderRepository.GetTopProducts(
