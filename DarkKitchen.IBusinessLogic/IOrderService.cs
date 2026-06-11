@@ -18,4 +18,5 @@ public interface IOrderService
     List<TopProductResponseDTO> GetTopProducts(DateTime dateFrom, DateTime dateTo);
     SalesReportWithTotalDTO GetSalesReport(int page, int pageSize);
     OrderPreviewResponseDTO PreviewOrder(List<OrderItemRequestDTO> items, string shippingTypeName);
+    UpdateOrderStatusResponseDTO ChangeStatus(int orderId, OrderStatus target, UserRole role);
 }

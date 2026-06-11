@@ -267,4 +267,9 @@ public class OrderService(
             }).ToList()
         };
     }
+
+    public UpdateOrderStatusResponseDTO ChangeStatus(int orderId, OrderStatus target, UserRole role)
+    {
+        throw new NotImplementedException();
+    }
 }

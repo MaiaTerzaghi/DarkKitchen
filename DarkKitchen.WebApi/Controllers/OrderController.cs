@@ -118,4 +118,13 @@ public class OrderController(IOrderService orderService) : ControllerBase
         var response = _orderService.GetDispatcherOrders();
         return Ok(response);
     }
+
+    [AuthorizeRoles(UserRole.Dispatcher, UserRole.Administrative)]
+    [HttpPatch("{id}/status")]
+    public IActionResult ChangeStatus(int id, [FromBody] ChangeOrderStatusRequestDTO request)
+    {
+        var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
+        var response = _orderService.ChangeStatus(id, request.Status, requestingUser.Role);
+        return Ok(response);
+    }
 }
