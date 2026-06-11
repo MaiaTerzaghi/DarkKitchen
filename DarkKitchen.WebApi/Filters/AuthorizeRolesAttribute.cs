@@ -12,11 +12,11 @@ public class AuthorizeRolesAttribute(params UserRole[] roles) : Attribute, IAuth
 
     public void OnAuthorization(AuthorizationFilterContext context)
     {
-        var token = context.HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+        var token = ExtractToken(context);
 
         if(string.IsNullOrEmpty(token))
         {
-            context.Result = new ObjectResult("Token requerido") { StatusCode = 401 };
+            SetUnauthorized(context, "Token requerido");
             return;
         }
 
@@ -29,18 +29,33 @@ public class AuthorizeRolesAttribute(params UserRole[] roles) : Attribute, IAuth
 
             if(!_roles.Contains(user.Role))
             {
-                context.Result = new ObjectResult("No tiene permisos") { StatusCode = 403 };
+                SetForbidden(context, "No tiene permisos");
                 return;
             }
 
-            context.HttpContext.Items["RequestingUser"] = user; // Agregue esto para guardar
-
+            // Agregue esto para guardar
             // el usuario autenticado para que los controllers puedan accederlo
             //  sin necesidad de llamar al servicio de sesión nuevamente
+            context.HttpContext.Items["RequestingUser"] = user;
         }
         catch(Exception)
         {
-            context.Result = new ObjectResult("Token inválido") { StatusCode = 401 };
+            SetUnauthorized(context, "Token inválido");
         }
+    }
+
+    private static string? ExtractToken(AuthorizationFilterContext context)
+    {
+        return context.HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+    }
+
+    private static void SetUnauthorized(AuthorizationFilterContext context, string message)
+    {
+        context.Result = new ObjectResult(message) { StatusCode = 401 };
+    }
+
+    private static void SetForbidden(AuthorizationFilterContext context, string message)
+    {
+        context.Result = new ObjectResult(message) { StatusCode = 403 };
     }
 }
