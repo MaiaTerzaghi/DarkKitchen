@@ -6,6 +6,7 @@ import CreateOrderResponse from './models/CreateOrderResponse';
 import OrderResponse from './models/OrderResponse';
 import OrderFilter from './models/OrderFilter';
 import OrderStatusResponse from './models/OrderStatusResponse';
+import { OrderStatus } from './models/OrderStatus';
 import OrderPreviewResponse from './models/OrderPreviewResponse';
 import TopProductResponse from './models/TopProductResponse';
 import SalesReportResponse from './models/SalesReportResponse';
@@ -33,16 +34,8 @@ export class OrderService {
     return this._repository.getDispatcherOrders();
   }
 
-  public markAsPrepared(id: number): Observable<OrderStatusResponse> {
-    return this._repository.markAsPrepared(id);
-  }
-
-  public deliverOrder(id: number): Observable<OrderStatusResponse> {
-    return this._repository.deliverOrder(id);
-  }
-
-  public markAsNotDelivered(id: number): Observable<OrderStatusResponse> {
-    return this._repository.markAsNotDelivered(id);
+  public changeStatus(id: number, status: OrderStatus): Observable<OrderStatusResponse> {
+    return this._repository.changeStatus(id, status);
   }
 
   public getTopProducts(dateFrom: string, dateTo: string): Observable<TopProductResponse[]> {
@@ -51,13 +44,5 @@ export class OrderService {
 
   public getSalesReport(page: number, pageSize: number): Observable<SalesReportResponse> {
     return this._repository.getSalesReport(page, pageSize);
-  }
-
-  public markAsOnTheWay(id: number): Observable<OrderStatusResponse> {
-    return this._repository.markAsOnTheWay(id);
-  }
-
-  public cancelOrder(id: number): Observable<OrderStatusResponse> {
-    return this._repository.cancelOrder(id);
   }
 }
