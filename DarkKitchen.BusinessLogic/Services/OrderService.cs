@@ -24,10 +24,12 @@ public class OrderService(
     {
         ValidateClient(clientId);
         ValidateItems(request.Items);
+
         var shippingType = ResolveShippingType(request.ShippingType);
         var pricing = _pricingService.CalculateOrderPricing(request.Items, shippingType);
         var order = BuildOrder(request, clientId, shippingType, pricing);
         var saved = _orderRepository.Add(order);
+
         return BuildOrderResponse(clientId, saved.Id, pricing.Subtotal, pricing.Vat, pricing.ShippingCost, pricing.Total);
     }
 
