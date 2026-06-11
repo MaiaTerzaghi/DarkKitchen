@@ -23,16 +23,18 @@ public class OrderService(
 
     public CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request, int clientId)
     {
-        ValidateClient(clientId);
+        ValidateClientExists(clientId);
         ValidateItems(request.Items);
+
         var shippingType = ResolveShippingType(request.ShippingType);
         var pricing = _pricingService.CalculateOrderPricing(request.Items, shippingType);
         var order = BuildOrder(request, clientId, shippingType, pricing);
         var saved = _orderRepository.Add(order);
+
         return BuildOrderResponse(clientId, saved.Id, pricing.Subtotal, pricing.Vat, pricing.ShippingCost, pricing.Total);
     }
 
-    private void ValidateClient(int clientId)
+    private void ValidateClientExists(int clientId)
     {
         _ = _userRepository.Get(u => u.Id == clientId)
             ?? throw new NotFoundException($"Cliente con id {clientId} no encontrado.");
@@ -116,22 +118,7 @@ public class OrderService(
     {
         var order = _orderRepository.GetOrderById(orderId) ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
 
-        return new OrderDetailResponseDTO
-        {
-            OrderId = order.Id,
-            ClientId = order.ClientId,
-            Date = order.Date,
-            Status = order.Status.ToString(),
-            ShippingType = order.ShippingType?.Name ?? string.Empty,
-            Total = order.Total,
-            Items = order.Items.Select(i => new OrderItemDetailDTO
-            {
-                ProductName = i.Product.Name,
-                Quantity = i.Quantity,
-                UnitPrice = i.UnitPrice,
-                Subtotal = i.UnitPrice * i.Quantity
-            }).ToList()
-        };
+        return MapToDetailDTO(order);
     }
 
     public List<TopProductResponseDTO> GetTopProducts(DateTime dateFrom, DateTime dateTo)
@@ -182,6 +169,26 @@ public class OrderService(
     {
         var orders = _orderRepository.GetDispatcherOrders();
         return orders.Select(MapToOrderResponse).ToList();
+    }
+
+    private static OrderDetailResponseDTO MapToDetailDTO(Order order)
+    {
+        return new OrderDetailResponseDTO
+        {
+            OrderId = order.Id,
+            ClientId = order.ClientId,
+            Date = order.Date,
+            Status = order.Status.ToString(),
+            ShippingType = order.ShippingType?.Name ?? string.Empty,
+            Total = order.Total,
+            Items = order.Items.Select(i => new OrderItemDetailDTO
+            {
+                ProductName = i.Product.Name,
+                Quantity = i.Quantity,
+                UnitPrice = i.UnitPrice,
+                Subtotal = i.UnitPrice * i.Quantity
+            }).ToList()
+        };
     }
 
     private static GetOrdersResponseDTO MapToOrderResponse(Order order)

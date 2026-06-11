@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
+using DarkKitchen.Domain.Models;
 using DarkKitchen.IDataAccess;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,37 +24,15 @@ public class OrderRepository(DarkKitchenContext context)
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
             .Include(o => o.Client)
-            .AsQueryable();
+            .Where(o => !clientId.HasValue || o.ClientId == clientId.Value)
+            .Where(o => !dateFrom.HasValue || o.Date.Date >= dateFrom.Value.Date)
+            .Where(o => !dateTo.HasValue || o.Date.Date <= dateTo.Value.Date)
+            .Where(o => string.IsNullOrEmpty(street) || o.Street.Contains(street))
+            .Where(o => !status.HasValue || o.Status == status.Value)
+            .OrderByDescending(o => o.Date);
+        var totalCount = query.Count();
 
-        if(clientId.HasValue)
-        {
-            query = query.Where(o => o.ClientId == clientId.Value);
-        }
-
-        if(dateFrom.HasValue)
-        {
-            query = query.Where(o => o.Date.Date >= dateFrom.Value.Date);
-        }
-
-        if(dateTo.HasValue)
-        {
-            query = query.Where(o => o.Date.Date <= dateTo.Value.Date);
-        }
-
-        if(!string.IsNullOrEmpty(street))
-        {
-            query = query.Where(o => o.Street.Contains(street));
-        }
-
-        if(status.HasValue)
-        {
-            query = query.Where(o => o.Status == status.Value);
-        }
-
-        var orderedQuery = query.OrderByDescending(o => o.Date);
-        var totalCount = orderedQuery.Count();
-
-        var items = orderedQuery
+        var items = query
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToList();
@@ -86,18 +65,18 @@ public class OrderRepository(DarkKitchenContext context)
             .ToList();
     }
 
-    public (List<(int Year, int Month, int ClientId, string ClientName, double Total)> Items, int TotalCount) GetSalesReport(
+    public (List<SalesReportItem> Items, int TotalCount) GetSalesReport(
         int page,
         int pageSize)
     {
         var query = context.Orders
             .GroupBy(o => new { o.Date.Year, o.Date.Month, o.ClientId, ClientName = o.Client.Name + " " + o.Client.LastName })
-            .Select(g => new
+            .Select(g => new SalesReportItem
             {
-                g.Key.Year,
-                g.Key.Month,
-                g.Key.ClientId,
-                g.Key.ClientName,
+                Year = g.Key.Year,
+                Month = g.Key.Month,
+                ClientId = g.Key.ClientId,
+                ClientName = g.Key.ClientName,
                 Total = g.Sum(o => o.Total)
             })
             .OrderByDescending(g => g.Year)
@@ -108,8 +87,6 @@ public class OrderRepository(DarkKitchenContext context)
         var items = query
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .AsEnumerable()
-            .Select(g => (g.Year, g.Month, g.ClientId, g.ClientName, g.Total))
             .ToList();
 
         return (items, totalCount);

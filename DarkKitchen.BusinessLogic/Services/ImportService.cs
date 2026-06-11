@@ -1,3 +1,4 @@
+using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.Domain.Validators;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
@@ -34,9 +35,20 @@ public class ImportService(
         };
 
         var result = new ImportResultDTO();
+
+        List<ImportedProduct> products;
+        try
+        {
+            products = importer.Import(importerRequest).ToList();
+        }
+        catch(Exception ex)
+        {
+            throw new ArgumentException($"El archivo no pudo ser procesado: {ex.Message}");
+        }
+
         var index = 0;
 
-        foreach(var imported in importer.Import(importerRequest))
+        foreach(var imported in products)
         {
             var error = FindValidationError(imported);
             if(error != null)
@@ -65,8 +77,20 @@ public class ImportService(
                 continue;
             }
 
-            _productService.CreateProduct(dto, responsibleUser);
-            result.ImportedCount++;
+            try
+            {
+                _productService.CreateProduct(dto, responsibleUser);
+                result.ImportedCount++;
+            }
+            catch(ConflictException)
+            {
+                result.Errors.Add(new ImportErrorDTO
+                {
+                    Index = index,
+                    Code = imported.Code,
+                    Reason = "Ya existe un producto con este código"
+                });
+            }
 
             index++;
         }

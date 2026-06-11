@@ -348,7 +348,7 @@ public sealed class PromotionServiceTest
             DiscountPercentage = 10,
             ValidFrom = DateTime.Today.AddDays(-1),
             ValidTo = DateTime.Today.AddDays(1),
-            Products = []
+            Products = [product]
         };
 
         _promotionRepositoryMock
@@ -358,10 +358,6 @@ public sealed class PromotionServiceTest
         _productRepositoryMock
             .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
             .Returns(product);
-
-        _promotionRepositoryMock
-            .Setup(r => r.ProductExistsInPromotion(1, 1))
-            .Returns(true);
 
         _service.AddProductToPromotion(1, 1);
     }
@@ -447,10 +443,6 @@ public sealed class PromotionServiceTest
         _productRepositoryMock
             .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
             .Returns(new Product { Id = 1 });
-
-        _promotionRepositoryMock
-            .Setup(r => r.ProductExistsInPromotion(1, 1))
-            .Returns(false);
 
         _service.AddProductToPromotion(1, 1);
     }

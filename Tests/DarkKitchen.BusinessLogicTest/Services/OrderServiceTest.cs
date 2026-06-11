@@ -3,6 +3,7 @@ using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
+using DarkKitchen.Domain.Models;
 using DarkKitchen.Domain.States;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
@@ -221,10 +222,10 @@ public class OrderServiceTest
     [TestMethod]
     public void GetSalesReport_ValidRequest_ReturnsSalesReport()
     {
-        var expectedReport = new List<(int Year, int Month, int ClientId, string ClientName, double Total)>
+        var expectedReport = new List<SalesReportItem>
         {
-            (2026, 1, 1, "Juan Perez", 500.0),
-            (2026, 1, 2, "Juan Perez", 300.0)
+            new() { Year = 2026, Month = 1, ClientId = 1, ClientName = "Juan Perez", Total = 500.0 },
+            new() { Year = 2026, Month = 1, ClientId = 2, ClientName = "Juan Perez", Total = 300.0 }
         };
 
         _orderRepositoryMock
@@ -680,10 +681,10 @@ public class OrderServiceTest
     [TestMethod]
     public void GetSalesReport_ReturnsMonthlyTotal()
     {
-        var reportData = new List<(int Year, int Month, int ClientId, string ClientName, double Total)>
+        var reportData = new List<SalesReportItem>
         {
-            (2026, 4, 1, "Juan Perez", 500.0),
-            (2026, 4, 2, "Maria Lopez", 300.0)
+            new() { Year = 2026, Month = 4, ClientId = 1, ClientName = "Juan Perez", Total = 500.0 },
+            new() { Year = 2026, Month = 4, ClientId = 2, ClientName = "Maria Lopez", Total = 300.0 }
         };
         _orderRepositoryMock
             .Setup(r => r.GetSalesReport(1, 20))
