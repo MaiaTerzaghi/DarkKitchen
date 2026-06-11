@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using DarkKitchen.DataAccess.Context;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
+using DarkKitchen.Domain.Models;
 using DarkKitchen.IDataAccess;
 using Microsoft.EntityFrameworkCore;
 
@@ -64,18 +65,18 @@ public class OrderRepository(DarkKitchenContext context)
             .ToList();
     }
 
-    public (List<(int Year, int Month, int ClientId, string ClientName, double Total)> Items, int TotalCount) GetSalesReport(
+    public (List<SalesReportItem> Items, int TotalCount) GetSalesReport(
         int page,
         int pageSize)
     {
         var query = context.Orders
             .GroupBy(o => new { o.Date.Year, o.Date.Month, o.ClientId, ClientName = o.Client.Name + " " + o.Client.LastName })
-            .Select(g => new
+            .Select(g => new SalesReportItem
             {
-                g.Key.Year,
-                g.Key.Month,
-                g.Key.ClientId,
-                g.Key.ClientName,
+                Year = g.Key.Year,
+                Month = g.Key.Month,
+                ClientId = g.Key.ClientId,
+                ClientName = g.Key.ClientName,
                 Total = g.Sum(o => o.Total)
             })
             .OrderByDescending(g => g.Year)
@@ -86,8 +87,6 @@ public class OrderRepository(DarkKitchenContext context)
         var items = query
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .AsEnumerable()
-            .Select(g => (g.Year, g.Month, g.ClientId, g.ClientName, g.Total))
             .ToList();
 
         return (items, totalCount);
