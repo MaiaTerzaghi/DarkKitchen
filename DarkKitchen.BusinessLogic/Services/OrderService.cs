@@ -1,4 +1,5 @@
 using DarkKitchen.Domain;
+using DarkKitchen.Domain.Authorization;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
@@ -268,8 +269,38 @@ public class OrderService(
         };
     }
 
+    private static readonly Dictionary<OrderStatus, Action<Order>> StatusDispatch = new()
+    {
+        { OrderStatus.Prepared, order => OrderStateFactory.Create(order.Status).Prepare(order) },
+        { OrderStatus.Cancelled, order => OrderStateFactory.Create(order.Status).Cancel(order) },
+        { OrderStatus.OnTheWay, order => OrderStateFactory.Create(order.Status).MarkOnTheWay(order) },
+        { OrderStatus.Delivered, order => OrderStateFactory.Create(order.Status).Deliver(order) },
+        { OrderStatus.NotDelivered, order => OrderStateFactory.Create(order.Status).MarkNotDelivered(order) },
+        { OrderStatus.Delayed, order => OrderStateFactory.Create(order.Status).MarkDelayed(order) },
+    };
+
     public UpdateOrderStatusResponseDTO ChangeStatus(int orderId, OrderStatus target, UserRole role)
     {
-        throw new NotImplementedException();
+        if (!StatusDispatch.ContainsKey(target))
+        {
+            throw new ArgumentException($"No se puede cambiar un pedido al estado {target}.");
+        }
+
+        OrderTransitionPolicy.AssertCanTransition(role, target);
+
+        var order = _orderRepository.GetOrderById(orderId)
+            ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
+
+        StatusDispatch[target](order);
+
+        order.UpdatedAt = DateTime.Now;
+        _orderRepository.Update(order);
+
+        return new UpdateOrderStatusResponseDTO
+        {
+            OrderId = order.Id,
+            Status = order.Status.ToString(),
+            UpdatedAt = order.UpdatedAt
+        };
     }
 }
