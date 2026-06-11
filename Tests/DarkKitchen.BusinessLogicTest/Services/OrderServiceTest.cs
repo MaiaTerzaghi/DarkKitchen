@@ -19,6 +19,32 @@ public class OrderServiceTest
     private Mock<IPricingService> _pricingServiceMock = null!;
     private Mock<IRepository<User>> _userRepositoryMock = null!;
     private Mock<IRepository<ShippingType>> _shippingTypeRepositoryMock = null!;
+
+    private const string Val1234 = "1234";
+    private const string Val18DeJulio = "18 de Julio";
+    private const string Express = "Express";
+    private const string Val2b = "2B";
+    private const string Juan = "Juan";
+    private const string Perez = "Perez";
+    private const string Val59899000000 = "+59899000000";
+    private const string Hamburguesa = "Hamburguesa";
+    private const string JuanPerez = "Juan Perez";
+    private const string Pending = "Pending";
+    private const string PizzaNapolitana = "Pizza napolitana";
+    private const string JuanTestCom = "juan@test.com";
+    private const string Cancelled = "Cancelled";
+    private const string PizzaNapolitana2 = "Pizza Napolitana";
+    private const string Prepared = "Prepared";
+    private const string Delayed = "Delayed";
+    private const string Delivered = "Delivered";
+    private const string Inexistente = "Inexistente";
+    private const string MariaLopez = "Maria Lopez";
+    private const string Notdelivered = "NotDelivered";
+    private const string Ontheway = "OnTheWay";
+    private const string P0001 = "P0001";
+    private const string PizzaMargherita = "Pizza Margherita";
+    private const string Rivera = "Rivera";
+    private const string Standard = "Standard";
     private OrderService _service = null!;
 
     [TestInitialize]
@@ -33,7 +59,7 @@ public class OrderServiceTest
                             .Returns(new User { Id = 1, Role = UserRole.Client });
 
         _shippingTypeRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<ShippingType, bool>>>()))
-                            .Returns(new ShippingType { Id = 1, Name = "Express", Cost = 50.0 });
+                            .Returns(new ShippingType { Id = 1, Name = Express, Cost = 50.0 });
 
         _service = new OrderService(
             _orderRepositoryMock.Object,
@@ -49,12 +75,12 @@ public class OrderServiceTest
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
-            ShippingType = "Express",
+            ShippingType = Express,
             Address = new AddressDTO
             {
-                Street = "18 de Julio",
-                DoorNumber = "1234",
-                Apartment = "2B"
+                Street = Val18DeJulio,
+                DoorNumber = Val1234,
+                Apartment = Val2b
             },
             Items = []
         };
@@ -70,7 +96,7 @@ public class OrderServiceTest
             Id = 1,
             ClientId = 1,
             Status = OrderStatus.Pending,
-            Client = new User { Id = 1, Name = "Juan", LastName = "Perez", Phone = "+59899000000" },
+            Client = new User { Id = 1, Name = Juan, LastName = Perez, Phone = Val59899000000 },
             Items = [new OrderItem { ProductId = 1, Quantity = 2, Product = new Product { Id = 1, Price = 100.0 } }]
         };
 
@@ -104,22 +130,22 @@ public class OrderServiceTest
                 Client = new User
                 {
                     Id = 10,
-                    Name = "Juan",
-                    LastName = "Perez",
-                    Email = "juan@test.com",
-                    Phone = "+59899000000"
+                    Name = Juan,
+                    LastName = Perez,
+                    Email = JuanTestCom,
+                    Phone = Val59899000000
                 },
                 Date = new DateTime(2026, 1, 10),
                 Status = OrderStatus.Pending,
-                Street = "18 de Julio",
-                DoorNumber = "1234",
+                Street = Val18DeJulio,
+                DoorNumber = Val1234,
                 Items =
                 [
                     new OrderItem
                     {
                         ProductId = 1,
                         Quantity = 2,
-                        Product = new Product { Name = "Hamburguesa" }
+                        Product = new Product { Name = Hamburguesa }
                     }
 
                 ]
@@ -135,8 +161,8 @@ public class OrderServiceTest
         Assert.IsNotNull(result);
         Assert.AreEqual(1, result.Items.Count);
         Assert.AreEqual(1, result.Items[0].OrderId);
-        Assert.AreEqual("Pending", result.Items[0].Status);
-        Assert.AreEqual("Hamburguesa", result.Items[0].Items[0].ProductName);
+        Assert.AreEqual(Pending, result.Items[0].Status);
+        Assert.AreEqual(Hamburguesa, result.Items[0].Items[0].ProductName);
         Assert.AreEqual(2, result.Items[0].Items[0].Quantity);
     }
 
@@ -151,8 +177,8 @@ public class OrderServiceTest
         var request = new CreateOrderRequestDTO
         {
             ClientId = 99,
-            ShippingType = "Express",
-            Address = new AddressDTO { Street = "18 de Julio", DoorNumber = "1234" },
+            ShippingType = Express,
+            Address = new AddressDTO { Street = Val18DeJulio, DoorNumber = Val1234 },
             Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 1 }]
         };
 
@@ -162,7 +188,7 @@ public class OrderServiceTest
     [TestMethod]
     public void GetOrderDetail_WhenOrderExists_ReturnsDetail()
     {
-        var product = new Product { Id = 1, Name = "Pizza napolitana", Price = 100.0 };
+        var product = new Product { Id = 1, Name = PizzaNapolitana, Price = 100.0 };
         var order = new Order
         {
             Id = 1,
@@ -181,7 +207,7 @@ public class OrderServiceTest
 
         Assert.IsNotNull(result);
         Assert.AreEqual(1, result.OrderId);
-        Assert.AreEqual("Pending", result.Status);
+        Assert.AreEqual(Pending, result.Status);
         Assert.AreEqual(1, result.Items.Count);
     }
 
@@ -194,8 +220,8 @@ public class OrderServiceTest
         var product = new Product
         {
             Id = 1,
-            Code = "P0001",
-            Name = "Pizza Napolitana",
+            Code = P0001,
+            Name = PizzaNapolitana2,
             Images = "/9j/2Q=="
         };
 
@@ -214,7 +240,7 @@ public class OrderServiceTest
 
         Assert.IsNotNull(result);
         Assert.AreEqual(1, result.Count);
-        Assert.AreEqual("Pizza Napolitana", result[0].Name);
+        Assert.AreEqual(PizzaNapolitana2, result[0].Name);
         Assert.AreEqual(10, result[0].Quantity);
     }
 
@@ -223,8 +249,8 @@ public class OrderServiceTest
     {
         var expectedReport = new List<(int Year, int Month, int ClientId, string ClientName, double Total)>
         {
-            (2026, 1, 1, "Juan Perez", 500.0),
-            (2026, 1, 2, "Juan Perez", 300.0)
+            (2026, 1, 1, JuanPerez, 500.0),
+            (2026, 1, 2, JuanPerez, 300.0)
         };
 
         _orderRepositoryMock
@@ -249,12 +275,12 @@ public class OrderServiceTest
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
-            ShippingType = "Express",
+            ShippingType = Express,
             Address = new AddressDTO
             {
                 Street = string.Empty,
-                DoorNumber = "1234",
-                Apartment = "2B"
+                DoorNumber = Val1234,
+                Apartment = Val2b
             },
             Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 1 }]
         };
@@ -279,12 +305,12 @@ public class OrderServiceTest
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
-            ShippingType = "Express",
+            ShippingType = Express,
             Address = new AddressDTO
             {
-                Street = "18 de Julio",
+                Street = Val18DeJulio,
                 DoorNumber = string.Empty,
-                Apartment = "2B"
+                Apartment = Val2b
             },
             Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 1 }]
         };
@@ -308,10 +334,10 @@ public class OrderServiceTest
         var client = new User
         {
             Id = 42,
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899000000"
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899000000
         };
         var order = new Order
         {
@@ -320,8 +346,8 @@ public class OrderServiceTest
             Client = client,
             Date = new DateTime(2026, 4, 20),
             Status = OrderStatus.Pending,
-            Street = "Rivera",
-            DoorNumber = "1234",
+            Street = Rivera,
+            DoorNumber = Val1234,
             Items = []
         };
 
@@ -340,9 +366,9 @@ public class OrderServiceTest
 
         Assert.AreEqual(1, result.Items.Count);
         Assert.AreEqual(42, result.Items[0].Client.Id);
-        Assert.AreEqual("Juan", result.Items[0].Client.Name);
-        Assert.AreEqual("Perez", result.Items[0].Client.LastName);
-        Assert.AreEqual("+59899000000", result.Items[0].Client.Phone);
+        Assert.AreEqual(Juan, result.Items[0].Client.Name);
+        Assert.AreEqual(Perez, result.Items[0].Client.LastName);
+        Assert.AreEqual(Val59899000000, result.Items[0].Client.Phone);
     }
 
     [TestMethod]
@@ -351,12 +377,12 @@ public class OrderServiceTest
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
-            ShippingType = "Express",
+            ShippingType = Express,
             Address = new AddressDTO
             {
-                Street = "18 de Julio",
-                DoorNumber = "1234",
-                Apartment = "2B"
+                Street = Val18DeJulio,
+                DoorNumber = Val1234,
+                Apartment = Val2b
             },
             Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
         };
@@ -395,12 +421,12 @@ public class OrderServiceTest
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
-            ShippingType = "Express",
+            ShippingType = Express,
             Address = new AddressDTO
             {
-                Street = "18 de Julio",
-                DoorNumber = "1234",
-                Apartment = "2B"
+                Street = Val18DeJulio,
+                DoorNumber = Val1234,
+                Apartment = Val2b
             },
             Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
         };
@@ -439,8 +465,8 @@ public class OrderServiceTest
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
-            ShippingType = "Standard",
-            Address = new AddressDTO { Street = "18 de Julio", DoorNumber = "1234", Apartment = "2B" },
+            ShippingType = Standard,
+            Address = new AddressDTO { Street = Val18DeJulio, DoorNumber = Val1234, Apartment = Val2b },
             Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
         };
 
@@ -478,12 +504,12 @@ public class OrderServiceTest
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
-            ShippingType = "Express",
+            ShippingType = Express,
             Address = new AddressDTO
             {
-                Street = "18 de Julio",
-                DoorNumber = "1234",
-                Apartment = "2B"
+                Street = Val18DeJulio,
+                DoorNumber = Val1234,
+                Apartment = Val2b
             },
             Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
         };
@@ -522,12 +548,12 @@ public class OrderServiceTest
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
-            ShippingType = "Express",
+            ShippingType = Express,
             Address = new AddressDTO
             {
-                Street = "18 de Julio",
-                DoorNumber = "1234",
-                Apartment = "2B"
+                Street = Val18DeJulio,
+                DoorNumber = Val1234,
+                Apartment = Val2b
             },
             Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
         };
@@ -566,12 +592,12 @@ public class OrderServiceTest
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
-            ShippingType = "Express",
+            ShippingType = Express,
             Address = new AddressDTO
             {
-                Street = "18 de Julio",
-                DoorNumber = "1234",
-                Apartment = "2B"
+                Street = Val18DeJulio,
+                DoorNumber = Val1234,
+                Apartment = Val2b
             },
             Items = [new OrderItemRequestDTO { ProductId = 1, Quantity = 2 }]
         };
@@ -613,7 +639,7 @@ public class OrderServiceTest
             ClientId = 1,
             Status = OrderStatus.Pending,
             Total = 500.0,
-            Client = new User { Id = 1, Name = "Juan", LastName = "Perez", Phone = "+59899000000" },
+            Client = new User { Id = 1, Name = Juan, LastName = Perez, Phone = Val59899000000 },
             Items = [new OrderItem { ProductId = 1, Quantity = 2, Product = new Product { Id = 1, Price = 100.0 } }]
         };
 
@@ -631,7 +657,7 @@ public class OrderServiceTest
     [TestMethod]
     public void GetOrderDetail_WhenOrderExists_ReturnsPersistedTotal()
     {
-        var product = new Product { Id = 1, Name = "Pizza napolitana", Price = 100.0 };
+        var product = new Product { Id = 1, Name = PizzaNapolitana, Price = 100.0 };
         var order = new Order
         {
             Id = 1,
@@ -655,7 +681,7 @@ public class OrderServiceTest
     [TestMethod]
     public void GetOrderDetail_WhenOrderExists_ReturnsPersistedUnitPrice()
     {
-        var product = new Product { Id = 1, Name = "Pizza napolitana", Price = 150.0 };
+        var product = new Product { Id = 1, Name = PizzaNapolitana, Price = 150.0 };
         var order = new Order
         {
             Id = 1,
@@ -682,8 +708,8 @@ public class OrderServiceTest
     {
         var reportData = new List<(int Year, int Month, int ClientId, string ClientName, double Total)>
         {
-            (2026, 4, 1, "Juan Perez", 500.0),
-            (2026, 4, 2, "Maria Lopez", 300.0)
+            (2026, 4, 1, JuanPerez, 500.0),
+            (2026, 4, 2, MariaLopez, 300.0)
         };
         _orderRepositoryMock
             .Setup(r => r.GetSalesReport(1, 20))
@@ -713,22 +739,22 @@ public class OrderServiceTest
                 Client = new User
                 {
                     Id = 10,
-                    Name = "Juan",
-                    LastName = "Perez",
-                    Email = "juan@test.com",
-                    Phone = "+59899000000"
+                    Name = Juan,
+                    LastName = Perez,
+                    Email = JuanTestCom,
+                    Phone = Val59899000000
                 },
                 Date = new DateTime(2026, 1, 10),
                 Status = OrderStatus.Pending,
-                Street = "18 de Julio",
-                DoorNumber = "1234",
+                Street = Val18DeJulio,
+                DoorNumber = Val1234,
                 Items =
                 [
                     new OrderItem
                     {
                         ProductId = 1,
                         Quantity = 2,
-                        Product = new Product { Name = "Hamburguesa" }
+                        Product = new Product { Name = Hamburguesa }
                     }
 
                 ]
@@ -745,10 +771,10 @@ public class OrderServiceTest
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual(1, result[0].OrderId);
         Assert.AreEqual(10, result[0].Client.Id);
-        Assert.AreEqual("Juan", result[0].Client.Name);
-        Assert.AreEqual("Perez", result[0].Client.LastName);
-        Assert.AreEqual("Pending", result[0].Status);
-        Assert.AreEqual("Hamburguesa", result[0].Items[0].ProductName);
+        Assert.AreEqual(Juan, result[0].Client.Name);
+        Assert.AreEqual(Perez, result[0].Client.LastName);
+        Assert.AreEqual(Pending, result[0].Status);
+        Assert.AreEqual(Hamburguesa, result[0].Items[0].ProductName);
         Assert.AreEqual(2, result[0].Items[0].Quantity);
     }
 
@@ -762,7 +788,7 @@ public class OrderServiceTest
                 new OrderPreviewItemDTO
                 {
                     ProductId = 1,
-                    ProductName = "Pizza Margherita",
+                    ProductName = PizzaMargherita,
                     Quantity = 1,
                     UnitPrice = 350.0,
                     DiscountPercentage = 35,
@@ -786,7 +812,7 @@ public class OrderServiceTest
             new OrderItemRequestDTO { ProductId = 1, Quantity = 1 }
         };
 
-        var result = _service.PreviewOrder(items, "Express");
+        var result = _service.PreviewOrder(items, Express);
 
         Assert.IsNotNull(result);
         Assert.AreEqual(350.0, result.Subtotal);
@@ -809,7 +835,7 @@ public class OrderServiceTest
             new OrderItemRequestDTO { ProductId = 1, Quantity = 1 }
         };
 
-        _service.PreviewOrder(items, "Inexistente");
+        _service.PreviewOrder(items, Inexistente);
     }
 
     [TestMethod]
@@ -823,7 +849,7 @@ public class OrderServiceTest
 
         Assert.IsNotNull(result);
         Assert.AreEqual(1, result.OrderId);
-        Assert.AreEqual("Prepared", result.Status);
+        Assert.AreEqual(Prepared, result.Status);
     }
 
     [TestMethod]
@@ -832,7 +858,7 @@ public class OrderServiceTest
         var order = new Order { Id = 1, Status = OrderStatus.Pending };
         _orderRepositoryMock.Setup(r => r.GetOrderById(1)).Returns(order);
         _orderRepositoryMock.Setup(r => r.Update(It.IsAny<Order>())).Returns(order);
-        Assert.AreEqual("Cancelled", _service.ChangeStatus(1, OrderStatus.Cancelled, UserRole.Administrative).Status);
+        Assert.AreEqual(Cancelled, _service.ChangeStatus(1, OrderStatus.Cancelled, UserRole.Administrative).Status);
     }
 
     [TestMethod]
@@ -841,7 +867,7 @@ public class OrderServiceTest
         var order = new Order { Id = 1, Status = OrderStatus.Pending };
         _orderRepositoryMock.Setup(r => r.GetOrderById(1)).Returns(order);
         _orderRepositoryMock.Setup(r => r.Update(It.IsAny<Order>())).Returns(order);
-        Assert.AreEqual("Delayed", _service.ChangeStatus(1, OrderStatus.Delayed, UserRole.Dispatcher).Status);
+        Assert.AreEqual(Delayed, _service.ChangeStatus(1, OrderStatus.Delayed, UserRole.Dispatcher).Status);
     }
 
     [TestMethod]
@@ -850,7 +876,7 @@ public class OrderServiceTest
         var order = new Order { Id = 1, Status = OrderStatus.Delayed };
         _orderRepositoryMock.Setup(r => r.GetOrderById(1)).Returns(order);
         _orderRepositoryMock.Setup(r => r.Update(It.IsAny<Order>())).Returns(order);
-        Assert.AreEqual("Prepared", _service.ChangeStatus(1, OrderStatus.Prepared, UserRole.Dispatcher).Status);
+        Assert.AreEqual(Prepared, _service.ChangeStatus(1, OrderStatus.Prepared, UserRole.Dispatcher).Status);
     }
 
     [TestMethod]
@@ -859,7 +885,7 @@ public class OrderServiceTest
         var order = new Order { Id = 1, Status = OrderStatus.Delayed };
         _orderRepositoryMock.Setup(r => r.GetOrderById(1)).Returns(order);
         _orderRepositoryMock.Setup(r => r.Update(It.IsAny<Order>())).Returns(order);
-        Assert.AreEqual("Cancelled", _service.ChangeStatus(1, OrderStatus.Cancelled, UserRole.Administrative).Status);
+        Assert.AreEqual(Cancelled, _service.ChangeStatus(1, OrderStatus.Cancelled, UserRole.Administrative).Status);
     }
 
     [TestMethod]
@@ -868,7 +894,7 @@ public class OrderServiceTest
         var order = new Order { Id = 1, Status = OrderStatus.Prepared };
         _orderRepositoryMock.Setup(r => r.GetOrderById(1)).Returns(order);
         _orderRepositoryMock.Setup(r => r.Update(It.IsAny<Order>())).Returns(order);
-        Assert.AreEqual("OnTheWay", _service.ChangeStatus(1, OrderStatus.OnTheWay, UserRole.Dispatcher).Status);
+        Assert.AreEqual(Ontheway, _service.ChangeStatus(1, OrderStatus.OnTheWay, UserRole.Dispatcher).Status);
     }
 
     [TestMethod]
@@ -877,7 +903,7 @@ public class OrderServiceTest
         var order = new Order { Id = 1, Status = OrderStatus.OnTheWay };
         _orderRepositoryMock.Setup(r => r.GetOrderById(1)).Returns(order);
         _orderRepositoryMock.Setup(r => r.Update(It.IsAny<Order>())).Returns(order);
-        Assert.AreEqual("Delivered", _service.ChangeStatus(1, OrderStatus.Delivered, UserRole.Dispatcher).Status);
+        Assert.AreEqual(Delivered, _service.ChangeStatus(1, OrderStatus.Delivered, UserRole.Dispatcher).Status);
     }
 
     [TestMethod]
@@ -886,7 +912,7 @@ public class OrderServiceTest
         var order = new Order { Id = 1, Status = OrderStatus.OnTheWay };
         _orderRepositoryMock.Setup(r => r.GetOrderById(1)).Returns(order);
         _orderRepositoryMock.Setup(r => r.Update(It.IsAny<Order>())).Returns(order);
-        Assert.AreEqual("NotDelivered", _service.ChangeStatus(1, OrderStatus.NotDelivered, UserRole.Dispatcher).Status);
+        Assert.AreEqual(Notdelivered, _service.ChangeStatus(1, OrderStatus.NotDelivered, UserRole.Dispatcher).Status);
     }
 
     [TestMethod]
