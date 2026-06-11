@@ -22,7 +22,7 @@ public class OrderService(
 
     public CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request, int clientId)
     {
-        ValidateClient(clientId);
+        ValidateClientExists(clientId);
         ValidateItems(request.Items);
 
         var shippingType = ResolveShippingType(request.ShippingType);
@@ -33,7 +33,7 @@ public class OrderService(
         return BuildOrderResponse(clientId, saved.Id, pricing.Subtotal, pricing.Vat, pricing.ShippingCost, pricing.Total);
     }
 
-    private void ValidateClient(int clientId)
+    private void ValidateClientExists(int clientId)
     {
         _ = _userRepository.Get(u => u.Id == clientId)
             ?? throw new NotFoundException($"Cliente con id {clientId} no encontrado.");
