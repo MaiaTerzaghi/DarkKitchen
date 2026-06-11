@@ -23,37 +23,15 @@ public class OrderRepository(DarkKitchenContext context)
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
             .Include(o => o.Client)
-            .AsQueryable();
+            .Where(o => !clientId.HasValue || o.ClientId == clientId.Value)
+            .Where(o => !dateFrom.HasValue || o.Date.Date >= dateFrom.Value.Date)
+            .Where(o => !dateTo.HasValue || o.Date.Date <= dateTo.Value.Date)
+            .Where(o => string.IsNullOrEmpty(street) || o.Street.Contains(street))
+            .Where(o => !status.HasValue || o.Status == status.Value)
+            .OrderByDescending(o => o.Date);
+        var totalCount = query.Count();
 
-        if(clientId.HasValue)
-        {
-            query = query.Where(o => o.ClientId == clientId.Value);
-        }
-
-        if(dateFrom.HasValue)
-        {
-            query = query.Where(o => o.Date.Date >= dateFrom.Value.Date);
-        }
-
-        if(dateTo.HasValue)
-        {
-            query = query.Where(o => o.Date.Date <= dateTo.Value.Date);
-        }
-
-        if(!string.IsNullOrEmpty(street))
-        {
-            query = query.Where(o => o.Street.Contains(street));
-        }
-
-        if(status.HasValue)
-        {
-            query = query.Where(o => o.Status == status.Value);
-        }
-
-        var orderedQuery = query.OrderByDescending(o => o.Date);
-        var totalCount = orderedQuery.Count();
-
-        var items = orderedQuery
+        var items = query
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToList();
