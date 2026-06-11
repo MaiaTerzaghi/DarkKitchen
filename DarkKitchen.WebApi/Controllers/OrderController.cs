@@ -74,7 +74,7 @@ public class OrderController(IOrderService orderService) : DarkKitchenController
     [HttpPatch("{id}/status")]
     public IActionResult ChangeStatus(int id, [FromBody] ChangeOrderStatusRequestDTO request)
     {
-        var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
+        var requestingUser = GetRequestingUser();
         var response = _orderService.ChangeStatus(id, request.Status, requestingUser.Role);
         return Ok(response);
     }
