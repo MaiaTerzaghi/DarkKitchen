@@ -6,6 +6,9 @@ namespace DarkKitchen.BusinessLogicTest.Security;
 [TestClass]
 public sealed class PasswordManagerTest
 {
+    private const string Contrasena1 = "Contrasena1!@#$%";
+    private const string Otracontrasena1 = "OtraContrasena1!";
+
     private IPasswordManager _passwordManager = null!;
 
     [TestInitialize]
@@ -17,7 +20,7 @@ public sealed class PasswordManagerTest
     [TestMethod]
     public void ComputeHash_WhenCalledTwiceWithSameInput_ReturnsSameHash()
     {
-        var password = "Contrasena1!@#$%";
+        var password = Contrasena1;
 
         var hash1 = _passwordManager.ComputeHash(password);
         var hash2 = _passwordManager.ComputeHash(password);
@@ -28,8 +31,8 @@ public sealed class PasswordManagerTest
     [TestMethod]
     public void ComputeHash_WhenDifferentInputs_ReturnsDifferentHashes()
     {
-        var password1 = "Contrasena1!@#$%";
-        var password2 = "OtraContrasena1!";
+        var password1 = Contrasena1;
+        var password2 = Otracontrasena1;
 
         var hash1 = _passwordManager.ComputeHash(password1);
         var hash2 = _passwordManager.ComputeHash(password2);
