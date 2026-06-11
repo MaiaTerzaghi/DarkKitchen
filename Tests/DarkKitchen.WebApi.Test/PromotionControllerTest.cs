@@ -13,6 +13,12 @@ namespace DarkKitchen.WebApi.Test;
 public sealed class PromotionControllerTest
 {
     private Mock<IPromotionService> _promotionServiceMock = null!;
+
+    private const string AdminEmailCom = "admin@email.com";
+    private const string BlackFriday = "Black Friday";
+    private const string BlackFridayUpdated = "Black Friday Updated";
+    private const string Error = "Error";
+    private const string Requestinguser = "RequestingUser";
     private PromotionController _controller = null!;
 
     [TestInitialize]
@@ -23,7 +29,7 @@ public sealed class PromotionControllerTest
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() }
         };
-        _controller.HttpContext.Items["RequestingUser"] = new User { Id = 1, Email = "admin@email.com" };
+        _controller.HttpContext.Items[Requestinguser] = new User { Id = 1, Email = AdminEmailCom };
     }
 
     [TestMethod]
@@ -44,7 +50,7 @@ public sealed class PromotionControllerTest
     {
         _promotionServiceMock
             .Setup(s => s.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>()))
-            .Throws(new ArgumentException("Error"));
+            .Throws(new ArgumentException(Error));
 
         _controller.GetActivePromotions(new PromotionFilterDTO());
     }
@@ -54,7 +60,7 @@ public sealed class PromotionControllerTest
     {
         var request = new CreatePromotionRequestDTO
         {
-            Name = "Black Friday",
+            Name = BlackFriday,
             DiscountPercentage = 10,
             ValidFrom = new DateTime(2026, 1, 25),
             ValidTo = new DateTime(2026, 1, 30)
@@ -63,7 +69,7 @@ public sealed class PromotionControllerTest
         var expectedResponse = new PromotionResponseDTO
         {
             Id = 1,
-            Name = "Black Friday",
+            Name = BlackFriday,
             DiscountPercentage = 10,
             ValidFrom = new DateTime(2026, 1, 25),
             ValidTo = new DateTime(2026, 1, 30)
@@ -89,7 +95,7 @@ public sealed class PromotionControllerTest
 
         var request = new UpdatePromotionRequestDTO
         {
-            Name = "Black Friday Updated",
+            Name = BlackFridayUpdated,
             DiscountPercentage = 20,
             ValidFrom = new DateTime(2026, 1, 25),
             ValidTo = new DateTime(2026, 1, 30)
@@ -98,7 +104,7 @@ public sealed class PromotionControllerTest
         var expectedResponse = new PromotionResponseDTO
         {
             Id = promotionId,
-            Name = "Black Friday Updated",
+            Name = BlackFridayUpdated,
             DiscountPercentage = 20,
             ValidFrom = new DateTime(2026, 1, 25),
             ValidTo = new DateTime(2026, 1, 30)
@@ -155,7 +161,7 @@ public sealed class PromotionControllerTest
         var request = new CreatePromotionRequestDTO();
         _controller.CreatePromotion(request);
 
-        _promotionServiceMock.Verify(s => s.CreatePromotion(request, "admin@email.com"), Times.Once);
+        _promotionServiceMock.Verify(s => s.CreatePromotion(request, AdminEmailCom), Times.Once);
     }
 
     [TestMethod]
@@ -168,6 +174,6 @@ public sealed class PromotionControllerTest
         var request = new UpdatePromotionRequestDTO();
         _controller.UpdatePromotion(5, request);
 
-        _promotionServiceMock.Verify(s => s.UpdatePromotion(5, request, "admin@email.com"), Times.Once);
+        _promotionServiceMock.Verify(s => s.UpdatePromotion(5, request, AdminEmailCom), Times.Once);
     }
 }
