@@ -12,13 +12,19 @@ namespace DarkKitchen.WebApi.Test;
 [TestClass]
 public sealed class ImportControllerTest
 {
+    private const string Json = "JSON";
+    private const string AdminEmailCom = "admin@email.com";
+    private const string Requestinguser = "RequestingUser";
+    private const string Xml = "XML";
+    private const string ProductsJson = "products.json";
+
     [TestMethod]
     public void GetAvailableImporters_WhenCalled_ReturnsOkWithImporters()
     {
         var importers = new List<ImporterInfoDTO>
         {
-            new ImporterInfoDTO { Name = "JSON" },
-            new ImporterInfoDTO { Name = "XML" }
+            new ImporterInfoDTO { Name = Json },
+            new ImporterInfoDTO { Name = Xml }
         };
 
         var importServiceMock = new Mock<IImportService>();
@@ -38,20 +44,20 @@ public sealed class ImportControllerTest
     {
         var request = new ImportProductsRequestDTO
         {
-            ImporterName = "JSON",
+            ImporterName = Json,
             Content = "[{ \"code\": \"P0001\" }]",
-            FileName = "products.json"
+            FileName = ProductsJson
         };
 
         var importResult = new ImportResultDTO { ImportedCount = 1 };
 
         var importServiceMock = new Mock<IImportService>();
-        importServiceMock.Setup(s => s.Import(request, "admin@email.com"))
+        importServiceMock.Setup(s => s.Import(request, AdminEmailCom))
                         .Returns(importResult);
 
         var controller = new ImportController(importServiceMock.Object);
         controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
-        controller.HttpContext.Items["RequestingUser"] = new User { Id = 1, Email = "admin@email.com" };
+        controller.HttpContext.Items[Requestinguser] = new User { Id = 1, Email = AdminEmailCom };
 
         var result = controller.Import(request);
 
