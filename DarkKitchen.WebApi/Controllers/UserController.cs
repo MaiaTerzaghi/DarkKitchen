@@ -1,7 +1,6 @@
-using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IBusinessLogic;
-using DarkKitchen.WebApi.Filters;
+using DarkKitchen.WebApi.Filters.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DarkKitchen.WebApi.Controllers;
@@ -19,7 +18,7 @@ public class UserController(IUserService userService) : DarkKitchenControllerBas
         return Created(string.Empty, new { id });
     }
 
-    [AuthorizeRoles(UserRole.Administrative)]
+    [AdministrativeOnly]
     [HttpGet]
     public IActionResult GetUsers([FromQuery] string? name, [FromQuery] string? lastName, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
     {
@@ -27,7 +26,7 @@ public class UserController(IUserService userService) : DarkKitchenControllerBas
         return Ok(users);
     }
 
-    [AuthorizeRoles(UserRole.Administrative)]
+    [AdministrativeOnly]
     [HttpPut("{id}")]
     public IActionResult UpdateUser(int id, UpdateUserRequestDTO request)
     {
@@ -36,7 +35,7 @@ public class UserController(IUserService userService) : DarkKitchenControllerBas
         return Ok(result);
     }
 
-    [AuthorizeRoles(UserRole.Administrative)]
+    [AdministrativeOnly]
     [HttpDelete("{id}")]
     public IActionResult DeleteUser(int id)
     {
