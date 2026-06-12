@@ -27,6 +27,8 @@ export class UserListComponent implements OnInit {
 
   showModal: boolean = false;
   editingUser: UserResponse | null = null;
+  showDeleteConfirm: boolean = false;
+  userToDelete: UserResponse | null = null;
 
   formData = {
     name: '',
@@ -177,15 +179,29 @@ export class UserListComponent implements OnInit {
   }
 
   deleteUser(user: UserResponse): void {
-    if (!confirm(`¿Estás seguro de eliminar a ${user.name} ${user.lastName}?`)) return;
+    this.userToDelete = user;
+    this.showDeleteConfirm = true;
+  }
 
-    this._userService.deleteUser(user.id).subscribe({
+  cancelDelete(): void {
+    this.showDeleteConfirm = false;
+    this.userToDelete = null;
+  }
+
+  confirmDelete(): void {
+    if (!this.userToDelete) return;
+
+    this._userService.deleteUser(this.userToDelete.id).subscribe({
       next: () => {
         this.successMessage = 'Usuario eliminado correctamente';
+        this.showDeleteConfirm = false;
+        this.userToDelete = null;
         this.loadUsers();
       },
       error: (err) => {
         this.errorMessage = err || 'Error al eliminar usuario';
+        this.showDeleteConfirm = false;
+        this.userToDelete = null;
       },
     });
   }

@@ -464,3 +464,25 @@ tr:hover {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
 }
+
+.delete-confirm-modal {
+  max-width: 440px;
+}
+
+.delete-confirm-modal .modal-body p {
+  color: #e5e7eb;
+}
+
+.delete-warning {
+  color: #ef4444;
+  font-size: 0.85rem;
+  margin-top: 8px;
+}
+
+.delete-btn {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+}
+
+.delete-btn:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+}
