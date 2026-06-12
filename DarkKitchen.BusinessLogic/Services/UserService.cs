@@ -65,6 +65,7 @@ public class UserService(IRepository<User> userRepository, IPasswordManager pass
     {
         var (users, totalCount) = _userRepository.GetAll(
             predicate: u =>
+            u.Role != UserRole.Client &&
             (name == null || u.Name.Contains(name)) &&
             (lastName == null || u.LastName.Contains(lastName)),
             page: page,
