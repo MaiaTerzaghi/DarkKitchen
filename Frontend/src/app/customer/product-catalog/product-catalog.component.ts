@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../../../backend/services/product/product.service';
 import { CartService } from '../services/cart.service';
+import { PromotionService } from '../../../backend/services/promotion/promotion.service';
+import PromotionResponse from '../../../backend/services/promotion/models/PromotionResponse';
 import ProductResponse from '../../../backend/services/product/models/ProductResponse';
 
 @Component({
@@ -11,6 +13,7 @@ import ProductResponse from '../../../backend/services/product/models/ProductRes
 })
 export class ProductCatalogComponent implements OnInit {
   products: ProductResponse[] = [];
+  promotions: PromotionResponse[] = [];
   filteredProducts: ProductResponse[] = [];
   categories: string[] = [];
   selectedCategory: string = 'Todos';
@@ -28,11 +31,13 @@ export class ProductCatalogComponent implements OnInit {
 
   constructor(
     private readonly _productService: ProductService,
-    private readonly _cartService: CartService
+    private readonly _cartService: CartService,
+    private readonly _promotionService: PromotionService
   ) {}
 
   ngOnInit(): void {
     this.loadProducts();
+    this.loadPromotions();
   }
 
   private loadProducts(): void {
@@ -53,6 +58,26 @@ export class ProductCatalogComponent implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  private loadPromotions(): void {
+    this._promotionService.getActivePromotions({ date: new Date().toISOString().split('T')[0] }).subscribe({
+      next: (data) => {
+        this.promotions = data;
+      },
+    });
+  }
+
+  getActivePromotion(product: ProductResponse): PromotionResponse | null {
+    return this.promotions.find(p =>
+      p.products?.some(prod => prod.id === product.id)
+    ) || null;
+  }
+
+  getDiscountedPrice(product: ProductResponse): number | null {
+    const promo = this.getActivePromotion(product);
+    if (!promo) return null;
+    return product.price * (1 - Number(promo.discountPercentage) / 100);
   }
 
   onPageChange(page: number): void {

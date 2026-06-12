@@ -99,7 +99,17 @@
         <p class="product-description">{{ product.commercialLine }}</p>
         <span class="category-badge">{{ product.category }}</span>
         <div class="product-footer">
-          <span class="product-price">$ {{ product.price }}</span>
+          <div class="price-container">
+            <span class="product-price" [class.price-strikethrough]="getDiscountedPrice(product) !== null">
+              $ {{ product.price }}
+            </span>
+            <span class="discount-price" *ngIf="getDiscountedPrice(product) !== null">
+              $ {{ getDiscountedPrice(product) | number:'1.2-2' }}
+            </span>
+            <span class="discount-badge" *ngIf="getActivePromotion(product) as promo">
+              -{{ promo.discountPercentage }}%
+            </span>
+          </div>
           <button class="add-cart-btn" (click)="addToCart(product)">
             <span class="material-icons">add_shopping_cart</span>
             Agregar al Carrito
