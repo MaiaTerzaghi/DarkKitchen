@@ -92,7 +92,7 @@
       <div class="top-images" *ngIf="getImageList(product.images).length > 0">
         <img
           *ngFor="let img of getImageList(product.images)"
-          [src]="img"
+          [src]="'data:image/jpeg;base64,' + img"
           alt="{{ product.name }}"
           class="product-thumb"
         />
