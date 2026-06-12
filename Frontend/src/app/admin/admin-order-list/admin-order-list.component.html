@@ -152,6 +152,14 @@
       </div>
 
       <div class="detail-section">
+        <label>Dirección</label>
+        <p class="detail-value">
+          {{ selectedOrder.street }} {{ selectedOrder.doorNumber }}
+          <span *ngIf="selectedOrder.apartment"> - Apto: {{ selectedOrder.apartment }}</span>
+        </p>
+      </div>
+
+      <div class="detail-section">
         <label>Productos</label>
         <ul class="items-list">
           <li *ngFor="let item of selectedOrder.items">

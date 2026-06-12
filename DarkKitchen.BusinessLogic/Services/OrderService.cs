@@ -208,6 +208,9 @@ public class OrderService(
             Status = order.Status.ToString(),
             Total = order.Total,
             ItemCount = order.Items.Sum(i => i.Quantity),
+            Street = order.Street,
+            DoorNumber = order.DoorNumber,
+            Apartment = order.Apartment,
             Items = order.Items.Select(item => new OrderItemResponseDTO
             {
                 ProductName = item.Product.Name,
