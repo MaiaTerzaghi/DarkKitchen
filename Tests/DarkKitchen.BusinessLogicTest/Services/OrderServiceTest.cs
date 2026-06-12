@@ -250,8 +250,8 @@ public class OrderServiceTest
     {
         var expectedReport = new List<SalesReportItem>
         {
-            new() { Year = 2026, Month = 1, ClientId = 1, ClientName = "Juan Perez", Total = 500.0 },
-            new() { Year = 2026, Month = 1, ClientId = 2, ClientName = "Juan Perez", Total = 300.0 }
+            new() { Year = 2026, Month = 1, ClientId = 1, ClientName = JuanPerez, Total = 500.0 },
+            new() { Year = 2026, Month = 1, ClientId = 2, ClientName = JuanPerez, Total = 300.0 }
         };
 
         _orderRepositoryMock
@@ -709,8 +709,8 @@ public class OrderServiceTest
     {
         var reportData = new List<SalesReportItem>
         {
-            new() { Year = 2026, Month = 4, ClientId = 1, ClientName = "Juan Perez", Total = 500.0 },
-            new() { Year = 2026, Month = 4, ClientId = 2, ClientName = "Maria Lopez", Total = 300.0 }
+            new() { Year = 2026, Month = 4, ClientId = 1, ClientName = JuanPerez, Total = 500.0 },
+            new() { Year = 2026, Month = 4, ClientId = 2, ClientName = MariaLopez, Total = 300.0 }
         };
         _orderRepositoryMock
             .Setup(r => r.GetSalesReport(1, 20))
