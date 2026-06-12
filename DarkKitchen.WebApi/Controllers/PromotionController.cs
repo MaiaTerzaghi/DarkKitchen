@@ -16,7 +16,11 @@ public class PromotionController(IPromotionService promotionService) : DarkKitch
     [HttpGet]
     public IActionResult GetActivePromotions([FromQuery] PromotionFilterDTO filters)
     {
-        var promotions = _promotionService.GetActivePromotions(filters.Date, filters.ProductLine, filters.Product);
+        var requestingUser = GetRequestingUser();
+        var date = requestingUser.Role == UserRole.Client
+            ? DateTime.Today
+            : filters.Date;
+        var promotions = _promotionService.GetActivePromotions(date, filters.ProductLine, filters.Product);
         return Ok(promotions);
     }
 
