@@ -18,6 +18,8 @@ public sealed class ProductServiceTest
     private Mock<IAuditSubject> _auditSubjectMock = null!;
 
     private const string P0001 = "P0001";
+    private const string P0002 = "P0002";
+    private const string PizzaNapolitanaEditada = "Pizza Napolitana Editada";
     private const string PizzaNapolitana = "Pizza Napolitana";
     private const string Fritos = "Fritos";
     private const string Minutas = "Minutas";
@@ -727,23 +729,23 @@ public sealed class ProductServiceTest
     {
         var request = new CreateProductRequestDTO
         {
-            Code = "P0001",
-            Name = "Pizza Napolitana",
-            Description = "Rica pizza napolitana con tomate y albahaca",
+            Code = P0001,
+            Name = PizzaNapolitana,
+            Description = RicaPizzaNapolitanaConTomateYA,
             Price = 100.0,
-            CommercialLine = "Minutas",
-            Category = "Fritos",
+            CommercialLine = Minutas,
+            Category = Fritos,
             Images = ValidJpgBase64
         };
 
-        var existing = new Product { Id = 5, Code = "P0001" };
+        var existing = new Product { Id = 5, Code = P0001 };
 
         var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
                             .Returns(existing);
 
         var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
-        productService.CreateProduct(request, "admin@email.com");
+        productService.CreateProduct(request, AdminEmailCom);
     }
 
     [TestMethod]
@@ -752,18 +754,18 @@ public sealed class ProductServiceTest
     {
         var request = new UpdateProductRequestDTO
         {
-            Code = "P0002",
-            Name = "Pizza Napolitana",
-            Description = "Rica pizza napolitana con tomate y albahaca",
+            Code = P0002,
+            Name = PizzaNapolitana,
+            Description = RicaPizzaNapolitanaConTomateYA,
             Price = 100.0,
-            CommercialLine = "Minutas",
-            Category = "Fritos",
+            CommercialLine = Minutas,
+            Category = Fritos,
             Images = ValidJpgBase64,
             IsActive = true
         };
 
-        var currentProduct = new Product { Id = 1, Code = "P0001" };
-        var otherProduct = new Product { Id = 2, Code = "P0002" };
+        var currentProduct = new Product { Id = 1, Code = P0001 };
+        var otherProduct = new Product { Id = 2, Code = P0002 };
 
         var callCount = 0;
         var productRepositoryMock = new Mock<IRepository<Product>>();
@@ -775,7 +777,7 @@ public sealed class ProductServiceTest
                             });
 
         var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
-        productService.UpdateProduct(1, request, "admin@email.com");
+        productService.UpdateProduct(1, request, AdminEmailCom);
     }
 
     [TestMethod]
@@ -783,12 +785,12 @@ public sealed class ProductServiceTest
     {
         var request = new UpdateProductRequestDTO
         {
-            Code = "P0001",
-            Name = "Pizza Napolitana Editada",
-            Description = "Rica pizza napolitana con tomate y albahaca",
+            Code = P0001,
+            Name = PizzaNapolitanaEditada,
+            Description = RicaPizzaNapolitanaConTomateYA,
             Price = 120.0,
-            CommercialLine = "Minutas",
-            Category = "Fritos",
+            CommercialLine = Minutas,
+            Category = Fritos,
             Images = ValidJpgBase64,
             IsActive = true
         };
@@ -796,12 +798,12 @@ public sealed class ProductServiceTest
         var product = new Product
         {
             Id = 1,
-            Code = "P0001",
-            Name = "Pizza Napolitana",
-            Description = "Rica pizza napolitana con tomate y albahaca",
+            Code = P0001,
+            Name = PizzaNapolitana,
+            Description = RicaPizzaNapolitanaConTomateYA,
             Price = 100.0,
-            CommercialLine = "Minutas",
-            Category = "Fritos",
+            CommercialLine = Minutas,
+            Category = Fritos,
             Images = ValidJpgBase64,
             IsActive = true
         };
@@ -818,9 +820,9 @@ public sealed class ProductServiceTest
                             .Returns(product);
 
         var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
-        var result = productService.UpdateProduct(1, request, "admin@email.com");
+        var result = productService.UpdateProduct(1, request, AdminEmailCom);
 
         Assert.IsNotNull(result);
-        Assert.AreEqual("P0001", result.Code);
+        Assert.AreEqual(P0001, result.Code);
     }
 }
