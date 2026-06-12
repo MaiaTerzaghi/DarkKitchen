@@ -26,7 +26,6 @@ export class AdminOrderListComponent implements OnInit {
   constructor(private readonly _orderService: OrderService) {}
 
   ngOnInit(): void {
-    this.setDefaultDates();
     this.loadOrders();
   }
 
@@ -47,18 +46,17 @@ export class AdminOrderListComponent implements OnInit {
   }
 
   public loadOrders(): void {
-    if (!this.dateFrom || !this.dateTo) {
-      this.errorMessage = 'Las fechas son obligatorias';
-      return;
-    }
-
     this.loading = true;
     this.errorMessage = '';
 
-    const filters: OrderFilter = {
-      dateFrom: this.dateFrom,
-      dateTo: this.dateTo,
-    };
+    const filters: OrderFilter = {};
+
+    if (this.dateFrom) {
+      filters.dateFrom = this.dateFrom;
+    }
+    if (this.dateTo) {
+      filters.dateTo = this.dateTo;
+    }
 
     if (this.filterStatus) {
       filters.status = Number(this.filterStatus);
