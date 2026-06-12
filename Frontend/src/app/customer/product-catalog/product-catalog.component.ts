@@ -63,7 +63,7 @@ export class ProductCatalogComponent implements OnInit {
   private loadPromotions(): void {
     this._promotionService.getActivePromotions({ date: new Date().toISOString().split('T')[0] }).subscribe({
       next: (data) => {
-        this.promotions = data;
+        this.promotions = data.items;
       },
     });
   }

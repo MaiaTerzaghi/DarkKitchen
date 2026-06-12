@@ -737,20 +737,21 @@ public class OrderServiceTest
         };
 
         _orderRepositoryMock
-            .Setup(r => r.GetDispatcherOrders())
-            .Returns(ordersFromRepo);
+            .Setup(r => r.GetDispatcherOrders(It.IsAny<int>(), It.IsAny<int>()))
+            .Returns((ordersFromRepo, ordersFromRepo.Count));
 
         var result = _service.GetDispatcherOrders();
 
         Assert.IsNotNull(result);
-        Assert.AreEqual(1, result.Count);
-        Assert.AreEqual(1, result[0].OrderId);
-        Assert.AreEqual(10, result[0].Client.Id);
-        Assert.AreEqual("Juan", result[0].Client.Name);
-        Assert.AreEqual("Perez", result[0].Client.LastName);
-        Assert.AreEqual("Pending", result[0].Status);
-        Assert.AreEqual("Hamburguesa", result[0].Items[0].ProductName);
-        Assert.AreEqual(2, result[0].Items[0].Quantity);
+        Assert.AreEqual(1, result.Items.Count);
+        Assert.AreEqual(1, result.TotalCount);
+        Assert.AreEqual(1, result.Items[0].OrderId);
+        Assert.AreEqual(10, result.Items[0].Client.Id);
+        Assert.AreEqual("Juan", result.Items[0].Client.Name);
+        Assert.AreEqual("Perez", result.Items[0].Client.LastName);
+        Assert.AreEqual("Pending", result.Items[0].Status);
+        Assert.AreEqual("Hamburguesa", result.Items[0].Items[0].ProductName);
+        Assert.AreEqual(2, result.Items[0].Items[0].Quantity);
     }
 
     [TestMethod]

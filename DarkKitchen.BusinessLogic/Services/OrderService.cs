@@ -165,10 +165,17 @@ public class OrderService(
         };
     }
 
-    public List<GetOrdersResponseDTO> GetDispatcherOrders()
+    public PaginatedResponse<GetOrdersResponseDTO> GetDispatcherOrders(int page = 1, int pageSize = 20)
     {
-        var orders = _orderRepository.GetDispatcherOrders();
-        return orders.Select(MapToOrderResponse).ToList();
+        var (orders, totalCount) = _orderRepository.GetDispatcherOrders(page, pageSize);
+
+        return new PaginatedResponse<GetOrdersResponseDTO>
+        {
+            Items = orders.Select(MapToOrderResponse).ToList(),
+            TotalCount = totalCount,
+            Page = page,
+            PageSize = pageSize
+        };
     }
 
     private static OrderDetailResponseDTO MapToDetailDTO(Order order)

@@ -20,7 +20,7 @@ public class PricingService(
         var itemsWithProducts = BuildOrderItems(items);
         var orderItems = itemsWithProducts.Select(i => i.Item).ToList();
         var subtotal = CalculateSubtotal(itemsWithProducts);
-        var promotions = _promotionRepository.GetActivePromotions(DateTime.Today, null, null);
+        var (promotions, _) = _promotionRepository.GetActivePromotions(DateTime.Today, null, null);
         var discount = CalculateTotalDiscount(itemsWithProducts, promotions);
         var totals = CalculateTotals(subtotal, discount, shippingType.Cost);
 
@@ -38,7 +38,7 @@ public class PricingService(
     public OrderPreviewResponseDTO PreviewOrderPricing(List<OrderItemRequestDTO> items, ShippingType shippingType)
     {
         var itemsWithProducts = BuildOrderItems(items);
-        var promotions = _promotionRepository.GetActivePromotions(DateTime.Today, null, null);
+        var (promotions, _) = _promotionRepository.GetActivePromotions(DateTime.Today, null, null);
         var subtotal = CalculateSubtotal(itemsWithProducts);
 
         var previewItems = itemsWithProducts

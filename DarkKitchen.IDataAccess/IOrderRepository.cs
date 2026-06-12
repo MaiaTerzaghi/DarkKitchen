@@ -19,5 +19,5 @@ public interface IOrderRepository : IRepository<Order>
     Expression<Func<Order, bool>> predicate,
     int top);
     (List<SalesReportItem> Items, int TotalCount) GetSalesReport(int page, int pageSize);
-    List<Order> GetDispatcherOrders();
+    (List<Order> Items, int TotalCount) GetDispatcherOrders(int page = 1, int pageSize = 20);
 }

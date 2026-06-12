@@ -64,9 +64,9 @@ public class OrderController(IOrderService orderService) : DarkKitchenController
 
     [AuthorizeRoles(UserRole.Dispatcher)]
     [HttpGet("dispatcher")]
-    public IActionResult GetDispatcherOrders()
+    public IActionResult GetDispatcherOrders([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
     {
-        var response = _orderService.GetDispatcherOrders();
+        var response = _orderService.GetDispatcherOrders(page, pageSize);
         return Ok(response);
     }
 

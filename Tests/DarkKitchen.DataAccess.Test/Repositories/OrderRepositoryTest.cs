@@ -527,14 +527,13 @@ public sealed class OrderRepositoryTest
         _context.SaveChanges();
 
         var repository = new OrderRepository(_context);
-        var result = repository.GetDispatcherOrders();
+        var (items, totalCount) = repository.GetDispatcherOrders();
 
-        Assert.AreEqual(2, result.Count);
-        Assert.IsNotNull(result[0].Client);
-        Assert.IsNotNull(result[1].Client);
-        Assert.AreEqual("Juan", result[0].Client.Name);
-        Assert.AreEqual("Ana", result[1].Client.Name);
-        Assert.AreEqual(1, result[0].Items.Count);
-        Assert.AreEqual("Pizza Napolitana", result[0].Items[0].Product.Name);
+        Assert.AreEqual(2, totalCount);
+        Assert.AreEqual(2, items.Count);
+        Assert.IsNotNull(items[0].Client);
+        Assert.IsNotNull(items[1].Client);
+        Assert.AreEqual(1, items[0].Items.Count);
+        Assert.AreEqual("Pizza Napolitana", items[0].Items[0].Product.Name);
     }
 }

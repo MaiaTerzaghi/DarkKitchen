@@ -30,8 +30,8 @@ export class OrderService {
     return this._repository.getOrders(filters);
   }
 
-  public getDispatcherOrders(): Observable<OrderResponse[]> {
-    return this._repository.getDispatcherOrders();
+  public getDispatcherOrders(page: number = 1, pageSize: number = 20): Observable<PaginatedResponse<OrderResponse>> {
+    return this._repository.getDispatcherOrders(page, pageSize);
   }
 
   public changeStatus(id: number, status: OrderStatus): Observable<OrderStatusResponse> {
