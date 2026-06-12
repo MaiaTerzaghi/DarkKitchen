@@ -48,7 +48,7 @@ export class UserListComponent implements OnInit {
     this.errorMessage = '';
     this._userService.getUsers(undefined, undefined, this.currentPage, this.pageSize).subscribe({
       next: (response) => {
-        this.users = response.items.filter((u) => u.role !== 0);
+        this.users = response.items;
         this.totalCount = response.totalCount;
         this.applyFilters();
         this.loading = false;
