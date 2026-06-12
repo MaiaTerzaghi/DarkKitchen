@@ -1,4 +1,3 @@
-using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IBusinessLogic;
@@ -9,7 +8,7 @@ namespace DarkKitchen.WebApi.Controllers;
 
 [ApiController]
 [Route("api/imports")]
-public class ImportController(IImportService importService) : ControllerBase
+public class ImportController(IImportService importService) : DarkKitchenControllerBase
 {
     private readonly IImportService _importService = importService;
 
@@ -25,7 +24,7 @@ public class ImportController(IImportService importService) : ControllerBase
     [HttpPost]
     public IActionResult Import([FromBody] ImportProductsRequestDTO request)
     {
-        var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
+        var requestingUser = GetRequestingUser();
         var result = _importService.Import(request, requestingUser.Email);
         return Ok(result);
     }

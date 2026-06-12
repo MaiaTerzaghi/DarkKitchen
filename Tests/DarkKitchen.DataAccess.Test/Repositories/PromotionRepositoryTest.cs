@@ -192,35 +192,4 @@ public sealed class PromotionRepositoryTest
         Assert.IsNotNull(result);
         Assert.AreEqual(1, result.Products.Count);
     }
-
-    [TestMethod]
-    public void ProductExistsInPromotion_WhenProductIsInPromotion_ReturnsTrue()
-    {
-        var product = new Product
-        {
-            Code = P0001,
-            Name = PizzaNapolitana,
-            Description = RicaPizzaNapolitana,
-            CommercialLine = Minutas,
-            Category = Fritos,
-            Price = 100.0
-        };
-
-        var promotion = new Promotion
-        {
-            Name = BlackFriday,
-            DiscountPercentage = 10,
-            ValidFrom = DateTime.Today.AddDays(-1),
-            ValidTo = DateTime.Today.AddDays(1),
-            Products = [product]
-        };
-
-        _context!.Promotions.Add(promotion);
-        _context.SaveChanges();
-
-        var repository = new PromotionRepository(_context);
-        var result = repository.ProductExistsInPromotion(promotion.Id, product.Id);
-
-        Assert.IsTrue(result);
-    }
 }

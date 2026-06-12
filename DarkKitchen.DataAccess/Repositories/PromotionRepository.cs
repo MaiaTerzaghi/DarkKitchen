@@ -18,13 +18,6 @@ public class PromotionRepository(DarkKitchenContext context)
             .ToList();
     }
 
-    public bool ProductExistsInPromotion(int promotionId, int productId)
-    {
-        return context.Promotions
-            .Any(p => p.Id == promotionId
-                && p.Products.Any(pr => pr.Id == productId));
-    }
-
     public Promotion? GetPromotionWithProducts(int promotionId)
     {
         return context.Promotions

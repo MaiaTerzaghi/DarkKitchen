@@ -424,9 +424,14 @@ public sealed class ProductServiceTest
             IsActive = true
         };
 
+        var callCount = 0;
         var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
-                            .Returns(product);
+                            .Returns(() =>
+                            {
+                                callCount++;
+                                return callCount == 1 ? product : null;
+                            });
         productRepositoryMock.Setup(r => r.Update(It.IsAny<Product>()))
                             .Returns(product);
 
@@ -593,9 +598,14 @@ public sealed class ProductServiceTest
             IsActive = true
         };
 
+        var callCount = 0;
         var productRepositoryMock = new Mock<IRepository<Product>>();
         productRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
-                            .Returns(product);
+                            .Returns(() =>
+                            {
+                                callCount++;
+                                return callCount == 1 ? product : null;
+                            });
         productRepositoryMock.Setup(r => r.Update(It.IsAny<Product>()))
                             .Returns(product);
 
@@ -709,5 +719,108 @@ public sealed class ProductServiceTest
         var productRepositoryMock = new Mock<IRepository<Product>>();
         var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
         productService.CreateProduct(request, AdminEmailCom);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ConflictException))]
+    public void CreateProduct_WhenCodeAlreadyExists_ThrowsConflictException()
+    {
+        var request = new CreateProductRequestDTO
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = ValidJpgBase64
+        };
+
+        var existing = new Product { Id = 5, Code = "P0001" };
+
+        var productRepositoryMock = new Mock<IRepository<Product>>();
+        productRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
+                            .Returns(existing);
+
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
+        productService.CreateProduct(request, "admin@email.com");
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ConflictException))]
+    public void UpdateProduct_WhenCodeTakenByAnother_ThrowsConflictException()
+    {
+        var request = new UpdateProductRequestDTO
+        {
+            Code = "P0002",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = ValidJpgBase64,
+            IsActive = true
+        };
+
+        var currentProduct = new Product { Id = 1, Code = "P0001" };
+        var otherProduct = new Product { Id = 2, Code = "P0002" };
+
+        var callCount = 0;
+        var productRepositoryMock = new Mock<IRepository<Product>>();
+        productRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
+                            .Returns(() =>
+                            {
+                                callCount++;
+                                return callCount == 1 ? currentProduct : otherProduct;
+                            });
+
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
+        productService.UpdateProduct(1, request, "admin@email.com");
+    }
+
+    [TestMethod]
+    public void UpdateProduct_WhenCodeSameAsOwn_DoesNotThrow()
+    {
+        var request = new UpdateProductRequestDTO
+        {
+            Code = "P0001",
+            Name = "Pizza Napolitana Editada",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 120.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = ValidJpgBase64,
+            IsActive = true
+        };
+
+        var product = new Product
+        {
+            Id = 1,
+            Code = "P0001",
+            Name = "Pizza Napolitana",
+            Description = "Rica pizza napolitana con tomate y albahaca",
+            Price = 100.0,
+            CommercialLine = "Minutas",
+            Category = "Fritos",
+            Images = ValidJpgBase64,
+            IsActive = true
+        };
+
+        var callCount = 0;
+        var productRepositoryMock = new Mock<IRepository<Product>>();
+        productRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
+                            .Returns(() =>
+                            {
+                                callCount++;
+                                return callCount == 1 ? product : null;
+                            });
+        productRepositoryMock.Setup(r => r.Update(It.IsAny<Product>()))
+                            .Returns(product);
+
+        var productService = new ProductService(productRepositoryMock.Object, _auditSubjectMock.Object);
+        var result = productService.UpdateProduct(1, request, "admin@email.com");
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual("P0001", result.Code);
     }
 }

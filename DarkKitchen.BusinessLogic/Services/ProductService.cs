@@ -43,18 +43,8 @@ public class ProductService(IRepository<Product> productRepository, IAuditSubjec
 
     public ProductResponseDTO CreateProduct(CreateProductRequestDTO request, string responsibleUser)
     {
-        var product = new Product
-        {
-            Code = request.Code,
-            Name = request.Name,
-            Description = request.Description,
-            Price = request.Price,
-            CommercialLine = request.CommercialLine,
-            Category = request.Category,
-            Images = request.Images,
-            IsActive = true
-        };
-
+        ValidateCodeNotTaken(request.Code);
+        var product = MapToEntity(request);
         var saved = _productRepository.Add(product);
 
         _audit.Notify(new AuditEvent
@@ -73,15 +63,8 @@ public class ProductService(IRepository<Product> productRepository, IAuditSubjec
         var product = _productRepository.Get(p => p.Id == id)
             ?? throw new NotFoundException($"Producto con id {id} no encontrado.");
 
-        product.Code = request.Code;
-        product.Name = request.Name;
-        product.Description = request.Description;
-        product.Price = request.Price;
-        product.CommercialLine = request.CommercialLine;
-        product.Category = request.Category;
-        product.Images = request.Images;
-        product.IsActive = request.IsActive;
-
+        ValidateCodeNotTaken(request.Code, id);
+        UpdateEntity(product, request);
         var updated = _productRepository.Update(product);
 
         _audit.Notify(new AuditEvent
@@ -93,6 +76,42 @@ public class ProductService(IRepository<Product> productRepository, IAuditSubjec
         });
 
         return MapToDTO(updated);
+    }
+
+    private void ValidateCodeNotTaken(string code, int? excludeId = null)
+    {
+        var existing = _productRepository.Get(p => p.Code == code && (!excludeId.HasValue || p.Id != excludeId.Value));
+        if(existing != null)
+        {
+            throw new ConflictException("Ya existe un producto con el código ingresado");
+        }
+    }
+
+    private static Product MapToEntity(CreateProductRequestDTO request)
+    {
+        return new Product
+        {
+            Code = request.Code,
+            Name = request.Name,
+            Description = request.Description,
+            Price = request.Price,
+            CommercialLine = request.CommercialLine,
+            Category = request.Category,
+            Images = request.Images,
+            IsActive = true
+        };
+    }
+
+    private static void UpdateEntity(Product product, UpdateProductRequestDTO request)
+    {
+        product.Code = request.Code;
+        product.Name = request.Name;
+        product.Description = request.Description;
+        product.Price = request.Price;
+        product.CommercialLine = request.CommercialLine;
+        product.Category = request.Category;
+        product.Images = request.Images;
+        product.IsActive = request.IsActive;
     }
 
     private static ProductResponseDTO MapToDTO(Product p)
