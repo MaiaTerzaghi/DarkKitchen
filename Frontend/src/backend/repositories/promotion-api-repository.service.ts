@@ -7,6 +7,7 @@ import PromotionResponse from '../services/promotion/models/PromotionResponse';
 import PromotionFilter from '../services/promotion/models/PromotionFilter';
 import CreatePromotionRequest from '../services/promotion/models/CreatePromotionRequest';
 import UpdatePromotionRequest from '../services/promotion/models/UpdatePromotionRequest';
+import PaginatedResponse from '../models/PaginatedResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +19,7 @@ export class PromotionApiRepositoryService extends ApiRepository {
 
   public getActivePromotions(
     filters: PromotionFilter
-  ): Observable<PromotionResponse[]> {
+  ): Observable<PaginatedResponse<PromotionResponse>> {
     const params: string[] = [];
 
     if (filters.date) {
@@ -31,8 +32,11 @@ export class PromotionApiRepositoryService extends ApiRepository {
       params.push(`product=${filters.product}`);
     }
 
+    params.push(`Page=${filters.page ?? 1}`);
+    params.push(`PageSize=${filters.pageSize ?? 20}`);
+
     const query = params.join('&');
-    return this.get<PromotionResponse[]>('', query);
+    return this.get<PaginatedResponse<PromotionResponse>>('', query);
   }
 
   public create(

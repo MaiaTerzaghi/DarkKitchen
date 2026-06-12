@@ -14,11 +14,17 @@ public class PromotionService(IPromotionRepository promotionRepository, IReposit
     private readonly IRepository<Product> _productRepository = productRepository;
     private readonly IAuditSubject _audit = audit;
 
-    public List<PromotionResponseDTO> GetActivePromotions(DateTime? date, string? productLine, string? product)
+    public PaginatedResponse<PromotionResponseDTO> GetActivePromotions(DateTime? date, string? productLine, string? product, int page = 1, int pageSize = 20)
     {
-        var promotions = _promotionRepository.GetActivePromotions(date, productLine, product);
+        var (promotions, totalCount) = _promotionRepository.GetActivePromotions(date, productLine, product, page, pageSize);
 
-        return promotions.Select(MapToDTO).ToList();
+        return new PaginatedResponse<PromotionResponseDTO>
+        {
+            Items = promotions.Select(MapToDTO).ToList(),
+            TotalCount = totalCount,
+            Page = page,
+            PageSize = pageSize
+        };
     }
 
     private static PromotionResponseDTO MapToDTO(Promotion promotion)

@@ -30,6 +30,11 @@ export class PromotionListComponent implements OnInit, CanComponentDeactivate {
   showRouteConfirm: boolean = false;
   private deactivateSubject: Subject<boolean> | null = null;
 
+  // Paginación
+  currentPage: number = 1;
+  pageSize: number = 20;
+  totalCount: number = 0;
+
   // Filtros avanzados
   filterDate: string = '';
   filterProductLine: string = '';
@@ -61,9 +66,13 @@ export class PromotionListComponent implements OnInit, CanComponentDeactivate {
       filters.product = this.filterProduct;
     }
 
+    filters.page = this.currentPage;
+    filters.pageSize = this.pageSize;
+
     this._promotionService.getActivePromotions(filters).subscribe({
       next: (data) => {
-        this.promotions = data;
+        this.promotions = data.items;
+        this.totalCount = data.totalCount;
         this.applySearch();
         this.loading = false;
       },
@@ -161,5 +170,10 @@ export class PromotionListComponent implements OnInit, CanComponentDeactivate {
     this.showRouteConfirm = false;
     this.deactivateSubject?.next(false);
     this.deactivateSubject?.complete();
+  }
+
+  public onPageChange(page: number): void {
+    this.currentPage = page;
+    this.loadPromotions();
   }
 }

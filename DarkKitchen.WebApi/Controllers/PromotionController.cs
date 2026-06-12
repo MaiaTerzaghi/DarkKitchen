@@ -14,13 +14,13 @@ public class PromotionController(IPromotionService promotionService) : DarkKitch
 
     [AuthorizeRoles(UserRole.Client, UserRole.Administrative)]
     [HttpGet]
-    public IActionResult GetActivePromotions([FromQuery] PromotionFilterDTO filters)
+    public IActionResult GetActivePromotions([FromQuery] PromotionFilterDTO filters, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
     {
         var requestingUser = GetRequestingUser();
         var date = requestingUser.Role == UserRole.Client
             ? DateTime.Today
             : filters.Date;
-        var promotions = _promotionService.GetActivePromotions(date, filters.ProductLine, filters.Product);
+        var promotions = _promotionService.GetActivePromotions(date, filters.ProductLine, filters.Product, page, pageSize);
         return Ok(promotions);
     }
 

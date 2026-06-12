@@ -30,8 +30,8 @@ public sealed class PromotionControllerTest
     public void GetActivePromotions_WhenCalled_ReturnsOk()
     {
         _promotionServiceMock
-            .Setup(s => s.GetActivePromotions(null, null, null))
-            .Returns([]);
+            .Setup(s => s.GetActivePromotions(null, null, null, It.IsAny<int>(), It.IsAny<int>()))
+            .Returns(new PaginatedResponse<PromotionResponseDTO>());
 
         var result = _controller.GetActivePromotions(new PromotionFilterDTO());
 
@@ -43,7 +43,7 @@ public sealed class PromotionControllerTest
     public void GetActivePromotions_WhenServiceThrowsException_ReturnsBadRequest()
     {
         _promotionServiceMock
-            .Setup(s => s.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>()))
+            .Setup(s => s.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<int>(), It.IsAny<int>()))
             .Throws(new ArgumentException("Error"));
 
         _controller.GetActivePromotions(new PromotionFilterDTO());

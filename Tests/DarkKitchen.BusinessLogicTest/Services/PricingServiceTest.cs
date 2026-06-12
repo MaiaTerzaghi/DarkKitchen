@@ -22,8 +22,8 @@ public class PricingServiceTest
         _promotionRepositoryMock = new Mock<IPromotionRepository>();
 
         _promotionRepositoryMock
-            .Setup(r => r.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>()))
-            .Returns([]);
+            .Setup(r => r.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<int>(), It.IsAny<int>()))
+            .Returns((new List<Promotion>(), 0));
 
         _service = new PricingService(
             _productRepositoryMock.Object,
@@ -91,8 +91,8 @@ public class PricingServiceTest
             .Returns(product);
 
         _promotionRepositoryMock
-            .Setup(r => r.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>()))
-            .Returns([promotion]);
+            .Setup(r => r.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<int>(), It.IsAny<int>()))
+            .Returns((new List<Promotion> { promotion }, 1));
 
         var items = new List<OrderItemRequestDTO>
         {
@@ -128,8 +128,8 @@ public class PricingServiceTest
             .Returns(burger);
 
         _promotionRepositoryMock
-            .Setup(r => r.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>()))
-            .Returns([promotion]);
+            .Setup(r => r.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<int>(), It.IsAny<int>()))
+            .Returns((new List<Promotion> { promotion }, 1));
 
         var items = new List<OrderItemRequestDTO>
         {
@@ -210,8 +210,8 @@ public class PricingServiceTest
             .Returns(pizza);
 
         _promotionRepositoryMock
-            .Setup(r => r.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>()))
-            .Returns([promo]);
+            .Setup(r => r.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<int>(), It.IsAny<int>()))
+            .Returns((new List<Promotion> { promo }, 1));
 
         var items = new List<OrderItemRequestDTO>
         {
@@ -243,8 +243,8 @@ public class PricingServiceTest
             .Returns(pizza);
 
         _promotionRepositoryMock
-            .Setup(r => r.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>()))
-            .Returns([promo15, promo35]);
+            .Setup(r => r.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<int>(), It.IsAny<int>()))
+            .Returns((new List<Promotion> { promo15, promo35 }, 2));
 
         var items = new List<OrderItemRequestDTO>
         {

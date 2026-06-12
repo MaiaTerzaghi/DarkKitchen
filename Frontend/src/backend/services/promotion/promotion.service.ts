@@ -5,6 +5,7 @@ import PromotionResponse from './models/PromotionResponse';
 import PromotionFilter from './models/PromotionFilter';
 import CreatePromotionRequest from './models/CreatePromotionRequest';
 import UpdatePromotionRequest from './models/UpdatePromotionRequest';
+import PaginatedResponse from '../../models/PaginatedResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,7 @@ export class PromotionService {
 
   public getActivePromotions(
     filters: PromotionFilter = {}
-  ): Observable<PromotionResponse[]> {
+  ): Observable<PaginatedResponse<PromotionResponse>> {
     return this._repository.getActivePromotions(filters);
   }
 
