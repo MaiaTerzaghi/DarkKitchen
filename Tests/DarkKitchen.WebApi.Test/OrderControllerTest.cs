@@ -264,8 +264,8 @@ public class OrderControllerTest
     {
         var expectedResponse = new PaginatedResponse<GetOrdersResponseDTO>
         {
-            Items = new List<GetOrdersResponseDTO>
-            {
+            Items =
+            [
                 new GetOrdersResponseDTO
                 {
                     OrderId = 1,
@@ -280,7 +280,8 @@ public class OrderControllerTest
                     Status = "Pending",
                     Items = [new OrderItemResponseDTO { ProductName = "Hamburguesa", Quantity = 2 }]
                 }
-            },
+
+            ],
             TotalCount = 1,
             Page = 1,
             PageSize = 20
