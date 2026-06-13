@@ -178,25 +178,27 @@ public sealed class PromotionControllerTest
     }
 
     [TestMethod]
-    public void GetActivePromotions_WhenClientRole_UsesTodayDateInsteadOfFilter()
+    public void GetActivePromotions_WhenAdminRole_UsesFilterDate()
     {
+        var filterDate = new DateTime(2026, 3, 15);
+
         _controller.HttpContext.Items[Requestinguser] = new User
         {
             Id = 2,
             Email = AdminEmailCom,
-            Role = Domain.Enums.UserRole.Client
+            Role = Domain.Enums.UserRole.Administrative
         };
 
         _promotionServiceMock
-            .Setup(s => s.GetActivePromotions(DateTime.Today, null, null, It.IsAny<int>(), It.IsAny<int>()))
+            .Setup(s => s.GetActivePromotions(filterDate, null, null, It.IsAny<int>(), It.IsAny<int>()))
             .Returns(new PaginatedResponse<PromotionResponseDTO>());
 
-        var filters = new PromotionFilterDTO { Date = new DateTime(2020, 1, 1) };
+        var filters = new PromotionFilterDTO { Date = filterDate };
         var result = _controller.GetActivePromotions(filters);
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
         _promotionServiceMock.Verify(
-            s => s.GetActivePromotions(DateTime.Today, null, null, It.IsAny<int>(), It.IsAny<int>()),
+            s => s.GetActivePromotions(filterDate, null, null, It.IsAny<int>(), It.IsAny<int>()),
             Times.Once);
     }
 }
