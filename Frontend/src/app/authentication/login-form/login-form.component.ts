@@ -52,7 +52,7 @@ export class LoginFormComponent {
             this._router.navigate(['/customer']);
             break;
           default:
-            this._router.navigate(['/home']);
+            this._router.navigate(['/login']);
             break;
         }
       },

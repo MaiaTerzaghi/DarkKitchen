@@ -27,12 +27,6 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'home',
-    canActivate: [authGuard],
-    loadChildren: () =>
-      import('./home/home.module').then((m) => m.HomeModule),
-  },
-  {
     path: '',
     canActivate: [noAuthGuard],
     loadChildren: () =>
