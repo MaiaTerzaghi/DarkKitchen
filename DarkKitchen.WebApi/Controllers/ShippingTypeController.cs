@@ -1,7 +1,6 @@
-using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IBusinessLogic;
-using DarkKitchen.WebApi.Filters;
+using DarkKitchen.WebApi.Filters.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DarkKitchen.WebApi.Controllers;
@@ -12,7 +11,7 @@ public class ShippingTypeController(IShippingTypeService shippingTypeService) : 
 {
     private readonly IShippingTypeService _shippingTypeService = shippingTypeService;
 
-    [AuthorizeRoles(UserRole.Administrative, UserRole.Client)]
+    [ClientOrAdministrative]
     [HttpGet]
     public IActionResult GetAll()
     {
@@ -20,7 +19,7 @@ public class ShippingTypeController(IShippingTypeService shippingTypeService) : 
         return Ok(shippingTypes);
     }
 
-    [AuthorizeRoles(UserRole.Administrative)]
+    [AdministrativeOnly]
     [HttpGet("{id}")]
     public IActionResult GetById(int id)
     {
@@ -28,7 +27,7 @@ public class ShippingTypeController(IShippingTypeService shippingTypeService) : 
         return Ok(shippingType);
     }
 
-    [AuthorizeRoles(UserRole.Administrative)]
+    [AdministrativeOnly]
     [HttpPost]
     public IActionResult Create([FromBody] CreateShippingTypeRequestDTO request)
     {
@@ -36,7 +35,7 @@ public class ShippingTypeController(IShippingTypeService shippingTypeService) : 
         return CreatedAtAction(nameof(GetById), new { id = shippingType.Id }, shippingType);
     }
 
-    [AuthorizeRoles(UserRole.Administrative)]
+    [AdministrativeOnly]
     [HttpPut("{id}")]
     public IActionResult Update(int id, [FromBody] UpdateShippingTypeRequestDTO request)
     {

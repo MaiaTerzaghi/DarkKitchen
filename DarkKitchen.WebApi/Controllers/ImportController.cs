@@ -1,7 +1,6 @@
-using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IBusinessLogic;
-using DarkKitchen.WebApi.Filters;
+using DarkKitchen.WebApi.Filters.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DarkKitchen.WebApi.Controllers;
@@ -12,7 +11,7 @@ public class ImportController(IImportService importService) : DarkKitchenControl
 {
     private readonly IImportService _importService = importService;
 
-    [AuthorizeRoles(UserRole.Administrative)]
+    [AdministrativeOnly]
     [HttpGet("importers")]
     public IActionResult GetAvailableImporters()
     {
@@ -20,7 +19,7 @@ public class ImportController(IImportService importService) : DarkKitchenControl
         return Ok(importers);
     }
 
-    [AuthorizeRoles(UserRole.Administrative)]
+    [AdministrativeOnly]
     [HttpPost]
     public IActionResult Import([FromBody] ImportProductsRequestDTO request)
     {

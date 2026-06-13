@@ -1,7 +1,6 @@
-using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IBusinessLogic;
-using DarkKitchen.WebApi.Filters;
+using DarkKitchen.WebApi.Filters.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DarkKitchen.WebApi.Controllers;
@@ -12,7 +11,7 @@ public class OrderController(IOrderService orderService) : DarkKitchenController
 {
     private readonly IOrderService _orderService = orderService;
 
-    [AuthorizeRoles(UserRole.Client)]
+    [ClientOnly]
     [HttpPost("preview")]
     public IActionResult PreviewOrder([FromBody] PreviewOrderRequestDTO request)
     {
@@ -20,7 +19,7 @@ public class OrderController(IOrderService orderService) : DarkKitchenController
         return Ok(response);
     }
 
-    [AuthorizeRoles(UserRole.Client)]
+    [ClientOnly]
     [HttpPost]
     public IActionResult CreateOrder([FromBody] CreateOrderRequestDTO request)
     {
@@ -29,7 +28,7 @@ public class OrderController(IOrderService orderService) : DarkKitchenController
         return CreatedAtAction(nameof(GetOrderDetail), new { id = response.OrderId }, response);
     }
 
-    [AuthorizeRoles(UserRole.Client, UserRole.Administrative, UserRole.Dispatcher)]
+    [AnyRole]
     [HttpGet]
     public IActionResult GetOrders([FromQuery] GetOrdersRequestDTO request)
     {
@@ -38,7 +37,7 @@ public class OrderController(IOrderService orderService) : DarkKitchenController
         return Ok(orders);
     }
 
-    [AuthorizeRoles(UserRole.Dispatcher, UserRole.Administrative)]
+    [AdministrativeOrDispatcher]
     [HttpGet("{id}")]
     public IActionResult GetOrderDetail(int id)
     {
@@ -46,7 +45,7 @@ public class OrderController(IOrderService orderService) : DarkKitchenController
         return Ok(order);
     }
 
-    [AuthorizeRoles(UserRole.Administrative)]
+    [AdministrativeOnly]
     [HttpGet("report")]
     public IActionResult GetSalesReport([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
     {
@@ -54,7 +53,7 @@ public class OrderController(IOrderService orderService) : DarkKitchenController
         return Ok(response);
     }
 
-    [AuthorizeRoles(UserRole.Administrative)]
+    [AdministrativeOnly]
     [HttpGet("top-products")]
     public IActionResult GetTopProducts([FromQuery] DateTime dateFrom, [FromQuery] DateTime dateTo)
     {
@@ -62,7 +61,7 @@ public class OrderController(IOrderService orderService) : DarkKitchenController
         return Ok(response);
     }
 
-    [AuthorizeRoles(UserRole.Dispatcher)]
+    [DispatcherOnly]
     [HttpGet("dispatcher")]
     public IActionResult GetDispatcherOrders()
     {
@@ -70,7 +69,7 @@ public class OrderController(IOrderService orderService) : DarkKitchenController
         return Ok(response);
     }
 
-    [AuthorizeRoles(UserRole.Dispatcher, UserRole.Administrative)]
+    [AdministrativeOrDispatcher]
     [HttpPatch("{id}/status")]
     public IActionResult ChangeStatus(int id, [FromBody] ChangeOrderStatusRequestDTO request)
     {

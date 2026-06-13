@@ -3,10 +3,10 @@ using DarkKitchen.IBusinessLogic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace DarkKitchen.WebApi.Filters;
+namespace DarkKitchen.WebApi.Filters.Authorization;
 
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-public class AuthorizeRolesAttribute(params UserRole[] roles) : Attribute, IAuthorizationFilter
+public abstract class AuthorizeRolesAttribute(params UserRole[] roles) : Attribute, IAuthorizationFilter
 {
     private readonly UserRole[] _roles = roles;
 

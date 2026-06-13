@@ -1,7 +1,7 @@
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.IBusinessLogic;
-using DarkKitchen.WebApi.Filters;
+using DarkKitchen.WebApi.Filters.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -37,7 +37,7 @@ public class AuthorizeRolesAttributeTest
             new ActionContext(httpContext, new RouteData(), new ActionDescriptor()),
             []);
 
-        var filter = new AuthorizeRolesAttribute(UserRole.Client);
+        var filter = new ClientOnlyAttribute();
 
         filter.OnAuthorization(context);
 
@@ -69,7 +69,7 @@ public class AuthorizeRolesAttributeTest
             new ActionContext(httpContext, new RouteData(), new ActionDescriptor()),
             []);
 
-        var filter = new AuthorizeRolesAttribute(UserRole.Client);
+        var filter = new ClientOnlyAttribute();
 
         filter.OnAuthorization(context);
 
@@ -104,7 +104,7 @@ public class AuthorizeRolesAttributeTest
             []);
 
         // El endpoint requiere Admin, pero el user es Client
-        var filter = new AuthorizeRolesAttribute(UserRole.Administrative);
+        var filter = new AdministrativeOnlyAttribute();
 
         filter.OnAuthorization(context);
 
@@ -138,7 +138,7 @@ public class AuthorizeRolesAttributeTest
             new ActionContext(httpContext, new RouteData(), new ActionDescriptor()),
             []);
 
-        var filter = new AuthorizeRolesAttribute(UserRole.Client);
+        var filter = new ClientOnlyAttribute();
 
         filter.OnAuthorization(context);
 
