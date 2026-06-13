@@ -14,6 +14,22 @@ namespace DarkKitchen.WebApi.Test;
 public class OrderControllerTest
 {
     private Mock<IOrderService> _orderServiceMock = null!;
+
+    private const string Requestinguser = "RequestingUser";
+    private const string Pending = "Pending";
+    private const string Val59899000000 = "+59899000000";
+    private const string Val1234 = "1234";
+    private const string Val18DeJulio = "18 de Julio";
+    private const string Val2b = "2B";
+    private const string Express = "Express";
+    private const string Hamburguesa = "Hamburguesa";
+    private const string Juan = "Juan";
+    private const string Perez = "Perez";
+    private const string PizzaNapolitana = "Pizza Napolitana";
+    private const string Prepared = "Prepared";
+    private const string ElPedidoDebeTenerAlMenosUnProd = "El pedido debe tener al menos un producto.";
+    private const string P0001 = "P0001";
+    private const string PizzaJpg = "pizza.jpg";
     private OrderController _controller = null!;
 
     [TestInitialize]
@@ -29,12 +45,12 @@ public class OrderControllerTest
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
-            ShippingType = "Express",
+            ShippingType = Express,
             Address = new AddressDTO
             {
-                Street = "18 de Julio",
-                DoorNumber = "1234",
-                Apartment = "2B"
+                Street = Val18DeJulio,
+                DoorNumber = Val1234,
+                Apartment = Val2b
             },
             Items =
             [
@@ -59,7 +75,7 @@ public class OrderControllerTest
         {
             HttpContext = new DefaultHttpContext()
         };
-        _controller.HttpContext.Items["RequestingUser"] = new User { Id = 1 };
+        _controller.HttpContext.Items[Requestinguser] = new User { Id = 1 };
 
         var result = _controller.CreateOrder(request);
 
@@ -77,25 +93,25 @@ public class OrderControllerTest
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
-            ShippingType = "Express",
+            ShippingType = Express,
             Address = new AddressDTO
             {
-                Street = "18 de Julio",
-                DoorNumber = "1234",
-                Apartment = "2B"
+                Street = Val18DeJulio,
+                DoorNumber = Val1234,
+                Apartment = Val2b
             },
             Items = []
         };
 
         _orderServiceMock
             .Setup(s => s.CreateOrder(request, It.IsAny<int>()))
-            .Throws(new ArgumentException("El pedido debe tener al menos un producto."));
+            .Throws(new ArgumentException(ElPedidoDebeTenerAlMenosUnProd));
 
         _controller.ControllerContext = new ControllerContext
         {
             HttpContext = new DefaultHttpContext()
         };
-        _controller.HttpContext.Items["RequestingUser"] = new User { Id = 1 };
+        _controller.HttpContext.Items[Requestinguser] = new User { Id = 1 };
 
         _controller.CreateOrder(request);
     }
@@ -113,7 +129,7 @@ public class OrderControllerTest
         {
             HttpContext = new DefaultHttpContext()
         };
-        _controller.HttpContext.Items["RequestingUser"] = new User { Id = 1, Role = UserRole.Client };
+        _controller.HttpContext.Items[Requestinguser] = new User { Id = 1, Role = UserRole.Client };
 
         var result = _controller.GetOrders(new GetOrdersRequestDTO());
 
@@ -139,13 +155,13 @@ public class OrderControllerTest
                     Client = new ClientInfoDTO
                     {
                         Id = 1,
-                        Name = "Juan",
-                        LastName = "Perez",
-                        Phone = "+59899000000"
+                        Name = Juan,
+                        LastName = Perez,
+                        Phone = Val59899000000
                     },
                     Date = new DateTime(2026, 1, 10),
-                    Status = "Pending",
-                    Items = [new OrderItemResponseDTO { ProductName = "Hamburguesa", Quantity = 2 }]
+                    Status = Pending,
+                    Items = [new OrderItemResponseDTO { ProductName = Hamburguesa, Quantity = 2 }]
                 }
 
             ],
@@ -162,7 +178,7 @@ public class OrderControllerTest
         {
             HttpContext = new DefaultHttpContext()
         };
-        _controller.HttpContext.Items["RequestingUser"] = new User { Id = 1, Role = UserRole.Administrative };
+        _controller.HttpContext.Items[Requestinguser] = new User { Id = 1, Role = UserRole.Administrative };
 
         var result = _controller.GetOrders(request);
 
@@ -185,7 +201,7 @@ public class OrderControllerTest
         {
             OrderId = 1,
             ClientId = 1,
-            Status = "Pending",
+            Status = Pending,
             Total = 200.0
         };
 
@@ -239,10 +255,10 @@ public class OrderControllerTest
         {
             new TopProductResponseDTO
             {
-                Code = "P0001",
-                Name = "Pizza Napolitana",
+                Code = P0001,
+                Name = PizzaNapolitana,
                 Quantity = 10,
-                Images = "pizza.jpg"
+                Images = PizzaJpg
             }
         };
 
@@ -256,7 +272,7 @@ public class OrderControllerTest
         var okResult = (OkObjectResult)result;
         var response = (List<TopProductResponseDTO>)okResult.Value!;
         Assert.AreEqual(1, response.Count);
-        Assert.AreEqual("Pizza Napolitana", response[0].Name);
+        Assert.AreEqual(PizzaNapolitana, response[0].Name);
     }
 
     [TestMethod]
@@ -272,13 +288,13 @@ public class OrderControllerTest
                     Client = new ClientInfoDTO
                     {
                         Id = 1,
-                        Name = "Juan",
-                        LastName = "Perez",
-                        Phone = "+59899000000"
+                        Name = Juan,
+                        LastName = Perez,
+                        Phone = Val59899000000
                     },
                     Date = new DateTime(2026, 1, 10),
-                    Status = "Pending",
-                    Items = [new OrderItemResponseDTO { ProductName = "Hamburguesa", Quantity = 2 }]
+                    Status = Pending,
+                    Items = [new OrderItemResponseDTO { ProductName = Hamburguesa, Quantity = 2 }]
                 }
 
             ],
@@ -313,7 +329,7 @@ public class OrderControllerTest
         var expectedResponse = new UpdateOrderStatusResponseDTO
         {
             OrderId = orderId,
-            Status = "Prepared",
+            Status = Prepared,
             UpdatedAt = DateTime.Now
         };
 
@@ -322,14 +338,14 @@ public class OrderControllerTest
             .Returns(expectedResponse);
 
         _controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
-        _controller.HttpContext.Items["RequestingUser"] = new User { Id = 1, Role = UserRole.Dispatcher };
+        _controller.HttpContext.Items[Requestinguser] = new User { Id = 1, Role = UserRole.Dispatcher };
 
         var result = _controller.ChangeStatus(orderId, request);
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
         var okResult = (OkObjectResult)result;
         var response = (UpdateOrderStatusResponseDTO)okResult.Value!;
-        Assert.AreEqual("Prepared", response.Status);
+        Assert.AreEqual(Prepared, response.Status);
         Assert.AreEqual(orderId, response.OrderId);
     }
 }

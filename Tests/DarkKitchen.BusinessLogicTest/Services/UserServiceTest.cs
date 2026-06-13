@@ -15,6 +15,28 @@ public sealed class UserServiceTest
 {
     private Mock<IRepository<User>> _userRepositoryMock = null!;
     private Mock<IPasswordManager> _passwordManagerMock = null!;
+
+    private const string Val59899123456 = "+59899123456";
+    private const string Juan = "Juan";
+    private const string Perez = "Perez";
+    private const string Contrasena1 = "Contrasena1!@#$%";
+    private const string JuanTestCom = "juan@test.com";
+    private const string JuanEmailCom = "juan@email.com";
+    private const string Oldlastname = "OldLastName";
+    private const string Oldname = "OldName";
+    private const string HashedContrasena = "hashed-contrasena";
+    private const string JuanexistenteEmailCom = "juanexistente@email.com";
+    private const string Val123 = "123";
+    private const string Contrasena12 = "CONTRASENA1!@#$%";
+    private const string Contrasena = "Contrasena!@#$%&*";
+    private const string Contrasena11111 = "Contrasena11111";
+    private const string Contrasena123 = "Contrasena123!@#";
+    private const string Corta1 = "Corta1!@#$%";
+    private const string Pe = "Pe";
+    private const string Contrasena13 = "contrasena1!@#$%";
+    private const string Emailinvalido = "emailinvalido";
+    private const string OldHashedPassword = "old-hashed-password";
+    private const string Password = "password";
     private UserService _service = null!;
 
     [TestInitialize]
@@ -30,11 +52,11 @@ public sealed class UserServiceTest
     {
         var request = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@email.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanEmailCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
         };
 
         var user = new User { Id = 1 };
@@ -55,15 +77,15 @@ public sealed class UserServiceTest
     {
         var request = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juanexistente@email.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanexistenteEmailCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
         };
 
         _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
-                        .Returns(new User { Email = "juanexistente@email.com" });
+                        .Returns(new User { Email = JuanexistenteEmailCom });
 
         _service.CreateUser(request);
     }
@@ -75,10 +97,10 @@ public sealed class UserServiceTest
         var request = new CreateUserRequestDTO
         {
             Name = string.Empty,
-            LastName = "Perez",
-            Email = "juan@email.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            LastName = Perez,
+            Email = JuanEmailCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
         };
 
         _service.CreateUser(request);
@@ -90,11 +112,11 @@ public sealed class UserServiceTest
     {
         var request = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Pe",
-            Email = "juan@email.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Pe,
+            Email = JuanEmailCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
         };
 
         _service.CreateUser(request);
@@ -106,11 +128,11 @@ public sealed class UserServiceTest
     {
         var request = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "emailinvalido",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = Emailinvalido,
+            Phone = Val59899123456,
+            Password = Contrasena1,
         };
 
         _service.CreateUser(request);
@@ -122,11 +144,11 @@ public sealed class UserServiceTest
     {
         var request = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@email.com",
-            Phone = "123",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanEmailCom,
+            Phone = Val123,
+            Password = Contrasena1,
         };
 
         _service.CreateUser(request);
@@ -138,11 +160,11 @@ public sealed class UserServiceTest
     {
         var request = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@email.com",
-            Phone = "+59899123456",
-            Password = "password",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanEmailCom,
+            Phone = Val59899123456,
+            Password = Password,
         };
 
         _service.CreateUser(request);
@@ -154,11 +176,11 @@ public sealed class UserServiceTest
     {
         var user = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@email.com",
-            Phone = "+59899123456",
-            Password = "Corta1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanEmailCom,
+            Phone = Val59899123456,
+            Password = Corta1,
         };
 
         _service.CreateUser(user);
@@ -170,11 +192,11 @@ public sealed class UserServiceTest
     {
         var user = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@email.com",
-            Phone = "+59899123456",
-            Password = "contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanEmailCom,
+            Phone = Val59899123456,
+            Password = Contrasena13,
         };
 
         _service.CreateUser(user);
@@ -186,11 +208,11 @@ public sealed class UserServiceTest
     {
         var user = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@email.com",
-            Phone = "+59899123456",
-            Password = "CONTRASENA1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanEmailCom,
+            Phone = Val59899123456,
+            Password = Contrasena12,
         };
 
         _service.CreateUser(user);
@@ -202,11 +224,11 @@ public sealed class UserServiceTest
     {
         var user = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@email.com",
-            Phone = "+59899123456",
-            Password = "Contrasena!@#$%&*",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanEmailCom,
+            Phone = Val59899123456,
+            Password = Contrasena,
         };
 
         _service.CreateUser(user);
@@ -218,11 +240,11 @@ public sealed class UserServiceTest
     {
         var user = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@email.com",
-            Phone = "+59899123456",
-            Password = "Contrasena11111",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanEmailCom,
+            Phone = Val59899123456,
+            Password = Contrasena11111,
         };
 
         _service.CreateUser(user);
@@ -234,11 +256,11 @@ public sealed class UserServiceTest
     {
         var user = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@email.com",
-            Phone = "+59899123456",
-            Password = "Contrasena123!@#",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanEmailCom,
+            Phone = Val59899123456,
+            Password = Contrasena123,
         };
 
         _service.CreateUser(user);
@@ -249,11 +271,11 @@ public sealed class UserServiceTest
     {
         var request = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
             Role = UserRole.Administrative
         };
 
@@ -275,16 +297,16 @@ public sealed class UserServiceTest
     {
         var request = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
             Role = UserRole.Administrative
         };
 
         _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
-                        .Returns(new User { Email = "juan@test.com" });
+                        .Returns(new User { Email = JuanTestCom });
 
         _service.CreateUser(request);
     }
@@ -295,11 +317,11 @@ public sealed class UserServiceTest
     {
         var request = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
             Role = UserRole.Client
         };
 
@@ -314,7 +336,7 @@ public sealed class UserServiceTest
     {
         var users = new List<User>
         {
-            new() { Id = 1, Name = "Juan", LastName = "Perez", Email = "juan@test.com", Phone = "+59899123456", Role = UserRole.Administrative }
+            new() { Id = 1, Name = Juan, LastName = Perez, Email = JuanTestCom, Phone = Val59899123456, Role = UserRole.Administrative }
         };
 
         _userRepositoryMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>(), null, false, 1, 20))
@@ -350,10 +372,10 @@ public sealed class UserServiceTest
     {
         var request = new UpdateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
             Password = null,
             Role = UserRole.Administrative
         };
@@ -361,11 +383,11 @@ public sealed class UserServiceTest
         var existingUser = new User
         {
             Id = 1,
-            Name = "OldName",
-            LastName = "OldLastName",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Oldname,
+            LastName = Oldlastname,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
             Role = UserRole.Administrative
         };
 
@@ -375,7 +397,7 @@ public sealed class UserServiceTest
 
         var result = _service.UpdateUser(1, request, 2);
 
-        Assert.AreEqual("Juan", result.Name);
+        Assert.AreEqual(Juan, result.Name);
     }
 
     [TestMethod]
@@ -384,11 +406,11 @@ public sealed class UserServiceTest
     {
         var request = new UpdateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
             Role = UserRole.Administrative
         };
 
@@ -404,22 +426,22 @@ public sealed class UserServiceTest
     {
         var request = new UpdateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
             Role = UserRole.Administrative
         };
 
         var existingUser = new User
         {
             Id = 1,
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
             Role = UserRole.Administrative
         };
 
@@ -435,11 +457,11 @@ public sealed class UserServiceTest
         var existingUser = new User
         {
             Id = 1,
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
             Role = UserRole.Administrative
         };
 
@@ -468,11 +490,11 @@ public sealed class UserServiceTest
         var existingUser = new User
         {
             Id = 1,
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
             Role = UserRole.Administrative
         };
 
@@ -484,15 +506,15 @@ public sealed class UserServiceTest
     [TestMethod]
     public void CreateUser_WhenValidData_SavesUserWithHashedPassword()
     {
-        var plainPassword = "Contrasena1!@#$%";
-        var hashedPassword = "hashed-contrasena";
+        var plainPassword = Contrasena1;
+        var hashedPassword = HashedContrasena;
 
         var request = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@email.com",
-            Phone = "+59899123456",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanEmailCom,
+            Phone = Val59899123456,
             Password = plainPassword,
         };
 
@@ -511,15 +533,15 @@ public sealed class UserServiceTest
     [TestMethod]
     public void CreateUser_WhenStaffWithValidData_SavesUserWithHashedPassword()
     {
-        var plainPassword = "Contrasena1!@#$%";
-        var hashedPassword = "hashed-contrasena";
+        var plainPassword = Contrasena1;
+        var hashedPassword = HashedContrasena;
 
         var request = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
             Password = plainPassword,
             Role = UserRole.Administrative
         };
@@ -539,15 +561,15 @@ public sealed class UserServiceTest
     [TestMethod]
     public void UpdateUser_WhenValidData_UpdatesUserWithHashedPassword()
     {
-        var plainPassword = "Contrasena1!@#$%";
-        var hashedPassword = "hashed-contrasena";
+        var plainPassword = Contrasena1;
+        var hashedPassword = HashedContrasena;
 
         var request = new UpdateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
             Password = plainPassword,
             Role = UserRole.Administrative
         };
@@ -555,11 +577,11 @@ public sealed class UserServiceTest
         var existingUser = new User
         {
             Id = 1,
-            Name = "OldName",
-            LastName = "OldLastName",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
-            Password = "old-hashed-password",
+            Name = Oldname,
+            LastName = Oldlastname,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
+            Password = OldHashedPassword,
             Role = UserRole.Administrative
         };
 
@@ -579,10 +601,10 @@ public sealed class UserServiceTest
     {
         var request = new UpdateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
             Password = null,
             Role = UserRole.Administrative
         };
@@ -590,11 +612,11 @@ public sealed class UserServiceTest
         var existingUser = new User
         {
             Id = 1,
-            Name = "OldName",
-            LastName = "OldLastName",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Oldname,
+            LastName = Oldlastname,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
             Role = UserRole.Administrative
         };
 
@@ -604,7 +626,7 @@ public sealed class UserServiceTest
 
         var result = _service.UpdateUser(1, request, 2);
 
-        Assert.AreEqual("Contrasena1!@#$%", existingUser.Password);
-        Assert.AreEqual("Juan", result.Name);
+        Assert.AreEqual(Contrasena1, existingUser.Password);
+        Assert.AreEqual(Juan, result.Name);
     }
 }

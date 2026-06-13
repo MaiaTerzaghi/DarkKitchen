@@ -10,12 +10,23 @@ namespace DarkKitchen.DataAccess.Test.Repositories;
 public sealed class PromotionRepositoryTest
 {
     private SqliteConnection? _connection;
+
+    private const string BlackFriday = "Black Friday";
+    private const string Minutas = "Minutas";
+    private const string PizzaNapolitana = "Pizza Napolitana";
+    private const string Fritos = "Fritos";
+    private const string P0001 = "P0001";
+    private const string Desayunos = "Desayunos";
+    private const string RicaPizzaNapolitana = "Rica pizza napolitana";
+    private const string SemanaTurismo = "Semana Turismo";
+    private const string DataSourceMemory = "Data Source=:memory:";
+    private const string RicaPizzaNapolitanaConTomateFr = "Rica pizza napolitana con tomate fresco";
     private DarkKitchenContext? _context;
 
     [TestInitialize]
     public void Initialize()
     {
-        _connection = new SqliteConnection("Data Source=:memory:");
+        _connection = new SqliteConnection(DataSourceMemory);
         _connection.Open();
 
         var options = new DbContextOptionsBuilder<DarkKitchenContext>()
@@ -38,7 +49,7 @@ public sealed class PromotionRepositoryTest
     {
         var promotion = new Promotion
         {
-            Name = "Black Friday",
+            Name = BlackFriday,
             DiscountPercentage = 10,
             ValidFrom = new DateTime(2026, 1, 25),
             ValidTo = new DateTime(2026, 12, 30)
@@ -60,7 +71,7 @@ public sealed class PromotionRepositoryTest
     {
         var promotion = new Promotion
         {
-            Name = "Black Friday",
+            Name = BlackFriday,
             DiscountPercentage = 10,
             ValidFrom = new DateTime(2026, 1, 25),
             ValidTo = new DateTime(2026, 12, 30)
@@ -82,20 +93,20 @@ public sealed class PromotionRepositoryTest
     {
         var promotion1 = new Promotion
         {
-            Name = "Black Friday",
+            Name = BlackFriday,
             DiscountPercentage = 10,
             ValidFrom = new DateTime(2026, 1, 25),
             ValidTo = new DateTime(2026, 12, 30),
-            ProductLine = "Minutas"
+            ProductLine = Minutas
         };
 
         var promotion2 = new Promotion
         {
-            Name = "Semana Turismo",
+            Name = SemanaTurismo,
             DiscountPercentage = 15,
             ValidFrom = new DateTime(2026, 1, 25),
             ValidTo = new DateTime(2026, 12, 30),
-            ProductLine = "Desayunos"
+            ProductLine = Desayunos
         };
 
         _context!.Promotions.Add(promotion1);
@@ -103,11 +114,11 @@ public sealed class PromotionRepositoryTest
         _context.SaveChanges();
 
         var repository = new PromotionRepository(_context);
-        var (items, totalCount) = repository.GetActivePromotions(null, "Minutas", null);
+        var (items, totalCount) = repository.GetActivePromotions(null, Minutas, null);
 
         Assert.AreEqual(1, totalCount);
         Assert.AreEqual(1, items.Count);
-        Assert.AreEqual("Black Friday", items[0].Name);
+        Assert.AreEqual(BlackFriday, items[0].Name);
     }
 
     [TestMethod]
@@ -115,31 +126,31 @@ public sealed class PromotionRepositoryTest
     {
         var product1 = new Product
         {
-            Code = "P0001",
-            Name = "Pizza Napolitana",
-            Description = "Rica pizza napolitana con tomate fresco",
-            CommercialLine = "Minutas",
-            Category = "Fritos",
+            Code = P0001,
+            Name = PizzaNapolitana,
+            Description = RicaPizzaNapolitanaConTomateFr,
+            CommercialLine = Minutas,
+            Category = Fritos,
             Price = 100.0
         };
 
         var promotion1 = new Promotion
         {
-            Name = "Black Friday",
+            Name = BlackFriday,
             DiscountPercentage = 10,
             ValidFrom = new DateTime(2026, 1, 25),
             ValidTo = new DateTime(2026, 12, 30),
-            ProductLine = "Minutas",
+            ProductLine = Minutas,
             Products = [product1]
         };
 
         var promotion2 = new Promotion
         {
-            Name = "Semana Turismo",
+            Name = SemanaTurismo,
             DiscountPercentage = 15,
             ValidFrom = new DateTime(2026, 1, 25),
             ValidTo = new DateTime(2026, 12, 30),
-            ProductLine = "Desayunos"
+            ProductLine = Desayunos
         };
 
         _context!.Promotions.Add(promotion1);
@@ -147,11 +158,11 @@ public sealed class PromotionRepositoryTest
         _context.SaveChanges();
 
         var repository = new PromotionRepository(_context);
-        var (items, totalCount) = repository.GetActivePromotions(null, null, "Pizza Napolitana");
+        var (items, totalCount) = repository.GetActivePromotions(null, null, PizzaNapolitana);
 
         Assert.AreEqual(1, totalCount);
         Assert.AreEqual(1, items.Count);
-        Assert.AreEqual("Black Friday", items[0].Name);
+        Assert.AreEqual(BlackFriday, items[0].Name);
     }
 
     [TestMethod]
@@ -159,17 +170,17 @@ public sealed class PromotionRepositoryTest
     {
         var product = new Product
         {
-            Code = "P0001",
-            Name = "Pizza Napolitana",
-            Description = "Rica pizza napolitana",
-            CommercialLine = "Minutas",
-            Category = "Fritos",
+            Code = P0001,
+            Name = PizzaNapolitana,
+            Description = RicaPizzaNapolitana,
+            CommercialLine = Minutas,
+            Category = Fritos,
             Price = 100.0
         };
 
         var promotion = new Promotion
         {
-            Name = "Black Friday",
+            Name = BlackFriday,
             DiscountPercentage = 10,
             ValidFrom = new DateTime(2026, 1, 25),
             ValidTo = new DateTime(2026, 1, 30),

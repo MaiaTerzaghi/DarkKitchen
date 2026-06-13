@@ -12,6 +12,10 @@ namespace DarkKitchen.BusinessLogicTest.Services;
 public sealed class ShippingTypeServiceTest
 {
     private Mock<IRepository<ShippingType>> _repositoryMock = null!;
+
+    private const string EnvioExpress = "Envío express";
+    private const string EnvioEnElDia = "Envío en el día";
+    private const string EnvioExpressModificado = "Envío express modificado";
     private ShippingTypeService _service = null!;
 
     [TestInitialize]
@@ -26,8 +30,8 @@ public sealed class ShippingTypeServiceTest
     {
         var shippingTypes = new List<ShippingType>
         {
-            new ShippingType { Id = 1, Name = "Envío express", Cost = 250 },
-            new ShippingType { Id = 2, Name = "Envío en el día", Cost = 200 }
+            new ShippingType { Id = 1, Name = EnvioExpress, Cost = 250 },
+            new ShippingType { Id = 2, Name = EnvioEnElDia, Cost = 200 }
         };
 
         _repositoryMock.Setup(r => r.GetAll(null, null, false, 1, 20))
@@ -36,14 +40,14 @@ public sealed class ShippingTypeServiceTest
         var result = _service.GetAll();
 
         Assert.AreEqual(2, result.Count);
-        Assert.AreEqual("Envío express", result[0].Name);
+        Assert.AreEqual(EnvioExpress, result[0].Name);
         Assert.AreEqual(250, result[0].Cost);
     }
 
     [TestMethod]
     public void GetById_WhenExists_ReturnsShippingType()
     {
-        var shippingType = new ShippingType { Id = 1, Name = "Envío express", Cost = 250 };
+        var shippingType = new ShippingType { Id = 1, Name = EnvioExpress, Cost = 250 };
 
         _repositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<ShippingType, bool>>>()))
                        .Returns(shippingType);
@@ -52,7 +56,7 @@ public sealed class ShippingTypeServiceTest
 
         Assert.IsNotNull(result);
         Assert.AreEqual(1, result.Id);
-        Assert.AreEqual("Envío express", result.Name);
+        Assert.AreEqual(EnvioExpress, result.Name);
         Assert.AreEqual(250, result.Cost);
     }
 
@@ -71,11 +75,11 @@ public sealed class ShippingTypeServiceTest
     {
         var request = new CreateShippingTypeRequestDTO
         {
-            Name = "Envío express",
+            Name = EnvioExpress,
             Cost = 250
         };
 
-        var saved = new ShippingType { Id = 1, Name = "Envío express", Cost = 250 };
+        var saved = new ShippingType { Id = 1, Name = EnvioExpress, Cost = 250 };
 
         _repositoryMock.Setup(r => r.Add(It.IsAny<ShippingType>()))
                        .Returns(saved);
@@ -84,7 +88,7 @@ public sealed class ShippingTypeServiceTest
 
         Assert.IsNotNull(result);
         Assert.AreEqual(1, result.Id);
-        Assert.AreEqual("Envío express", result.Name);
+        Assert.AreEqual(EnvioExpress, result.Name);
         Assert.AreEqual(250, result.Cost);
     }
 
@@ -107,7 +111,7 @@ public sealed class ShippingTypeServiceTest
     {
         var request = new CreateShippingTypeRequestDTO
         {
-            Name = "Envío express",
+            Name = EnvioExpress,
             Cost = -10
         };
 
@@ -117,12 +121,12 @@ public sealed class ShippingTypeServiceTest
     [TestMethod]
     public void Update_WhenExists_ReturnsUpdatedShippingType()
     {
-        var existing = new ShippingType { Id = 1, Name = "Envío express", Cost = 250 };
-        var updated = new ShippingType { Id = 1, Name = "Envío express modificado", Cost = 300 };
+        var existing = new ShippingType { Id = 1, Name = EnvioExpress, Cost = 250 };
+        var updated = new ShippingType { Id = 1, Name = EnvioExpressModificado, Cost = 300 };
 
         var request = new UpdateShippingTypeRequestDTO
         {
-            Name = "Envío express modificado",
+            Name = EnvioExpressModificado,
             Cost = 300
         };
 
@@ -136,7 +140,7 @@ public sealed class ShippingTypeServiceTest
 
         Assert.IsNotNull(result);
         Assert.AreEqual(1, result.Id);
-        Assert.AreEqual("Envío express modificado", result.Name);
+        Assert.AreEqual(EnvioExpressModificado, result.Name);
         Assert.AreEqual(300, result.Cost);
     }
 
@@ -146,7 +150,7 @@ public sealed class ShippingTypeServiceTest
     {
         var request = new UpdateShippingTypeRequestDTO
         {
-            Name = "Envío express",
+            Name = EnvioExpress,
             Cost = 250
         };
 
@@ -162,11 +166,11 @@ public sealed class ShippingTypeServiceTest
     {
         var request = new CreateShippingTypeRequestDTO
         {
-            Name = "Envío express",
+            Name = EnvioExpress,
             Cost = 250
         };
 
-        var existing = new ShippingType { Id = 1, Name = "Envío express", Cost = 250 };
+        var existing = new ShippingType { Id = 1, Name = EnvioExpress, Cost = 250 };
 
         _repositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<ShippingType, bool>>>()))
                        .Returns(existing);
@@ -180,12 +184,12 @@ public sealed class ShippingTypeServiceTest
     {
         var request = new UpdateShippingTypeRequestDTO
         {
-            Name = "Envío en el día",
+            Name = EnvioEnElDia,
             Cost = 300
         };
 
-        var current = new ShippingType { Id = 1, Name = "Envío express", Cost = 250 };
-        var other = new ShippingType { Id = 2, Name = "Envío en el día", Cost = 200 };
+        var current = new ShippingType { Id = 1, Name = EnvioExpress, Cost = 250 };
+        var other = new ShippingType { Id = 2, Name = EnvioEnElDia, Cost = 200 };
 
         _repositoryMock.SetupSequence(r => r.Get(It.IsAny<Expression<Func<ShippingType, bool>>>()))
                        .Returns(current)

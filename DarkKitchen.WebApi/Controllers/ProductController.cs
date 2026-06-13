@@ -1,7 +1,6 @@
-using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IBusinessLogic;
-using DarkKitchen.WebApi.Filters;
+using DarkKitchen.WebApi.Filters.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DarkKitchen.WebApi.Controllers;
@@ -12,7 +11,7 @@ public class ProductController(IProductService productService) : DarkKitchenCont
 {
     private readonly IProductService _productService = productService;
 
-    [AuthorizeRoles(UserRole.Client, UserRole.Administrative)]
+    [ClientOrAdministrative]
     [HttpGet]
     public IActionResult GetProducts([FromQuery] GetProductsManageRequestDTO request)
     {
@@ -21,7 +20,7 @@ public class ProductController(IProductService productService) : DarkKitchenCont
         return Ok(products);
     }
 
-    [AuthorizeRoles(UserRole.Administrative)]
+    [AdministrativeOnly]
     [HttpPost]
     public IActionResult CreateProduct([FromBody] CreateProductRequestDTO request)
     {
@@ -30,7 +29,7 @@ public class ProductController(IProductService productService) : DarkKitchenCont
         return Created(" ", product);
     }
 
-    [AuthorizeRoles(UserRole.Administrative)]
+    [AdministrativeOnly]
     [HttpPut("{id}")]
     public IActionResult UpdateProduct(int id, [FromBody] UpdateProductRequestDTO request)
     {

@@ -1,7 +1,6 @@
-using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IBusinessLogic;
-using DarkKitchen.WebApi.Filters;
+using DarkKitchen.WebApi.Filters.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DarkKitchen.WebApi.Controllers;
@@ -12,7 +11,7 @@ public class AuditController(IAuditService auditService) : ControllerBase
 {
     private readonly IAuditService _auditService = auditService;
 
-    [AuthorizeRoles(UserRole.Administrative)]
+    [AdministrativeOnly]
     [HttpGet]
     public IActionResult GetLogs([FromQuery] GetAuditLogsRequestDTO request)
     {

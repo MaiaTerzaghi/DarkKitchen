@@ -11,12 +11,39 @@ namespace DarkKitchen.DataAccess.Test.Repositories;
 public sealed class OrderRepositoryTest
 {
     private SqliteConnection? _connection;
+
+    private const string Val18DeJulio = "18 de Julio";
+    private const string Val1234 = "1234";
+    private const string Minutas = "Minutas";
+    private const string PizzaNapolitana = "Pizza Napolitana";
+    private const string Fritos = "Fritos";
+    private const string P0001 = "P0001";
+    private const string RicaPizzaNapolitana = "Rica pizza napolitana";
+    private const string Val5678 = "5678";
+    private const string AvItalia = "Av. Italia";
+    private const string Ana = "Ana";
+    private const string Juan = "Juan";
+    private const string PastaBolognesa = "Pasta Bolognesa";
+    private const string Hash = "hash";
+    private const string Val59899000000 = "+59899000000";
+    private const string Val59899000001 = "+59899000001";
+    private const string DataSourceMemory = "Data Source=:memory:";
+    private const string DescripcionLargaDelProducto = "Descripcion larga del producto";
+    private const string DescripcionLargaDelProductoPar = "Descripcion larga del producto para cumplir validacion";
+    private const string Express = "Express";
+    private const string Lopez = "Lopez";
+    private const string P0002 = "P0002";
+    private const string Pastas = "Pastas";
+    private const string Perez = "Perez";
+    private const string RicaPastaBolognesa = "Rica pasta bolognesa";
+    private const string Client1TestCom = "client1@test.com";
+    private const string Client2TestCom = "client2@test.com";
     private DarkKitchenContext? _context;
 
     [TestInitialize]
     public void Initialize()
     {
-        _connection = new SqliteConnection("Data Source=:memory:");
+        _connection = new SqliteConnection(DataSourceMemory);
         _connection.Open();
 
         var options = new DbContextOptionsBuilder<DarkKitchenContext>()
@@ -30,28 +57,28 @@ public sealed class OrderRepositoryTest
             new User
             {
                 Id = 1,
-                Name = "Juan",
-                LastName = "Perez",
-                Email = "client1@test.com",
-                Phone = "+59899000000",
-                Password = "hash",
+                Name = Juan,
+                LastName = Perez,
+                Email = Client1TestCom,
+                Phone = Val59899000000,
+                Password = Hash,
                 Role = UserRole.Client
             },
             new User
             {
                 Id = 2,
-                Name = "Ana",
-                LastName = "Lopez",
-                Email = "client2@test.com",
-                Phone = "+59899000001",
-                Password = "hash",
+                Name = Ana,
+                LastName = Lopez,
+                Email = Client2TestCom,
+                Phone = Val59899000001,
+                Password = Hash,
                 Role = UserRole.Client
             });
 
         _context.ShippingTypes.Add(new ShippingType
         {
             Id = 1,
-            Name = "Express",
+            Name = Express,
             Cost = 50.0
         });
 
@@ -73,8 +100,8 @@ public sealed class OrderRepositoryTest
             ClientId = 1,
             ShippingTypeId = 1,
             Status = OrderStatus.Pending,
-            Street = "18 de Julio",
-            DoorNumber = "1234",
+            Street = Val18DeJulio,
+            DoorNumber = Val1234,
             Items = []
         };
 
@@ -97,8 +124,8 @@ public sealed class OrderRepositoryTest
             ClientId = 1,
             ShippingTypeId = 1,
             Status = OrderStatus.Pending,
-            Street = "18 de Julio",
-            DoorNumber = "1234",
+            Street = Val18DeJulio,
+            DoorNumber = Val1234,
             Date = new DateTime(2026, 1, 10),
             Items = []
         };
@@ -108,8 +135,8 @@ public sealed class OrderRepositoryTest
             ClientId = 2,
             ShippingTypeId = 1,
             Status = OrderStatus.Pending,
-            Street = "Av. Italia",
-            DoorNumber = "5678",
+            Street = AvItalia,
+            DoorNumber = Val5678,
             Date = new DateTime(2026, 3, 10),
             Items = []
         };
@@ -133,8 +160,8 @@ public sealed class OrderRepositoryTest
             ClientId = 1,
             ShippingTypeId = 1,
             Status = OrderStatus.Pending,
-            Street = "18 de Julio",
-            DoorNumber = "1234",
+            Street = Val18DeJulio,
+            DoorNumber = Val1234,
             Date = new DateTime(2026, 1, 10),
             Items = []
         };
@@ -144,8 +171,8 @@ public sealed class OrderRepositoryTest
             ClientId = 2,
             ShippingTypeId = 1,
             Status = OrderStatus.Pending,
-            Street = "Av. Italia",
-            DoorNumber = "5678",
+            Street = AvItalia,
+            DoorNumber = Val5678,
             Date = new DateTime(2026, 1, 15),
             Items = []
         };
@@ -154,11 +181,11 @@ public sealed class OrderRepositoryTest
         _context.SaveChanges();
 
         var repository = new OrderRepository(_context);
-        var (items, totalCount) = repository.GetOrders(null, new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), "18 de Julio", null);
+        var (items, totalCount) = repository.GetOrders(null, new DateTime(2026, 1, 1), new DateTime(2026, 1, 31), Val18DeJulio, null);
 
         Assert.AreEqual(1, items.Count);
         Assert.AreEqual(1, totalCount);
-        Assert.AreEqual("18 de Julio", items[0].Street);
+        Assert.AreEqual(Val18DeJulio, items[0].Street);
     }
 
     [TestMethod]
@@ -169,8 +196,8 @@ public sealed class OrderRepositoryTest
             ClientId = 1,
             ShippingTypeId = 1,
             Status = OrderStatus.Pending,
-            Street = "18 de Julio",
-            DoorNumber = "1234",
+            Street = Val18DeJulio,
+            DoorNumber = Val1234,
             Date = new DateTime(2026, 1, 10),
             Items = []
         };
@@ -180,8 +207,8 @@ public sealed class OrderRepositoryTest
             ClientId = 2,
             ShippingTypeId = 1,
             Status = OrderStatus.Delivered,
-            Street = "Av. Italia",
-            DoorNumber = "5678",
+            Street = AvItalia,
+            DoorNumber = Val5678,
             Date = new DateTime(2026, 1, 15),
             Items = []
         };
@@ -205,8 +232,8 @@ public sealed class OrderRepositoryTest
             ClientId = 1,
             ShippingTypeId = 1,
             Status = OrderStatus.Pending,
-            Street = "18 de Julio",
-            DoorNumber = "1234",
+            Street = Val18DeJulio,
+            DoorNumber = Val1234,
             Items = []
         };
 
@@ -226,11 +253,11 @@ public sealed class OrderRepositoryTest
     {
         var product = new Product
         {
-            Code = "P0001",
-            Name = "Pizza Napolitana",
-            Description = "Rica pizza napolitana",
-            CommercialLine = "Minutas",
-            Category = "Fritos",
+            Code = P0001,
+            Name = PizzaNapolitana,
+            Description = RicaPizzaNapolitana,
+            CommercialLine = Minutas,
+            Category = Fritos,
             Price = 100.0,
             Images = "/9j/2Q=="
         };
@@ -240,8 +267,8 @@ public sealed class OrderRepositoryTest
             ClientId = 1,
             ShippingTypeId = 1,
             Status = OrderStatus.Delivered,
-            Street = "18 de Julio",
-            DoorNumber = "1234",
+            Street = Val18DeJulio,
+            DoorNumber = Val1234,
             Date = new DateTime(2026, 1, 10),
             Items = [new OrderItem { Product = product, Quantity = 5 }]
         };
@@ -251,8 +278,8 @@ public sealed class OrderRepositoryTest
             ClientId = 1,
             ShippingTypeId = 1,
             Status = OrderStatus.Delivered,
-            Street = "18 de Julio",
-            DoorNumber = "1234",
+            Street = Val18DeJulio,
+            DoorNumber = Val1234,
             Date = new DateTime(2026, 3, 10),
             Items = [new OrderItem { Product = product, Quantity = 10 }]
         };
@@ -267,7 +294,7 @@ public sealed class OrderRepositoryTest
 
         Assert.IsNotNull(result);
         Assert.AreEqual(1, result.Count);
-        Assert.AreEqual("Pizza Napolitana", result[0].Product.Name);
+        Assert.AreEqual(PizzaNapolitana, result[0].Product.Name);
         Assert.AreEqual(5, result[0].Quantity);
     }
 
@@ -276,22 +303,22 @@ public sealed class OrderRepositoryTest
     {
         var product1 = new Product
         {
-            Code = "P0001",
-            Name = "Pizza Napolitana",
-            Description = "Rica pizza napolitana",
-            CommercialLine = "Minutas",
-            Category = "Fritos",
+            Code = P0001,
+            Name = PizzaNapolitana,
+            Description = RicaPizzaNapolitana,
+            CommercialLine = Minutas,
+            Category = Fritos,
             Price = 100.0,
             Images = "/9j/2Q=="
         };
 
         var product2 = new Product
         {
-            Code = "P0002",
-            Name = "Pasta Bolognesa",
-            Description = "Rica pasta bolognesa",
-            CommercialLine = "Minutas",
-            Category = "Pastas",
+            Code = P0002,
+            Name = PastaBolognesa,
+            Description = RicaPastaBolognesa,
+            CommercialLine = Minutas,
+            Category = Pastas,
             Price = 80.0,
             Images = "/9j/2Q=="
         };
@@ -301,8 +328,8 @@ public sealed class OrderRepositoryTest
             ClientId = 1,
             ShippingTypeId = 1,
             Status = OrderStatus.Delivered,
-            Street = "18 de Julio",
-            DoorNumber = "1234",
+            Street = Val18DeJulio,
+            DoorNumber = Val1234,
             Date = new DateTime(2026, 1, 10),
             Items =
             [
@@ -319,8 +346,8 @@ public sealed class OrderRepositoryTest
             o => o.Date >= new DateTime(2026, 1, 1) && o.Date <= new DateTime(2026, 1, 31),
             5);
 
-        Assert.AreEqual("Pasta Bolognesa", result[0].Product.Name);
-        Assert.AreEqual("Pizza Napolitana", result[1].Product.Name);
+        Assert.AreEqual(PastaBolognesa, result[0].Product.Name);
+        Assert.AreEqual(PizzaNapolitana, result[1].Product.Name);
     }
 
     [TestMethod]
@@ -332,9 +359,9 @@ public sealed class OrderRepositoryTest
             {
                 Code = $"P000{i}",
                 Name = $"Producto {i} largo nombre",
-                Description = "Descripcion larga del producto",
-                CommercialLine = "Minutas",
-                Category = "Fritos",
+                Description = DescripcionLargaDelProducto,
+                CommercialLine = Minutas,
+                Category = Fritos,
                 Price = 100.0,
                 Images = "/9j/2Q=="
             };
@@ -344,8 +371,8 @@ public sealed class OrderRepositoryTest
                 ClientId = 1,
                 ShippingTypeId = 1,
                 Status = OrderStatus.Delivered,
-                Street = "18 de Julio",
-                DoorNumber = "1234",
+                Street = Val18DeJulio,
+                DoorNumber = Val1234,
                 Date = new DateTime(2026, 1, 10),
                 Items = [new OrderItem { Product = product, Quantity = i }]
             };
@@ -368,11 +395,11 @@ public sealed class OrderRepositoryTest
     {
         var product = new Product
         {
-            Code = "P0001",
-            Name = "Pizza Napolitana",
-            Description = "Rica pizza napolitana",
-            CommercialLine = "Minutas",
-            Category = "Fritos",
+            Code = P0001,
+            Name = PizzaNapolitana,
+            Description = RicaPizzaNapolitana,
+            CommercialLine = Minutas,
+            Category = Fritos,
             Price = 100.0,
             Images = "/9j/2Q=="
         };
@@ -382,8 +409,8 @@ public sealed class OrderRepositoryTest
             ClientId = 1,
             ShippingTypeId = 1,
             Status = OrderStatus.Delivered,
-            Street = "18 de Julio",
-            DoorNumber = "1234",
+            Street = Val18DeJulio,
+            DoorNumber = Val1234,
             Date = new DateTime(2026, 1, 10),
             Items = [new OrderItem { Product = product, Quantity = 1 }]
         };
@@ -393,8 +420,8 @@ public sealed class OrderRepositoryTest
             ClientId = 2,
             ShippingTypeId = 1,
             Status = OrderStatus.Delivered,
-            Street = "18 de Julio",
-            DoorNumber = "1234",
+            Street = Val18DeJulio,
+            DoorNumber = Val1234,
             Date = new DateTime(2026, 1, 15),
             Items = [new OrderItem { Product = product, Quantity = 1 }]
         };
@@ -422,9 +449,9 @@ public sealed class OrderRepositoryTest
             {
                 Code = $"P{i:D4}",
                 Name = $"Producto {i} largo nombre",
-                Description = "Descripcion larga del producto para cumplir validacion",
-                CommercialLine = "Minutas",
-                Category = "Fritos",
+                Description = DescripcionLargaDelProductoPar,
+                CommercialLine = Minutas,
+                Category = Fritos,
                 Price = 100.0,
                 Images = "/9j/2Q=="
             };
@@ -434,8 +461,8 @@ public sealed class OrderRepositoryTest
                 ClientId = 1,
                 ShippingTypeId = 1,
                 Status = OrderStatus.Delivered,
-                Street = "18 de Julio",
-                DoorNumber = "1234",
+                Street = Val18DeJulio,
+                DoorNumber = Val1234,
                 Date = new DateTime(2000 + i, 1, 1),
                 Items = [new OrderItem { Product = product, Quantity = 1 }]
             });
@@ -455,11 +482,11 @@ public sealed class OrderRepositoryTest
     {
         var product = new Product
         {
-            Code = "P0001",
-            Name = "Pizza Napolitana",
-            Description = "Rica pizza napolitana",
-            CommercialLine = "Minutas",
-            Category = "Fritos",
+            Code = P0001,
+            Name = PizzaNapolitana,
+            Description = RicaPizzaNapolitana,
+            CommercialLine = Minutas,
+            Category = Fritos,
             Price = 100.0,
             Images = "/9j/2Q=="
         };
@@ -469,8 +496,8 @@ public sealed class OrderRepositoryTest
             ClientId = 1,
             ShippingTypeId = 1,
             Status = OrderStatus.Delivered,
-            Street = "18 de Julio",
-            DoorNumber = "1234",
+            Street = Val18DeJulio,
+            DoorNumber = Val1234,
             Date = new DateTime(2026, 1, 10),
             Total = 500.0,
             Items = [new OrderItem { Product = product, Quantity = 3 }]
@@ -492,11 +519,11 @@ public sealed class OrderRepositoryTest
     {
         var product = new Product
         {
-            Code = "P0001",
-            Name = "Pizza Napolitana",
-            Description = "Rica pizza napolitana",
-            CommercialLine = "Minutas",
-            Category = "Fritos",
+            Code = P0001,
+            Name = PizzaNapolitana,
+            Description = RicaPizzaNapolitana,
+            CommercialLine = Minutas,
+            Category = Fritos,
             Price = 100.0,
             Images = "/9j/2Q=="
         };
@@ -506,8 +533,8 @@ public sealed class OrderRepositoryTest
             ClientId = 1,
             ShippingTypeId = 1,
             Status = OrderStatus.Pending,
-            Street = "18 de Julio",
-            DoorNumber = "1234",
+            Street = Val18DeJulio,
+            DoorNumber = Val1234,
             Date = new DateTime(2026, 1, 10),
             Items = [new OrderItem { Product = product, Quantity = 2 }]
         };
@@ -517,8 +544,8 @@ public sealed class OrderRepositoryTest
             ClientId = 2,
             ShippingTypeId = 1,
             Status = OrderStatus.Delivered,
-            Street = "Av. Italia",
-            DoorNumber = "5678",
+            Street = AvItalia,
+            DoorNumber = Val5678,
             Date = new DateTime(2026, 3, 10),
             Items = [new OrderItem { Product = product, Quantity = 1 }]
         };
@@ -533,7 +560,9 @@ public sealed class OrderRepositoryTest
         Assert.AreEqual(2, items.Count);
         Assert.IsNotNull(items[0].Client);
         Assert.IsNotNull(items[1].Client);
+        Assert.AreEqual(Ana, items[0].Client.Name);
+        Assert.AreEqual(Juan, items[1].Client.Name);
         Assert.AreEqual(1, items[0].Items.Count);
-        Assert.AreEqual("Pizza Napolitana", items[0].Items[0].Product.Name);
+        Assert.AreEqual(PizzaNapolitana, items[0].Items[0].Product.Name);
     }
 }

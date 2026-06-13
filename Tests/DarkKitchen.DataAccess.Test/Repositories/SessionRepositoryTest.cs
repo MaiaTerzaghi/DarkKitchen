@@ -10,12 +10,19 @@ namespace DarkKitchen.DataAccess.Test.Repositories;
 public sealed class SessionRepositoryTest
 {
     private SqliteConnection? _connection;
+
+    private const string Val59891234567 = "+59891234567";
+    private const string Contrasena1 = "Contrasena1@%#!";
+    private const string DataSourceMemory = "Data Source=:memory:";
+    private const string Juan = "Juan";
+    private const string Perez = "Perez";
+    private const string JuanTestCom = "juan@test.com";
     private DarkKitchenContext? _context;
 
     [TestInitialize]
     public void Initialize()
     {
-        _connection = new SqliteConnection("Data Source=:memory:");
+        _connection = new SqliteConnection(DataSourceMemory);
         _connection.Open();
 
         var options = new DbContextOptionsBuilder<DarkKitchenContext>()
@@ -38,11 +45,11 @@ public sealed class SessionRepositoryTest
     {
         var user = new User
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Password = "Contrasena1@%#!",
-            Phone = "+59891234567"
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Password = Contrasena1,
+            Phone = Val59891234567
         };
 
         var session = new Session { User = user };

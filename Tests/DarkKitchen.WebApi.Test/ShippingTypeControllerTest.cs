@@ -11,6 +11,10 @@ namespace DarkKitchen.WebApi.Test;
 public sealed class ShippingTypeControllerTest
 {
     private Mock<IShippingTypeService> _serviceMock = null!;
+
+    private const string EnvioExpress = "Envío express";
+    private const string EnvioExpressModificado = "Envío express modificado";
+    private const string EnvioEnElDia = "Envío en el día";
     private ShippingTypeController _controller = null!;
 
     [TestInitialize]
@@ -25,8 +29,8 @@ public sealed class ShippingTypeControllerTest
     {
         var shippingTypes = new List<ShippingTypeResponseDTO>
         {
-            new() { Id = 1, Name = "Envío express", Cost = 250 },
-            new() { Id = 2, Name = "Envío en el día", Cost = 200 }
+            new() { Id = 1, Name = EnvioExpress, Cost = 250 },
+            new() { Id = 2, Name = EnvioEnElDia, Cost = 200 }
         };
 
         _serviceMock.Setup(s => s.GetAll()).Returns(shippingTypes);
@@ -44,7 +48,7 @@ public sealed class ShippingTypeControllerTest
         var shippingType = new ShippingTypeResponseDTO
         {
             Id = 1,
-            Name = "Envío express",
+            Name = EnvioExpress,
             Cost = 250
         };
 
@@ -62,14 +66,14 @@ public sealed class ShippingTypeControllerTest
     {
         var request = new CreateShippingTypeRequestDTO
         {
-            Name = "Envío express",
+            Name = EnvioExpress,
             Cost = 250
         };
 
         var response = new ShippingTypeResponseDTO
         {
             Id = 1,
-            Name = "Envío express",
+            Name = EnvioExpress,
             Cost = 250
         };
 
@@ -86,14 +90,14 @@ public sealed class ShippingTypeControllerTest
     {
         var request = new UpdateShippingTypeRequestDTO
         {
-            Name = "Envío express modificado",
+            Name = EnvioExpressModificado,
             Cost = 300
         };
 
         var response = new ShippingTypeResponseDTO
         {
             Id = 1,
-            Name = "Envío express modificado",
+            Name = EnvioExpressModificado,
             Cost = 300
         };
 
