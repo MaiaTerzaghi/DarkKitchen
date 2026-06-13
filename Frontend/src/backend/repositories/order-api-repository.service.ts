@@ -45,8 +45,9 @@ export class OrderApiRepositoryService extends ApiRepository {
     return this.get<PaginatedResponse<OrderResponse>>('', query);
   }
 
-  public getDispatcherOrders(): Observable<OrderResponse[]> {
-    return this.get<OrderResponse[]>('dispatcher');
+  public getDispatcherOrders(page: number = 1, pageSize: number = 20): Observable<PaginatedResponse<OrderResponse>> {
+    const query = `Page=${page}&PageSize=${pageSize}`;
+    return this.get<PaginatedResponse<OrderResponse>>('dispatcher', query);
   }
 
   public changeStatus(id: number, status: OrderStatus): Observable<OrderStatusResponse> {

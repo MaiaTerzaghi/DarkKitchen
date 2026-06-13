@@ -63,6 +63,13 @@
         <span class="detail-label">Tel:</span>
         <span class="detail-value">{{ order.client.phone }}</span>
       </div>
+      <div class="detail-row">
+        <span class="detail-label">Dirección:</span>
+        <span class="detail-value">
+          {{ order.street }} {{ order.doorNumber }}
+          <span *ngIf="order.apartment"> - Apto: {{ order.apartment }}</span>
+        </span>
+      </div>
     </div>
 
     <div class="actions" *ngIf="availableActions(order.status).length > 0">
@@ -86,6 +93,15 @@
   <p>{{ searchTerm ? 'No se encontraron pedidos para esa búsqueda' : 'No hay pedidos' }}</p>
 </div>
 
+
+<!-- Paginador -->
+<app-paginator
+  *ngIf="!loading && totalCount > 0"
+  [currentPage]="currentPage"
+  [pageSize]="pageSize"
+  [totalCount]="totalCount"
+  (pageChange)="onPageChange($event)">
+</app-paginator>
 
 <div class="toast" *ngIf="toast" [ngClass]="'toast-' + toast.type">
   <span class="material-icons">

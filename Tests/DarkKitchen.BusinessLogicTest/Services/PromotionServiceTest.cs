@@ -48,13 +48,14 @@ public sealed class PromotionServiceTest
         };
 
         _promotionRepositoryMock
-            .Setup(r => r.GetActivePromotions(null, null, null))
-            .Returns(promotions);
+            .Setup(r => r.GetActivePromotions(null, null, null, It.IsAny<int>(), It.IsAny<int>()))
+            .Returns((promotions, promotions.Count));
 
         var result = _service.GetActivePromotions(null, null, null);
 
         Assert.IsNotNull(result);
-        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual(1, result.Items.Count);
+        Assert.AreEqual(1, result.TotalCount);
     }
 
     [TestMethod]

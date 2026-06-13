@@ -59,10 +59,11 @@ public sealed class PromotionRepositoryTest
         _context.SaveChanges();
 
         var repository = new PromotionRepository(_context);
-        var result = repository.GetActivePromotions(new DateTime(2026, 4, 1), null, null);
+        var (items, totalCount) = repository.GetActivePromotions(new DateTime(2026, 4, 1), null, null);
 
-        Assert.IsNotNull(result);
-        Assert.AreEqual(1, result.Count);
+        Assert.IsNotNull(items);
+        Assert.AreEqual(1, totalCount);
+        Assert.AreEqual(1, items.Count);
     }
 
     [TestMethod]
@@ -80,10 +81,11 @@ public sealed class PromotionRepositoryTest
         _context.SaveChanges();
 
         var repository = new PromotionRepository(_context);
-        var result = repository.GetActivePromotions(null, null, null);
+        var (items, totalCount) = repository.GetActivePromotions(null, null, null);
 
-        Assert.IsNotNull(result);
-        Assert.AreEqual(1, result.Count);
+        Assert.IsNotNull(items);
+        Assert.AreEqual(1, totalCount);
+        Assert.AreEqual(1, items.Count);
     }
 
     [TestMethod]
@@ -112,10 +114,11 @@ public sealed class PromotionRepositoryTest
         _context.SaveChanges();
 
         var repository = new PromotionRepository(_context);
-        var result = repository.GetActivePromotions(null, Minutas, null);
+        var (items, totalCount) = repository.GetActivePromotions(null, Minutas, null);
 
-        Assert.AreEqual(1, result.Count);
-        Assert.AreEqual(BlackFriday, result[0].Name);
+        Assert.AreEqual(1, totalCount);
+        Assert.AreEqual(1, items.Count);
+        Assert.AreEqual(BlackFriday, items[0].Name);
     }
 
     [TestMethod]
@@ -155,10 +158,11 @@ public sealed class PromotionRepositoryTest
         _context.SaveChanges();
 
         var repository = new PromotionRepository(_context);
-        var result = repository.GetActivePromotions(null, null, PizzaNapolitana);
+        var (items, totalCount) = repository.GetActivePromotions(null, null, PizzaNapolitana);
 
-        Assert.AreEqual(1, result.Count);
-        Assert.AreEqual(BlackFriday, result[0].Name);
+        Assert.AreEqual(1, totalCount);
+        Assert.AreEqual(1, items.Count);
+        Assert.AreEqual(BlackFriday, items[0].Name);
     }
 
     [TestMethod]

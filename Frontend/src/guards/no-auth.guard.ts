@@ -6,7 +6,18 @@ export const noAuthGuard: CanActivateFn = (route, state) => {
 
   if (isLoggedIn) {
     const router = inject(Router);
-    return router.parseUrl('/home');
+    const role = localStorage.getItem('role');
+
+    switch (role) {
+      case 'Administrative':
+        return router.parseUrl('/admin');
+      case 'Dispatcher':
+        return router.parseUrl('/dispatcher');
+      case 'Client':
+        return router.parseUrl('/customer');
+      default:
+        return router.parseUrl('/login');
+    }
   }
 
   return true;

@@ -36,8 +36,8 @@ public sealed class PromotionControllerTest
     public void GetActivePromotions_WhenCalled_ReturnsOk()
     {
         _promotionServiceMock
-            .Setup(s => s.GetActivePromotions(null, null, null))
-            .Returns([]);
+            .Setup(s => s.GetActivePromotions(null, null, null, It.IsAny<int>(), It.IsAny<int>()))
+            .Returns(new PaginatedResponse<PromotionResponseDTO>());
 
         var result = _controller.GetActivePromotions(new PromotionFilterDTO());
 
@@ -49,7 +49,7 @@ public sealed class PromotionControllerTest
     public void GetActivePromotions_WhenServiceThrowsException_ReturnsBadRequest()
     {
         _promotionServiceMock
-            .Setup(s => s.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>()))
+            .Setup(s => s.GetActivePromotions(It.IsAny<DateTime?>(), It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<int>(), It.IsAny<int>()))
             .Throws(new ArgumentException(Error));
 
         _controller.GetActivePromotions(new PromotionFilterDTO());
@@ -175,5 +175,30 @@ public sealed class PromotionControllerTest
         _controller.UpdatePromotion(5, request);
 
         _promotionServiceMock.Verify(s => s.UpdatePromotion(5, request, AdminEmailCom), Times.Once);
+    }
+
+    [TestMethod]
+    public void GetActivePromotions_WhenAdminRole_UsesFilterDate()
+    {
+        var filterDate = new DateTime(2026, 3, 15);
+
+        _controller.HttpContext.Items[Requestinguser] = new User
+        {
+            Id = 2,
+            Email = AdminEmailCom,
+            Role = Domain.Enums.UserRole.Administrative
+        };
+
+        _promotionServiceMock
+            .Setup(s => s.GetActivePromotions(filterDate, null, null, It.IsAny<int>(), It.IsAny<int>()))
+            .Returns(new PaginatedResponse<PromotionResponseDTO>());
+
+        var filters = new PromotionFilterDTO { Date = filterDate };
+        var result = _controller.GetActivePromotions(filters);
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        _promotionServiceMock.Verify(
+            s => s.GetActivePromotions(filterDate, null, null, It.IsAny<int>(), It.IsAny<int>()),
+            Times.Once);
     }
 }

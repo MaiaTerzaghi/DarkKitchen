@@ -348,6 +348,26 @@ public sealed class UserServiceTest
     }
 
     [TestMethod]
+    public void GetUsers_WhenCalled_ExcludesClients()
+    {
+        var users = new List<User>
+        {
+            new() { Id = 1, Name = "Admin", LastName = "User", Email = "admin@test.com", Phone = "+59899111111", Role = UserRole.Administrative },
+            new() { Id = 2, Name = "Prep", LastName = "User", Email = "prep@test.com", Phone = "+59899222222", Role = UserRole.Dispatcher }
+        };
+
+        _userRepositoryMock.Setup(r => r.GetAll(
+            It.Is<Expression<Func<User, bool>>>(expr => true),
+            null, false, 1, 20))
+            .Returns((users, users.Count));
+
+        var result = _service.GetUsers(null, null);
+
+        Assert.AreEqual(2, result.Items.Count);
+        Assert.IsTrue(result.Items.All(u => u.Role != UserRole.Client));
+    }
+
+    [TestMethod]
     public void UpdateUser_WhenValidData_ReturnsUpdatedUser()
     {
         var request = new UpdateUserRequestDTO

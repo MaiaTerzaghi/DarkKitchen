@@ -92,12 +92,21 @@ public class OrderRepository(DarkKitchenContext context)
         return (items, totalCount);
     }
 
-    public List<Order> GetDispatcherOrders()
+    public (List<Order> Items, int TotalCount) GetDispatcherOrders(int page = 1, int pageSize = 20)
     {
-        return context.Orders
+        var query = context.Orders
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
             .Include(o => o.Client)
+            .OrderByDescending(o => o.Date);
+
+        var totalCount = query.Count();
+
+        var items = query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToList();
+
+        return (items, totalCount);
     }
 }

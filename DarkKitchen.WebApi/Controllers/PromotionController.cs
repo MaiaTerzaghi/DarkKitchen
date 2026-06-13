@@ -1,3 +1,4 @@
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.WebApi.Filters.Authorization;
@@ -13,9 +14,13 @@ public class PromotionController(IPromotionService promotionService) : DarkKitch
 
     [ClientOrAdministrative]
     [HttpGet]
-    public IActionResult GetActivePromotions([FromQuery] PromotionFilterDTO filters)
+    public IActionResult GetActivePromotions([FromQuery] PromotionFilterDTO filters, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
     {
-        var promotions = _promotionService.GetActivePromotions(filters.Date, filters.ProductLine, filters.Product);
+        var requestingUser = GetRequestingUser();
+        var date = requestingUser.Role == UserRole.Client
+            ? DateTime.Today
+            : filters.Date;
+        var promotions = _promotionService.GetActivePromotions(date, filters.ProductLine, filters.Product, page, pageSize);
         return Ok(promotions);
     }
 

@@ -4,6 +4,7 @@ import { OrderService } from '../../../backend/services/order/order.service';
 import OrderResponse from '../../../backend/services/order/models/OrderResponse';
 import OrderStatusResponse from '../../../backend/services/order/models/OrderStatusResponse';
 import { OrderStatus } from '../../../backend/services/order/models/OrderStatus';
+import PaginatedResponse from '../../../backend/models/PaginatedResponse';
 
 interface OrderAction {
   label: string;
@@ -31,6 +32,10 @@ export class OrderManagementComponent implements OnInit {
   searchTerm: string = '';
   toast: ToastMessage | null = null;
   processingOrderId: number | null = null;
+
+  currentPage: number = 1;
+  pageSize: number = 20;
+  totalCount: number = 0;
 
   orderActions: OrderAction[] = [
     {
@@ -73,9 +78,10 @@ export class OrderManagementComponent implements OnInit {
     this.loading = true;
     this.errorMessage = '';
 
-    this._orderService.getDispatcherOrders().subscribe({
+    this._orderService.getDispatcherOrders(this.currentPage, this.pageSize).subscribe({
       next: (data) => {
-        this.orders = data;
+        this.orders = data.items;
+        this.totalCount = data.totalCount;
         this.loading = false;
       },
       error: (err) => {
@@ -83,6 +89,11 @@ export class OrderManagementComponent implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  public onPageChange(page: number): void {
+    this.currentPage = page;
+    this.loadOrders();
   }
 
   public get filteredOrders(): OrderResponse[] {

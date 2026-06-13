@@ -430,3 +430,31 @@
     grid-template-columns: 1fr;
   }
 }
+
+.price-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.price-strikethrough {
+  text-decoration: line-through;
+  opacity: 0.5;
+  font-size: 0.9rem;
+}
+
+.discount-price {
+  color: #22c55e;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.discount-badge {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}

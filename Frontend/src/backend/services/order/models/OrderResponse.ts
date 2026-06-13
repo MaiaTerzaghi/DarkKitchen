@@ -17,5 +17,8 @@ export default interface OrderResponse {
   status: string;
   total: number;
   itemCount: number;
+  street: string;
+  doorNumber: string;
+  apartment?: string;
   items: OrderItemInfo[];
 }

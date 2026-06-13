@@ -20,13 +20,16 @@ export class AdminOrderListComponent implements OnInit {
   selectedOrder: OrderResponse | null = null;
   processingOrderId: number | null = null;
 
+  currentPage: number = 1;
+  pageSize: number = 20;
+  totalCount: number = 0;
+
   dateFrom: string = '';
   dateTo: string = '';
 
   constructor(private readonly _orderService: OrderService) {}
 
   ngOnInit(): void {
-    this.setDefaultDates();
     this.loadOrders();
   }
 
@@ -47,18 +50,20 @@ export class AdminOrderListComponent implements OnInit {
   }
 
   public loadOrders(): void {
-    if (!this.dateFrom || !this.dateTo) {
-      this.errorMessage = 'Las fechas son obligatorias';
-      return;
-    }
-
     this.loading = true;
     this.errorMessage = '';
 
-    const filters: OrderFilter = {
-      dateFrom: this.dateFrom,
-      dateTo: this.dateTo,
-    };
+    const filters: OrderFilter = {};
+
+    if (this.dateFrom) {
+      filters.dateFrom = this.dateFrom;
+    }
+    if (this.dateTo) {
+      filters.dateTo = this.dateTo;
+    }
+
+    filters.page = this.currentPage;
+    filters.pageSize = this.pageSize;
 
     if (this.filterStatus) {
       filters.status = Number(this.filterStatus);
@@ -67,6 +72,7 @@ export class AdminOrderListComponent implements OnInit {
     this._orderService.getOrders(filters).subscribe({
       next: (data) => {
         this.orders = data.items;
+        this.totalCount = data.totalCount;
         this.loading = false;
       },
       error: (err) => {
@@ -160,5 +166,10 @@ export class AdminOrderListComponent implements OnInit {
         this.processingOrderId = null;
       },
     });
+  }
+
+  public onPageChange(page: number): void {
+    this.currentPage = page;
+    this.loadOrders();
   }
 }
