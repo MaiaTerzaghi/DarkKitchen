@@ -15,6 +15,10 @@ namespace DarkKitchen.WebApi.Test.Filters;
 [TestClass]
 public class AuthorizeRolesAttributeTest
 {
+    private const string Authorization = "Authorization";
+    private const string ValidToken = "valid-token";
+    private const string InvalidToken = "invalid-token";
+
     [TestMethod]
     public void OnAuthorization_WhenNoToken_Returns401()
     {
@@ -59,7 +63,7 @@ public class AuthorizeRolesAttributeTest
             RequestServices = serviceProvider
         };
 
-        httpContext.Request.Headers["Authorization"] = "invalid-token";
+        httpContext.Request.Headers[Authorization] = InvalidToken;
 
         var context = new AuthorizationFilterContext(
             new ActionContext(httpContext, new RouteData(), new ActionDescriptor()),
@@ -93,7 +97,7 @@ public class AuthorizeRolesAttributeTest
             RequestServices = serviceProvider
         };
 
-        httpContext.Request.Headers["Authorization"] = "valid-token";
+        httpContext.Request.Headers[Authorization] = ValidToken;
 
         var context = new AuthorizationFilterContext(
             new ActionContext(httpContext, new RouteData(), new ActionDescriptor()),
@@ -128,7 +132,7 @@ public class AuthorizeRolesAttributeTest
             RequestServices = serviceProvider
         };
 
-        httpContext.Request.Headers["Authorization"] = "valid-token";
+        httpContext.Request.Headers[Authorization] = ValidToken;
 
         var context = new AuthorizationFilterContext(
             new ActionContext(httpContext, new RouteData(), new ActionDescriptor()),

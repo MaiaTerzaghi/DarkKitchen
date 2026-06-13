@@ -10,6 +10,9 @@ namespace DarkKitchen.BusinessLogicTest.Auditing;
 [TestClass]
 public sealed class AuditLogObserverTest
 {
+    private const string AltaDeProducto = "Alta de producto.";
+    private const string AdminEmailCom = "admin@email.com";
+
     [TestMethod]
     public void Update_WhenEventReceived_PersistsAuditLog()
     {
@@ -19,8 +22,8 @@ public sealed class AuditLogObserverTest
         {
             EntityName = AuditedEntity.Product,
             EntityId = 12,
-            Description = "Alta de producto.",
-            ResponsibleUser = "admin@email.com"
+            Description = AltaDeProducto,
+            ResponsibleUser = AdminEmailCom
         };
 
         observer.Update(auditEvent);
@@ -28,8 +31,8 @@ public sealed class AuditLogObserverTest
         auditRepositoryMock.Verify(r => r.Add(It.Is<AuditLog>(log =>
             log.EntityName == AuditedEntity.Product &&
             log.EntityId == 12 &&
-            log.Description == "Alta de producto." &&
-            log.ResponsibleUser == "admin@email.com")), Times.Once);
+            log.Description == AltaDeProducto &&
+            log.ResponsibleUser == AdminEmailCom)), Times.Once);
     }
 
     [TestMethod]

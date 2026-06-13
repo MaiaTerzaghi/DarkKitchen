@@ -11,6 +11,10 @@ namespace DarkKitchen.BusinessLogicTest.Services;
 public sealed class AuditServiceTest
 {
     private Mock<IAuditRepository> _auditRepositoryMock = null!;
+
+    private const string AltaDeProducto = "Alta de producto.";
+    private const string AdminEmailCom = "admin@email.com";
+    private const string Product = "Product";
     private AuditService _service = null!;
 
     [TestInitialize]
@@ -113,8 +117,8 @@ public sealed class AuditServiceTest
             Timestamp = new DateTime(2026, 4, 23, 9, 0, 0),
             EntityName = AuditedEntity.Product,
             EntityId = 12345,
-            Description = "Alta de producto.",
-            ResponsibleUser = "admin@email.com"
+            Description = AltaDeProducto,
+            ResponsibleUser = AdminEmailCom
         };
         _auditRepositoryMock
             .Setup(r => r.GetByEntity(It.IsAny<AuditedEntity>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<int>()))
@@ -132,9 +136,9 @@ public sealed class AuditServiceTest
         var dto = result.Items[0];
         Assert.AreEqual(7, dto.Id);
         Assert.AreEqual(new DateTime(2026, 4, 23, 9, 0, 0), dto.Timestamp);
-        Assert.AreEqual("Product", dto.EntityName);
+        Assert.AreEqual(Product, dto.EntityName);
         Assert.AreEqual(12345, dto.EntityId);
-        Assert.AreEqual("Alta de producto.", dto.Description);
-        Assert.AreEqual("admin@email.com", dto.ResponsibleUser);
+        Assert.AreEqual(AltaDeProducto, dto.Description);
+        Assert.AreEqual(AdminEmailCom, dto.ResponsibleUser);
     }
 }
