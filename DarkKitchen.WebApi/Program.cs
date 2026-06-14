@@ -16,7 +16,10 @@ public class Program
         {
             options.AddPolicy("AllowAngular", policy =>
             {
-                policy.WithOrigins("http://localhost:4200")
+                policy.WithOrigins(
+                          "http://localhost:4200",
+                          "http://localhost:8080",
+                          "https://darkkitchen-msn.web.app")
                       .AllowAnyHeader()
                       .AllowAnyMethod();
             });

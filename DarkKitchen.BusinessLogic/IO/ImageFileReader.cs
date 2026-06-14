@@ -4,7 +4,14 @@ namespace DarkKitchen.BusinessLogic.IO;
 
 public class ImageFileReader : IImageFileReader
 {
-    private static readonly HttpClient _httpClient = new();
+    private static readonly HttpClient _httpClient = CreateClient();
+
+    private static HttpClient CreateClient()
+    {
+        var client = new HttpClient();
+        client.DefaultRequestHeaders.Add("User-Agent", "DarkKitchen/1.0");
+        return client;
+    }
 
     public bool Exists(string fullPath) => File.Exists(fullPath);
 
