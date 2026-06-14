@@ -13,6 +13,7 @@ export default abstract class ApiRepository {
       headers: new HttpHeaders({
         accept: 'application/json',
         Authorization: localStorage.getItem('token') ?? '',
+        'ngrok-skip-browser-warning': 'true',
       }),
     };
   }
