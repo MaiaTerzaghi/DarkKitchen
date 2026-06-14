@@ -29,6 +29,13 @@ RUN dotnet publish DarkKitchen.WebApi/DarkKitchen.WebApi.csproj \
     -o /app/publish \
     --no-restore
 
+# Build importers and copy DLLs to Plugins folder
+RUN dotnet build DarkKitchen.Importers.Json/DarkKitchen.Importers.Json.csproj -c Release \
+    && dotnet build DarkKitchen.Importers.Xml/DarkKitchen.Importers.Xml.csproj -c Release \
+    && mkdir -p /app/publish/Plugins \
+    && cp DarkKitchen.Importers.Json/bin/Release/net8.0/DarkKitchen.Importers.Json.dll /app/publish/Plugins/ \
+    && cp DarkKitchen.Importers.Xml/bin/Release/net8.0/DarkKitchen.Importers.Xml.dll /app/publish/Plugins/
+
 # ---------- Runtime stage ----------
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
