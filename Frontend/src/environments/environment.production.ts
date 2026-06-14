@@ -1,3 +1,3 @@
 export default {
-  darkKitchenApi: 'https://your-prod-domain.com/api',
+  darkKitchenApi: 'https://encrust-trial-stalemate.ngrok-free.dev/api',
 };
