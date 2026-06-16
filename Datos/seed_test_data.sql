@@ -113,6 +113,21 @@ INSERT INTO [Orders] (Id, ClientId, ShippingTypeId, Status, Street, DoorNumber, 
 -- Subtotal=540, Descuento=0, VAT=118.80, Shipping=20, Total=678.80
 INSERT INTO [Orders] (Id, ClientId, ShippingTypeId, Status, Street, DoorNumber, Apartment, Subtotal, Discount, ShippingCost, Vat, Total, Date, UpdatedAt) VALUES
 (5, 3, 2, 4, 'Constituyente', '1800', 'Apto 5', 540.00, 0.00, 20.00, 118.80, 678.80, '2026-02-20 18:00:00', '2026-02-20 19:30:00');
+-- Pedido 6: DELAYED (para testear la transicion Delayed -> Prepared o Delayed -> Cancelled)
+-- Cliente 3, Standard (ShippingTypeId=2, $20), Producto 3 x1 (Pasta $320, sin promo)
+-- Subtotal=320, Descuento=0, VAT=70.40, Shipping=20, Total=410.40
+INSERT INTO [Orders] (Id, ClientId, ShippingTypeId, Status, Street, DoorNumber, Apartment, Subtotal, Discount, ShippingCost, Vat, Total, Date, UpdatedAt) VALUES
+(6, 3, 2, 6, 'Luis Alberto de Herrera', '445', NULL, 320.00, 0.00, 20.00, 70.40, 410.40, '2026-06-10 11:00:00', '2026-06-10 11:45:00');
+-- Pedido 7: CANCELLED (estado terminal - fue cancelado desde Pending)
+-- Cliente 4, Express (ShippingTypeId=1, $50), Producto 5 x1 (Milanesa $400, sin promo)
+-- Subtotal=400, Descuento=0, VAT=88.00, Shipping=50, Total=538.00
+INSERT INTO [Orders] (Id, ClientId, ShippingTypeId, Status, Street, DoorNumber, Apartment, Subtotal, Discount, ShippingCost, Vat, Total, Date, UpdatedAt) VALUES
+(7, 4, 1, 2, 'Pocitos', '310', 'Apto 201', 400.00, 0.00, 50.00, 88.00, 538.00, '2026-06-09 19:00:00', '2026-06-09 19:30:00');
+-- Pedido 8: NOT DELIVERED (estado terminal - estuvo OnTheWay pero no se entrego)
+-- Cliente 3, Standard (ShippingTypeId=2, $20), Producto 4 x1 (Ensalada $250, sin promo)
+-- Subtotal=250, Descuento=0, VAT=55.00, Shipping=20, Total=325.00
+INSERT INTO [Orders] (Id, ClientId, ShippingTypeId, Status, Street, DoorNumber, Apartment, Subtotal, Discount, ShippingCost, Vat, Total, Date, UpdatedAt) VALUES
+(8, 3, 2, 5, 'Av. Italia', '2901', NULL, 250.00, 0.00, 20.00, 55.00, 325.00, '2026-06-08 20:00:00', '2026-06-08 21:00:00');
 SET IDENTITY_INSERT [Orders] OFF;
 -- ============================================================
 -- ORDER ITEMS
@@ -134,7 +149,30 @@ INSERT INTO [OrderItem] (Id, OrderId, ProductId, Quantity, UnitPrice) VALUES
 -- Pedido 5: Tostado x3
 INSERT INTO [OrderItem] (Id, OrderId, ProductId, Quantity, UnitPrice) VALUES
 (6, 5, 6, 3, 180.00);
+-- Pedido 6: Pasta x1
+INSERT INTO [OrderItem] (Id, OrderId, ProductId, Quantity, UnitPrice) VALUES
+(7, 6, 3, 1, 320.00);
+-- Pedido 7: Milanesa x1
+INSERT INTO [OrderItem] (Id, OrderId, ProductId, Quantity, UnitPrice) VALUES
+(8, 7, 5, 1, 400.00);
+-- Pedido 8: Ensalada x1
+INSERT INTO [OrderItem] (Id, OrderId, ProductId, Quantity, UnitPrice) VALUES
+(9, 8, 4, 1, 250.00);
 SET IDENTITY_INSERT [OrderItem] OFF;
+
+-- ============================================================
+-- AUDIT LOGS (6) - Registro de auditoria para Productos y Promociones
+-- AuditedEntity enum: Product="Product", Promotion="Promotion"
+-- ============================================================
+SET IDENTITY_INSERT [AuditLogs] ON;
+INSERT INTO [AuditLogs] (Id, Timestamp, EntityName, EntityId, Description, ResponsibleUser) VALUES
+(1, '2026-04-01 09:00:00', 'Product',   1, 'Producto creado: Pizza Margherita ($350.00)',                  'admin@darkkitchen.com'),
+(2, '2026-04-01 09:05:00', 'Product',   2, 'Producto creado: Hamburguesa Clasica ($280.00)',               'admin@darkkitchen.com'),
+(3, '2026-04-02 10:00:00', 'Promotion', 1, 'Promocion creada: Descuento Bienvenida 15% (linea Minutas)',  'admin@darkkitchen.com'),
+(4, '2026-04-05 14:30:00', 'Product',   7, 'Producto modificado: precio actualizado de $290.00 a $310.00','admin@darkkitchen.com'),
+(5, '2026-04-10 16:00:00', 'Promotion', 2, 'Promocion modificada: porcentaje actualizado de 30% a 35%',  'admin@darkkitchen.com'),
+(6, '2026-04-12 11:00:00', 'Product',   7, 'Producto eliminado (soft delete): Carbonara desactivada',     'admin@darkkitchen.com');
+SET IDENTITY_INSERT [AuditLogs] OFF;
 -- ============================================================
 -- RESUMEN DE DATOS PARA POSTMAN
 -- ============================================================
@@ -154,9 +192,14 @@ SET IDENTITY_INSERT [OrderItem] OFF;
 -- Promo activa 35%: id=2 (producto 1) -> Pizza tiene 35% de descuento
 -- Promo vencida:    id=3 (sin productos)
 --
--- Pedido Pending:   id=1 (para prepared/cancel)
--- Pedido Prepared:  id=2 (para on-the-way)
--- Pedido OnTheWay:  id=3 (para deliver/not-delivered)
--- Pedido Delivered: id=4 (no se puede cancelar, datos para reporte marzo)
--- Pedido Delivered: id=5 (datos para reporte febrero)
+-- Pedido Pending:     id=1 (para prepared/cancel)
+-- Pedido Prepared:    id=2 (para on-the-way)
+-- Pedido OnTheWay:    id=3 (para deliver/not-delivered)
+-- Pedido Delivered:   id=4 (no se puede cancelar, datos para reporte marzo)
+-- Pedido Delivered:   id=5 (datos para reporte febrero)
+-- Pedido Delayed:     id=6 (para testear Delayed->Prepared o Delayed->Cancelled)
+-- Pedido Cancelled:   id=7 (estado terminal)
+-- Pedido NotDelivered:id=8 (estado terminal)
+--
+-- AuditLogs: id=1..6 (productos 1,2,7 y promociones 1,2)
 -- ============================================================
