@@ -299,6 +299,16 @@
   background: rgba(239, 68, 68, 0.25);
 }
 
+.btn-delayed {
+  background: rgba(249, 115, 22, 0.15);
+  border-color: rgba(249, 115, 22, 0.3);
+  color: #f97316;
+}
+
+.btn-delayed:hover:not(:disabled) {
+  background: rgba(249, 115, 22, 0.25);
+}
+
 
 .empty-state {
   display: flex;
