@@ -1,6 +1,8 @@
 using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
+using DarkKitchen.Domain.Auditing;
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IDataAccess;
@@ -13,7 +15,12 @@ public sealed class PromotionServiceTest
 {
     private Mock<IPromotionRepository> _promotionRepositoryMock = null!;
     private Mock<IRepository<Product>> _productRepositoryMock = null!;
+    private Mock<IAuditSubject> _auditSubjectMock = null!;
 
+    private const string BlackFriday = "Black Friday";
+    private const string AdminEmailCom = "admin@email.com";
+    private const string BlackFridayUpdated = "Black Friday Updated";
+    private const string PizzaNapolitana = "Pizza Napolitana";
     private PromotionService _service = null!;
 
     [TestInitialize]
@@ -21,7 +28,8 @@ public sealed class PromotionServiceTest
     {
         _promotionRepositoryMock = new Mock<IPromotionRepository>();
         _productRepositoryMock = new Mock<IRepository<Product>>();
-        _service = new PromotionService(_promotionRepositoryMock.Object, _productRepositoryMock.Object);
+        _auditSubjectMock = new Mock<IAuditSubject>();
+        _service = new PromotionService(_promotionRepositoryMock.Object, _productRepositoryMock.Object, _auditSubjectMock.Object);
     }
 
     [TestMethod]
@@ -32,7 +40,7 @@ public sealed class PromotionServiceTest
             new Promotion
             {
                 Id = 1,
-                Name = "Black Friday",
+                Name = BlackFriday,
                 DiscountPercentage = 10,
                 ValidFrom = new DateTime(2026, 1, 25),
                 ValidTo = new DateTime(2026, 1, 30)
@@ -40,13 +48,14 @@ public sealed class PromotionServiceTest
         };
 
         _promotionRepositoryMock
-            .Setup(r => r.GetActivePromotions(null, null, null))
-            .Returns(promotions);
+            .Setup(r => r.GetActivePromotions(null, null, null, It.IsAny<int>(), It.IsAny<int>()))
+            .Returns((promotions, promotions.Count));
 
         var result = _service.GetActivePromotions(null, null, null);
 
         Assert.IsNotNull(result);
-        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual(1, result.Items.Count);
+        Assert.AreEqual(1, result.TotalCount);
     }
 
     [TestMethod]
@@ -54,7 +63,7 @@ public sealed class PromotionServiceTest
     {
         var request = new CreatePromotionRequestDTO
         {
-            Name = "Black Friday",
+            Name = BlackFriday,
             DiscountPercentage = 10,
             ValidFrom = DateTime.Today.AddDays(-1),
             ValidTo = DateTime.Today.AddDays(30),
@@ -63,7 +72,7 @@ public sealed class PromotionServiceTest
         var savedPromotion = new Promotion
         {
             Id = 1,
-            Name = "Black Friday",
+            Name = BlackFriday,
             DiscountPercentage = 10,
             ValidFrom = new DateTime(2026, 1, 25),
             ValidTo = new DateTime(2026, 1, 30)
@@ -73,11 +82,11 @@ public sealed class PromotionServiceTest
             .Setup(r => r.Add(It.IsAny<Promotion>()))
             .Returns(savedPromotion);
 
-        var result = _service.CreatePromotion(request);
+        var result = _service.CreatePromotion(request, AdminEmailCom);
 
         Assert.IsNotNull(result);
         Assert.AreEqual(1, result.Id);
-        Assert.AreEqual("Black Friday", result.Name);
+        Assert.AreEqual(BlackFriday, result.Name);
         Assert.AreEqual(10, result.DiscountPercentage);
     }
 
@@ -87,13 +96,13 @@ public sealed class PromotionServiceTest
     {
         var request = new CreatePromotionRequestDTO
         {
-            Name = "Black Friday",
+            Name = BlackFriday,
             DiscountPercentage = 10,
             ValidFrom = new DateTime(2026, 1, 30),
             ValidTo = new DateTime(2026, 1, 25)
         };
 
-        _service.CreatePromotion(request);
+        _service.CreatePromotion(request, AdminEmailCom);
     }
 
     [TestMethod]
@@ -102,13 +111,13 @@ public sealed class PromotionServiceTest
     {
         var request = new CreatePromotionRequestDTO
         {
-            Name = "Black Friday",
+            Name = BlackFriday,
             DiscountPercentage = 0,
             ValidFrom = new DateTime(2026, 1, 25),
             ValidTo = new DateTime(2026, 1, 30)
         };
 
-        _service.CreatePromotion(request);
+        _service.CreatePromotion(request, AdminEmailCom);
     }
 
     [TestMethod]
@@ -123,7 +132,7 @@ public sealed class PromotionServiceTest
             ValidTo = new DateTime(2026, 1, 30)
         };
 
-        _service.CreatePromotion(request);
+        _service.CreatePromotion(request, AdminEmailCom);
     }
 
     [TestMethod]
@@ -132,7 +141,7 @@ public sealed class PromotionServiceTest
         var promotion = new Promotion
         {
             Id = 1,
-            Name = "Black Friday",
+            Name = BlackFriday,
             DiscountPercentage = 10,
             ValidFrom = new DateTime(2026, 1, 25),
             ValidTo = new DateTime(2026, 1, 30)
@@ -140,7 +149,7 @@ public sealed class PromotionServiceTest
 
         var request = new UpdatePromotionRequestDTO
         {
-            Name = "Black Friday Updated",
+            Name = BlackFridayUpdated,
             DiscountPercentage = 20,
             ValidFrom = new DateTime(2026, 1, 25),
             ValidTo = new DateTime(2026, 1, 30)
@@ -154,11 +163,11 @@ public sealed class PromotionServiceTest
             .Setup(r => r.Update(It.IsAny<Promotion>()))
             .Returns(promotion);
 
-        var result = _service.UpdatePromotion(1, request);
+        var result = _service.UpdatePromotion(1, request, AdminEmailCom);
 
         Assert.IsNotNull(result);
         Assert.AreEqual(1, result.Id);
-        Assert.AreEqual("Black Friday Updated", result.Name);
+        Assert.AreEqual(BlackFridayUpdated, result.Name);
     }
 
     [TestMethod]
@@ -171,13 +180,13 @@ public sealed class PromotionServiceTest
 
         var request = new UpdatePromotionRequestDTO
         {
-            Name = "Black Friday Updated",
+            Name = BlackFridayUpdated,
             DiscountPercentage = 20,
             ValidFrom = new DateTime(2026, 1, 25),
             ValidTo = new DateTime(2026, 1, 30)
         };
 
-        _service.UpdatePromotion(99, request);
+        _service.UpdatePromotion(1, request, AdminEmailCom);
     }
 
     [TestMethod]
@@ -187,7 +196,7 @@ public sealed class PromotionServiceTest
         var promotion = new Promotion
         {
             Id = 1,
-            Name = "Black Friday",
+            Name = BlackFriday,
             DiscountPercentage = 10,
             ValidFrom = new DateTime(2026, 1, 25),
             ValidTo = new DateTime(2026, 1, 30)
@@ -199,13 +208,13 @@ public sealed class PromotionServiceTest
 
         var request = new UpdatePromotionRequestDTO
         {
-            Name = "Black Friday Updated",
+            Name = BlackFridayUpdated,
             DiscountPercentage = 20,
             ValidFrom = new DateTime(2026, 1, 30),
             ValidTo = new DateTime(2026, 1, 25)
         };
 
-        _service.UpdatePromotion(1, request);
+        _service.UpdatePromotion(1, request, AdminEmailCom);
     }
 
     [TestMethod]
@@ -215,7 +224,7 @@ public sealed class PromotionServiceTest
         var promotion = new Promotion
         {
             Id = 1,
-            Name = "Black Friday",
+            Name = BlackFriday,
             DiscountPercentage = 10,
             ValidFrom = new DateTime(2026, 1, 25),
             ValidTo = new DateTime(2026, 1, 30)
@@ -227,13 +236,13 @@ public sealed class PromotionServiceTest
 
         var request = new UpdatePromotionRequestDTO
         {
-            Name = "Black Friday Updated",
+            Name = BlackFridayUpdated,
             DiscountPercentage = 0,
             ValidFrom = new DateTime(2026, 1, 25),
             ValidTo = new DateTime(2026, 1, 30)
         };
 
-        _service.UpdatePromotion(1, request);
+        _service.UpdatePromotion(1, request, AdminEmailCom);
     }
 
     [TestMethod]
@@ -243,7 +252,7 @@ public sealed class PromotionServiceTest
         var promotion = new Promotion
         {
             Id = 1,
-            Name = "Black Friday",
+            Name = BlackFriday,
             DiscountPercentage = 10,
             ValidFrom = new DateTime(2026, 1, 25),
             ValidTo = new DateTime(2026, 1, 30)
@@ -261,7 +270,7 @@ public sealed class PromotionServiceTest
             ValidTo = new DateTime(2026, 1, 30)
         };
 
-        _service.UpdatePromotion(1, request);
+        _service.UpdatePromotion(1, request, AdminEmailCom);
     }
 
     [TestMethod]
@@ -270,14 +279,14 @@ public sealed class PromotionServiceTest
         var promotion = new Promotion
         {
             Id = 1,
-            Name = "Black Friday",
+            Name = BlackFriday,
             DiscountPercentage = 10,
             ValidFrom = DateTime.Today.AddDays(-1),
             ValidTo = DateTime.Today.AddDays(30),
             Products = []
         };
 
-        var product = new Product { Id = 1, Name = "Pizza Napolitana", Price = 100 };
+        var product = new Product { Id = 1, Name = PizzaNapolitana, Price = 100 };
 
         _promotionRepositoryMock
             .Setup(r => r.GetPromotionWithProducts(1))
@@ -314,7 +323,7 @@ public sealed class PromotionServiceTest
         var promotion = new Promotion
         {
             Id = 1,
-            Name = "Black Friday",
+            Name = BlackFriday,
             DiscountPercentage = 10,
             ValidFrom = DateTime.Today.AddDays(-1),
             ValidTo = DateTime.Today.AddDays(30),
@@ -336,16 +345,16 @@ public sealed class PromotionServiceTest
     [ExpectedException(typeof(ArgumentException))]
     public void AddProductToPromotion_ProductAlreadyInPromotion_ThrowsException()
     {
-        var product = new Product { Id = 1, Name = "Pizza Napolitana", Price = 100 };
+        var product = new Product { Id = 1, Name = PizzaNapolitana, Price = 100 };
 
         var promotion = new Promotion
         {
             Id = 1,
-            Name = "Black Friday",
+            Name = BlackFriday,
             DiscountPercentage = 10,
             ValidFrom = DateTime.Today.AddDays(-1),
             ValidTo = DateTime.Today.AddDays(1),
-            Products = []
+            Products = [product]
         };
 
         _promotionRepositoryMock
@@ -356,22 +365,18 @@ public sealed class PromotionServiceTest
             .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
             .Returns(product);
 
-        _promotionRepositoryMock
-            .Setup(r => r.ProductExistsInPromotion(1, 1))
-            .Returns(true);
-
         _service.AddProductToPromotion(1, 1);
     }
 
     [TestMethod]
     public void RemoveProductFromPromotion_ValidRequest_RemovesProductFromPromotion()
     {
-        var product = new Product { Id = 1, Name = "Pizza Napolitana", Price = 100 };
+        var product = new Product { Id = 1, Name = PizzaNapolitana, Price = 100 };
 
         var promotion = new Promotion
         {
             Id = 1,
-            Name = "Black Friday",
+            Name = BlackFriday,
             DiscountPercentage = 10,
             ValidFrom = new DateTime(2026, 1, 25),
             ValidTo = new DateTime(2026, 1, 30),
@@ -409,7 +414,7 @@ public sealed class PromotionServiceTest
         var promotion = new Promotion
         {
             Id = 1,
-            Name = "Black Friday",
+            Name = BlackFriday,
             DiscountPercentage = 10,
             ValidFrom = new DateTime(2026, 1, 25),
             ValidTo = new DateTime(2026, 1, 30),
@@ -430,7 +435,7 @@ public sealed class PromotionServiceTest
         var promotion = new Promotion
         {
             Id = 1,
-            Name = "Black Friday",
+            Name = BlackFriday,
             DiscountPercentage = 10,
             ValidFrom = new DateTime(2026, 1, 25),
             ValidTo = new DateTime(2026, 1, 30),
@@ -445,10 +450,77 @@ public sealed class PromotionServiceTest
             .Setup(r => r.Get(It.IsAny<Expression<Func<Product, bool>>>()))
             .Returns(new Product { Id = 1 });
 
-        _promotionRepositoryMock
-            .Setup(r => r.ProductExistsInPromotion(1, 1))
-            .Returns(false);
-
         _service.AddProductToPromotion(1, 1);
+    }
+
+    [TestMethod]
+    public void CreatePromotion_ValidRequest_NotifiesAuditSubject()
+    {
+        var auditSubjectMock = new Mock<IAuditSubject>();
+        var savedPromotion = new Promotion
+        {
+            Id = 7,
+            Name = BlackFriday,
+            DiscountPercentage = 10,
+            ValidFrom = DateTime.Today.AddDays(-1),
+            ValidTo = DateTime.Today.AddDays(30)
+        };
+
+        _promotionRepositoryMock
+            .Setup(r => r.Add(It.IsAny<Promotion>()))
+            .Returns(savedPromotion);
+
+        var service = new PromotionService(_promotionRepositoryMock.Object, _productRepositoryMock.Object, auditSubjectMock.Object);
+        var request = new CreatePromotionRequestDTO
+        {
+            Name = BlackFriday,
+            DiscountPercentage = 10,
+            ValidFrom = DateTime.Today.AddDays(-1),
+            ValidTo = DateTime.Today.AddDays(30)
+        };
+
+        service.CreatePromotion(request, AdminEmailCom);
+
+        auditSubjectMock.Verify(a => a.Notify(It.Is<AuditEvent>(e =>
+            e.EntityName == AuditedEntity.Promotion &&
+            e.EntityId == 7 &&
+            e.ResponsibleUser == AdminEmailCom &&
+            e.Description.Contains(BlackFriday))), Times.Once);
+    }
+
+    [TestMethod]
+    public void UpdatePromotion_WhenPromotionExists_NotifiesAuditSubject()
+    {
+        var promotion = new Promotion
+        {
+            Id = 4,
+            Name = BlackFriday,
+            DiscountPercentage = 10,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 1, 30)
+        };
+
+        _promotionRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Promotion, bool>>>()))
+            .Returns(promotion);
+        _promotionRepositoryMock
+            .Setup(r => r.Update(It.IsAny<Promotion>()))
+            .Returns(promotion);
+
+        var request = new UpdatePromotionRequestDTO
+        {
+            Name = BlackFridayUpdated,
+            DiscountPercentage = 20,
+            ValidFrom = new DateTime(2026, 1, 25),
+            ValidTo = new DateTime(2026, 1, 30)
+        };
+
+        _service.UpdatePromotion(4, request, AdminEmailCom);
+
+        _auditSubjectMock.Verify(a => a.Notify(It.Is<AuditEvent>(e =>
+            e.EntityName == AuditedEntity.Promotion &&
+            e.EntityId == 4 &&
+            e.ResponsibleUser == AdminEmailCom &&
+            e.Description.Contains(BlackFridayUpdated))), Times.Once);
     }
 }

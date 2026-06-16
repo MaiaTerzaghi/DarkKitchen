@@ -1,0 +1,134 @@
+<div class="modal-overlay" *ngIf="visible" (click)="onClose()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ isEditMode ? 'Editar Producto' : 'Nuevo Producto' }}</h2>
+      <button class="close-btn" (click)="onClose()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+      <div class="field-group">
+        <label for="code">Código</label>
+        <div class="input-wrapper">
+          <span class="material-icons input-icon">tag</span>
+          <input id="code" type="text" formControlName="code" placeholder="Ej: PROD001" />
+        </div>
+        <small class="field-error"
+          *ngIf="productForm.get('code')?.touched && productForm.get('code')?.invalid">
+          El código debe tener entre 5 y 20 caracteres.
+        </small>
+      </div>
+
+      <div class="field-group">
+        <label for="name">Nombre</label>
+        <div class="input-wrapper">
+          <span class="material-icons input-icon">restaurant</span>
+          <input id="name" type="text" formControlName="name" placeholder="Ej: Pizza Napolitana" />
+        </div>
+        <small class="field-error"
+          *ngIf="productForm.get('name')?.touched && productForm.get('name')?.invalid">
+          El nombre debe tener entre 10 y 50 caracteres.
+        </small>
+      </div>
+
+      <div class="field-group">
+        <label for="description">Descripción</label>
+        <textarea id="description" formControlName="description" rows="3"
+          placeholder="Descripción del producto"></textarea>
+        <small class="field-error"
+          *ngIf="productForm.get('description')?.touched && productForm.get('description')?.invalid">
+          La descripción debe tener entre 20 y 500 caracteres.
+        </small>
+      </div>
+
+      <div class="row-fields">
+        <div class="field-group">
+          <label for="price">Precio</label>
+          <div class="input-wrapper">
+            <span class="material-icons input-icon">attach_money</span>
+            <input id="price" type="number" formControlName="price" placeholder="0" min="0" step="0.01" />
+          </div>
+          <small class="field-error"
+            *ngIf="productForm.get('price')?.touched && productForm.get('price')?.invalid">
+            El precio debe ser mayor a 0.
+          </small>
+        </div>
+
+        <div class="field-group">
+          <label for="category">Categoría</label>
+          <div class="input-wrapper">
+            <span class="material-icons input-icon">category</span>
+            <input id="category" type="text" formControlName="category" placeholder="Ej: Fritos" />
+          </div>
+          <small class="field-error"
+            *ngIf="productForm.get('category')?.touched && productForm.get('category')?.invalid">
+            La categoría es obligatoria.
+          </small>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label for="commercialLine">Línea comercial</label>
+        <div class="input-wrapper">
+          <span class="material-icons input-icon">storefront</span>
+          <input id="commercialLine" type="text" formControlName="commercialLine"
+            placeholder="Ej: Minutas clásicas" />
+        </div>
+        <small class="field-error"
+          *ngIf="productForm.get('commercialLine')?.touched && productForm.get('commercialLine')?.invalid">
+          La línea comercial es obligatoria.
+        </small>
+      </div>
+
+      <div class="field-group">
+        <label for="images">Imágenes (.jpg, máx. 500 KB c/u)</label>
+        <input
+          id="images"
+          type="file"
+          accept="image/jpeg"
+          multiple
+          (change)="onImagesSelected($event)"
+          class="file-input"
+        />
+        <small class="field-hint">Hasta 3 imágenes .jpg, al menos una, máximo 500 KB cada una.</small>
+
+        <div class="image-previews" *ngIf="previews.length > 0">
+          <div class="preview-item" *ngFor="let img of previews; let i = index">
+            <img [src]="'data:image/jpeg;base64,' + img" alt="preview" />
+            <button type="button" class="preview-remove" (click)="removeImage(i)" title="Quitar">
+              <span class="material-icons">close</span>
+            </button>
+          </div>
+        </div>
+
+        <small class="field-error" *ngIf="imageError">{{ imageError }}</small>
+        <small
+          class="field-error"
+          *ngIf="!imageError && previews.length === 0 && productForm.dirty"
+        >
+          Se requiere al menos una imagen.
+        </small>
+      </div>
+
+      <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="onClose()">Cancelar</button>
+        <button type="submit" class="btn-submit" [disabled]="productForm.invalid || loading">
+          {{ loading
+            ? (isEditMode ? 'Guardando...' : 'Creando...')
+            : (isEditMode ? 'Guardar Cambios' : 'Crear Producto')
+          }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal de confirmación de salida -->
+<app-confirm-exit-modal
+  [visible]="showConfirmExit"
+  (confirm)="confirmExit()"
+  (cancel)="cancelExit()"
+></app-confirm-exit-modal>

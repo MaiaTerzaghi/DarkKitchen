@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace DarkKitchen.WebApi.Filters;
 
-public class ExceptionFilter : Attribute, IExceptionFilter
+public class GlobalExceptionFilterAttribute : Attribute, IExceptionFilter
 {
     private readonly Dictionary<Type, int> _statusCodes = new()
     {

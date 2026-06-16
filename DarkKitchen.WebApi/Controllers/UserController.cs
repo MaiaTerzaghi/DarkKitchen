@@ -1,35 +1,24 @@
-using DarkKitchen.Domain.Entities;
-using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.IBusinessLogic;
-using DarkKitchen.WebApi.Filters;
+using DarkKitchen.WebApi.Filters.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DarkKitchen.WebApi.Controllers;
 
 [ApiController]
 [Route("api/users")]
-public class UserController(IUserService userService) : ControllerBase
+public class UserController(IUserService userService) : DarkKitchenControllerBase
 {
     private readonly IUserService _userService = userService;
 
     [HttpPost]
-    public IActionResult Register(RegisterClientDTO request)
+    public IActionResult CreateUser(CreateUserRequestDTO request)
     {
-        var id = _userService.Register(request);
-
+        var id = _userService.CreateUser(request);
         return Created(string.Empty, new { id });
     }
 
-    [AuthorizeRoles(UserRole.Administrative)]
-    [HttpPost("staff")]
-    public IActionResult CreateStaffUser(CreateStaffUserRequestDTO request)
-    {
-        var id = _userService.CreateStaffUser(request);
-        return Created(string.Empty, new { id });
-    }
-
-    [AuthorizeRoles(UserRole.Administrative)]
+    [AdministrativeOnly]
     [HttpGet]
     public IActionResult GetUsers([FromQuery] string? name, [FromQuery] string? lastName, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
     {
@@ -37,20 +26,20 @@ public class UserController(IUserService userService) : ControllerBase
         return Ok(users);
     }
 
-    [AuthorizeRoles(UserRole.Administrative)]
+    [AdministrativeOnly]
     [HttpPut("{id}")]
     public IActionResult UpdateUser(int id, UpdateUserRequestDTO request)
     {
-        var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
+        var requestingUser = GetRequestingUser();
         var result = _userService.UpdateUser(id, request, requestingUser.Id);
         return Ok(result);
     }
 
-    [AuthorizeRoles(UserRole.Administrative)]
+    [AdministrativeOnly]
     [HttpDelete("{id}")]
     public IActionResult DeleteUser(int id)
     {
-        var requestingUser = (User)HttpContext.Items["RequestingUser"]!;
+        var requestingUser = GetRequestingUser();
         _userService.DeleteUser(id, requestingUser.Id);
         return NoContent();
     }

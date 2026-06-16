@@ -13,91 +13,124 @@ namespace DarkKitchen.WebApi.Test;
 [TestClass]
 public sealed class UserControllerTest
 {
+    private const string Val59899123456 = "+59899123456";
+    private const string Juan = "Juan";
+    private const string Perez = "Perez";
+    private const string Contrasena1 = "Contrasena1!@#$%";
+    private const string JuanTestCom = "juan@test.com";
+    private const string Requestinguser = "RequestingUser";
+    private const string JuanEmailCom = "juan@email.com";
+    private const string Error = "Error";
+
     [TestMethod]
-    public void Register_WhenValidData_ReturnsCreated()
+    public void CreateUser_WhenValidData_ReturnsCreated()
     {
         var userServiceMock = new Mock<IUserService>();
-        userServiceMock.Setup(s => s.Register(It.IsAny<RegisterClientDTO>()))
+        userServiceMock.Setup(s => s.CreateUser(It.IsAny<CreateUserRequestDTO>()))
                        .Returns(1);
 
         var controller = new UserController(userServiceMock.Object);
-        var request = new RegisterClientDTO
+        controller.ControllerContext = new ControllerContext
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@email.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%"
+            HttpContext = new DefaultHttpContext()
         };
 
-        var result = controller.Register(request);
+        var request = new CreateUserRequestDTO
+        {
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanEmailCom,
+            Phone = Val59899123456,
+            Password = Contrasena1
+        };
+
+        var result = controller.CreateUser(request);
 
         Assert.IsInstanceOfType(result, typeof(CreatedResult));
+        userServiceMock.Verify(s => s.CreateUser(request), Times.Once);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void Register_WhenServiceThrowsException_ReturnsBadRequest()
+    public void CreateUser_WhenServiceThrowsException_Throws()
     {
         var userServiceMock = new Mock<IUserService>();
-        userServiceMock.Setup(s => s.Register(It.IsAny<RegisterClientDTO>()))
-                    .Throws(new ArgumentException("Error"));
+        userServiceMock.Setup(s => s.CreateUser(It.IsAny<CreateUserRequestDTO>()))
+                    .Throws(new ArgumentException(Error));
 
         var controller = new UserController(userServiceMock.Object);
-        var request = new RegisterClientDTO
+        controller.ControllerContext = new ControllerContext
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@email.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%"
+            HttpContext = new DefaultHttpContext()
         };
 
-        controller.Register(request);
+        var request = new CreateUserRequestDTO
+        {
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanEmailCom,
+            Phone = Val59899123456,
+            Password = Contrasena1
+        };
+
+        controller.CreateUser(request);
     }
 
     [TestMethod]
-    public void CreateStaffUser_WhenValidData_ReturnsCreated()
+    public void CreateUser_WhenRoleProvided_ReturnsCreated()
     {
         var userServiceMock = new Mock<IUserService>();
-        userServiceMock.Setup(s => s.CreateStaffUser(It.IsAny<CreateStaffUserRequestDTO>()))
+        userServiceMock.Setup(s => s.CreateUser(It.IsAny<CreateUserRequestDTO>()))
                .Returns(1);
 
         var controller = new UserController(userServiceMock.Object);
-        var request = new CreateStaffUserRequestDTO
+        controller.ControllerContext = new ControllerContext
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            HttpContext = new DefaultHttpContext()
+        };
+
+        var request = new CreateUserRequestDTO
+        {
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
             Role = UserRole.Administrative
         };
 
-        var result = controller.CreateStaffUser(request);
+        var result = controller.CreateUser(request);
 
         Assert.IsInstanceOfType(result, typeof(CreatedResult));
+        userServiceMock.Verify(s => s.CreateUser(request), Times.Once);
     }
 
     [TestMethod]
     public void GetUsers_WhenCalled_ReturnsOk()
     {
-        var users = new List<UserResponseDTO>
+        var paginatedResponse = new PaginatedResponse<UserResponseDTO>
         {
-            new UserResponseDTO
-            {
-                Id = 1,
-                Name = "Juan",
-                LastName = "Perez",
-                Email = "juan@test.com",
-                Phone = "+59899123456",
-                Role = UserRole.Administrative
-            }
+            Items =
+            [
+                new UserResponseDTO
+                {
+                    Id = 1,
+                    Name = Juan,
+                    LastName = Perez,
+                    Email = JuanTestCom,
+                    Phone = Val59899123456,
+                    Role = UserRole.Administrative
+                }
+
+            ],
+            TotalCount = 1,
+            Page = 1,
+            PageSize = 20
         };
 
         var userServiceMock = new Mock<IUserService>();
         userServiceMock.Setup(s => s.GetUsers(It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<int>(), It.IsAny<int>()))
-                    .Returns(users);
+                    .Returns(paginatedResponse);
 
         var controller = new UserController(userServiceMock.Object);
 
@@ -111,7 +144,7 @@ public sealed class UserControllerTest
     {
         var userServiceMock = new Mock<IUserService>();
         userServiceMock.Setup(s => s.UpdateUser(It.IsAny<int>(), It.IsAny<UpdateUserRequestDTO>(), It.IsAny<int>()))
-            .Returns(new UserResponseDTO { Id = 1, Name = "Juan", LastName = "Perez", Email = "juan@test.com", Phone = "+59899123456", Role = UserRole.Administrative });
+            .Returns(new UserResponseDTO { Id = 1, Name = Juan, LastName = Perez, Email = JuanTestCom, Phone = Val59899123456, Role = UserRole.Administrative });
 
         var controller = new UserController(userServiceMock.Object);
 
@@ -120,15 +153,15 @@ public sealed class UserControllerTest
             HttpContext = new DefaultHttpContext()
         };
 
-        controller.HttpContext.Items["RequestingUser"] = new User { Id = 2 };
+        controller.HttpContext.Items[Requestinguser] = new User { Id = 2 };
 
         var request = new UpdateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
             Role = UserRole.Administrative
         };
 
@@ -150,7 +183,7 @@ public sealed class UserControllerTest
             HttpContext = new DefaultHttpContext()
         };
 
-        controller.HttpContext.Items["RequestingUser"] = new User { Id = 2 };
+        controller.HttpContext.Items[Requestinguser] = new User { Id = 2 };
 
         var result = controller.DeleteUser(1);
 

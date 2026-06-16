@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DarkKitchen.Domain\DarkKitchen.Domain.csproj" />
     <ProjectReference Include="..\DarkKitchen.DTOs\DarkKitchen.DTOs.csproj" />
+    <ProjectReference Include="..\DarkKitchen.Importers.Contracts\DarkKitchen.Importers.Contracts.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

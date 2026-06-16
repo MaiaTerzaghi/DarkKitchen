@@ -1,0 +1,45 @@
+using DarkKitchen.DTOs.Args.In;
+using DarkKitchen.IBusinessLogic;
+using DarkKitchen.WebApi.Filters.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace DarkKitchen.WebApi.Controllers;
+
+[ApiController]
+[Route("api/shipping-types")]
+public class ShippingTypeController(IShippingTypeService shippingTypeService) : ControllerBase
+{
+    private readonly IShippingTypeService _shippingTypeService = shippingTypeService;
+
+    [ClientOrAdministrative]
+    [HttpGet]
+    public IActionResult GetAll()
+    {
+        var shippingTypes = _shippingTypeService.GetAll();
+        return Ok(shippingTypes);
+    }
+
+    [AdministrativeOnly]
+    [HttpGet("{id}")]
+    public IActionResult GetById(int id)
+    {
+        var shippingType = _shippingTypeService.GetById(id);
+        return Ok(shippingType);
+    }
+
+    [AdministrativeOnly]
+    [HttpPost]
+    public IActionResult Create([FromBody] CreateShippingTypeRequestDTO request)
+    {
+        var shippingType = _shippingTypeService.Create(request);
+        return CreatedAtAction(nameof(GetById), new { id = shippingType.Id }, shippingType);
+    }
+
+    [AdministrativeOnly]
+    [HttpPut("{id}")]
+    public IActionResult Update(int id, [FromBody] UpdateShippingTypeRequestDTO request)
+    {
+        var shippingType = _shippingTypeService.Update(id, request);
+        return Ok(shippingType);
+    }
+}

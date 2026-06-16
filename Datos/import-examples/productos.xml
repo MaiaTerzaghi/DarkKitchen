@@ -1,0 +1,24 @@
+<Products>
+  <Product>
+    <Code>IMP-X001</Code>
+    <Name>Cado</Name>
+    <Description>CaXML</Description>
+    <Price>180</Price>
+    <CommercialLine>Desayunos</CommercialLine>
+    <Category>Bebidas</Category>
+    <ImagePaths>
+      <Path>https://media.istockphoto.com/id/1859646927/es/foto/imagen-de-primer-plano-de-un-hombre-y-una-mujer-tintineando-tazas-de-caf%C3%A9-blanco-en-la.jpg?s=612x612&amp;w=0&amp;k=20&amp;c=Juw94UAigv_0Xjz6FlLluho0-rpHL14dSAGusD97wos=</Path>
+    </ImagePaths>
+  </Product>
+  <Product>
+    <Code>PROD-00001</Code>
+    <Name>Frutillas de Estacion Importadas</Name>
+    <Description>Deliciosas frutillas importadas desde archivo XML</Description>
+    <Price>123</Price>
+    <CommercialLine>Frutas</CommercialLine>
+    <Category>Dulces</Category>
+    <ImagePaths>
+      <Path>https://media.istockphoto.com/id/1157946861/es/foto/fresa-de-baya-roja-aislada.jpg?s=612x612&amp;w=0&amp;k=20&amp;c=lSELqZMZv9TmXjdTLczmiSzl3Z-jI81rRa_WloV8gcQ=</Path>
+    </ImagePaths>
+  </Product>
+</Products>

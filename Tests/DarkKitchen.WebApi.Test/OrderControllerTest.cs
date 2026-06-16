@@ -1,4 +1,5 @@
 using DarkKitchen.Domain.Entities;
+using DarkKitchen.Domain.Enums;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
@@ -13,6 +14,22 @@ namespace DarkKitchen.WebApi.Test;
 public class OrderControllerTest
 {
     private Mock<IOrderService> _orderServiceMock = null!;
+
+    private const string Requestinguser = "RequestingUser";
+    private const string Pending = "Pending";
+    private const string Val59899000000 = "+59899000000";
+    private const string Val1234 = "1234";
+    private const string Val18DeJulio = "18 de Julio";
+    private const string Val2b = "2B";
+    private const string Express = "Express";
+    private const string Hamburguesa = "Hamburguesa";
+    private const string Juan = "Juan";
+    private const string Perez = "Perez";
+    private const string PizzaNapolitana = "Pizza Napolitana";
+    private const string Prepared = "Prepared";
+    private const string ElPedidoDebeTenerAlMenosUnProd = "El pedido debe tener al menos un producto.";
+    private const string P0001 = "P0001";
+    private const string PizzaJpg = "pizza.jpg";
     private OrderController _controller = null!;
 
     [TestInitialize]
@@ -28,12 +45,12 @@ public class OrderControllerTest
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
-            DeliveryType = "Express",
+            ShippingType = Express,
             Address = new AddressDTO
             {
-                Street = "18 de Julio",
-                DoorNumber = "1234",
-                Apartment = "2B"
+                Street = Val18DeJulio,
+                DoorNumber = Val1234,
+                Apartment = Val2b
             },
             Items =
             [
@@ -58,7 +75,7 @@ public class OrderControllerTest
         {
             HttpContext = new DefaultHttpContext()
         };
-        _controller.HttpContext.Items["RequestingUser"] = new User { Id = 1 };
+        _controller.HttpContext.Items[Requestinguser] = new User { Id = 1 };
 
         var result = _controller.CreateOrder(request);
 
@@ -76,45 +93,45 @@ public class OrderControllerTest
         var request = new CreateOrderRequestDTO
         {
             ClientId = 1,
-            DeliveryType = "Express",
+            ShippingType = Express,
             Address = new AddressDTO
             {
-                Street = "18 de Julio",
-                DoorNumber = "1234",
-                Apartment = "2B"
+                Street = Val18DeJulio,
+                DoorNumber = Val1234,
+                Apartment = Val2b
             },
             Items = []
         };
 
         _orderServiceMock
             .Setup(s => s.CreateOrder(request, It.IsAny<int>()))
-            .Throws(new ArgumentException("El pedido debe tener al menos un producto."));
+            .Throws(new ArgumentException(ElPedidoDebeTenerAlMenosUnProd));
 
         _controller.ControllerContext = new ControllerContext
         {
             HttpContext = new DefaultHttpContext()
         };
-        _controller.HttpContext.Items["RequestingUser"] = new User { Id = 1 };
+        _controller.HttpContext.Items[Requestinguser] = new User { Id = 1 };
 
         _controller.CreateOrder(request);
     }
 
     [TestMethod]
-    public void GetClientOrders_WhenCalled_ReturnsOk()
+    public void GetOrders_WhenClientRole_ReturnsOk()
     {
-        var orders = new List<GetClientOrdersResponseDTO>();
+        var paginatedResponse = new PaginatedResponse<GetOrdersResponseDTO>();
 
         _orderServiceMock
-            .Setup(s => s.GetClientOrders(It.IsAny<GetClientOrdersRequestDTO>(), It.IsAny<int>()))
-            .Returns(orders);
+            .Setup(s => s.GetOrders(It.IsAny<GetOrdersRequestDTO>(), It.IsAny<UserRole>(), It.IsAny<int?>()))
+            .Returns(paginatedResponse);
 
         _controller.ControllerContext = new ControllerContext
         {
             HttpContext = new DefaultHttpContext()
         };
-        _controller.HttpContext.Items["RequestingUser"] = new User { Id = 1 };
+        _controller.HttpContext.Items[Requestinguser] = new User { Id = 1, Role = UserRole.Client };
 
-        var result = _controller.GetClientOrders(new GetClientOrdersRequestDTO());
+        var result = _controller.GetOrders(new GetOrdersRequestDTO());
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
     }
@@ -128,63 +145,53 @@ public class OrderControllerTest
             DateTo = new DateTime(2026, 1, 31)
         };
 
-        var expectedOrders = new List<GetOrdersResponseDTO>
+        var paginatedResponse = new PaginatedResponse<GetOrdersResponseDTO>
         {
-            new GetOrdersResponseDTO
-            {
-                OrderId = 1,
-                Client = new ClientInfoDTO
+            Items =
+            [
+                new GetOrdersResponseDTO
                 {
-                    Id = 1,
-                    Name = "Juan",
-                    LastName = "Perez",
-                    Phone = "+59899000000"
-                },
-                Date = new DateTime(2026, 1, 10),
-                Status = "Pending",
-                Items = [new OrderItemResponseDTO { ProductName = "Hamburguesa", Quantity = 2 }]
-            }
+                    OrderId = 1,
+                    Client = new ClientInfoDTO
+                    {
+                        Id = 1,
+                        Name = Juan,
+                        LastName = Perez,
+                        Phone = Val59899000000
+                    },
+                    Date = new DateTime(2026, 1, 10),
+                    Status = Pending,
+                    Items = [new OrderItemResponseDTO { ProductName = Hamburguesa, Quantity = 2 }]
+                }
+
+            ],
+            TotalCount = 1,
+            Page = 1,
+            PageSize = 20
         };
 
         _orderServiceMock
-            .Setup(s => s.GetOrders(request))
-            .Returns(expectedOrders);
+            .Setup(s => s.GetOrders(request, It.IsAny<UserRole>(), It.IsAny<int?>()))
+            .Returns(paginatedResponse);
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
+        _controller.HttpContext.Items[Requestinguser] = new User { Id = 1, Role = UserRole.Administrative };
 
         var result = _controller.GetOrders(request);
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+
         var okResult = (OkObjectResult)result;
-        var response = (List<GetOrdersResponseDTO>)okResult.Value!;
-        Assert.AreEqual(expectedOrders.Count, response.Count);
-        Assert.AreEqual(expectedOrders[0].OrderId, response[0].OrderId);
-        Assert.AreEqual(expectedOrders[0].Client.Id, response[0].Client.Id);
-        Assert.AreEqual(expectedOrders[0].Client.Name, response[0].Client.Name);
-        Assert.AreEqual(expectedOrders[0].Client.LastName, response[0].Client.LastName);
-    }
+        var response = (PaginatedResponse<GetOrdersResponseDTO>)okResult.Value!;
 
-    [TestMethod]
-    public void MarkAsPrepared_ValidOrderId_ReturnsOkWithUpdatedStatus()
-    {
-        var orderId = 1;
-
-        var expectedResponse = new UpdateOrderStatusResponseDTO
-        {
-            OrderId = orderId,
-            Status = "Prepared",
-            UpdatedAt = DateTime.Now
-        };
-
-        _orderServiceMock
-            .Setup(s => s.MarkAsPrepared(orderId))
-            .Returns(expectedResponse);
-
-        var result = _controller.MarkAsPrepared(orderId);
-
-        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-        var okResult = (OkObjectResult)result;
-        var response = (UpdateOrderStatusResponseDTO)okResult.Value!;
-        Assert.AreEqual("Prepared", response.Status);
-        Assert.AreEqual(orderId, response.OrderId);
+        Assert.AreEqual(paginatedResponse.TotalCount, response.TotalCount);
+        Assert.AreEqual(paginatedResponse.Items[0].OrderId, response.Items[0].OrderId);
+        Assert.AreEqual(paginatedResponse.Items[0].Client.Id, response.Items[0].Client.Id);
+        Assert.AreEqual(paginatedResponse.Items[0].Client.Name, response.Items[0].Client.Name);
+        Assert.AreEqual(paginatedResponse.Items[0].Client.LastName, response.Items[0].Client.LastName);
     }
 
     [TestMethod]
@@ -194,7 +201,7 @@ public class OrderControllerTest
         {
             OrderId = 1,
             ClientId = 1,
-            Status = "Pending",
+            Status = Pending,
             Total = 200.0
         };
 
@@ -205,98 +212,6 @@ public class OrderControllerTest
         var result = _controller.GetOrderDetail(1);
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-    }
-
-    [TestMethod]
-    public void DeliverOrder_WhenCalled_ReturnsOk()
-    {
-        var response = new UpdateOrderStatusResponseDTO
-        {
-            OrderId = 1,
-            Status = "Delivered",
-            UpdatedAt = DateTime.Now
-        };
-
-        _orderServiceMock
-            .Setup(s => s.DeliverOrder(It.IsAny<int>()))
-            .Returns(response);
-
-        var result = _controller.DeliverOrder(1);
-
-        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-    }
-
-    [TestMethod]
-    public void CancelOrder_ValidOrderId_ReturnsOkWithUpdatedStatus()
-    {
-        var orderId = 1;
-
-        var expectedResponse = new UpdateOrderStatusResponseDTO
-        {
-            OrderId = orderId,
-            Status = "Cancelled",
-            UpdatedAt = DateTime.Now
-        };
-
-        _orderServiceMock
-            .Setup(s => s.CancelOrder(orderId))
-            .Returns(expectedResponse);
-
-        var result = _controller.CancelOrder(orderId);
-
-        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-        var okResult = (OkObjectResult)result;
-        var response = (UpdateOrderStatusResponseDTO)okResult.Value!;
-        Assert.AreEqual("Cancelled", response.Status);
-        Assert.AreEqual(orderId, response.OrderId);
-    }
-
-    [TestMethod]
-    public void MarkAsOnTheWay_ValidOrderId_ReturnsOk()
-    {
-        var expectedResponse = new UpdateOrderStatusResponseDTO
-        {
-            OrderId = 1,
-            Status = "OnTheWay",
-            UpdatedAt = DateTime.Now
-        };
-
-        _orderServiceMock
-            .Setup(s => s.MarkAsOnTheWay(1))
-            .Returns(expectedResponse);
-
-        var result = _controller.MarkAsOnTheWay(1);
-        var okResult = (OkObjectResult)result;
-        var response = (UpdateOrderStatusResponseDTO)okResult.Value!;
-
-        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-        Assert.AreEqual("OnTheWay", response.Status);
-        Assert.AreEqual(1, response.OrderId);
-    }
-
-    [TestMethod]
-    public void MarkAsNotDelivered_ValidOrderId_ReturnsOkWithUpdatedStatus()
-    {
-        var orderId = 1;
-
-        var expectedResponse = new UpdateOrderStatusResponseDTO
-        {
-            OrderId = orderId,
-            Status = "NotDelivered",
-            UpdatedAt = DateTime.Now
-        };
-
-        _orderServiceMock
-            .Setup(s => s.MarkAsNotDelivered(orderId))
-            .Returns(expectedResponse);
-
-        var result = _controller.MarkAsNotDelivered(orderId);
-
-        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-        var okResult = (OkObjectResult)result;
-        var response = (UpdateOrderStatusResponseDTO)okResult.Value!;
-        Assert.AreEqual("NotDelivered", response.Status);
-        Assert.AreEqual(orderId, response.OrderId);
     }
 
     [TestMethod]
@@ -313,7 +228,10 @@ public class OrderControllerTest
             }
 
             ],
-            GeneralTotal = 1026.0
+            GeneralTotal = 1026.0,
+            TotalCount = 1,
+            Page = 1,
+            PageSize = 20
         };
 
         _orderServiceMock
@@ -337,10 +255,10 @@ public class OrderControllerTest
         {
             new TopProductResponseDTO
             {
-                Code = "P0001",
-                Name = "Pizza Napolitana",
+                Code = P0001,
+                Name = PizzaNapolitana,
                 Quantity = 10,
-                Images = "pizza.jpg"
+                Images = PizzaJpg
             }
         };
 
@@ -354,6 +272,80 @@ public class OrderControllerTest
         var okResult = (OkObjectResult)result;
         var response = (List<TopProductResponseDTO>)okResult.Value!;
         Assert.AreEqual(1, response.Count);
-        Assert.AreEqual("Pizza Napolitana", response[0].Name);
+        Assert.AreEqual(PizzaNapolitana, response[0].Name);
+    }
+
+    [TestMethod]
+    public void GetDispatcherOrders_WhenCalled_ReturnsOkWithOrders()
+    {
+        var expectedResponse = new PaginatedResponse<GetOrdersResponseDTO>
+        {
+            Items =
+            [
+                new GetOrdersResponseDTO
+                {
+                    OrderId = 1,
+                    Client = new ClientInfoDTO
+                    {
+                        Id = 1,
+                        Name = Juan,
+                        LastName = Perez,
+                        Phone = Val59899000000
+                    },
+                    Date = new DateTime(2026, 1, 10),
+                    Status = Pending,
+                    Items = [new OrderItemResponseDTO { ProductName = Hamburguesa, Quantity = 2 }]
+                }
+
+            ],
+            TotalCount = 1,
+            Page = 1,
+            PageSize = 20
+        };
+
+        _orderServiceMock
+            .Setup(s => s.GetDispatcherOrders(It.IsAny<int>(), It.IsAny<int>()))
+            .Returns(expectedResponse);
+
+        var result = _controller.GetDispatcherOrders();
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = (OkObjectResult)result;
+        var response = (PaginatedResponse<GetOrdersResponseDTO>)okResult.Value!;
+        Assert.AreEqual(1, response.Items.Count);
+        Assert.AreEqual(1, response.TotalCount);
+        Assert.AreEqual(expectedResponse.Items[0].OrderId, response.Items[0].OrderId);
+        Assert.AreEqual(expectedResponse.Items[0].Client.Id, response.Items[0].Client.Id);
+        Assert.AreEqual(expectedResponse.Items[0].Client.Name, response.Items[0].Client.Name);
+        Assert.AreEqual(expectedResponse.Items[0].Status, response.Items[0].Status);
+    }
+
+    [TestMethod]
+    public void ChangeStatus_ValidRequest_ReturnsOkWithUpdatedStatus()
+    {
+        var orderId = 1;
+        var request = new ChangeOrderStatusRequestDTO { Status = OrderStatus.Prepared };
+
+        var expectedResponse = new UpdateOrderStatusResponseDTO
+        {
+            OrderId = orderId,
+            Status = Prepared,
+            UpdatedAt = DateTime.Now
+        };
+
+        _orderServiceMock
+            .Setup(s => s.ChangeStatus(orderId, OrderStatus.Prepared, It.IsAny<UserRole>()))
+            .Returns(expectedResponse);
+
+        _controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
+        _controller.HttpContext.Items[Requestinguser] = new User { Id = 1, Role = UserRole.Dispatcher };
+
+        var result = _controller.ChangeStatus(orderId, request);
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = (OkObjectResult)result;
+        var response = (UpdateOrderStatusResponseDTO)okResult.Value!;
+        Assert.AreEqual(Prepared, response.Status);
+        Assert.AreEqual(orderId, response.OrderId);
     }
 }

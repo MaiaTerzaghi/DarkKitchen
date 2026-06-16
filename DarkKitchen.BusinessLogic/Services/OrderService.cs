@@ -1,7 +1,9 @@
 using DarkKitchen.Domain;
+using DarkKitchen.Domain.Authorization;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.Domain.Exceptions;
+using DarkKitchen.Domain.States;
 using DarkKitchen.DTOs.Args.In;
 using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
@@ -11,24 +13,28 @@ namespace DarkKitchen.BusinessLogic.Services;
 public class OrderService(
     IOrderRepository orderRepository,
     IPricingService pricingService,
-    IRepository<User> userRepository) : IOrderService
+    IRepository<User> userRepository,
+    IRepository<ShippingType> shippingTypeRepository) : IOrderService
 {
     private readonly IOrderRepository _orderRepository = orderRepository;
     private readonly IPricingService _pricingService = pricingService;
     private readonly IRepository<User> _userRepository = userRepository;
+    private readonly IRepository<ShippingType> _shippingTypeRepository = shippingTypeRepository;
 
     public CreateOrderResponseDTO CreateOrder(CreateOrderRequestDTO request, int clientId)
     {
-        ValidateClient(clientId);
+        ValidateClientExists(clientId);
         ValidateItems(request.Items);
-        var deliveryType = ParseDeliveryType(request.DeliveryType);
-        var pricing = _pricingService.CalculateOrderPricing(request.Items, deliveryType);
-        var order = BuildOrder(request, clientId, deliveryType, pricing);
+
+        var shippingType = ResolveShippingType(request.ShippingType);
+        var pricing = _pricingService.CalculateOrderPricing(request.Items, shippingType);
+        var order = BuildOrder(request, clientId, shippingType, pricing);
         var saved = _orderRepository.Add(order);
-        return BuildOrderResponse(clientId, saved.Id, pricing.Subtotal, pricing.ShippingCost, pricing.Total);
+
+        return BuildOrderResponse(clientId, saved.Id, pricing.Subtotal, pricing.Vat, pricing.ShippingCost, pricing.Total);
     }
 
-    private void ValidateClient(int clientId)
+    private void ValidateClientExists(int clientId)
     {
         _ = _userRepository.Get(u => u.Id == clientId)
             ?? throw new NotFoundException($"Cliente con id {clientId} no encontrado.");
@@ -42,22 +48,24 @@ public class OrderService(
         }
     }
 
-    private static DeliveryType ParseDeliveryType(string deliveryType)
+    public OrderPreviewResponseDTO PreviewOrder(List<OrderItemRequestDTO> items, string shippingTypeName)
     {
-        if(!Enum.TryParse<DeliveryType>(deliveryType, out var result))
-        {
-            throw new ArgumentException($"Tipo de entrega '{deliveryType}' no válido.");
-        }
-
-        return result;
+        var shippingType = ResolveShippingType(shippingTypeName);
+        return _pricingService.PreviewOrderPricing(items, shippingType);
     }
 
-    private static Order BuildOrder(CreateOrderRequestDTO request, int clientId, DeliveryType deliveryType, PricingResult pricing)
+    private ShippingType ResolveShippingType(string shippingTypeName)
+    {
+        return _shippingTypeRepository.Get(st => st.Name == shippingTypeName)
+            ?? throw new ArgumentException($"Tipo de envío '{shippingTypeName}' no válido.");
+    }
+
+    private static Order BuildOrder(CreateOrderRequestDTO request, int clientId, ShippingType shippingType, PricingResult pricing)
     {
         return new Order
         {
             ClientId = clientId,
-            DeliveryType = deliveryType,
+            ShippingTypeId = shippingType.Id,
             Status = OrderStatus.Pending,
             Street = request.Address.Street,
             DoorNumber = request.Address.DoorNumber,
@@ -71,128 +79,52 @@ public class OrderService(
         };
     }
 
-    private static CreateOrderResponseDTO BuildOrderResponse(int clientId, int orderId, double subtotal, double shippingCost, double total)
+    private static CreateOrderResponseDTO BuildOrderResponse(int clientId, int orderId, double subtotal, double vat, double shippingCost, double total)
     {
         return new CreateOrderResponseDTO
         {
             ClientId = clientId,
             OrderId = orderId,
             Subtotal = subtotal,
+            Vat = vat,
             ShippingCost = shippingCost,
             Total = total
         };
     }
 
-    public List<GetClientOrdersResponseDTO> GetClientOrders(GetClientOrdersRequestDTO request, int clientId)
+    public PaginatedResponse<GetOrdersResponseDTO> GetOrders(GetOrdersRequestDTO request, UserRole role, int? clientId)
     {
-        var orders = _orderRepository.GetClientOrders(
-            clientId,
-            request.Status,
+        var filterClientId = role == UserRole.Client ? clientId : null;
+
+        var (orders, totalCount) = _orderRepository.GetOrders(
+            filterClientId,
             request.DateFrom,
-            request.DateTo);
-        return orders.Select(o => new GetClientOrdersResponseDTO
-        {
-            OrderId = o.Id,
-            ClientId = o.ClientId,
-            Date = o.Date,
-            Status = o.Status.ToString(),
-            Total = o.Total,
-            ItemCount = o.Items.Sum(i => i.Quantity)
-        }).ToList();
-    }
+            request.DateTo,
+            request.Street,
+            request.Status,
+            request.Page,
+            request.PageSize);
 
-    public List<GetOrdersResponseDTO> GetOrders(GetOrdersRequestDTO request)
-    {
-        var orders = _orderRepository.GetOrders(
-        request.DateFrom,
-        request.DateTo,
-        request.Street,
-        request.Status);
-
-        return orders.Select(order => new GetOrdersResponseDTO
+        return new PaginatedResponse<GetOrdersResponseDTO>
         {
-            OrderId = order.Id,
-            Client = new ClientInfoDTO
-            {
-                Id = order.Client.Id,
-                Name = order.Client.Name,
-                LastName = order.Client.LastName,
-                Phone = order.Client.Phone
-            },
-            Date = order.Date,
-            Status = order.Status.ToString(),
-            Items = order.Items.Select(item => new OrderItemResponseDTO
-            {
-                ProductName = item.Product.Name,
-                Quantity = item.Quantity
-            }).ToList()
-        }).ToList();
+            Items = orders.Select(MapToOrderResponse).ToList(),
+            TotalCount = totalCount,
+            Page = request.Page,
+            PageSize = request.PageSize
+        };
     }
 
     public OrderDetailResponseDTO GetOrderDetail(int orderId)
     {
         var order = _orderRepository.GetOrderById(orderId) ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
 
-        return new OrderDetailResponseDTO
-        {
-            OrderId = order.Id,
-            ClientId = order.ClientId,
-            Date = order.Date,
-            Status = order.Status.ToString(),
-            DeliveryType = order.DeliveryType.ToString(),
-            Total = order.Total,
-            Items = order.Items.Select(i => new OrderItemDetailDTO
-            {
-                ProductName = i.Product.Name,
-                Quantity = i.Quantity,
-                UnitPrice = i.UnitPrice,
-                Subtotal = i.UnitPrice * i.Quantity
-            }).ToList()
-        };
-    }
-
-    public UpdateOrderStatusResponseDTO MarkAsPrepared(int orderId) =>
-        TransitionOrder(orderId, OrderStatus.Pending, OrderStatus.Prepared, "El pedido solo puede prepararse si está pendiente.");
-
-    public UpdateOrderStatusResponseDTO DeliverOrder(int orderId) =>
-        TransitionOrder(orderId, OrderStatus.OnTheWay, OrderStatus.Delivered, "El pedido solo puede entregarse si está en camino.");
-
-    public UpdateOrderStatusResponseDTO CancelOrder(int orderId) =>
-        TransitionOrder(orderId, OrderStatus.Pending, OrderStatus.Cancelled, "El pedido solo puede cancelarse si está pendiente.");
-
-    public UpdateOrderStatusResponseDTO MarkAsOnTheWay(int orderId) =>
-        TransitionOrder(orderId, OrderStatus.Prepared, OrderStatus.OnTheWay, "El pedido solo puede ponerse en camino si está preparado.");
-
-    public UpdateOrderStatusResponseDTO MarkAsNotDelivered(int orderId) =>
-        TransitionOrder(orderId, OrderStatus.OnTheWay, OrderStatus.NotDelivered, "El pedido solo puede marcarse como no entregado si está en camino.");
-
-    private UpdateOrderStatusResponseDTO TransitionOrder(int orderId, OrderStatus requiredStatus, OrderStatus newStatus, string errorMessage)
-    {
-        var order = _orderRepository.GetOrderById(orderId)
-            ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
-
-        if(order.Status != requiredStatus)
-        {
-            throw new ConflictException(errorMessage);
-        }
-
-        order.Status = newStatus;
-        order.UpdatedAt = DateTime.Now;
-
-        _orderRepository.Update(order);
-
-        return new UpdateOrderStatusResponseDTO
-        {
-            OrderId = order.Id,
-            Status = order.Status.ToString(),
-            UpdatedAt = order.UpdatedAt
-        };
+        return MapToDetailDTO(order);
     }
 
     public List<TopProductResponseDTO> GetTopProducts(DateTime dateFrom, DateTime dateTo)
     {
         var topProducts = _orderRepository.GetTopProducts(
-            o => o.Date >= dateFrom && o.Date <= dateTo,
+            o => o.Date.Date >= dateFrom.Date && o.Date.Date <= dateTo.Date,
             AppConstants.TopProductsCount);
 
         return topProducts.Select(p => new TopProductResponseDTO
@@ -206,7 +138,7 @@ public class OrderService(
 
     public SalesReportWithTotalDTO GetSalesReport(int page, int pageSize)
     {
-        var report = _orderRepository.GetSalesReport(page, pageSize);
+        var (report, totalCount) = _orderRepository.GetSalesReport(page, pageSize);
 
         var months = report
             .GroupBy(r => new { r.Year, r.Month })
@@ -226,7 +158,106 @@ public class OrderService(
         return new SalesReportWithTotalDTO
         {
             Months = months,
-            GeneralTotal = months.Sum(m => m.MonthlyTotal)
+            GeneralTotal = months.Sum(m => m.MonthlyTotal),
+            TotalCount = totalCount,
+            Page = page,
+            PageSize = pageSize
+        };
+    }
+
+    public PaginatedResponse<GetOrdersResponseDTO> GetDispatcherOrders(int page = 1, int pageSize = 20)
+    {
+        var (orders, totalCount) = _orderRepository.GetDispatcherOrders(page, pageSize);
+
+        return new PaginatedResponse<GetOrdersResponseDTO>
+        {
+            Items = orders.Select(MapToOrderResponse).ToList(),
+            TotalCount = totalCount,
+            Page = page,
+            PageSize = pageSize
+        };
+    }
+
+    private static OrderDetailResponseDTO MapToDetailDTO(Order order)
+    {
+        return new OrderDetailResponseDTO
+        {
+            OrderId = order.Id,
+            ClientId = order.ClientId,
+            Date = order.Date,
+            Status = order.Status.ToString(),
+            ShippingType = order.ShippingType?.Name ?? string.Empty,
+            Total = order.Total,
+            Items = order.Items.Select(i => new OrderItemDetailDTO
+            {
+                ProductName = i.Product.Name,
+                Quantity = i.Quantity,
+                UnitPrice = i.UnitPrice,
+                Subtotal = i.UnitPrice * i.Quantity
+            }).ToList()
+        };
+    }
+
+    private static GetOrdersResponseDTO MapToOrderResponse(Order order)
+    {
+        return new GetOrdersResponseDTO
+        {
+            OrderId = order.Id,
+            Client = order.Client != null ? new ClientInfoDTO
+            {
+                Id = order.Client.Id,
+                Name = order.Client.Name,
+                LastName = order.Client.LastName,
+                Phone = order.Client.Phone
+            }
+            : new ClientInfoDTO(),
+            Date = order.Date,
+            Status = order.Status.ToString(),
+            Total = order.Total,
+            ItemCount = order.Items.Sum(i => i.Quantity),
+            Street = order.Street,
+            DoorNumber = order.DoorNumber,
+            Apartment = order.Apartment,
+            Items = order.Items.Select(item => new OrderItemResponseDTO
+            {
+                ProductName = item.Product.Name,
+                Quantity = item.Quantity
+            }).ToList()
+        };
+    }
+
+    private static readonly Dictionary<OrderStatus, Action<Order>> StatusDispatch = new()
+    {
+        { OrderStatus.Prepared, order => OrderStateFactory.Create(order.Status).Prepare(order) },
+        { OrderStatus.Cancelled, order => OrderStateFactory.Create(order.Status).Cancel(order) },
+        { OrderStatus.OnTheWay, order => OrderStateFactory.Create(order.Status).MarkOnTheWay(order) },
+        { OrderStatus.Delivered, order => OrderStateFactory.Create(order.Status).Deliver(order) },
+        { OrderStatus.NotDelivered, order => OrderStateFactory.Create(order.Status).MarkNotDelivered(order) },
+        { OrderStatus.Delayed, order => OrderStateFactory.Create(order.Status).MarkDelayed(order) },
+    };
+
+    public UpdateOrderStatusResponseDTO ChangeStatus(int orderId, OrderStatus target, UserRole role)
+    {
+        if(!StatusDispatch.ContainsKey(target))
+        {
+            throw new ArgumentException($"No se puede cambiar un pedido al estado {target}.");
+        }
+
+        OrderTransitionPolicy.AssertCanTransition(role, target);
+
+        var order = _orderRepository.GetOrderById(orderId)
+            ?? throw new NotFoundException($"Pedido con id {orderId} no encontrado.");
+
+        StatusDispatch[target](order);
+
+        order.UpdatedAt = DateTime.Now;
+        _orderRepository.Update(order);
+
+        return new UpdateOrderStatusResponseDTO
+        {
+            OrderId = order.Id,
+            Status = order.Status.ToString(),
+            UpdatedAt = order.UpdatedAt
         };
     }
 }

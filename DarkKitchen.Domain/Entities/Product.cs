@@ -4,6 +4,7 @@ namespace DarkKitchen.Domain.Entities;
 
 public class Product
 {
+    public int Id { get; set; }
     private string _code = string.Empty;
     private string _name = string.Empty;
     private string _description = string.Empty;
@@ -12,8 +13,6 @@ public class Product
     private double _price;
     private string _images = string.Empty;
     public bool IsActive { get; set; } = true;
-
-    public int Id { get; set; }
 
     public string Code
     {

@@ -1,0 +1,185 @@
+<div class="page-header">
+  <div class="header-text">
+    <h1>Gestión de Pedidos</h1>
+    <p>Administra todos los pedidos del sistema</p>
+  </div>
+</div>
+
+<!-- Filtros -->
+<div class="filters-row">
+  <div class="search-bar">
+    <span class="material-icons">search</span>
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      placeholder="Buscar por ID o cliente..."
+      class="search-input"
+    />
+  </div>
+
+  <div class="date-filters">
+    <div class="date-field">
+      <label>Desde</label>
+      <input type="date" [(ngModel)]="dateFrom" class="date-input" />
+    </div>
+    <div class="date-field">
+      <label>Hasta</label>
+      <input type="date" [(ngModel)]="dateTo" class="date-input" />
+    </div>
+  </div>
+
+  <select [(ngModel)]="filterStatus" class="status-select" (change)="loadOrders()">
+    <option value="">Todos los estados</option>
+    <option value="0">Pendiente</option>
+    <option value="1">Preparado</option>
+    <option value="2">Cancelado</option>
+    <option value="3">En camino</option>
+    <option value="4">Entregado</option>
+    <option value="5">No entregado</option>
+    <option value="6">Demorado</option>
+  </select>
+
+  <button class="btn-search" (click)="loadOrders()">
+    <span class="material-icons">filter_list</span>
+    Filtrar
+  </button>
+</div>
+
+<!-- Error -->
+<div class="error-message" *ngIf="errorMessage">
+  <span class="material-icons">error</span>
+  {{ errorMessage }}
+</div>
+
+<!-- Loading -->
+<div class="loading" *ngIf="loading">
+  <span class="material-icons spinning">sync</span>
+  Cargando pedidos...
+</div>
+
+<!-- Tabla -->
+<div class="table-container" *ngIf="!loading && filteredOrders.length > 0">
+  <table class="orders-table">
+    <thead>
+      <tr>
+        <th>Pedido</th>
+        <th>Cliente</th>
+        <th>Items</th>
+        <th>Estado</th>
+        <th>Fecha</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let order of filteredOrders">
+        <td>
+          <span class="order-id">#{{ order.orderId }}</span>
+        </td>
+        <td>
+          <span class="customer-name">{{ order.client.name }} {{ order.client.lastName }}</span>
+        </td>
+        <td>
+          <span class="item-count">{{ getTotalItems(order) }} items</span>
+        </td>
+        <td>
+          <span class="badge" [ngClass]="getStatusClass(order.status)">
+            <span class="material-icons">{{ getStatusIcon(order.status) }}</span>
+            {{ getStatusLabel(order.status) }}
+          </span>
+        </td>
+        <td>
+          <span class="order-date">{{ order.date | date:'dd/MM/yyyy HH:mm' }}</span>
+        </td>
+        <td>
+          <div class="actions-row">
+            <button class="btn-detail" (click)="openDetail(order)" title="Ver detalle">
+              <span class="material-icons">visibility</span>
+            </button>
+            <button
+              class="btn-cancel"
+              *ngIf="canCancel(order.status)"
+              [disabled]="processingOrderId === order.orderId"
+              (click)="cancelOrder(order)"
+              title="Cancelar pedido"
+            >
+              <span class="material-icons">{{ processingOrderId === order.orderId ? 'sync' : 'cancel' }}</span>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Paginador -->
+<app-paginator
+  *ngIf="!loading && totalCount > 0"
+  [currentPage]="currentPage"
+  [pageSize]="pageSize"
+  [totalCount]="totalCount"
+  (pageChange)="onPageChange($event)">
+</app-paginator>
+
+<!-- Empty -->
+<div class="empty-state" *ngIf="!loading && filteredOrders.length === 0 && !errorMessage">
+  <span class="material-icons">receipt_long</span>
+  <p>{{ searchTerm ? 'No se encontraron pedidos para esa búsqueda' : 'No hay pedidos en el rango seleccionado' }}</p>
+</div>
+
+<!-- Modal detalle -->
+<div class="modal-overlay" *ngIf="selectedOrder" (click)="closeDetail()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Detalle del Pedido #{{ selectedOrder.orderId }}</h2>
+      <button class="btn-close" (click)="closeDetail()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="detail-section">
+        <label>Cliente</label>
+        <p class="detail-value">{{ selectedOrder.client.name }} {{ selectedOrder.client.lastName }}</p>
+      </div>
+
+      <div class="detail-section">
+        <label>Teléfono</label>
+        <p class="detail-value">{{ selectedOrder.client.phone }}</p>
+      </div>
+
+      <div class="detail-section">
+        <label>Estado</label>
+        <span class="badge" [ngClass]="getStatusClass(selectedOrder.status)">
+          <span class="material-icons">{{ getStatusIcon(selectedOrder.status) }}</span>
+          {{ getStatusLabel(selectedOrder.status) }}
+        </span>
+      </div>
+
+      <div class="detail-section">
+        <label>Fecha</label>
+        <p class="detail-value">{{ selectedOrder.date | date:'dd/MM/yyyy HH:mm' }}</p>
+      </div>
+
+      <div class="detail-section">
+        <label>Dirección</label>
+        <p class="detail-value">
+          {{ selectedOrder.street }} {{ selectedOrder.doorNumber }}
+          <span *ngIf="selectedOrder.apartment"> - Apto: {{ selectedOrder.apartment }}</span>
+        </p>
+      </div>
+
+      <div class="detail-section">
+        <label>Productos</label>
+        <ul class="items-list">
+          <li *ngFor="let item of selectedOrder.items">
+            {{ item.productName }} x{{ item.quantity }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-close-footer" (click)="closeDetail()">Cerrar</button>
+    </div>
+  </div>
+</div>

@@ -15,6 +15,28 @@ public sealed class UserServiceTest
 {
     private Mock<IRepository<User>> _userRepositoryMock = null!;
     private Mock<IPasswordManager> _passwordManagerMock = null!;
+
+    private const string Val59899123456 = "+59899123456";
+    private const string Juan = "Juan";
+    private const string Perez = "Perez";
+    private const string Contrasena1 = "Contrasena1!@#$%";
+    private const string JuanTestCom = "juan@test.com";
+    private const string JuanEmailCom = "juan@email.com";
+    private const string Oldlastname = "OldLastName";
+    private const string Oldname = "OldName";
+    private const string HashedContrasena = "hashed-contrasena";
+    private const string JuanexistenteEmailCom = "juanexistente@email.com";
+    private const string Val123 = "123";
+    private const string Contrasena12 = "CONTRASENA1!@#$%";
+    private const string Contrasena = "Contrasena!@#$%&*";
+    private const string Contrasena11111 = "Contrasena11111";
+    private const string Contrasena123 = "Contrasena123!@#";
+    private const string Corta1 = "Corta1!@#$%";
+    private const string Pe = "Pe";
+    private const string Contrasena13 = "contrasena1!@#$%";
+    private const string Emailinvalido = "emailinvalido";
+    private const string OldHashedPassword = "old-hashed-password";
+    private const string Password = "password";
     private UserService _service = null!;
 
     [TestInitialize]
@@ -26,15 +48,15 @@ public sealed class UserServiceTest
     }
 
     [TestMethod]
-    public void Register_WhenValidData_ReturnsId()
+    public void CreateUser_WhenValidData_ReturnsId()
     {
-        var request = new RegisterClientDTO
+        var request = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@email.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanEmailCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
         };
 
         var user = new User { Id = 1 };
@@ -44,216 +66,216 @@ public sealed class UserServiceTest
         _userRepositoryMock.Setup(r => r.Add(It.IsAny<User>()))
                         .Returns(user);
 
-        var result = _service.Register(request);
+        var result = _service.CreateUser(request);
 
         Assert.AreEqual(1, result);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ConflictException))]
-    public void Register_WhenEmailAlreadyExists_ThrowsException()
+    public void CreateUser_WhenEmailAlreadyExists_ThrowsException()
     {
-        var request = new RegisterClientDTO
+        var request = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juanexistente@email.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanexistenteEmailCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
         };
 
         _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
-                        .Returns(new User { Email = "juanexistente@email.com" });
+                        .Returns(new User { Email = JuanexistenteEmailCom });
 
-        _service.Register(request);
+        _service.CreateUser(request);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void Register_WhenNameIsEmpty_ThrowsException()
+    public void CreateUser_WhenNameIsEmpty_ThrowsException()
     {
-        var request = new RegisterClientDTO
+        var request = new CreateUserRequestDTO
         {
             Name = string.Empty,
-            LastName = "Perez",
-            Email = "juan@email.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            LastName = Perez,
+            Email = JuanEmailCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
         };
 
-        _service.Register(request);
+        _service.CreateUser(request);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void Register_WhenLastNameIsTooShort_ThrowsException()
+    public void CreateUser_WhenLastNameIsTooShort_ThrowsException()
     {
-        var request = new RegisterClientDTO
+        var request = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Pe",
-            Email = "juan@email.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Pe,
+            Email = JuanEmailCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
         };
 
-        _service.Register(request);
+        _service.CreateUser(request);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void Register_WhenEmailIsInvalid_ThrowsException()
+    public void CreateUser_WhenEmailIsInvalid_ThrowsException()
     {
-        var request = new RegisterClientDTO
+        var request = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "emailinvalido",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = Emailinvalido,
+            Phone = Val59899123456,
+            Password = Contrasena1,
         };
 
-        _service.Register(request);
+        _service.CreateUser(request);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void Register_WhenPhoneIsInvalid_ThrowsException()
+    public void CreateUser_WhenPhoneIsInvalid_ThrowsException()
     {
-        var request = new RegisterClientDTO
+        var request = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@email.com",
-            Phone = "123",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanEmailCom,
+            Phone = Val123,
+            Password = Contrasena1,
         };
 
-        _service.Register(request);
+        _service.CreateUser(request);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void Register_WhenPasswordIsInvalid_ThrowsException()
+    public void CreateUser_WhenPasswordIsInvalid_ThrowsException()
     {
-        var request = new RegisterClientDTO
+        var request = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@email.com",
-            Phone = "+59899123456",
-            Password = "password",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanEmailCom,
+            Phone = Val59899123456,
+            Password = Password,
         };
 
-        _service.Register(request);
+        _service.CreateUser(request);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void Register_WhenPasswordIsTooShort_ThrowsException()
+    public void CreateUser_WhenPasswordIsTooShort_ThrowsException()
     {
-        var user = new RegisterClientDTO
+        var user = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@email.com",
-            Phone = "+59899123456",
-            Password = "Corta1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanEmailCom,
+            Phone = Val59899123456,
+            Password = Corta1,
         };
 
-        _service.Register(user);
+        _service.CreateUser(user);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void Register_WhenPasswordHasNoUppercase_ThrowsException()
+    public void CreateUser_WhenPasswordHasNoUppercase_ThrowsException()
     {
-        var user = new RegisterClientDTO
+        var user = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@email.com",
-            Phone = "+59899123456",
-            Password = "contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanEmailCom,
+            Phone = Val59899123456,
+            Password = Contrasena13,
         };
 
-        _service.Register(user);
+        _service.CreateUser(user);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void Register_WhenPasswordHasNoLowercase_ThrowsException()
+    public void CreateUser_WhenPasswordHasNoLowercase_ThrowsException()
     {
-        var user = new RegisterClientDTO
+        var user = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@email.com",
-            Phone = "+59899123456",
-            Password = "CONTRASENA1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanEmailCom,
+            Phone = Val59899123456,
+            Password = Contrasena12,
         };
 
-        _service.Register(user);
+        _service.CreateUser(user);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void Register_WhenPasswordHasNoNumber_ThrowsException()
+    public void CreateUser_WhenPasswordHasNoNumber_ThrowsException()
     {
-        var user = new RegisterClientDTO
+        var user = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@email.com",
-            Phone = "+59899123456",
-            Password = "Contrasena!@#$%&*",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanEmailCom,
+            Phone = Val59899123456,
+            Password = Contrasena,
         };
 
-        _service.Register(user);
+        _service.CreateUser(user);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void Register_WhenPasswordHasNoSymbol_ThrowsException()
+    public void CreateUser_WhenPasswordHasNoSymbol_ThrowsException()
     {
-        var user = new RegisterClientDTO
+        var user = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@email.com",
-            Phone = "+59899123456",
-            Password = "Contrasena11111",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanEmailCom,
+            Phone = Val59899123456,
+            Password = Contrasena11111,
         };
 
-        _service.Register(user);
+        _service.CreateUser(user);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void Register_WhenPasswordHasSequence_ThrowsException()
+    public void CreateUser_WhenPasswordHasSequence_ThrowsException()
     {
-        var user = new RegisterClientDTO
+        var user = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@email.com",
-            Phone = "+59899123456",
-            Password = "Contrasena123!@#",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanEmailCom,
+            Phone = Val59899123456,
+            Password = Contrasena123,
         };
 
-        _service.Register(user);
+        _service.CreateUser(user);
     }
 
     [TestMethod]
-    public void CreateStaffUser_WhenValidData_ReturnsId()
+    public void CreateUser_WhenStaffWithValidData_ReturnsId()
     {
-        var request = new CreateStaffUserRequestDTO
+        var request = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
             Role = UserRole.Administrative
         };
 
@@ -264,49 +286,49 @@ public sealed class UserServiceTest
         _userRepositoryMock.Setup(r => r.Add(It.IsAny<User>()))
                             .Returns(user);
 
-        var result = _service.CreateStaffUser(request);
+        var result = _service.CreateUser(request);
 
         Assert.AreEqual(1, result);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ConflictException))]
-    public void CreateStaffUser_WhenEmailAlreadyExists_ThrowsArgumentException()
+    public void CreateUser_WhenStaffEmailAlreadyExists_ThrowsException()
     {
-        var request = new CreateStaffUserRequestDTO
+        var request = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
             Role = UserRole.Administrative
         };
 
         _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
-                        .Returns(new User { Email = "juan@test.com" });
+                        .Returns(new User { Email = JuanTestCom });
 
-        _service.CreateStaffUser(request);
+        _service.CreateUser(request);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void CreateStaffUser_WhenRoleIsClient_ThrowsArgumentException()
+    public void CreateUser_WhenRoleIsClient_ThrowsArgumentException()
     {
-        var request = new CreateStaffUserRequestDTO
+        var request = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
             Role = UserRole.Client
         };
 
         _userRepositoryMock.Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
                         .Returns((User?)null);
 
-        _service.CreateStaffUser(request);
+        _service.CreateUser(request);
     }
 
     [TestMethod]
@@ -314,15 +336,35 @@ public sealed class UserServiceTest
     {
         var users = new List<User>
         {
-            new() { Id = 1, Name = "Juan", LastName = "Perez", Email = "juan@test.com", Phone = "+59899123456", Role = UserRole.Administrative }
+            new() { Id = 1, Name = Juan, LastName = Perez, Email = JuanTestCom, Phone = Val59899123456, Role = UserRole.Administrative }
         };
 
         _userRepositoryMock.Setup(r => r.GetAll(It.IsAny<Expression<Func<User, bool>>>(), null, false, 1, 20))
-                            .Returns(users);
+                            .Returns((users, users.Count));
 
         var result = _service.GetUsers(null, null);
 
-        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual(1, result.Items.Count);
+    }
+
+    [TestMethod]
+    public void GetUsers_WhenCalled_ExcludesClients()
+    {
+        var users = new List<User>
+        {
+            new() { Id = 1, Name = "Admin", LastName = "User", Email = "admin@test.com", Phone = "+59899111111", Role = UserRole.Administrative },
+            new() { Id = 2, Name = "Prep", LastName = "User", Email = "prep@test.com", Phone = "+59899222222", Role = UserRole.Dispatcher }
+        };
+
+        _userRepositoryMock.Setup(r => r.GetAll(
+            It.Is<Expression<Func<User, bool>>>(expr => true),
+            null, false, 1, 20))
+            .Returns((users, users.Count));
+
+        var result = _service.GetUsers(null, null);
+
+        Assert.AreEqual(2, result.Items.Count);
+        Assert.IsTrue(result.Items.All(u => u.Role != UserRole.Client));
     }
 
     [TestMethod]
@@ -330,10 +372,10 @@ public sealed class UserServiceTest
     {
         var request = new UpdateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
             Password = null,
             Role = UserRole.Administrative
         };
@@ -341,11 +383,11 @@ public sealed class UserServiceTest
         var existingUser = new User
         {
             Id = 1,
-            Name = "OldName",
-            LastName = "OldLastName",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Oldname,
+            LastName = Oldlastname,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
             Role = UserRole.Administrative
         };
 
@@ -355,7 +397,7 @@ public sealed class UserServiceTest
 
         var result = _service.UpdateUser(1, request, 2);
 
-        Assert.AreEqual("Juan", result.Name);
+        Assert.AreEqual(Juan, result.Name);
     }
 
     [TestMethod]
@@ -364,11 +406,11 @@ public sealed class UserServiceTest
     {
         var request = new UpdateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
             Role = UserRole.Administrative
         };
 
@@ -384,22 +426,22 @@ public sealed class UserServiceTest
     {
         var request = new UpdateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
             Role = UserRole.Administrative
         };
 
         var existingUser = new User
         {
             Id = 1,
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
             Role = UserRole.Administrative
         };
 
@@ -415,11 +457,11 @@ public sealed class UserServiceTest
         var existingUser = new User
         {
             Id = 1,
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
             Role = UserRole.Administrative
         };
 
@@ -448,11 +490,11 @@ public sealed class UserServiceTest
         var existingUser = new User
         {
             Id = 1,
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
             Role = UserRole.Administrative
         };
 
@@ -462,17 +504,17 @@ public sealed class UserServiceTest
     }
 
     [TestMethod]
-    public void Register_WhenValidData_SavesUserWithHashedPassword()
+    public void CreateUser_WhenValidData_SavesUserWithHashedPassword()
     {
-        var plainPassword = "Contrasena1!@#$%";
-        var hashedPassword = "hashed-contrasena";
+        var plainPassword = Contrasena1;
+        var hashedPassword = HashedContrasena;
 
-        var request = new RegisterClientDTO
+        var request = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@email.com",
-            Phone = "+59899123456",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanEmailCom,
+            Phone = Val59899123456,
             Password = plainPassword,
         };
 
@@ -483,23 +525,23 @@ public sealed class UserServiceTest
         _passwordManagerMock.Setup(p => p.ComputeHash(plainPassword))
                         .Returns(hashedPassword);
 
-        _service.Register(request);
+        _service.CreateUser(request);
 
         _userRepositoryMock.Verify(r => r.Add(It.Is<User>(u => u.Password == hashedPassword)), Times.Once);
     }
 
     [TestMethod]
-    public void CreateStaffUser_WhenValidData_SavesUserWithHashedPassword()
+    public void CreateUser_WhenStaffWithValidData_SavesUserWithHashedPassword()
     {
-        var plainPassword = "Contrasena1!@#$%";
-        var hashedPassword = "hashed-contrasena";
+        var plainPassword = Contrasena1;
+        var hashedPassword = HashedContrasena;
 
-        var request = new CreateStaffUserRequestDTO
+        var request = new CreateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
             Password = plainPassword,
             Role = UserRole.Administrative
         };
@@ -511,7 +553,7 @@ public sealed class UserServiceTest
         _passwordManagerMock.Setup(p => p.ComputeHash(plainPassword))
                         .Returns(hashedPassword);
 
-        _service.CreateStaffUser(request);
+        _service.CreateUser(request);
 
         _userRepositoryMock.Verify(r => r.Add(It.Is<User>(u => u.Password == hashedPassword)), Times.Once);
     }
@@ -519,15 +561,15 @@ public sealed class UserServiceTest
     [TestMethod]
     public void UpdateUser_WhenValidData_UpdatesUserWithHashedPassword()
     {
-        var plainPassword = "Contrasena1!@#$%";
-        var hashedPassword = "hashed-contrasena";
+        var plainPassword = Contrasena1;
+        var hashedPassword = HashedContrasena;
 
         var request = new UpdateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
             Password = plainPassword,
             Role = UserRole.Administrative
         };
@@ -535,11 +577,11 @@ public sealed class UserServiceTest
         var existingUser = new User
         {
             Id = 1,
-            Name = "OldName",
-            LastName = "OldLastName",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
-            Password = "old-hashed-password",
+            Name = Oldname,
+            LastName = Oldlastname,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
+            Password = OldHashedPassword,
             Role = UserRole.Administrative
         };
 
@@ -559,10 +601,10 @@ public sealed class UserServiceTest
     {
         var request = new UpdateUserRequestDTO
         {
-            Name = "Juan",
-            LastName = "Perez",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
+            Name = Juan,
+            LastName = Perez,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
             Password = null,
             Role = UserRole.Administrative
         };
@@ -570,11 +612,11 @@ public sealed class UserServiceTest
         var existingUser = new User
         {
             Id = 1,
-            Name = "OldName",
-            LastName = "OldLastName",
-            Email = "juan@test.com",
-            Phone = "+59899123456",
-            Password = "Contrasena1!@#$%",
+            Name = Oldname,
+            LastName = Oldlastname,
+            Email = JuanTestCom,
+            Phone = Val59899123456,
+            Password = Contrasena1,
             Role = UserRole.Administrative
         };
 
@@ -584,7 +626,7 @@ public sealed class UserServiceTest
 
         var result = _service.UpdateUser(1, request, 2);
 
-        Assert.AreEqual("Contrasena1!@#$%", existingUser.Password);
-        Assert.AreEqual("Juan", result.Name);
+        Assert.AreEqual(Contrasena1, existingUser.Password);
+        Assert.AreEqual(Juan, result.Name);
     }
 }

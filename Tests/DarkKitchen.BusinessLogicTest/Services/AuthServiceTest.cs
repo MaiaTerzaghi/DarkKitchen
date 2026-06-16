@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using DarkKitchen.BusinessLogic.Services;
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Exceptions;
+using DarkKitchen.DTOs.Args.Output;
 using DarkKitchen.IBusinessLogic;
 using DarkKitchen.IDataAccess;
 using Moq;
@@ -11,14 +12,21 @@ namespace DarkKitchen.BusinessLogicTest.Services;
 [TestClass]
 public sealed class AuthServiceTest
 {
+    private const string Contrasena1 = "Contrasena1!@#$%";
+    private const string TokenValido = "token-valido";
+    private const string JuanEmailCom = "juan@email.com";
+    private const string TokenInvalido = "token-invalido";
+    private const string HashedContrasena = "hashed-contrasena";
+    private const string MalTestCom = "mal@test.com";
+
     [TestMethod]
     public void Login_WhenValidCredentials_ReturnsToken()
     {
-        var hashedPassword = "hashed-contrasena";
+        var hashedPassword = HashedContrasena;
         var user = new User
         {
             Id = 1,
-            Email = "juan@email.com",
+            Email = JuanEmailCom,
             Password = hashedPassword
         };
 
@@ -32,15 +40,17 @@ public sealed class AuthServiceTest
         sessionRepositoryMock.Setup(r => r.Add(It.IsAny<Session>()))
                     .Returns(new Session { User = user });
 
-        passwordManagerMock.Setup(p => p.ComputeHash("Contrasena1!@#$%"))
+        passwordManagerMock.Setup(p => p.ComputeHash(Contrasena1))
                     .Returns(hashedPassword);
 
         var authService = new AuthService(userRepositoryMock.Object, sessionRepositoryMock.Object, passwordManagerMock.Object);
 
-        var result = authService.Login("juan@email.com", "Contrasena1!@#$%");
+        var result = authService.Login(JuanEmailCom, Contrasena1);
 
         Assert.IsNotNull(result);
-        Assert.IsInstanceOfType(result, typeof(string));
+        Assert.IsInstanceOfType(result, typeof(LoginResponseDTO));
+        Assert.IsNotNull(result.Token);
+        Assert.IsNotNull(result.Role);
     }
 
     [TestMethod]
@@ -56,24 +66,24 @@ public sealed class AuthServiceTest
 
         var authService = new AuthService(userRepositoryMock.Object, sessionRepositoryMock.Object, passwordManagerMock.Object);
 
-        authService.Login("mal@test.com", "Contrasena1!@#$%");
+        authService.Login(MalTestCom, Contrasena1);
     }
 
     [TestMethod]
     public void Logout_WhenValidToken_DeletesSession()
     {
-        var session = new Session { Token = "token-valido", UserId = 1 };
+        var session = new Session { Token = TokenValido, UserId = 1 };
 
         var userRepositoryMock = new Mock<IRepository<User>>();
         var sessionRepositoryMock = new Mock<ISessionRepository>();
         var passwordManagerMock = new Mock<IPasswordManager>();
 
-        sessionRepositoryMock.Setup(r => r.GetSessionByToken("token-valido"))
+        sessionRepositoryMock.Setup(r => r.GetSessionByToken(TokenValido))
                              .Returns(session);
 
         var authService = new AuthService(userRepositoryMock.Object, sessionRepositoryMock.Object, passwordManagerMock.Object);
 
-        authService.Logout("token-valido");
+        authService.Logout(TokenValido);
 
         sessionRepositoryMock.Verify(r => r.Delete(session), Times.Once);
     }
@@ -86,11 +96,11 @@ public sealed class AuthServiceTest
         var sessionRepositoryMock = new Mock<ISessionRepository>();
         var passwordManagerMock = new Mock<IPasswordManager>();
 
-        sessionRepositoryMock.Setup(r => r.GetSessionByToken("token-invalido"))
+        sessionRepositoryMock.Setup(r => r.GetSessionByToken(TokenInvalido))
                              .Returns((Session?)null);
 
         var authService = new AuthService(userRepositoryMock.Object, sessionRepositoryMock.Object, passwordManagerMock.Object);
 
-        authService.Logout("token-invalido");
+        authService.Logout(TokenInvalido);
     }
 }

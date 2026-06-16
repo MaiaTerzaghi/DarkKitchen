@@ -1,7 +1,7 @@
 using DarkKitchen.Domain.Entities;
 using DarkKitchen.Domain.Enums;
 using DarkKitchen.IBusinessLogic;
-using DarkKitchen.WebApi.Filters;
+using DarkKitchen.WebApi.Filters.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -15,6 +15,10 @@ namespace DarkKitchen.WebApi.Test.Filters;
 [TestClass]
 public class AuthorizeRolesAttributeTest
 {
+    private const string Authorization = "Authorization";
+    private const string ValidToken = "valid-token";
+    private const string InvalidToken = "invalid-token";
+
     [TestMethod]
     public void OnAuthorization_WhenNoToken_Returns401()
     {
@@ -33,7 +37,7 @@ public class AuthorizeRolesAttributeTest
             new ActionContext(httpContext, new RouteData(), new ActionDescriptor()),
             []);
 
-        var filter = new AuthorizeRolesAttribute(UserRole.Client);
+        var filter = new ClientOnlyAttribute();
 
         filter.OnAuthorization(context);
 
@@ -59,13 +63,13 @@ public class AuthorizeRolesAttributeTest
             RequestServices = serviceProvider
         };
 
-        httpContext.Request.Headers["Authorization"] = "invalid-token";
+        httpContext.Request.Headers[Authorization] = InvalidToken;
 
         var context = new AuthorizationFilterContext(
             new ActionContext(httpContext, new RouteData(), new ActionDescriptor()),
             []);
 
-        var filter = new AuthorizeRolesAttribute(UserRole.Client);
+        var filter = new ClientOnlyAttribute();
 
         filter.OnAuthorization(context);
 
@@ -93,14 +97,14 @@ public class AuthorizeRolesAttributeTest
             RequestServices = serviceProvider
         };
 
-        httpContext.Request.Headers["Authorization"] = "valid-token";
+        httpContext.Request.Headers[Authorization] = ValidToken;
 
         var context = new AuthorizationFilterContext(
             new ActionContext(httpContext, new RouteData(), new ActionDescriptor()),
             []);
 
         // El endpoint requiere Admin, pero el user es Client
-        var filter = new AuthorizeRolesAttribute(UserRole.Administrative);
+        var filter = new AdministrativeOnlyAttribute();
 
         filter.OnAuthorization(context);
 
@@ -128,13 +132,13 @@ public class AuthorizeRolesAttributeTest
             RequestServices = serviceProvider
         };
 
-        httpContext.Request.Headers["Authorization"] = "valid-token";
+        httpContext.Request.Headers[Authorization] = ValidToken;
 
         var context = new AuthorizationFilterContext(
             new ActionContext(httpContext, new RouteData(), new ActionDescriptor()),
             []);
 
-        var filter = new AuthorizeRolesAttribute(UserRole.Client);
+        var filter = new ClientOnlyAttribute();
 
         filter.OnAuthorization(context);
 

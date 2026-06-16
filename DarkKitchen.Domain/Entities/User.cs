@@ -5,13 +5,13 @@ namespace DarkKitchen.Domain.Entities;
 
 public class User
 {
+    public int Id { get; set; }
     private string _email = string.Empty;
     private string _password = string.Empty;
     private string _name = string.Empty;
     private string _lastName = string.Empty;
     private string _phone = string.Empty;
 
-    public int Id { get; set; }
     public UserRole Role { get; set; }
 
     public string Email

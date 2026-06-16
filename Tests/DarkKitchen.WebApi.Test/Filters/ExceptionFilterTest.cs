@@ -11,6 +11,12 @@ namespace DarkKitchen.WebApi.Test.Filters;
 [TestClass]
 public class ExceptionFilterTest
 {
+    private const string Conflicto = "Conflicto";
+    private const string CredencialesInvalidas = "Credenciales inválidas";
+    private const string Error = "Error";
+    private const string ErrorInesperado = "Error inesperado";
+    private const string RecursoNoEncontrado = "Recurso no encontrado";
+
     private ExceptionContext CreateContext(Exception exception)
     {
         var httpContext = new DefaultHttpContext();
@@ -26,8 +32,8 @@ public class ExceptionFilterTest
     [TestMethod]
     public void OnException_WhenArgumentException_Returns400()
     {
-        var filter = new ExceptionFilter();
-        var context = CreateContext(new ArgumentException("Error"));
+        var filter = new GlobalExceptionFilterAttribute();
+        var context = CreateContext(new ArgumentException(Error));
 
         filter.OnException(context);
 
@@ -40,8 +46,8 @@ public class ExceptionFilterTest
     [TestMethod]
     public void OnException_WhenUnknownException_Returns500()
     {
-        var filter = new ExceptionFilter();
-        var context = CreateContext(new Exception("Error inesperado"));
+        var filter = new GlobalExceptionFilterAttribute();
+        var context = CreateContext(new Exception(ErrorInesperado));
 
         filter.OnException(context);
 
@@ -54,8 +60,8 @@ public class ExceptionFilterTest
     [TestMethod]
     public void OnException_WhenNotFoundException_Returns404()
     {
-        var filter = new ExceptionFilter();
-        var context = CreateContext(new NotFoundException("Recurso no encontrado"));
+        var filter = new GlobalExceptionFilterAttribute();
+        var context = CreateContext(new NotFoundException(RecursoNoEncontrado));
 
         filter.OnException(context);
 
@@ -68,8 +74,8 @@ public class ExceptionFilterTest
     [TestMethod]
     public void OnException_WhenConflictException_Returns409()
     {
-        var filter = new ExceptionFilter();
-        var context = CreateContext(new ConflictException("Conflicto"));
+        var filter = new GlobalExceptionFilterAttribute();
+        var context = CreateContext(new ConflictException(Conflicto));
 
         filter.OnException(context);
 
@@ -82,8 +88,8 @@ public class ExceptionFilterTest
     [TestMethod]
     public void OnException_WhenUnauthorizedException_Returns401()
     {
-        var filter = new ExceptionFilter();
-        var context = CreateContext(new UnauthorizedException("Credenciales inválidas"));
+        var filter = new GlobalExceptionFilterAttribute();
+        var context = CreateContext(new UnauthorizedException(CredencialesInvalidas));
 
         filter.OnException(context);
 

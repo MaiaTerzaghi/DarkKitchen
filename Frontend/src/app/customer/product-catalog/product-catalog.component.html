@@ -1,0 +1,130 @@
+<div class="catalog-container">
+  <!-- Header -->
+  <div class="catalog-header">
+    <div class="header-text">
+      <h1 class="catalog-title">Catálogo de Productos</h1>
+      <p class="catalog-subtitle">Descubre nuestros deliciosos platos</p>
+    </div>
+    <a class="cart-btn" [routerLink]="['/customer/checkout']">
+      <span class="material-icons">shopping_cart</span>
+      <span class="cart-badge" *ngIf="getCartCount() > 0">{{ getCartCount() }}</span>
+    </a>
+  </div>
+
+  <!-- Search bar -->
+  <div class="search-bar">
+    <span class="material-icons search-icon">search</span>
+    <input
+      type="text"
+      placeholder="Buscar productos..."
+      [(ngModel)]="searchTerm"
+      (input)="onSearch()"
+    />
+  </div>
+
+  <!-- Category chips -->
+  <div class="category-chips">
+    <button
+      *ngFor="let cat of categories"
+      class="chip"
+      [class.active]="selectedCategory === cat"
+      (click)="filterByCategory(cat)"
+    >
+      {{ cat }}
+    </button>
+  </div>
+
+  <!-- Loading state -->
+  <div class="state-message" *ngIf="loading">
+    <span class="material-icons spinning">sync</span>
+    <p>Cargando productos...</p>
+  </div>
+
+  <!-- Error state -->
+  <div class="state-message error" *ngIf="errorMessage && !loading">
+    <span class="material-icons">error_outline</span>
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <!-- Empty state -->
+  <div class="state-message" *ngIf="!loading && !errorMessage && filteredProducts.length === 0">
+    <span class="material-icons">search_off</span>
+    <p>No se encontraron productos</p>
+  </div>
+
+  <!-- Product grid -->
+  <div class="products-grid" *ngIf="!loading && !errorMessage && filteredProducts.length > 0">
+    <div class="product-card" *ngFor="let product of filteredProducts">
+      <div class="product-image">
+        <img
+          *ngIf="imageList(product.images).length > 0"
+          [src]="'data:image/jpeg;base64,' + imageList(product.images)[getImageIndex(product.id)]"
+          [alt]="product.name"
+        />
+        <span *ngIf="imageList(product.images).length === 0" class="material-icons image-placeholder">lunch_dining</span>
+
+        <!-- Flechas del carrusel -->
+        <button
+          *ngIf="imageList(product.images).length > 1"
+          class="carousel-arrow carousel-prev"
+          (click)="prevImage(product)"
+        >
+          <span class="material-icons">chevron_left</span>
+        </button>
+        <button
+          *ngIf="imageList(product.images).length > 1"
+          class="carousel-arrow carousel-next"
+          (click)="nextImage(product)"
+        >
+          <span class="material-icons">chevron_right</span>
+        </button>
+
+        <div class="carousel-dots" *ngIf="imageList(product.images).length > 1">
+          <span
+            *ngFor="let img of imageList(product.images); let i = index"
+            class="dot"
+            [class.active]="i === getImageIndex(product.id)"
+            (click)="setImageIndex(product.id, i)"
+          ></span>
+        </div>
+      </div>
+      <div class="product-info">
+        <div class="info-top">
+          <h3 class="product-name">{{ product.name }}</h3>
+          <div class="rating-badge">
+            <span class="material-icons star-icon">star</span>
+            <span>4.5</span>
+          </div>
+        </div>
+        <p class="product-description">{{ product.commercialLine }}</p>
+        <span class="category-badge">{{ product.category }}</span>
+        <div class="product-footer">
+          <div class="price-container">
+            <span class="product-price" [class.price-strikethrough]="getDiscountedPrice(product) !== null">
+              $ {{ product.price }}
+            </span>
+            <span class="discount-price" *ngIf="getDiscountedPrice(product) !== null">
+              $ {{ getDiscountedPrice(product) | number:'1.2-2' }}
+            </span>
+            <span class="discount-badge" *ngIf="getActivePromotion(product) as promo">
+              -{{ promo.discountPercentage }}%
+            </span>
+          </div>
+          <button class="add-cart-btn" (click)="addToCart(product)">
+            <span class="material-icons">add_shopping_cart</span>
+            Agregar al Carrito
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Paginador -->
+  <app-paginator
+    *ngIf="!loading && totalCount > 0"
+    [currentPage]="currentPage"
+    [pageSize]="pageSize"
+    [totalCount]="totalCount"
+    (pageChange)="onPageChange($event)">
+  </app-paginator>
+</div>

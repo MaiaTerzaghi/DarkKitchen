@@ -1,0 +1,13 @@
+<div class="confirm-overlay" *ngIf="visible" (click)="onCancel()">
+  <div class="confirm-card" (click)="$event.stopPropagation()">
+    <div class="confirm-icon">
+      <span class="material-icons">warning_amber</span>
+    </div>
+    <h3>Cambios sin guardar</h3>
+    <p>Tenés cambios que no fueron guardados. ¿Seguro que querés salir?</p>
+    <div class="confirm-actions">
+      <button class="btn-stay" (click)="onCancel()">Seguir editando</button>
+      <button class="btn-leave" (click)="onConfirm()">Salir sin guardar</button>
+    </div>
+  </div>
+</div>

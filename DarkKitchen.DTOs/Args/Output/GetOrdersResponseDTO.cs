@@ -6,5 +6,10 @@ public class GetOrdersResponseDTO
     public ClientInfoDTO Client { get; set; } = new();
     public DateTime Date { get; set; }
     public string Status { get; set; } = string.Empty;
+    public double Total { get; set; }
+    public int ItemCount { get; set; }
+    public string Street { get; set; } = string.Empty;
+    public string DoorNumber { get; set; } = string.Empty;
+    public string? Apartment { get; set; }
     public List<OrderItemResponseDTO> Items { get; set; } = [];
 }

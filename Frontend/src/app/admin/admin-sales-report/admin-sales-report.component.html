@@ -1,0 +1,61 @@
+<div class="page-header">
+  <div class="header-text">
+    <h1>Reporte de Ventas</h1>
+    <p>Resumen de ventas agrupado por mes y cliente</p>
+  </div>
+</div>
+
+<!-- Error -->
+<div class="error-message" *ngIf="errorMessage">
+  <span class="material-icons">error</span>
+  {{ errorMessage }}
+</div>
+
+<!-- Loading -->
+<div class="loading" *ngIf="loading">
+  <span class="material-icons spinning">sync</span>
+  Cargando reporte...
+</div>
+
+<!-- Reporte -->
+<div class="report-container" *ngIf="!loading && report">
+  <!-- Mes -->
+  <div class="month-section" *ngFor="let month of report.months">
+    <div class="month-header">
+      <span class="material-icons">calendar_today</span>
+      <h2>{{ getMonthName(month.month) }} {{ month.year }}</h2>
+    </div>
+
+    <div class="month-table">
+      <div class="table-row" *ngFor="let client of month.clients">
+        <span class="client-name">{{ client.clientName }}</span>
+        <span class="client-total">{{ formatCurrency(client.total) }}</span>
+      </div>
+      <div class="table-row subtotal-row">
+        <span class="subtotal-label">Subtotal</span>
+        <span class="subtotal-value">{{ formatCurrency(month.monthlyTotal) }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Total General -->
+  <div class="general-total" *ngIf="report.months.length > 0">
+    <span class="general-label">Total General</span>
+    <span class="general-value">{{ formatCurrency(report.generalTotal) }}</span>
+  </div>
+
+  <!-- Paginador -->
+  <app-paginator
+    *ngIf="report.totalCount > 0"
+    [currentPage]="page"
+    [pageSize]="pageSize"
+    [totalCount]="report.totalCount"
+    (pageChange)="onPageChange($event)">
+  </app-paginator>
+
+  <!-- Empty -->
+  <div class="empty-state" *ngIf="report.months.length === 0">
+    <span class="material-icons">assessment</span>
+    <p>No hay datos de ventas para mostrar</p>
+  </div>
+</div>

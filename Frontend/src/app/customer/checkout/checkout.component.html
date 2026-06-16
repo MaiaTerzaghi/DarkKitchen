@@ -1,0 +1,234 @@
+<!-- Success state -->
+<div class="checkout-container" *ngIf="orderSuccess && orderResponse">
+  <div class="success-card">
+    <div class="success-icon-wrapper">
+      <span class="material-icons success-check">check_circle</span>
+    </div>
+    <h2 class="success-title">Pedido confirmado</h2>
+    <p class="success-subtitle">Tu pedido ha sido creado exitosamente</p>
+
+    <div class="success-details">
+      <div class="success-row">
+        <span class="success-label">N.° de pedido</span>
+        <span class="success-value">#{{ orderResponse.orderId }}</span>
+      </div>
+      <div class="success-row">
+        <span class="success-label">Subtotal</span>
+        <span class="success-value">${{ orderResponse.subtotal | number:'1.2-2' }}</span>
+      </div>
+      <div class="success-row">
+        <span class="success-label">IVA (22%)</span>
+        <span class="success-value">${{ orderResponse.vat | number:'1.2-2' }}</span>
+      </div>
+      <div class="success-row">
+        <span class="success-label">Envío</span>
+        <span class="success-value">${{ orderResponse.shippingCost | number:'1.2-2' }}</span>
+      </div>
+      <div class="success-row total-row">
+        <span class="success-label">Total</span>
+        <span class="success-value">${{ orderResponse.total | number:'1.2-2' }}</span>
+      </div>
+    </div>
+
+    <a [routerLink]="['/customer']" class="back-btn">
+      <span class="material-icons">storefront</span>
+      Volver al catálogo
+    </a>
+  </div>
+</div>
+
+<!-- Checkout layout -->
+<div class="checkout-container" *ngIf="!orderSuccess">
+  <!-- Left column: Cart items -->
+  <div class="cart-section">
+    <div class="section-header">
+      <h2 class="section-title">
+        <span class="material-icons">shopping_cart</span>
+        Tu Pedido
+      </h2>
+      <span class="item-count" *ngIf="!isCartEmpty">{{ itemCount }} {{ itemCount === 1 ? 'item' : 'items' }}</span>
+    </div>
+
+    <!-- Empty cart -->
+    <div class="empty-cart" *ngIf="isCartEmpty">
+      <span class="material-icons empty-icon">remove_shopping_cart</span>
+      <p class="empty-text">Tu carrito está vacío</p>
+      <a [routerLink]="['/customer']" class="back-link">
+        <span class="material-icons">arrow_back</span>
+        Volver al catálogo
+      </a>
+    </div>
+
+    <!-- Cart items list -->
+    <div class="cart-items" *ngIf="!isCartEmpty">
+      <div class="cart-item" *ngFor="let item of cartItems">
+        <div class="item-info">
+          <h3 class="item-name">{{ item.product.name }}</h3>
+          <span class="item-category">{{ item.product.category }}</span>
+          <span class="item-unit-price" *ngIf="!getPreviewItem(item.product.id)?.discountPercentage">
+            ${{ item.product.price | number:'1.2-2' }} c/u
+          </span>
+          <span class="item-unit-price" *ngIf="getPreviewItem(item.product.id)?.discountPercentage">
+            <span class="price-original">${{ item.product.price | number:'1.2-2' }}</span>
+            <span class="price-discounted">${{ getPreviewItem(item.product.id)!.discountedUnitPrice | number:'1.2-2' }} c/u</span>
+            <span class="discount-badge">-{{ getPreviewItem(item.product.id)!.discountPercentage }}%</span>
+          </span>
+        </div>
+
+        <div class="item-actions">
+          <div class="quantity-controls">
+            <button class="qty-btn" (click)="decrementQuantity(item)" type="button">
+              <span class="material-icons">remove</span>
+            </button>
+            <span class="qty-value">{{ item.quantity }}</span>
+            <button class="qty-btn" (click)="incrementQuantity(item)" type="button">
+              <span class="material-icons">add</span>
+            </button>
+          </div>
+
+          <span class="item-subtotal">${{ (getPreviewItem(item.product.id)?.itemTotal ?? (item.product.price * item.quantity)) | number:'1.2-2' }}</span>
+
+          <button class="remove-btn" (click)="removeItem(item)" type="button">
+            <span class="material-icons">delete</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right column: Summary -->
+  <div class="summary-section" *ngIf="!isCartEmpty">
+    <!-- Address form -->
+    <div class="summary-block">
+      <h3 class="block-title">
+        <span class="material-icons">local_shipping</span>
+        Dirección de entrega
+      </h3>
+
+      <form [formGroup]="addressForm">
+        <div class="field-group">
+          <label for="street">Calle *</label>
+          <div class="input-wrapper">
+            <span class="material-icons input-icon">location_on</span>
+            <input
+              id="street"
+              type="text"
+              formControlName="street"
+              placeholder="Nombre de la calle"
+            />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="doorNumber">Número de puerta *</label>
+          <div class="input-wrapper">
+            <span class="material-icons input-icon">home</span>
+            <input
+              id="doorNumber"
+              type="text"
+              formControlName="doorNumber"
+              placeholder="Ej: 1234"
+            />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="apartment">Apartamento <span class="optional-tag">(opcional)</span></label>
+          <div class="input-wrapper">
+            <span class="material-icons input-icon">apartment</span>
+            <input
+              id="apartment"
+              type="text"
+              formControlName="apartment"
+              placeholder="Ej: Apto 101"
+            />
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Shipping type -->
+    <div class="summary-block">
+      <h3 class="block-title">
+        <span class="material-icons">inventory_2</span>
+        Tipo de envío
+      </h3>
+
+      <div class="shipping-loading" *ngIf="loadingShipping">
+        <span class="material-icons spinning">sync</span>
+        <span>Cargando opciones...</span>
+      </div>
+
+      <div class="shipping-options" *ngIf="!loadingShipping">
+        <div
+          class="shipping-option"
+          *ngFor="let type of shippingTypes"
+          [class.selected]="selectedShippingType?.id === type.id"
+          (click)="selectShippingType(type)"
+        >
+          <div class="shipping-radio">
+            <span class="radio-dot" *ngIf="selectedShippingType?.id === type.id"></span>
+          </div>
+          <div class="shipping-info">
+            <span class="shipping-name">{{ type.name }}</span>
+          </div>
+          <span class="shipping-cost">${{ type.cost | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order summary -->
+    <div class="summary-block">
+      <h3 class="block-title">
+        <span class="material-icons">receipt_long</span>
+        Resumen
+      </h3>
+
+      <div class="summary-loading" *ngIf="loadingPreview">
+        <span class="material-icons spinning">sync</span>
+        <span>Calculando...</span>
+      </div>
+
+      <div class="summary-rows" *ngIf="preview && !loadingPreview">
+        <div class="summary-row">
+          <span class="summary-label">Subtotal</span>
+          <span class="summary-value">${{ preview.subtotal | number:'1.2-2' }}</span>
+        </div>
+        <div class="summary-row discount-row" *ngIf="preview.discount > 0">
+          <span class="summary-label">Descuento</span>
+          <span class="summary-value">-${{ preview.discount | number:'1.2-2' }}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">IVA (22%)</span>
+          <span class="summary-value">${{ preview.vat | number:'1.2-2' }}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Envío</span>
+          <span class="summary-value">${{ preview.shippingCost | number:'1.2-2' }}</span>
+        </div>
+        <div class="summary-row total-row">
+          <span class="summary-label">Total</span>
+          <span class="summary-value">${{ preview.total | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error message -->
+    <div class="error-message" *ngIf="errorMessage">
+      <span class="material-icons">error</span>
+      {{ errorMessage }}
+    </div>
+
+    <!-- Submit button -->
+    <button
+      class="confirm-btn"
+      [disabled]="!canSubmit"
+      (click)="onSubmit()"
+      type="button"
+    >
+      <span class="material-icons" *ngIf="!loading">check</span>
+      <span class="material-icons spinning" *ngIf="loading">sync</span>
+      {{ loading ? 'Procesando...' : 'Confirmar Pedido' }}
+    </button>
+  </div>
+</div>

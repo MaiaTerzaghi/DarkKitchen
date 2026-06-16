@@ -1,0 +1,81 @@
+<div class="page-header">
+  <div class="header-text">
+    <h1>Mis Pedidos</h1>
+    <p>Consultá el estado de tus pedidos</p>
+  </div>
+</div>
+
+<!-- Filtros -->
+<div class="filters-panel">
+  <div class="filters-grid">
+    <div class="filter-group">
+      <label>Desde</label>
+      <input type="date" [(ngModel)]="filterDateFrom" class="filter-input" />
+    </div>
+    <div class="filter-group">
+      <label>Hasta</label>
+      <input type="date" [(ngModel)]="filterDateTo" class="filter-input" />
+    </div>
+    <div class="filter-group">
+      <label>Estado</label>
+      <select [(ngModel)]="filterStatus" class="filter-input">
+        <option value="">Todos</option>
+        <option *ngFor="let s of statuses" [value]="s.value">{{ s.label }}</option>
+      </select>
+    </div>
+  </div>
+  <div class="filters-actions">
+    <button class="btn-apply" (click)="loadOrders()">
+      <span class="material-icons">search</span>
+      Aplicar
+    </button>
+    <button class="btn-clear" (click)="clearFilters()">
+      <span class="material-icons">clear</span>
+      Limpiar
+    </button>
+  </div>
+</div>
+
+<!-- Error -->
+<div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+<!-- Loading -->
+<div class="loading" *ngIf="loading">
+  <span class="material-icons spinning">sync</span>
+  Cargando pedidos...
+</div>
+
+<!-- Lista de pedidos -->
+<div class="orders-list" *ngIf="!loading && orders.length > 0">
+  <div class="order-card" *ngFor="let order of orders">
+    <div class="order-icon">
+      <span class="material-icons">receipt_long</span>
+    </div>
+    <div class="order-info">
+      <h3>Pedido #{{ order.orderId }}</h3>
+      <p class="order-date">{{ order.date | date: 'dd/MM/yyyy HH:mm' }}</p>
+      <p class="order-items">{{ order.itemCount }} producto(s)</p>
+    </div>
+    <div class="order-right">
+      <span class="status-badge" [ngClass]="statusClass(order.status)">
+        {{ statusLabel(order.status) }}
+      </span>
+      <span class="order-total">${{ order.total }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- Paginador -->
+<app-paginator
+  *ngIf="!loading && totalCount > 0"
+  [currentPage]="currentPage"
+  [pageSize]="pageSize"
+  [totalCount]="totalCount"
+  (pageChange)="onPageChange($event)">
+</app-paginator>
+
+<!-- Sin resultados -->
+<div class="empty-state" *ngIf="!loading && orders.length === 0 && !errorMessage">
+  <span class="material-icons">receipt_long</span>
+  <p>No tenés pedidos</p>
+</div>

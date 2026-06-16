@@ -10,13 +10,16 @@ public sealed class DarkKitchenContext(DbContextOptions<DarkKitchenContext> opti
     public DbSet<Promotion> Promotions { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<Order> Orders { get; set; }
+    public DbSet<ShippingType> ShippingTypes { get; set; }
+    public DbSet<AuditLog> AuditLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Guardo el tipo de delivery como string en la bdd
         modelBuilder.Entity<Order>()
-            .Property(o => o.DeliveryType)
-            .HasConversion<string>();
+            .HasOne(o => o.ShippingType)
+            .WithMany()
+            .HasForeignKey(o => o.ShippingTypeId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Session>()
             .HasOne(s => s.User)
@@ -37,5 +40,9 @@ public sealed class DarkKitchenContext(DbContextOptions<DarkKitchenContext> opti
             .WithMany()
             .HasForeignKey(o => o.ClientId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<AuditLog>()
+            .Property(a => a.EntityName)
+            .HasConversion<string>();
     }
 }
