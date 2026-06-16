@@ -11,10 +11,22 @@ IF OBJECT_ID('PromotionProducts', 'U') IS NOT NULL DROP TABLE [PromotionProducts
 IF OBJECT_ID('OrderItem', 'U') IS NOT NULL DROP TABLE [OrderItem];
 IF OBJECT_ID('Sessions', 'U') IS NOT NULL DROP TABLE [Sessions];
 IF OBJECT_ID('Orders', 'U') IS NOT NULL DROP TABLE [Orders];
+IF OBJECT_ID('AuditLogs', 'U') IS NOT NULL DROP TABLE [AuditLogs];
 IF OBJECT_ID('Products', 'U') IS NOT NULL DROP TABLE [Products];
 IF OBJECT_ID('Promotions', 'U') IS NOT NULL DROP TABLE [Promotions];
+IF OBJECT_ID('ShippingTypes', 'U') IS NOT NULL DROP TABLE [ShippingTypes];
 IF OBJECT_ID('Users', 'U') IS NOT NULL DROP TABLE [Users];
 IF OBJECT_ID('__EFMigrationsHistory', 'U') IS NOT NULL DROP TABLE [__EFMigrationsHistory];
+
+-- ============================================================
+-- Tabla: ShippingTypes
+-- ============================================================
+CREATE TABLE [ShippingTypes] (
+    [Id]   INT            IDENTITY(1,1) NOT NULL,
+    [Name] NVARCHAR(MAX)  NOT NULL,
+    [Cost] FLOAT          NOT NULL,
+    CONSTRAINT [PK_ShippingTypes] PRIMARY KEY ([Id])
+);
 
 -- ============================================================
 -- Tabla: Users
@@ -75,28 +87,33 @@ CREATE INDEX [IX_Sessions_UserId] ON [Sessions] ([UserId]);
 
 -- ============================================================
 -- Tabla: Orders
+-- OrderStatus: Pending=0, Prepared=1, Cancelled=2, OnTheWay=3,
+--              Delivered=4, NotDelivered=5, Delayed=6
 -- ============================================================
 CREATE TABLE [Orders] (
-    [Id]           INT            IDENTITY(1,1) NOT NULL,
-    [ClientId]     INT            NOT NULL,
-    [DeliveryType] NVARCHAR(MAX)  NOT NULL,
-    [Status]       INT            NOT NULL,
-    [Date]         DATETIME2      NOT NULL,
-    [UpdatedAt]    DATETIME2      NOT NULL,
-    [Street]       NVARCHAR(MAX)  NOT NULL,
-    [DoorNumber]   NVARCHAR(MAX)  NOT NULL,
-    [Apartment]    NVARCHAR(MAX)  NULL,
-    [Subtotal]     FLOAT          NOT NULL,
-    [Discount]     FLOAT          NOT NULL,
-    [ShippingCost] FLOAT          NOT NULL,
-    [Vat]          FLOAT          NOT NULL,
-    [Total]        FLOAT          NOT NULL,
+    [Id]             INT            IDENTITY(1,1) NOT NULL,
+    [ClientId]       INT            NOT NULL,
+    [ShippingTypeId] INT            NOT NULL,
+    [Status]         INT            NOT NULL,
+    [Date]           DATETIME2      NOT NULL,
+    [UpdatedAt]      DATETIME2      NOT NULL,
+    [Street]         NVARCHAR(MAX)  NOT NULL,
+    [DoorNumber]     NVARCHAR(MAX)  NOT NULL,
+    [Apartment]      NVARCHAR(MAX)  NULL,
+    [Subtotal]       FLOAT          NOT NULL,
+    [Discount]       FLOAT          NOT NULL,
+    [ShippingCost]   FLOAT          NOT NULL,
+    [Vat]            FLOAT          NOT NULL,
+    [Total]          FLOAT          NOT NULL,
     CONSTRAINT [PK_Orders] PRIMARY KEY ([Id]),
     CONSTRAINT [FK_Orders_Users_ClientId] FOREIGN KEY ([ClientId])
-        REFERENCES [Users] ([Id]) ON DELETE NO ACTION
+        REFERENCES [Users] ([Id]) ON DELETE NO ACTION,
+    CONSTRAINT [FK_Orders_ShippingTypes_ShippingTypeId] FOREIGN KEY ([ShippingTypeId])
+        REFERENCES [ShippingTypes] ([Id]) ON DELETE NO ACTION
 );
 
 CREATE INDEX [IX_Orders_ClientId] ON [Orders] ([ClientId]);
+CREATE INDEX [IX_Orders_ShippingTypeId] ON [Orders] ([ShippingTypeId]);
 
 -- ============================================================
 -- Tabla: OrderItem
@@ -131,6 +148,20 @@ CREATE TABLE [PromotionProducts] (
 );
 
 CREATE INDEX [IX_PromotionProducts_PromotionId] ON [PromotionProducts] ([PromotionId]);
+
+-- ============================================================
+-- Tabla: AuditLogs
+-- AuditedEntity: Product="Product", Promotion="Promotion"
+-- ============================================================
+CREATE TABLE [AuditLogs] (
+    [Id]              INT            IDENTITY(1,1) NOT NULL,
+    [Timestamp]       DATETIME2      NOT NULL,
+    [EntityName]      NVARCHAR(MAX)  NOT NULL,
+    [EntityId]        INT            NOT NULL,
+    [Description]     NVARCHAR(MAX)  NOT NULL,
+    [ResponsibleUser] NVARCHAR(MAX)  NOT NULL,
+    CONSTRAINT [PK_AuditLogs] PRIMARY KEY ([Id])
+);
 
 -- ============================================================
 -- Tabla: __EFMigrationsHistory (requerida por EF Core)
