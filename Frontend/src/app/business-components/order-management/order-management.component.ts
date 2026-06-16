@@ -42,7 +42,7 @@ export class OrderManagementComponent implements OnInit {
       label: 'Marcar como Preparado',
       icon: 'check_circle',
       cssClass: 'btn-prepare',
-      canApply: (status) => status === 'Pending',
+      canApply: (status) => status === 'Pending' || status === 'Delayed',
       apply: (id) => this._orderService.changeStatus(id, OrderStatus.Prepared),
     },
     {
@@ -65,6 +65,13 @@ export class OrderManagementComponent implements OnInit {
       cssClass: 'btn-not-delivered',
       canApply: (status) => status === 'OnTheWay',
       apply: (id) => this._orderService.changeStatus(id, OrderStatus.NotDelivered),
+    },
+    {
+      label: 'Marcar como Demorado',
+      icon: 'schedule',
+      cssClass: 'btn-delayed',
+      canApply: (status) => status === 'Pending',
+      apply: (id) => this._orderService.changeStatus(id, OrderStatus.Delayed),
     },
   ];
 
